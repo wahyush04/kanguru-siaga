@@ -19,7 +19,9 @@ fun BabyEntity.toDomain(): Baby {
         birthWeightGram = birthWeightGram,
         birthLengthCm = birthLengthCm,
         birthHeadCircumferenceCm = birthHeadCircumferenceCm,
-        photoUri = photoUri
+        photoUri = photoUri,
+        createdAt = createdAt,
+        updatedAt = updatedAt
     )
 }
 
@@ -33,6 +35,8 @@ fun Baby.toEntity(isActive: Boolean = true): BabyEntity {
         birthLengthCm = birthLengthCm,
         birthHeadCircumferenceCm = birthHeadCircumferenceCm,
         photoUri = photoUri,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         isActive = isActive
     )
 }

@@ -19,6 +19,8 @@ class BabyMapperTest {
             birthLengthCm = 44.5f,
             birthHeadCircumferenceCm = 31.0f,
             photoUri = "content://photo/1",
+            createdAt = 1727136000000L,
+            updatedAt = 1727136100000L,
             isActive = true
         )
 
@@ -31,6 +33,8 @@ class BabyMapperTest {
         assertThat(domain.birthLengthCm).isEqualTo(44.5f)
         assertThat(domain.birthHeadCircumferenceCm).isEqualTo(31.0f)
         assertThat(domain.photoUri).isEqualTo("content://photo/1")
+        assertThat(domain.createdAt).isEqualTo(1727136000000L)
+        assertThat(domain.updatedAt).isEqualTo(1727136100000L)
     }
 
     @Test
@@ -43,7 +47,9 @@ class BabyMapperTest {
             birthWeightGram = 1950,
             birthLengthCm = 43.0f,
             birthHeadCircumferenceCm = 30.0f,
-            photoUri = null
+            photoUri = null,
+            createdAt = 1727136000000L,
+            updatedAt = 1727136100000L
         )
 
         val entity = domain.toEntity(isActive = true)
@@ -53,6 +59,9 @@ class BabyMapperTest {
         assertThat(entity.gender).isEqualTo("FEMALE")
         assertThat(entity.birthWeightGram).isEqualTo(1950)
         assertThat(entity.birthLengthCm).isEqualTo(43.0f)
+        assertThat(entity.photoUri).isNull()
+        assertThat(entity.createdAt).isEqualTo(1727136000000L)
+        assertThat(entity.updatedAt).isEqualTo(1727136100000L)
         assertThat(entity.isActive).isTrue()
     }
 }

@@ -4,5 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesRepository {
     val isOnboardingCompleted: Flow<Boolean>
+    val hasCompletedOnboarding: Flow<Boolean>
     suspend fun setOnboardingCompleted(completed: Boolean)
 }

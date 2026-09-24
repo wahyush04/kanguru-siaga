@@ -6,7 +6,9 @@ data class Baby(
     val gender: Gender,
     val birthDateEpochMillis: Long,
     val birthWeightGram: Int,
-    val birthLengthCm: Float,
-    val birthHeadCircumferenceCm: Float,
-    val photoUri: String? = null
+    val birthLengthCm: Float = 0f,
+    val birthHeadCircumferenceCm: Float = 0f,
+    val photoUri: String? = null,
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 )

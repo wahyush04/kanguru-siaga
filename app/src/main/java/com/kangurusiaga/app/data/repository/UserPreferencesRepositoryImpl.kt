@@ -12,6 +12,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 ) : UserPreferencesRepository {
 
     override val isOnboardingCompleted: Flow<Boolean> = dataStore.isOnboardingCompleted
+    override val hasCompletedOnboarding: Flow<Boolean> = dataStore.hasCompletedOnboarding
 
     override suspend fun setOnboardingCompleted(completed: Boolean) {
         dataStore.setOnboardingCompleted(completed)

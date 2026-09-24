@@ -18,6 +18,7 @@ espresso = "3.6.1"
 truth = "1.4.4"
 mockk = "1.13.13"
 turbine = "1.2.0"
+coilCompose = "2.7.0"
 
 [libraries]
 # AndroidX Core & Lifecycle
@@ -36,6 +37,7 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 
 # Navigation
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }

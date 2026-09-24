@@ -11,8 +11,10 @@ data class BabyEntity(
     val gender: String,
     val birthDateEpochMillis: Long,
     val birthWeightGram: Int,
-    val birthLengthCm: Float,
-    val birthHeadCircumferenceCm: Float,
-    val photoUri: String?,
+    val birthLengthCm: Float = 0f,
+    val birthHeadCircumferenceCm: Float = 0f,
+    val photoUri: String? = null,
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis(),
     val isActive: Boolean = true
 )

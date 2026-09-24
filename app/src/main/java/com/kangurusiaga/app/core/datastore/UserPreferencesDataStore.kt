@@ -25,6 +25,8 @@ class UserPreferencesDataStore @Inject constructor(
         preferences[PreferencesKeys.IS_ONBOARDING_COMPLETED] ?: false
     }
 
+    val hasCompletedOnboarding: Flow<Boolean> = isOnboardingCompleted
+
     suspend fun setOnboardingCompleted(completed: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_ONBOARDING_COMPLETED] = completed
