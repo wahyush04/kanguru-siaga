@@ -1,6 +1,8 @@
 package com.kangurusiaga.app.data.repository
 
 import com.kangurusiaga.app.domain.repository.BabyRepository
+import com.kangurusiaga.app.domain.repository.PmkReminderRepository
+import com.kangurusiaga.app.domain.repository.PmkRepository
 import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
 import dagger.Binds
 import dagger.Module
@@ -23,4 +25,16 @@ abstract class RepositoryModule {
     abstract fun bindUserPreferencesRepository(
         impl: UserPreferencesRepositoryImpl
     ): UserPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPmkRepository(
+        impl: PmkRepositoryImpl
+    ): PmkRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPmkReminderRepository(
+        impl: PmkReminderRepositoryImpl
+    ): PmkReminderRepository
 }

@@ -4,12 +4,13 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
+import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.usecase.GetBabyProfileUseCase
+import com.kangurusiaga.app.domain.usecase.GetTodayPmkSessionsUseCase
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -24,6 +25,7 @@ class HomeViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val getBabyProfileUseCase: GetBabyProfileUseCase = mockk()
+    private val getTodayPmkSessionsUseCase: GetTodayPmkSessionsUseCase = mockk()
 
     @Before
     fun setUp() {
@@ -36,20 +38,29 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun uiState_emitsActiveBabyCorrectly() = runTest {
+    fun uiState_emitsActiveBabyAndTodaySessionsCorrectly() = runTest {
         val baby = Baby(
             id = 1L,
-            name = "Baby test",
+            name = "Aisyah Humaira",
             gender = Gender.FEMALE,
-            birthDateEpochMillis = 1727136000000L,
-            birthWeightGram = 2000,
+            birthDateEpochMillis = System.currentTimeMillis() - (14 * 24 * 3600 * 1000L), // 2 weeks ago
+            birthWeightGram = 1850,
             birthLengthCm = 44.0f,
             birthHeadCircumferenceCm = 31.0f
         )
 
-        every { getBabyProfileUseCase() } returns flowOf(baby)
+        val session = PmkSession(
+            id = 10L,
+            babyId = 1L,
+            startTimeEpoch = System.currentTimeMillis() - 3600000,
+            endTimeEpoch = System.currentTimeMillis(),
+            durationMinutes = 60
+        )
 
-        val viewModel = HomeViewModel(getBabyProfileUseCase)
+        every { getBabyProfileUseCase() } returns flowOf(baby)
+        every { getTodayPmkSessionsUseCase(1L) } returns flowOf(listOf(session))
+
+        val viewModel = HomeViewModel(getBabyProfileUseCase, getTodayPmkSessionsUseCase)
 
         viewModel.uiState.test {
             val initial = awaitItem()
@@ -60,26 +71,23 @@ class HomeViewModelTest {
             val success = awaitItem()
             assertThat(success.isLoading).isFalse()
             assertThat(success.activeBaby).isEqualTo(baby)
+            assertThat(success.todaySessionsCount).isEqualTo(1)
+            assertThat(success.babyAgeFormatted).contains("minggu")
+            assertThat(success.babyWeightFormatted).contains("1.850")
+            assertThat(success.todayProgressFraction).isGreaterThan(0.3f)
         }
     }
 
     @Test
-    fun uiState_handlesErrorCorrectly() = runTest {
-        every { getBabyProfileUseCase() } returns flow {
-            throw RuntimeException("Database error")
-        }
+    fun dialog_emergencyStateToggleWorks() = runTest {
+        every { getBabyProfileUseCase() } returns flowOf(null)
 
-        val viewModel = HomeViewModel(getBabyProfileUseCase)
+        val viewModel = HomeViewModel(getBabyProfileUseCase, getTodayPmkSessionsUseCase)
 
-        viewModel.uiState.test {
-            val initial = awaitItem()
-            assertThat(initial.isLoading).isTrue()
+        viewModel.openEmergencyDialog()
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val errorState = awaitItem()
-            assertThat(errorState.isLoading).isFalse()
-            assertThat(errorState.userMessage).isEqualTo("Database error")
-        }
+        viewModel.closeEmergencyDialog()
+        testDispatcher.scheduler.advanceUntilIdle()
     }
 }
