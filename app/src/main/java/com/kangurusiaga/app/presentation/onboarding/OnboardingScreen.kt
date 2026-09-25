@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -96,7 +97,8 @@ fun OnboardingRoute(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 20.dp),
+                .statusBarsPadding()
+                .padding(horizontal = 24.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             // Top Navigation Bar with Skip (Lewati)

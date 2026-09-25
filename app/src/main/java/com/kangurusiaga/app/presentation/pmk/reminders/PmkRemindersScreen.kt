@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -126,54 +127,59 @@ fun PmkRemindersScreen(
         containerColor = Color(0xFFFDFBF9),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFFDFBF9))
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            Surface(
+                color = Color(0xFFFDFBF9),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
-                            tint = Color(0xFF1E293B)
-                        )
-                    }
-
-                    Text(
-                        text = "Pengingat PMK",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
-                    )
-
-                    IconButton(onClick = onOpenInfoDialog) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = "Info",
-                            tint = Color(0xFF475569)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Text(
-                    text = "Atur jadwal dan pengingat kontak kulit ke kulit (KMC) rutin untuk kenyamanan dan tumbuh kembang si kecil.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.5.sp,
-                    lineHeight = 16.sp,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Kembali",
+                                tint = Color(0xFF1E293B)
+                            )
+                        }
+
+                        Text(
+                            text = "Pengingat PMK",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF0F172A)
+                        )
+
+                        IconButton(onClick = onOpenInfoDialog) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Info",
+                                tint = Color(0xFF475569)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    Text(
+                        text = "Atur jadwal dan pengingat kontak kulit ke kulit (KMC) rutin untuk kenyamanan dan tumbuh kembang si kecil.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF64748B),
+                        textAlign = TextAlign.Center,
+                        fontSize = 11.5.sp,
+                        lineHeight = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+                }
             }
         },
         bottomBar = {

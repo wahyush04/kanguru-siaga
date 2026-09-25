@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -70,53 +71,58 @@ fun PmkCenterScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = Color(0xFFFBFBFC),
         topBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFFBFBFC))
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            Surface(
+                color = Color(0xFFFBFBFC),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
                 ) {
-                    IconButton(
-                        onClick = onNavigateBack,
-                        modifier = Modifier.size(36.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
-                            tint = Color(0xFF1E293B)
+                        IconButton(
+                            onClick = onNavigateBack,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Kembali",
+                                tint = Color(0xFF1E293B)
+                            )
+                        }
+
+                        Text(
+                            text = "Perawatan Metode Kanguru\n(PMK)",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF0F172A),
+                            textAlign = TextAlign.Center,
+                            lineHeight = 20.sp,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 36.dp)
                         )
                     }
 
+                    Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
-                        text = "Perawatan Metode Kanguru\n(PMK)",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A),
+                        text = "Metode sederhana dengan sentuhan penuh manfaat untuk bayi BBLR",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF64748B),
                         textAlign = TextAlign.Center,
-                        lineHeight = 20.sp,
+                        fontSize = 11.5.sp,
+                        lineHeight = 16.sp,
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 36.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
                     )
                 }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "Metode sederhana dengan sentuhan penuh manfaat untuk bayi BBLR",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.5.sp,
-                    lineHeight = 16.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
-                )
             }
         },
         bottomBar = {

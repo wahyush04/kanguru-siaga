@@ -14,6 +14,7 @@ import com.kangurusiaga.app.presentation.onboarding.OnboardingRoute
 import com.kangurusiaga.app.presentation.onboarding.ProfileIntroRoute
 import com.kangurusiaga.app.presentation.onboarding.SplashRoute
 import com.kangurusiaga.app.presentation.pmk.center.PmkCenterScreen
+import com.kangurusiaga.app.presentation.pmk.history.PmkHistoryRoute
 import com.kangurusiaga.app.presentation.pmk.manual.PmkManualLogRoute
 import com.kangurusiaga.app.presentation.pmk.reminders.PmkRemindersRoute
 import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsRoute
@@ -104,7 +105,7 @@ fun KanguruNavGraph(
                     navController.navigate(Screen.PmkReminders.route)
                 },
                 onNavigateToHistory = {
-                    navController.navigate(Screen.PmkStatistics.route)
+                    navController.navigate(Screen.PmkHistory.route)
                 }
             )
         }
@@ -125,7 +126,7 @@ fun KanguruNavGraph(
                     navController.navigate(Screen.PmkReminders.route)
                 },
                 onNavigateToHistory = {
-                    navController.navigate(Screen.PmkStatistics.route)
+                    navController.navigate(Screen.PmkHistory.route)
                 }
             )
         }
@@ -148,14 +149,54 @@ fun KanguruNavGraph(
             )
         }
 
-        // PMK Statistics & History
-        composable(route = Screen.PmkStatistics.route) {
+        // Screen 1: Kanguru Siaga - Riwayat PMK (Halaman Utama Riwayat PMK)
+        composable(route = Screen.PmkHistory.route) {
+            PmkHistoryRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDetail = {
+                    navController.navigate(Screen.PmkStatisticsDetail.route)
+                },
+                onNavigateToManualLog = {
+                    navController.navigate(Screen.PmkManualLog.route)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        // Screen 2: Kanguru Siaga - Detail Statistik PMK (Halaman Detail Lanjutan Statistik)
+        composable(route = Screen.PmkStatisticsDetail.route) {
             PmkStatisticsRoute(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
                 onNavigateToManualLog = {
                     navController.navigate(Screen.PmkManualLog.route)
+                }
+            )
+        }
+
+        // PMK Statistics Legacy Alias -> navigates to PmkHistory
+        composable(route = Screen.PmkStatistics.route) {
+            PmkHistoryRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDetail = {
+                    navController.navigate(Screen.PmkStatisticsDetail.route)
+                },
+                onNavigateToManualLog = {
+                    navController.navigate(Screen.PmkManualLog.route)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
                 }
             )
         }

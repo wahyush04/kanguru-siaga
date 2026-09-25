@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -125,34 +126,40 @@ fun PmkStatisticsScreen(
         containerColor = Color(0xFFFFF9F6),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Surface(
+                color = Color(0xFFFFF9F6),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Kembali",
-                        tint = Color(0xFF1E293B)
-                    )
-                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Kembali",
+                            tint = Color(0xFF1E293B)
+                        )
+                    }
 
-                Text(
-                    text = "Riwayat PMK",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B)
-                )
-
-                IconButton(onClick = { /* calendar selector */ }) {
-                    Icon(
-                        imageVector = Icons.Default.CalendarMonth,
-                        contentDescription = "Filter",
-                        tint = Color(0xFF475569)
+                    Text(
+                        text = "Detail Statistik PMK",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1E293B)
                     )
+
+                    IconButton(onClick = { /* Unduh laporan ringkasan */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Download,
+                            contentDescription = "Unduh Laporan",
+                            tint = Color(0xFF475569)
+                        )
+                    }
                 }
             }
         },
@@ -636,29 +643,7 @@ fun PmkStatisticsScreen(
                     }
                 }
 
-                // 7. Daftar Sesi Terakhir (Session Log History)
-                if (uiState.sessions.isNotEmpty()) {
-                    Text(
-                        text = "Catatan Sesi (${uiState.sessions.size})",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
-                    )
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        uiState.sessions.take(10).forEach { session ->
-                            SessionHistoryItem(
-                                session = session,
-                                onDelete = { onDeleteSession(session.id) }
-                            )
-                        }
-                    }
-                }
-
-                // 8. Action Buttons
+                // 7. Action Buttons
                 Button(
                     onClick = onNavigateToManualLog,
                     modifier = Modifier
