@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,11 +27,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -92,6 +99,7 @@ fun HomeRoute(
     onNavigateToPmk: () -> Unit,
     onNavigateToProfileSetup: () -> Unit = {},
     onNavigateToEducation: () -> Unit = {},
+    onNavigateToEmergency: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -102,6 +110,7 @@ fun HomeRoute(
         onNavigateToPmk = onNavigateToPmk,
         onNavigateToProfileSetup = onNavigateToProfileSetup,
         onNavigateToEducation = onNavigateToEducation,
+        onNavigateToEmergency = onNavigateToEmergency,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
         onOpenNotification = viewModel::openNotificationSheet,
@@ -119,12 +128,13 @@ fun HomeScreen(
     onNavigateToPmk: () -> Unit,
     onNavigateToProfileSetup: () -> Unit = {},
     onNavigateToEducation: () -> Unit = {},
-    onOpenEmergency: () -> Unit,
-    onCloseEmergency: () -> Unit,
-    onOpenNotification: () -> Unit,
-    onCloseNotification: () -> Unit,
-    onShowInfo: (String) -> Unit,
-    onClearInfo: () -> Unit,
+    onNavigateToEmergency: () -> Unit = {},
+    onOpenEmergency: () -> Unit = {},
+    onCloseEmergency: () -> Unit = {},
+    onOpenNotification: () -> Unit = {},
+    onCloseNotification: () -> Unit = {},
+    onShowInfo: (String) -> Unit = {},
+    onClearInfo: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -178,6 +188,7 @@ fun HomeScreen(
                         unreadNotificationsCount = uiState.unreadNotificationsCount,
                         onNavigateToPmk = onNavigateToPmk,
                         onNavigateToEducation = onNavigateToEducation,
+                        onNavigateToEmergency = onNavigateToEmergency,
                         onOpenEmergency = onOpenEmergency,
                         onOpenNotification = onOpenNotification,
                         onShowInfo = onShowInfo,
@@ -235,6 +246,7 @@ private fun HomeContent(
     unreadNotificationsCount: Int,
     onNavigateToPmk: () -> Unit,
     onNavigateToEducation: () -> Unit = {},
+    onNavigateToEmergency: () -> Unit = {},
     onOpenEmergency: () -> Unit,
     onOpenNotification: () -> Unit,
     onShowInfo: (String) -> Unit,
@@ -383,7 +395,7 @@ private fun HomeContent(
                 iconRes = R.drawable.ic_card_emergency,
                 containerColor = Color(0xFFFFF6E9),
                 borderColor = Color(0xFFFFE7C6),
-                onClick = onOpenEmergency,
+                onClick = onNavigateToEmergency,
                 modifier = Modifier.weight(1f)
             )
 
@@ -891,47 +903,53 @@ fun HomeBottomBar(
         shadowElevation = 8.dp,
         border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF1F5F9))
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
+                .navigationBarsPadding()
         ) {
-            HomeTab.entries.forEach { tab ->
-                val isSelected = tab == currentTab
-                val contentColor = if (isSelected) BrandPink else Color(0xFF94A3B8)
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { onTabSelected(tab) }
-                        .padding(horizontal = 12.dp, vertical = 4.dp)
-                ) {
-                    val icon = when (tab) {
-                        HomeTab.BERANDA -> R.drawable.ic_kangaroo_mascot
-                        HomeTab.PMK -> R.drawable.ic_card_pmk
-                        HomeTab.EDUKASI -> R.drawable.il_trusted_guide
-                        HomeTab.ALARM -> R.drawable.ic_card_asi
-                        HomeTab.PROFIL -> R.drawable.il_welcome_mother_baby
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                HomeTab.entries.forEach { tab ->
+                    val isSelected = tab == currentTab
+                    val contentColor = if (isSelected) BrandPink else Color(0xFF94A3B8)
+                    val icon: ImageVector = when (tab) {
+                        HomeTab.BERANDA -> Icons.Default.Home
+                        HomeTab.PMK -> Icons.Default.VolunteerActivism
+                        HomeTab.EDUKASI -> Icons.AutoMirrored.Filled.MenuBook
+                        HomeTab.ALARM -> Icons.Default.Alarm
+                        HomeTab.PROFIL -> Icons.Default.Person
                     }
 
-                    Image(
-                        painter = painterResource(id = icon),
-                        contentDescription = tab.label,
-                        modifier = Modifier.size(22.dp)
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onTabSelected(tab) }
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = tab.label,
+                            tint = contentColor,
+                            modifier = Modifier.size(22.dp)
+                        )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(2.dp))
 
-                    Text(
-                        text = tab.label,
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = contentColor,
-                        fontSize = 10.sp
-                    )
+                        Text(
+                            text = tab.label,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = contentColor,
+                            fontSize = 10.5.sp
+                        )
+                    }
                 }
             }
         }

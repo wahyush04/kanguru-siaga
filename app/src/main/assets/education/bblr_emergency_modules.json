@@ -1,0 +1,208 @@
+{
+  "modules": [
+    {
+      "id": "emergency_01",
+      "order": 1,
+      "title": "Gangguan Pernapasan",
+      "category": "Tanda Kegawatan BBLR",
+      "iconType": "lungs",
+      "themeColor": "rose",
+      "heroDrawable": "il_emergency_01",
+      "heroTag": "PEMANTAUAN RESPIRATORI BBLR",
+      "sections": [
+        {
+          "type": "symptoms_list",
+          "title": "Tanda yang perlu diperhatikan",
+          "items": [
+            "Napas terlihat cepat atau sulit",
+            "Tarikan dinding dada ke dalam",
+            "Hidung kembang kempis",
+            "Suara napas tidak normal",
+            "Bayi tampak gelisah atau lemas"
+          ]
+        },
+        {
+          "type": "action_alert",
+          "title": "Apa yang harus dilakukan?",
+          "message": "Segera hubungi tenaga kesehatan atau bawa bayi ke fasilitas layanan kesehatan terdekat.",
+          "themeColor": "amber"
+        }
+      ]
+    },
+    {
+      "id": "emergency_02",
+      "order": 2,
+      "title": "Perubahan Warna Kulit",
+      "category": "Tanda Kegawatan BBLR",
+      "iconType": "skin",
+      "themeColor": "rose",
+      "heroDrawable": "il_emergency_02",
+      "heroTag": "Pemantauan Kulit & Perfusi BBLR",
+      "sections": [
+        {
+          "type": "symptoms_list",
+          "title": "Tanda yang perlu diperhatikan",
+          "items": [
+            "Kebiruan pada bibir, lidah, atau seluruh tubuh (sianosis sentral)",
+            "Kulit terlihat sangat pucat atau keabu-abuan",
+            "Warna kuning muncul dalam 24 jam pertama atau menjalar hingga ke telapak tangan dan kaki (ikterus berat)",
+            "Kulit tampak belang-belang atau keunguan seperti marmer (cutis marmorata)",
+            "Ujung jari tangan atau kaki tetap dingin dan membiru meski sudah dihangatkan"
+          ]
+        },
+        {
+          "type": "action_alert",
+          "title": "Apa yang harus dilakukan?",
+          "message": "Segera bawa bayi ke fasilitas pelayanan kesehatan terdekat atau Unit Gawat Darurat (IGD) jika menemukan tanda kebiruan atau pucat mendadak.",
+          "themeColor": "amber"
+        }
+      ]
+    },
+    {
+      "id": "emergency_03",
+      "order": 3,
+      "title": "Bayi Sulit Dibangunkan",
+      "category": "Tanda Kegawatan BBLR",
+      "iconType": "sleep",
+      "themeColor": "orange",
+      "heroDrawable": "il_emergency_03",
+      "heroTag": "PEMANTAUAN KESADARAN & RESPON BBLR",
+      "sections": [
+        {
+          "type": "symptoms_list",
+          "title": "Tanda yang perlu diperhatikan",
+          "items": [
+            "Bayi tidur terus-menerus dan sangat sulit dibangunkan meski sudah waktunya minum (melewati > 3 jam)",
+            "Tidak merespons atau respons sangat lambat saat disentuh, diajak bicara, atau telapak kaki ditepuk lembut",
+            "Otot tubuh terasa terkulai lemas (floppy) atau lunglai saat digendong",
+            "Menghisap sangat lemah atau tidak mau menyusu sama sekali (refleks hisap hilang)",
+            "Suara tangisan sangat lemah, merintih (grunting), atau tidak menangis sama sekali saat merasa tidak nyaman"
+          ]
+        },
+        {
+          "type": "action_alert",
+          "title": "Apa yang harus dilakukan?",
+          "message": "Segera bawa bayi ke fasilitas pelayanan kesehatan terdekat atau Unit Gawat Darurat (IGD) jika bayi tidak bangun untuk minum atau tampak sangat lemas/lunglai.",
+          "themeColor": "amber"
+        }
+      ]
+    },
+    {
+      "id": "emergency_04",
+      "order": 4,
+      "title": "Kesulitan Menyusu",
+      "category": "Tanda Kegawatan BBLR",
+      "iconType": "feeding",
+      "themeColor": "rose",
+      "heroDrawable": "il_emergency_04",
+      "heroTag": "PEMANTAUAN MINUM & REFLEKS HISAP BBLR",
+      "sections": [
+        {
+          "type": "symptoms_list",
+          "title": "Tanda yang perlu diperhatikan",
+          "items": [
+            "Bayi sama sekali tidak mau menetek atau menolak minum susu.",
+            "Daya hisap sangat lemah, mudah lelah, atau sering terlepas saat menyusu.",
+            "Sering tersedak, batuk, atau tampak kebiruan di sekitar bibir saat minum.",
+            "Membutuhkan waktu sangat lama untuk menghabiskan porsi minum (melebihi 30–45 menit).",
+            "Jumlah buang air kecil (BAK) berkurang drastis (kurang dari 6 popok basah dalam 24 jam)."
+          ]
+        },
+        {
+          "type": "action_alert",
+          "title": "Apa yang harus dilakukan?",
+          "message": "Segera bawa bayi ke fasilitas pelayanan kesehatan atau dokter anak jika bayi tidak dapat minum minimal 2 sesi berturut-turut, tersedak disertai sesak, atau popok kering seharian untuk mencegah dehidrasi dan hipoglikemia berat.",
+          "themeColor": "amber"
+        }
+      ]
+    },
+    {
+      "id": "emergency_05",
+      "order": 5,
+      "title": "Kejang",
+      "category": "Tanda Kegawatan BBLR",
+      "iconType": "seizure",
+      "themeColor": "rose",
+      "heroDrawable": "il_emergency_05",
+      "heroTag": "Pemantauan Kejang & Gerakan Abnormal BBLR",
+      "sections": [
+        {
+          "type": "symptoms_list",
+          "title": "Tanda yang perlu diperhatikan",
+          "items": [
+            "Gerakan menyentak-nyentak berulang dan berirama pada lengan, tungkai kaki, atau wajah yang tidak berhenti saat dipegang lembut.",
+            "Tatapan mata kosong, mendelik ke atas, atau mata berkedip-kedip cepat secara terus-menerus.",
+            "Gerakan seperti mengayuh sepeda pada kedua kaki atau gerakan meninju berulang.",
+            "Gerakan mengecap-ngecap bibir, mengunyah, atau menjulurkan lidah berulang di luar waktu menyusu.",
+            "Tubuh tiba-tiba menjadi kaku tegang atau melengkung ke belakang, terkadang disertai henti napas sesaat (kebiruan)."
+          ]
+        },
+        {
+          "type": "action_alert",
+          "title": "Apa yang harus dilakukan?",
+          "message": "Segera bawa bayi ke Unit Gawat Darurat (IGD) atau fasilitas kesehatan terdekat jika bayi mengalami kejang. Jaga jalan napas tetap terbuka, posisikan bayi miring dengan lembut, dan JANGAN masukkan benda apa pun ke dalam mulut bayi.",
+          "themeColor": "amber"
+        }
+      ]
+    },
+    {
+      "id": "emergency_06",
+      "order": 6,
+      "title": "Suhu Tubuh Tidak Normal",
+      "category": "Tanda Kegawatan BBLR",
+      "iconType": "thermometer",
+      "themeColor": "orange",
+      "heroDrawable": "il_emergency_06",
+      "heroTag": "PEMANTAUAN SUHU & TERMOREGULASI BBLR",
+      "sections": [
+        {
+          "type": "symptoms_list",
+          "title": "Tanda yang perlu diperhatikan",
+          "items": [
+            "Suhu ketiak (aksila) bayi di bawah 36,5°C (hipotermia) atau di atas 37,5°C (hipertermia / demam).",
+            "Tubuh atau dada bayi terasa dingin saat disentuh, terutama disertai telapak tangan dan kaki yang dingin serta pucat.",
+            "Bayi tampak sangat lesu, malas bergerak, tidak aktif, atau tangisannya melemah.",
+            "Napas bayi menjadi lebih lambat dari biasanya atau justru bernapas sangat cepat dan terengah-engah.",
+            "Bayi menolak minum ASI atau kemampuan menghisapnya mendadak menurun drastis."
+          ]
+        },
+        {
+          "type": "action_alert",
+          "title": "Apa yang harus dilakukan?",
+          "message": "Lakukan Perawatan Metode Kanguru (PMK) kontak kulit-ke-kulit dan selimuti bayi jika suhu tubuh dingin (< 36,5°C). Jika suhu tetap tidak naik dalam 1 jam, atau suhu > 37,5°C disertai tanda bahaya lain, segera bawa bayi ke fasilitas pelayanan kesehatan atau IGD terdekat.",
+          "themeColor": "amber"
+        }
+      ]
+    },
+    {
+      "id": "emergency_07",
+      "order": 7,
+      "title": "Kondisi Lainnya",
+      "category": "Tanda Kegawatan BBLR",
+      "iconType": "other",
+      "themeColor": "rose",
+      "heroDrawable": "il_emergency_07",
+      "heroTag": "PEMANTAUAN TANDA INFEKSI & BAHAYA LAIN BBLR",
+      "sections": [
+        {
+          "type": "symptoms_list",
+          "title": "Tanda yang perlu diperhatikan",
+          "items": [
+            "Perut kembung, keras, atau tampak urat-urat kebiruan di dinding perut (distensi abdomen).",
+            "Tali pusat merah, bengkak, berbau busuk, atau keluar nanah/darah (omfalitis / infeksi tali pusat).",
+            "Muntah berwarna hijau pekat kehijauan atau muntah menyemprot terus-menerus.",
+            "Diare cair berulang atau feses bercampur darah/lendir.",
+            "Pendarahan mendadak dari hidung, mulut, saluran cerna, atau kulit timbul bintik-bintik merah/ungu (petekie).",
+            "Mata bernanah banyak, bengkak, dan memerah terus-menerus."
+          ]
+        },
+        {
+          "type": "action_alert",
+          "title": "Apa yang harus dilakukan?",
+          "message": "Segera bawa bayi ke Rumah Sakit / Unit Gawat Darurat (IGD) terdekat jika mendapati salah satu dari tanda-tanda di atas. Kondisi infeksi atau gangguan pencernaan pada bayi BBLR dapat memburuk dengan sangat cepat dan memerlukan antibiotik atau evaluasi medis segera.",
+          "themeColor": "amber"
+        }
+      ]
+    }
+  ]
+}

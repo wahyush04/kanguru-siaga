@@ -11,6 +11,8 @@ import androidx.navigation.navArgument
 import com.kangurusiaga.app.presentation.babyprofile.BabyProfileSetupRoute
 import com.kangurusiaga.app.presentation.education.EducationDetailRoute
 import com.kangurusiaga.app.presentation.education.EducationListRoute
+import com.kangurusiaga.app.presentation.emergency.EmergencyWarningDetailRoute
+import com.kangurusiaga.app.presentation.emergency.EmergencyWarningListRoute
 import com.kangurusiaga.app.presentation.home.HomeRoute
 import com.kangurusiaga.app.presentation.onboarding.OnboardingRoute
 import com.kangurusiaga.app.presentation.onboarding.ProfileIntroRoute
@@ -90,6 +92,9 @@ fun KanguruNavGraph(
                 },
                 onNavigateToEducation = {
                     navController.navigate(Screen.EducationList.route)
+                },
+                onNavigateToEmergency = {
+                    navController.navigate(Screen.EmergencyWarningList.route)
                 }
             )
         }
@@ -326,6 +331,35 @@ fun KanguruNavGraph(
                 },
                 onNavigateToPmk = {
                     navController.navigate(Screen.PmkCenter.route)
+                }
+            )
+        }
+
+        // Tanda Kegawatan pada BBLR - List Screen
+        composable(route = Screen.EmergencyWarningList.route) {
+            EmergencyWarningListRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDetail = { moduleId ->
+                    navController.navigate(Screen.EmergencyWarningDetail.createRoute(moduleId))
+                }
+            )
+        }
+
+        // Tanda Kegawatan pada BBLR - Detail Screen (Single Reusable Screen)
+        composable(
+            route = Screen.EmergencyWarningDetail.route,
+            arguments = listOf(
+                navArgument("moduleId") {
+                    type = NavType.StringType
+                    defaultValue = "emergency_01"
+                }
+            )
+        ) {
+            EmergencyWarningDetailRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

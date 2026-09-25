@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -23,10 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -55,6 +49,8 @@ import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.education.EducationModule
 import com.kangurusiaga.app.presentation.education.components.EducationModuleCard
+import com.kangurusiaga.app.presentation.home.HomeBottomBar
+import com.kangurusiaga.app.presentation.home.HomeTab
 
 @Composable
 fun EducationListRoute(
@@ -162,9 +158,15 @@ fun EducationListScreen(
             }
         },
         bottomBar = {
-            EducationBottomBar(
-                onNavigateToHome = onNavigateToHome,
-                onNavigateToPmk = onNavigateToPmk
+            HomeBottomBar(
+                currentTab = HomeTab.EDUKASI,
+                onTabSelected = { tab ->
+                    when (tab) {
+                        HomeTab.BERANDA -> onNavigateToHome()
+                        HomeTab.PMK -> onNavigateToPmk()
+                        else -> {}
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -308,83 +310,4 @@ private fun EmptyEducationContent(
     }
 }
 
-@Composable
-private fun EducationBottomBar(
-    onNavigateToHome: () -> Unit,
-    onNavigateToPmk: () -> Unit
-) {
-    Surface(
-        color = White,
-        shadowElevation = 8.dp,
-        border = androidx.compose.foundation.BorderStroke(1.dp, BrandCardBorder)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BottomBarItem(
-                label = "Beranda",
-                icon = Icons.Default.Home,
-                selected = false,
-                onClick = onNavigateToHome
-            )
-            BottomBarItem(
-                label = "PMK",
-                icon = Icons.Default.VolunteerActivism,
-                selected = false,
-                onClick = onNavigateToPmk
-            )
-            BottomBarItem(
-                label = "Edukasi",
-                icon = Icons.Default.BookmarkBorder,
-                selected = true,
-                onClick = { /* already here */ }
-            )
-            BottomBarItem(
-                label = "Alarm",
-                icon = Icons.Default.Notifications,
-                selected = false,
-                onClick = { }
-            )
-            BottomBarItem(
-                label = "Profil",
-                icon = Icons.Default.Person,
-                selected = false,
-                onClick = { }
-            )
-        }
-    }
-}
 
-@Composable
-private fun BottomBarItem(
-    label: String,
-    icon: ImageVector,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = if (selected) BrandPink else Color(0xFF94A3B8),
-            modifier = Modifier.size(22.dp)
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = label,
-            fontSize = 10.sp,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-            color = if (selected) BrandPink else Color(0xFF94A3B8)
-        )
-    }
-}

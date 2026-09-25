@@ -1,7 +1,9 @@
 package com.kangurusiaga.app.data.repository
 
+import com.kangurusiaga.app.data.repository.emergency.EmergencyWarningRepositoryImpl
 import com.kangurusiaga.app.domain.repository.BabyRepository
 import com.kangurusiaga.app.domain.repository.EducationRepository
+import com.kangurusiaga.app.domain.repository.EmergencyWarningRepository
 import com.kangurusiaga.app.domain.repository.PmkReminderRepository
 import com.kangurusiaga.app.domain.repository.PmkRepository
 import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
@@ -44,4 +46,10 @@ abstract class RepositoryModule {
     abstract fun bindEducationRepository(
         impl: EducationRepositoryImpl
     ): EducationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindEmergencyWarningRepository(
+        impl: EmergencyWarningRepositoryImpl
+    ): EmergencyWarningRepository
 }
