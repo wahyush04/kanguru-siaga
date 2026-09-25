@@ -3,9 +3,11 @@ package com.kangurusiaga.app.core.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.kangurusiaga.app.data.local.dao.BabyDao
+import com.kangurusiaga.app.data.local.dao.EducationDao
 import com.kangurusiaga.app.data.local.dao.PmkReminderDao
 import com.kangurusiaga.app.data.local.dao.PmkSessionDao
 import com.kangurusiaga.app.data.local.entity.BabyEntity
+import com.kangurusiaga.app.data.local.entity.EducationProgressEntity
 import com.kangurusiaga.app.data.local.entity.PmkReminderEntity
 import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
 
@@ -13,15 +15,17 @@ import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
     entities = [
         BabyEntity::class,
         PmkSessionEntity::class,
-        PmkReminderEntity::class
+        PmkReminderEntity::class,
+        EducationProgressEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class KanguruDatabase : RoomDatabase() {
     abstract fun babyDao(): BabyDao
     abstract fun pmkSessionDao(): PmkSessionDao
     abstract fun pmkReminderDao(): PmkReminderDao
+    abstract fun educationDao(): EducationDao
 
     companion object {
         const val DATABASE_NAME = "kanguru_siaga_db"

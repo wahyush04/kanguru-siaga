@@ -96,6 +96,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation("org.json:json:20240303")
 
     // Android Testing
     androidTestImplementation(platform(libs.androidx.compose.bom))

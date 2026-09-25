@@ -91,6 +91,7 @@ import kotlinx.coroutines.launch
 fun HomeRoute(
     onNavigateToPmk: () -> Unit,
     onNavigateToProfileSetup: () -> Unit = {},
+    onNavigateToEducation: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -100,6 +101,7 @@ fun HomeRoute(
         uiState = uiState,
         onNavigateToPmk = onNavigateToPmk,
         onNavigateToProfileSetup = onNavigateToProfileSetup,
+        onNavigateToEducation = onNavigateToEducation,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
         onOpenNotification = viewModel::openNotificationSheet,
@@ -116,6 +118,7 @@ fun HomeScreen(
     uiState: HomeUiState,
     onNavigateToPmk: () -> Unit,
     onNavigateToProfileSetup: () -> Unit = {},
+    onNavigateToEducation: () -> Unit = {},
     onOpenEmergency: () -> Unit,
     onCloseEmergency: () -> Unit,
     onOpenNotification: () -> Unit,
@@ -145,7 +148,7 @@ fun HomeScreen(
                     when (tab) {
                         HomeTab.BERANDA -> { /* already here */ }
                         HomeTab.PMK -> onNavigateToPmk()
-                        HomeTab.EDUKASI -> onShowInfo("Modul Edukasi BBLR tersedia di fase berikutnya.")
+                        HomeTab.EDUKASI -> onNavigateToEducation()
                         HomeTab.ALARM -> onShowInfo("Pengaturan Alarm ASI tersedia di fase berikutnya.")
                         HomeTab.PROFIL -> onShowInfo("Pengaturan Profil Bayi tersedia di fase berikutnya.")
                     }
@@ -174,6 +177,7 @@ fun HomeScreen(
                         todayProgress = uiState.todayProgressFraction,
                         unreadNotificationsCount = uiState.unreadNotificationsCount,
                         onNavigateToPmk = onNavigateToPmk,
+                        onNavigateToEducation = onNavigateToEducation,
                         onOpenEmergency = onOpenEmergency,
                         onOpenNotification = onOpenNotification,
                         onShowInfo = onShowInfo,
@@ -230,6 +234,7 @@ private fun HomeContent(
     todayProgress: Float,
     unreadNotificationsCount: Int,
     onNavigateToPmk: () -> Unit,
+    onNavigateToEducation: () -> Unit = {},
     onOpenEmergency: () -> Unit,
     onOpenNotification: () -> Unit,
     onShowInfo: (String) -> Unit,
@@ -360,7 +365,7 @@ private fun HomeContent(
                 iconRes = R.drawable.ic_card_bblr,
                 containerColor = Color(0xFFEBF8F1),
                 borderColor = Color(0xFFD3F3E1),
-                onClick = { onShowInfo("Panduan Perawatan BBLR tersedia di modul Edukasi.") },
+                onClick = onNavigateToEducation,
                 modifier = Modifier.weight(1f)
             )
         }

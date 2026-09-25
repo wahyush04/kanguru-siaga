@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kangurusiaga.app.presentation.babyprofile.BabyProfileSetupRoute
+import com.kangurusiaga.app.presentation.education.EducationDetailRoute
+import com.kangurusiaga.app.presentation.education.EducationListRoute
 import com.kangurusiaga.app.presentation.home.HomeRoute
 import com.kangurusiaga.app.presentation.onboarding.OnboardingRoute
 import com.kangurusiaga.app.presentation.onboarding.ProfileIntroRoute
@@ -85,6 +87,9 @@ fun KanguruNavGraph(
                 },
                 onNavigateToProfileSetup = {
                     navController.navigate(Screen.ProfileSetup.route)
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route)
                 }
             )
         }
@@ -259,6 +264,68 @@ fun KanguruNavGraph(
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                     }
+                }
+            )
+        }
+
+        // Perawatan Bayi BBLR - Education List (Stitch: Kanguru Siaga - Perawatan Bayi BBLR)
+        composable(route = Screen.EducationList.route) {
+            EducationListRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDetail = { moduleId ->
+                    navController.navigate(Screen.EducationDetail.createRoute(moduleId))
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
+                },
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route)
+                }
+            )
+        }
+
+        // Perawatan Bayi BBLR - Detail Module (Single Reusable Screen)
+        composable(
+            route = Screen.EducationDetail.route,
+            arguments = listOf(
+                navArgument("moduleId") {
+                    type = NavType.StringType
+                    defaultValue = "bblr_01"
+                }
+            )
+        ) {
+            EducationDetailRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToNextModule = { nextModuleId ->
+                    navController.navigate(Screen.EducationDetail.createRoute(nextModuleId)) {
+                        popUpTo(Screen.EducationDetail.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // Education Legacy Alias -> navigates to EducationList
+        composable(route = Screen.Education.route) {
+            EducationListRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDetail = { moduleId ->
+                    navController.navigate(Screen.EducationDetail.createRoute(moduleId))
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
+                },
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route)
                 }
             )
         }

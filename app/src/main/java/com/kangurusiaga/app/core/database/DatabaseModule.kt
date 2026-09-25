@@ -3,6 +3,7 @@ package com.kangurusiaga.app.core.database
 import android.content.Context
 import androidx.room.Room
 import com.kangurusiaga.app.data.local.dao.BabyDao
+import com.kangurusiaga.app.data.local.dao.EducationDao
 import com.kangurusiaga.app.data.local.dao.PmkReminderDao
 import com.kangurusiaga.app.data.local.dao.PmkSessionDao
 import dagger.Module
@@ -44,5 +45,11 @@ object DatabaseModule {
     @Singleton
     fun providePmkReminderDao(database: KanguruDatabase): PmkReminderDao {
         return database.pmkReminderDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideEducationDao(database: KanguruDatabase): EducationDao {
+        return database.educationDao()
     }
 }

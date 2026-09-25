@@ -1,0 +1,808 @@
+{
+  "modules": [
+    {
+      "id": "bblr_01",
+      "order": 1,
+      "title": "Pengertian BBLR",
+      "category": "Edukasi Dasar Medis",
+      "readingTimeMinutes": 3,
+      "themeColor": "rose",
+      "heroDrawable": "il_edu_module_1",
+      "heroTag": "Edukasi Dasar Medis",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Apa itu BBLR?",
+          "paragraphs": [
+            "BBLR (Bayi Berat Lahir Rendah) adalah kondisi ketika bayi lahir dengan bobot tubuh kurang dari 2.500 gram (2,5 kg) tanpa memandang usia kehamilannya.",
+            "Kondisi ini umumnya terjadi pada bayi lahir prematur (kurang bulan) maupun bayi cukup bulan namun mengalami hambatan perkembangan di dalam rahim (Intrauterine Growth Restriction / IUGR)."
+          ]
+        },
+        {
+          "type": "classification_list",
+          "title": "Tingkatan Klasifikasi Berat Lahir",
+          "standardBadge": "Standar WHO",
+          "items": [
+            {
+              "title": "BBLR (Ringan-Sedang)",
+              "subtitle": "Memerlukan pemantauan suhu & nutrisi intensif di rumah.",
+              "badgeText": "1.500 - 2.499 g",
+              "themeColor": "emerald"
+            },
+            {
+              "title": "BBLSR (Sangat Rendah)",
+              "subtitle": "Refleks hisap seringkali belum matang, butuh PMK konsisten.",
+              "badgeText": "1.000 - 1.499 g",
+              "themeColor": "amber"
+            },
+            {
+              "title": "BBLER (Ekstrem Rendah)",
+              "subtitle": "Memerlukan perawatan intensif perinatologi (NICU) khusus.",
+              "badgeText": "< 1.000 g",
+              "themeColor": "rose"
+            }
+          ]
+        },
+        {
+          "type": "icon_list",
+          "title": "Karakteristik Fisik Si Kecil dengan BBLR",
+          "subtitle": "Memahami ciri tubuhnya membantu orang tua lebih peka terhadap kebutuhannya:",
+          "items": [
+            {
+              "iconType": "fat",
+              "title": "Lapisan Lemak Bawah Kulit Tipis",
+              "description": "Cadangan panas sedikit sehingga si kecil mudah kedinginan (hipotermia).",
+              "themeColor": "orange"
+            },
+            {
+              "iconType": "reflex",
+              "title": "Refleks Isap Belum Sempurna",
+              "description": "Koordinasi mengisap dan menelan masih belajar, butuh ketelatenan atau sendok/pipet.",
+              "themeColor": "pink"
+            },
+            {
+              "iconType": "skin",
+              "title": "Kulit Halus & Pembuluh Darah Jelas",
+              "description": "Tekstur kulit tampak transparan kemerahan dengan rambut halus (lanugo) yang lembut.",
+              "themeColor": "rose"
+            },
+            {
+              "iconType": "cry",
+              "title": "Tangisan Cenderung Halus & Lemah",
+              "description": "Gerakan tubuh lebih pasif serta pola tidur lebih lama, butuh dibangunkan saat jadwal minum.",
+              "themeColor": "purple"
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "3 Pilar Utama Perawatan di Rumah",
+          "items": [
+            {
+              "number": 1,
+              "title": "Jaga Kehangatan (Kangaroo Mother Care)",
+              "description": "Kontak kulit langsung (PMK) rutin minimal 60–120 menit per sesi."
+            },
+            {
+              "number": 2,
+              "title": "Nutrisi Optimal (ASI Eksklusif)",
+              "description": "Pemberian ASI teratur tiap 2–3 jam secara disiplin tanpa menunggu lapar."
+            },
+            {
+              "number": 3,
+              "title": "Deteksi Dini Tanda Bahaya",
+              "description": "Selalu waspada jika suhu dingin (<36,5°C), napas sesak, atau malas menyusu."
+            }
+          ]
+        },
+        {
+          "type": "callout_box",
+          "title": "Catatan Kasih untuk Bunda & Ayah",
+          "message": "BBLR bukanlah vonis kegagalan, melainkan titik awal yang sangat mungkin dikejar pertumbuhannya (catch-up growth) melalui sentuhan hangat, ASI penuh cinta, dan ketelatenan keluarga bersama.",
+          "themeColor": "amber"
+        }
+      ]
+    },
+    {
+      "id": "bblr_02",
+      "order": 2,
+      "title": "Menjaga Kehangatan Bayi",
+      "category": "Perawatan Termal Bayi",
+      "readingTimeMinutes": 4,
+      "themeColor": "amber",
+      "heroDrawable": "il_edu_module_2",
+      "heroTag": "Perawatan Termal Bayi",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Mengapa Kehangatan Begitu Krusial?",
+          "paragraphs": [
+            "Bayi BBLR memiliki lapisan lemak subkutan (lemak coklat) yang sangat tipis dan rasio luas permukaan tubuh yang besar dibandingkan bobotnya, sehingga suhu tubuh dapat anjlok dengan sangat cepat (hipotermia).",
+            "Kondisi hipotermia berbahaya karena memaksa tubuh kecil bayi membakar kalori penting hanya untuk menghangatkan diri, memicu napas cepat atau henti napas (apnea), serta menghambat kenaikan berat badan."
+          ]
+        },
+        {
+          "type": "classification_list",
+          "title": "Rentang Suhu Tubuh Normal (Aksila)",
+          "standardBadge": "Standar WHO & Kemenkes",
+          "items": [
+            {
+              "title": "Normal & Aman",
+              "subtitle": "Ketiak teraba hangat, bayi bernapas tenang, aktif & reflek menyusu baik.",
+              "badgeText": "36,5 – 37,5°C",
+              "themeColor": "emerald"
+            },
+            {
+              "title": "Hipotermia Ringan (Cold Stress)",
+              "subtitle": "Kaki & tangan teraba dingin, malas menyusu. Butuh PMK & selimut ekstra.",
+              "badgeText": "36,0 – 36,4°C",
+              "themeColor": "amber"
+            },
+            {
+              "title": "Hipotermia Berat / Bahaya (Darurat)",
+              "subtitle": "Bibir pucat/kebiruan, letargis/lemas. Segera hubungi fasilitas kesehatan!",
+              "badgeText": "< 36,0°C",
+              "themeColor": "rose"
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "4 Metode Efektif Menjaga Kehangatan di Rumah",
+          "items": [
+            {
+              "number": 1,
+              "title": "Perawatan Metode Kanguru (PMK)",
+              "description": "Kontak kulit-ke-kulit (skin-to-skin) langsung antara dada bayi dan dada orang tua. Suhu dada orang tua secara biologis beradaptasi menghangatkan bayi."
+            },
+            {
+              "number": 2,
+              "title": "Teknik Membedong (Swaddling) yang Tepat",
+              "description": "Gunakan kain katun lembut berlapis tipis yang nyaman. Hindari membedong terlalu kencang pada area sendi panggul dan dada agar bayi bebas bernapas."
+            },
+            {
+              "number": 3,
+              "title": "Topi Katun, Kaus Kaki & Sarung Tangan",
+              "description": "Kepala menyumbang proporsi pelepasan panas terbesar pada bayi baru lahir. Selalu pasang topi rajut katun terutama saat tidur atau setelah mandi seka."
+            },
+            {
+              "number": 4,
+              "title": "Kontrol Suhu Ruangan (24°C – 26°C)",
+              "description": "Jauhkan tempat tidur bayi dari hembusan angin langsung (jendela terbuka, kipas angin putar, atau semburan AC langsung)."
+            }
+          ]
+        },
+        {
+          "type": "warning_box",
+          "title": "HAL YANG HARUS DIHINDARI",
+          "items": [
+            {
+              "title": "Tunda Memandikan",
+              "description": "Jika berat < 2.000 gram, cukup seka dengan air hangat di ruangan tertutup. Jangan berendam lama."
+            },
+            {
+              "title": "Dilarang Bantal Pemanas / Botol Panas",
+              "description": "Berbahaya dan dapat menyebabkan luka bakar serius pada kulit bayi yang sangat rapuh."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bblr_03",
+      "order": 3,
+      "title": "Kebersihan Bayi dan Lingkungan",
+      "category": "Higienitas & Sanitasi BBLR",
+      "readingTimeMinutes": 4,
+      "themeColor": "sky",
+      "heroDrawable": "il_edu_module_3",
+      "heroTag": "Higienitas & Sanitasi BBLR",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Mengapa Kebersihan Sangat Krusial Bagi BBLR?",
+          "paragraphs": [
+            "Bayi Berat Lahir Rendah memiliki sistem kekebalan tubuh (imunitas) yang masih sangat rentan dan imatur, serta barrier kulit yang tipis.",
+            "Infeksi bakteri atau virus (seperti sepsis neonatorum atau infeksi saluran napas) dapat berkembang sangat cepat dan berakibat fatal. Menjaga kebersihan tangan, perlengkapan bayi, dan sirkulasi ruangan adalah perisai pelindung utama si kecil di rumah."
+          ]
+        },
+        {
+          "type": "protocol_box",
+          "title": "STANDAR PROTOKOL KESEHATAN",
+          "badgeText": "WHO & Kemenkes",
+          "header": "Cuci Tangan Sebelum Kontak Bayi",
+          "items": [
+            {
+              "title": "Wajib steril",
+              "description": "Sebelum memegang bayi, menyusui, memerah ASI, atau memulai sesi Perawatan Metode Kanguru (PMK)."
+            },
+            {
+              "title": "Durasi efektif",
+              "description": "Minimal 40–60 detik dengan sabun & air mengalir, atau 20–30 detik bila memakai alkohol antiseptik."
+            },
+            {
+              "title": "Kebersihan personal",
+              "description": "Pastikan kuku dipotong pendek, selalu bersih, dan lepaskan seluruh perhiasan/cincin tangan."
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "4 PANDUAN PRAKTIS MENJAGA KEBERSIHAN DI RUMAH",
+          "items": [
+            {
+              "number": 1,
+              "title": "Perawatan Memandikan & Mandi Seka",
+              "description": "Jika berat bayi < 2.000 gram atau suhu belum stabil, cukup seka dengan air hangat (37°C) dan waslap lembut berbahan katun. Hindari memandikan terlalu lama di bak mandi agar bayi tidak kedinginan."
+            },
+            {
+              "number": 2,
+              "title": "Kebersihan Pakaian, Kain Bedong & Popok",
+              "description": "Cuci pakaian dan kain bayi secara terpisah dengan detergen khusus bayi bebas pewangi menyengat. Ganti popok segera setelah BAK/BAB untuk mencegah ruam popok dan infeksi kulit."
+            },
+            {
+              "number": 3,
+              "title": "Sterilisasi Alat Minum & Selang ASI",
+              "description": "Rebus atau gunakan sterilizer untuk botol, cangkir kecil, sendok, serta perlengkapan OGT/NGT secara berkala setiap habis pemakaian."
+            },
+            {
+              "number": 4,
+              "title": "Sanitasi Kamar & Batasi Kunjungan Tamu",
+              "description": "Bersihkan kamar secara teratur, buka ventilasi udara di pagi hari, dan batasi tamu luar yang sedang flu/batuk agar tidak mendekati atau mencium bayi."
+            }
+          ]
+        },
+        {
+          "type": "warning_box",
+          "title": "HAL YANG HARUS DIHINDARI",
+          "items": [
+            {
+              "title": "Dilarang mencium area wajah/bibir bayi",
+              "description": "Terutama oleh tamu atau anggota keluarga luar untuk mencegah penularan kuman dan virus."
+            },
+            {
+              "title": "Jangan gunakan bedak tabur (powder)",
+              "description": "Partikel mikronya berisiko fatal jika terhirup paru-paru bayi prematur yang rapuh."
+            },
+            {
+              "title": "Hindari paparan asap rokok",
+              "description": "Hindari asap rokok, asap dapur, atau obat nyamuk bakar di dalam maupun di area ventilasi sekitar kamar."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bblr_04",
+      "order": 4,
+      "title": "Perawatan Tali Pusat",
+      "category": "Perawatan Tali Pusat Bersih & Kering",
+      "readingTimeMinutes": 4,
+      "themeColor": "orange",
+      "heroDrawable": "il_edu_module_4",
+      "heroTag": "Perawatan Tali Pusat Bersih & Kering",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Mengapa Tali Pusat Butuh Perhatian Khusus?",
+          "paragraphs": [
+            "Bayi BBLR memiliki sistem pertahanan tubuh yang belum sempurna. Sisa tali pusat (umbilical cord stump) merupakan pintu masuk terbuka bagi kuman dan bakteri menuju pembuluh darah bayi.",
+            "Infeksi tali pusat (omfalitis) dapat berkembang cepat menjadi infeksi sistemik berat (sepsis neonatorum). Menjaga tali pusat tetap bersih, kering, dan terbuka adalah kunci pencegahan infeksi paling efektif di rumah."
+          ]
+        },
+        {
+          "type": "protocol_box",
+          "title": "STANDAR PROTOKOL KESEHATAN",
+          "badgeText": "WHO & Kemenkes",
+          "header": "Prinsip Utama: Perawatan Kering & Bersih (Dry Cord Care)",
+          "items": [
+            {
+              "title": "Wajib Cuci Tangan",
+              "description": "Selalu cuci tangan 6 langkah dengan sabun dan air mengalir sebelum maupun sesudah merawat area pusar bayi."
+            },
+            {
+              "title": "Biarkan Terbuka & Kering",
+              "description": "Tidak perlu menutup rapat dengan kasa tebal atau gurita. Paparan udara membantu tali pusat cepat mengering dan lepas secara alami (biasanya lepas dalam 7–14 hari)."
+            },
+            {
+              "title": "Jaga dari Air Seni & Feses",
+              "description": "Lipat bagian depan popok bayi ke arah bawah agar tidak menutupi atau menggesek pangkal tali pusat yang belum lepas."
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "4 PANDUAN PRAKTIS MERAWAT TALI PUSAT DI RUMAH",
+          "items": [
+            {
+              "number": 1,
+              "title": "Bersihkan Saat Terkena Kotoran",
+              "description": "Jika tali pusat kotor atau terkena urin/feses, bersihkan secara lembut dengan air matang hangat dan kapas/waslap bersih. Jangan dikorek atau ditarik paksa."
+            },
+            {
+              "number": 2,
+              "title": "Keringkan Secara Sempurna",
+              "description": "Keringkan perlahan dengan menepuk-nepuk menggunakan kasa steril kering atau handuk halus khusus bayi. Pastikan pangkalnya benar-benar kering sebelum mengenakan pakaian."
+            },
+            {
+              "number": 3,
+              "title": "Posisikan Popok di Bawah Pusar",
+              "description": "Lipat tepi atas popok sekali pakai atau popok kain di bawah tali pusat. Ini mencegah kelembapan akibat urin dan paparan gesekan langsung saat bayi bergerak."
+            },
+            {
+              "number": 4,
+              "title": "Kenakan Pakaian Longgar & Menyerap Keringat",
+              "description": "Pakaikan baju katun berkancing depan yang longgar. Hindari pakaian ketat yang membuat area pusar berkeringat, lembap, atau tertekan."
+            }
+          ]
+        },
+        {
+          "type": "warning_box",
+          "title": "TANDA BAHAYA & HAL YANG HARUS DIHINDARI",
+          "items": [
+            {
+              "title": "Dilarang memberi ramuan tradisional / alkohol",
+              "description": "Jangan beri ramuan tradisional, minyak, alkohol 70%, atau povidone iodine (betadine) kecuali atas resep dokter, karena dapat mengiritasi dan memperlambat pelepasan alami."
+            },
+            {
+              "title": "Jangan gunakan gurita atau perban ketat",
+              "description": "Dapat menekan organ perut bayi BBLR dan menahan kelembapan yang memicu kuman."
+            },
+            {
+              "title": "Waspadai tanda infeksi (Omfalitis)",
+              "description": "Kulit sekitar pusar memerah, bengkak, berbau busuk, keluar nanah/cairan, atau bayi demam/menolak minum. Segera bawa ke faskes terdekat jika menemukan tanda ini!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bblr_05",
+      "order": 5,
+      "title": "Posisi dan Keamanan Bayi",
+      "category": "Posisi Tidur & Keselamatan BBLR",
+      "readingTimeMinutes": 4,
+      "themeColor": "purple",
+      "heroDrawable": "il_edu_module_5",
+      "heroTag": "Posisi Tidur & Keselamatan BBLR",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Mengapa Posisi & Keamanan Sangat Penting bagi BBLR?",
+          "paragraphs": [
+            "Bayi prematur dan Berat Badan Lahir Rendah (BBLR) memiliki otot leher yang masih lemah, saluran napas yang sempit dan lunak, serta refleks perlindungan yang belum matang. Mereka sangat rentan mengalami obstruksi jalan napas dan sindrom kematian bayi mendadak (Sudden Infant Death Syndrome / SIDS).",
+            "Pengaturan posisi yang benar sangat krusial guna menjamin suplai oksigen lancar, mendukung pengembangan paru-paru, serta memfasilitasi proses pencernaan agar tidak terjadi aspirasi."
+          ]
+        },
+        {
+          "type": "protocol_box",
+          "title": "PANDUAN POSISI TIDUR AMAN (SAFE SLEEP)",
+          "badgeText": "Standar AAP & IDAI",
+          "header": "3 Pilar Posisi Tidur Aman",
+          "items": [
+            {
+              "title": "Selalu Telentang (Supine Position)",
+              "description": "Bayi BBLR wajib ditidurkan dalam posisi telentang untuk mencegah risiko sindrom kematian bayi mendadak (SIDS) dan menjaga jalan napas tetap lapang."
+            },
+            {
+              "title": "Permukaan Kasur Rata & Padat (Firm Mattress)",
+              "description": "Hindari kasur yang terlalu empuk, bantal berlebihan, selimut tebal, atau boneka di dalam tempat tidur bayi yang berisiko menutupi wajah si kecil."
+            },
+            {
+              "title": "Satu Kamar, Beda Tempat Tidur (Room-Sharing)",
+              "description": "Letakkan boks/ranjang bayi di dekat tempat tidur orang tua agar mudah dipantau tanpa risiko tertindih saat orang tua tertidur."
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "4 Posisi & Panduan Keamanan Bayi BBLR",
+          "items": [
+            {
+              "number": 1,
+              "title": "Posisi Saat PMK (Kontak Kulit-ke-Kulit)",
+              "description": "Bayi dalam posisi tegak (upright) seperti katak (frog position), kepala menoleh ke satu sisi dengan dagu tidak menunduk ke dada agar jalan napas tetap terbuka lapang."
+            },
+            {
+              "number": 2,
+              "title": "Posisi Pasca Pemberian ASI (Cegah Gumoh)",
+              "description": "Posisikan bayi sedikit tegak atau miringkan kepala/badan bagian atas sedikit lebih tinggi (elevasi 30°) selama 20–30 menit setelah minum susu/ASI, sendawakan dengan lembut."
+            },
+            {
+              "number": 3,
+              "title": "Tummy Time Terawasi Saat Bangun",
+              "description": "Lakukan stimulasi tengkurap singkat di atas dada ibu/ayah hanya saat bayi aktif bangun dan diawasi penuh untuk memperkuat otot leher dan mencegah kepala peyang."
+            },
+            {
+              "number": 4,
+              "title": "Keamanan Tempat Tidur & Lingkungan",
+              "description": "Jauhkan dari kabel listrik, tali tirai jendela, benda tajam, serta pastikan kisi-kisi tempat tidur memiliki jarak aman (tidak berisiko menjepit kepala bayi)."
+            }
+          ]
+        },
+        {
+          "type": "warning_box",
+          "title": "HAL YANG HARUS DIHINDARI",
+          "items": [
+            {
+              "title": "DILARANG Menidurkan Tengkurap Tanpa Pengawasan",
+              "description": "Jangan menidurkan bayi dalam posisi tengkurap atau miring tanpa pengawasan ketat."
+            },
+            {
+              "title": "JANGAN Gunakan Bantal Empuk atau Selimut Longgar",
+              "description": "Hindari bantal empuk, guling besar, atau selimut longgar di sekitar kepala bayi."
+            },
+            {
+              "title": "HINDARI Meletakkan Bayi di Sofa / Kasur Dewasa Sendirian",
+              "description": "Sangat berbahaya karena risiko jatuh atau tercekik lipatan kasur."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bblr_06",
+      "order": 6,
+      "title": "Pemberian ASI",
+      "category": "Manajemen Laktasi & Nutrisi BBLR",
+      "readingTimeMinutes": 5,
+      "themeColor": "pink",
+      "heroDrawable": "il_edu_module_6",
+      "heroTag": "Manajemen Laktasi & Nutrisi BBLR",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Mengapa ASI adalah Obat Utama bagi BBLR?",
+          "paragraphs": [
+            "Bayi BBLR memiliki saluran pencernaan yang imatur dan imunitas sangat rentan. ASI (khususnya kolostrum) bukan sekadar nutrisi, melainkan obat pelindung alami yang mengandung antibodi sekretori IgA, enzim pelindung, dan faktor pertumbuhan usus untuk mencegah komplikasi berbahaya seperti Enterokolitis Nekrotikans (NEC / necrotizing enterocolitis).",
+            "ASI juga mempercepat pematangan otak, serta mengoptimalkan kenaikan berat badan secara seimbang."
+          ]
+        },
+        {
+          "type": "protocol_box",
+          "title": "PANDUAN & METODE MINUM BBLR",
+          "badgeText": "Standar IDAI & Kemenkes",
+          "header": "Jadwal & Kesiapan Minum Bayi",
+          "items": [
+            {
+              "title": "Jadwal Rutin Tiap 2-3 Jam",
+              "description": "Berikan ASI setiap 2–3 jam (8–12 kali sehari) tanpa menunggu bayi menangis kencang untuk mencegah hipoglikemia (penurunan gula darah drastis)."
+            },
+            {
+              "title": "Menyesuaikan Kemampuan Hisap",
+              "description": "Bayi prematur < 34 minggu seringkali belum sinkron antara menghisap, menelan, dan bernapas sehingga memerlukan metode alternatif yang aman."
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "4 Metode Aman Pemberian ASI di Rumah",
+          "items": [
+            {
+              "number": 1,
+              "title": "Menyusu Langsung (Direct Breastfeeding / DBF)",
+              "description": "Diterapkan saat refleks hisap-telan sudah matang (biasanya ≥ 34 minggu). Gunakan posisi mendekap santai (cross-cradle) dengan kepala dan leher tersangga tegak lurus agar tidak tersedak."
+            },
+            {
+              "number": 2,
+              "title": "Pemberian Melalui Sendok / Cangkir Kecil (Cup Feeding)",
+              "description": "Pilihan terbaik untuk melatih refleks oral tanpa risiko bingung puting (nipple confusion). Dekatkan tepi cangkir/sendok ke bibir atas bayi, biarkan bayi menjilat dan menghirup susu sendiri tanpa menuangkannya ke tenggorokan."
+            },
+            {
+              "number": 3,
+              "title": "Pipet Tetes / Syringe Khusus Bayi",
+              "description": "Digunakan untuk memberikan kolostrum berharga atau suplemen ASI perah tetes demi tetes secara perlahan di pipi bagian dalam bayi."
+            },
+            {
+              "number": 4,
+              "title": "Pipa Lambung (OGT / NGT) di Bawah Pengawasan",
+              "description": "Jika bayi masih menggunakan selang nutrisi di rumah, pastikan posisi selang terfiksasi benar, berikan ASI secara gravitasi perlahan, dan catat volume sesuai target medis."
+            }
+          ]
+        },
+        {
+          "type": "warning_box",
+          "title": "HAL YANG HARUS DIHINDARI & PERHATIAN KHUSUS",
+          "items": [
+            {
+              "title": "JANGAN Memaksakan Dot/Botol Aliran Deras",
+              "description": "Dapat memicu tersedak, aspirasi susu ke paru-paru, dan kelelahan pada bayi."
+            },
+            {
+              "title": "JANGAN Menambahkan Air Putih / Formula Tanpa Dokter",
+              "description": "Jangan beri air putih, madu, atau susu formula tanpa instruksi eksplisit dari dokter spesialis anak."
+            },
+            {
+              "title": "HINDARI Menyusui Datar Terlentang",
+              "description": "Selalu posisikan kepala dan badan atas sedikit terangkat (30°)."
+            },
+            {
+              "title": "Sendawakan Bayi Setelah Minum",
+              "description": "Sendawakan secara lembut setelah selesai minum untuk mengeluarkan udara dan mencegah gumoh berlebih."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bblr_07",
+      "order": 7,
+      "title": "Pemantauan Kondisi Bayi",
+      "category": "Pemantauan Tanda Vital & Respon BBLR",
+      "readingTimeMinutes": 5,
+      "themeColor": "teal",
+      "heroDrawable": "il_edu_module_7",
+      "heroTag": "Pemantauan Tanda Vital & Respon BBLR",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Mengapa Pemantauan Kondisi Bayi Sangat Krusial?",
+          "paragraphs": [
+            "Bayi BBLR memiliki stabilitas fisiologis yang belum matang sepenuhnya. Perubahan kecil pada suhu tubuh, pola pernapasan, warna kulit, atau respon menyusu bisa menjadi tanda awal adaptasi atau kelelahan tubuh.",
+            "Deteksi dini mandiri oleh orang tua di rumah merupakan benteng utama mencegah penurunan kondisi akut."
+          ]
+        },
+        {
+          "type": "protocol_box",
+          "title": "TANDA VITAL & INDIKATOR NORMAL",
+          "badgeText": "Standar IDAI & Kemenkes",
+          "header": "Parameter Fisiologis Normal",
+          "items": [
+            {
+              "title": "Suhu Tubuh Aksila",
+              "description": "36,5°C – 37,5°C (diukur di ketiak menggunakan termometer digital)."
+            },
+            {
+              "title": "Laju Pernapasan",
+              "description": "40–60 kali per menit, teratur dan tanpa tarikan dada dalam saat tenang atau tidur."
+            },
+            {
+              "title": "Buang Air Kecil (BAK)",
+              "description": "Minimal 6–8 kali per 24 jam dengan urin jernih/kekuningan, tanda hidrasi cukup."
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "4 Langkah Pemantauan Harian BBLR di Rumah",
+          "items": [
+            {
+              "number": 1,
+              "title": "Cek Suhu Tubuh Secara Berkala",
+              "description": "Ukur suhu sebelum sesi PMK atau saat mengganti popok. Jangan biarkan bayi kepanasan atau kedinginan."
+            },
+            {
+              "number": 2,
+              "title": "Amati Irama & Pola Pernapasan",
+              "description": "Perhatikan gerakan dada dan perut si kecil. Waspadai jeda napas yang lebih dari 15-20 detik atau napas megap-megap."
+            },
+            {
+              "number": 3,
+              "title": "Evaluasi Warna Kulit & Bibir",
+              "description": "Kulit dan bibir harus berwarna kemerahan merona. Segera waspadai jika terlihat pucat, kuning pekat meluas, atau kebiruan (sianosis)."
+            },
+            {
+              "number": 4,
+              "title": "Pantau Respon & Refleks Bayi",
+              "description": "Bayi aktif bangun saat waktu minum tiba, mampu menghisap, dan bergerak spontan saat distimulasi lembut."
+            }
+          ]
+        },
+        {
+          "type": "warning_box",
+          "title": "KAPAN HARUS SEGERA KE FASILITAS KESEHATAN?",
+          "items": [
+            {
+              "title": "Suhu Tidak Normal",
+              "description": "JIKA suhu tubuh < 36,5°C (hipotermia) atau > 37,5°C (demam) meski sudah dihangatkan."
+            },
+            {
+              "title": "Sesak / Retraksi Dada",
+              "description": "JIKA ada tarikan dinding dada ke dalam yang dalam (retraksi) atau hidung kembang-kempis."
+            },
+            {
+              "title": "Lemas / Kejang",
+              "description": "JIKA bayi lemas lunglai, tidak mau minum 2 kali jadwal berturut-turut, atau kejang."
+            },
+            {
+              "title": "Akses Kegawatan",
+              "description": "SEGERA buka menu 'Tanda Kegawatan' atau hubungi fasilitas pelayanan kesehatan darurat terdekat."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bblr_08",
+      "order": 8,
+      "title": "Kontrol Sesuai Jadwal",
+      "category": "Pemantauan Rutin & Jadwal Faskes",
+      "readingTimeMinutes": 4,
+      "themeColor": "emerald",
+      "heroDrawable": "il_edu_module_8",
+      "heroTag": "Pemantauan Rutin & Jadwal Faskes",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Mengapa Kontrol Rutin Sangat Penting bagi BBLR?",
+          "paragraphs": [
+            "Meskipun si kecil sudah diizinkan pulang, fase pemulihan dan kejar tumbuh (catch-up growth) bayi BBLR membutuhkan supervisi medis berkala.",
+            "Kontrol rutin memastikan kurva pertumbuhan terpantau, refleks saraf berkembang baik, skrining organ vital (mata, pendengaran) tepat waktu, dan jadwal imunisasi tetap aman sesuai usia kronologis maupun usia koreksi."
+          ]
+        },
+        {
+          "type": "protocol_box",
+          "title": "JADWAL WAKTU KONTROL PASCA RAWAT INAP",
+          "badgeText": "Standar IDAI & Kemenkes",
+          "header": "Waktu Kontrol Rutin",
+          "items": [
+            {
+              "title": "Kontrol Pertama (3–7 Hari Pasca Pulang)",
+              "description": "Evaluasi adaptasi di rumah, penimbangan berat badan, pemeriksaan ikterus/kuning, dan evaluasi minum."
+            },
+            {
+              "title": "Bulan Pertama (Setiap 1–2 Minggu)",
+              "description": "Pemantauan laju kenaikan berat badan (minimal 20–30 gram/hari) dan evaluasi asupan ASI/nutrisi."
+            },
+            {
+              "title": "Bulan ke-2 hingga ke-6 (Setiap Bulan)",
+              "description": "Penilaian tumbuh kembang, lingkar kepala, panjang badan, serta jadwal imunisasi."
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "4 Persiapan Penting Sebelum Membawa Bayi Kontrol",
+          "items": [
+            {
+              "number": 1,
+              "title": "Bawa Buku KIA & Resume Medis Rumah Sakit",
+              "description": "Bawa selalu Buku Kesehatan Ibu dan Anak (KIA) serta resume medis keluar RS agar dokter dapat melihat riwayat lahir, terapi yang telah didapat, dan target medis lanjutan."
+            },
+            {
+              "number": 2,
+              "title": "Catat Pertanyaan & Keluhan di Rumah",
+              "description": "Tuliskan catatan harian seperti frekuensi BAK/BAB, durasi PMK harian, volume minum ASI, atau gejala yang membuat cemas untuk dikonsultasikan langsung."
+            },
+            {
+              "number": 3,
+              "title": "Jaga Kehangatan Selama Perjalanan",
+              "description": "Gunakan pakaian hangat berlapis, topi bayi, dan selimut lembut. Jika memungkinkan, lakukan metode kanguru (PMK) dalam perjalanan agar suhu tubuh tetap optimal."
+            },
+            {
+              "number": 4,
+              "title": "Siapkan Perlengkapan Minum & Pakaian Ganti",
+              "description": "Bawa stok ASI perah dalam cooler bag serta pakaian ganti bersih untuk mengantisipasi bayi gumoh atau waktu tunggu antrean yang lebih lama di faskes."
+            }
+          ]
+        },
+        {
+          "type": "screening_box",
+          "title": "Skrining Penting untuk Bayi Prematur",
+          "items": [
+            {
+              "title": "Skrining Retinopati Prematuritas (ROP)",
+              "description": "Pemeriksaan mata untuk bayi lahir < 34 minggu atau < 1.500 gram pada usia 4–6 minggu pasca lahir."
+            },
+            {
+              "title": "Tes Pendengaran (OAE / BERA)",
+              "description": "Memastikan fungsi saraf pendengaran berfungsi optimal sedini mungkin sebelum usia 3 bulan."
+            }
+          ]
+        },
+        {
+          "type": "warning_box",
+          "title": "JANGAN MENUNDA JADWAL KONTROL",
+          "items": [
+            {
+              "title": "Jangan Tunda Jadwal",
+              "description": "JANGAN menunda jadwal kontrol meski bayi terlihat sehat dan tenang, karena tanda malnutrisi atau keterlambatan tumbuh kembang sering tidak terlihat secara kasat mata."
+            },
+            {
+              "title": "Gejala Darurat Sebelum Jadwal",
+              "description": "JIKA bayi tiba-tiba demam, sesak napas, atau tidak mau minum sebelum tanggal kontrol yang ditentukan, JANGAN menunggu tanggal kontrol—segera bawa ke IGD terdekat!"
+            },
+            {
+              "title": "Konsultasi Imunisasi",
+              "description": "KONSULTASIKAN status imunisasi dengan dokter anak; sebagian besar vaksin tetap diberikan sesuai usia kronologis sejak lahir."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bblr_09",
+      "order": 9,
+      "title": "Hal yang Perlu Diperhatikan",
+      "category": "Panduan Esensial & Keselamatan BBLR",
+      "readingTimeMinutes": 4,
+      "themeColor": "yellow",
+      "heroDrawable": "il_edu_module_9",
+      "heroTag": "Panduan Esensial & Keselamatan BBLR",
+      "sections": [
+        {
+          "type": "overview",
+          "title": "Mengapa Perhatian Ekstra Sangat Penting di Rumah?",
+          "paragraphs": [
+            "Bayi dengan Berat Badan Lahir Rendah (BBLR) memiliki daya tahan tubuh yang belum sempurna, cadangan lemak terbatas, serta refleks perlindungan yang masih berkembang.",
+            "Masa transisi di rumah membutuhkan kehati-hatian khusus, mulai dari kebersihan lingkungan hingga pembatasan kontak untuk melindungi si kecil dari infeksi dan stres lingkungan."
+          ]
+        },
+        {
+          "type": "protocol_box",
+          "title": "PRINSIP EMAS PERLINDUNGAN BBLR",
+          "badgeText": "Standar IDAI & Kemenkes",
+          "header": "Proteksi & Lingkungan Sehat",
+          "items": [
+            {
+              "title": "Proteksi Infeksi Maksimal",
+              "description": "Selalu cuci tangan 6 langkah dengan sabun atau hand sanitizer sebelum dan sesudah menyentuh bayi."
+            },
+            {
+              "title": "Batasi Kunjungan Tamu",
+              "description": "Tunda kunjungan kerabat atau tamu luar hingga berat badan bayi stabil dan kondisi lebih kuat, hindari orang yang sedang flu atau batuk."
+            },
+            {
+              "title": "Lingkungan Tenang & Bebas Asap",
+              "description": "Jauhkan bayi dari asap rokok, polusi, aroma wewangian tajam, serta paparan suara bising yang memicu stres neonatus."
+            }
+          ]
+        },
+        {
+          "type": "step_list",
+          "title": "4 Hal Penting yang Wajib Dilakukan",
+          "items": [
+            {
+              "number": 1,
+              "title": "Jaga Kebersihan Perlengkapan Bayi",
+              "description": "Sterilkan secara rutin alat minum, sendok, cangkir, atau dot bayi. Ganti pakaian dan alas tidur segera saat basah atau lembap."
+            },
+            {
+              "number": 2,
+              "title": "Kontinuitas Kontak Kulit (PMK)",
+              "description": "Lakukan Perawatan Metode Kanguru secara rutin minimal 1-2 jam per sesi untuk stabilitas denyut jantung dan kenaikan berat badan."
+            },
+            {
+              "number": 3,
+              "title": "Pemantauan Suhu & Pernapasan",
+              "description": "Periksa suhu tubuh ketiak secara teratur (rentang aman 36,5°C - 37,5°C) dan perhatikan frekuensi serta kelegaan napas si kecil."
+            },
+            {
+              "number": 4,
+              "title": "Kesiapan Catatan & Kontak Darurat",
+              "description": "Selalu siapkan Buku KIA, ringkasan kepulangan medis dari RS, serta nomor kontak bidan, dokter anak, atau ambulans/faskes terdekat."
+            }
+          ]
+        },
+        {
+          "type": "callout_box",
+          "title": "Aturan Bebas Asap Rokok 100%",
+          "message": "Asap rokok yang menempel pada baju, rambut, atau ruangan (third-hand smoke) sangat berbahaya bagi paru-paru BBLR yang rapuh. Anggota keluarga yang merokok wajib mandi, keramas, dan ganti pakaian sebelum mendekati bayi.",
+          "themeColor": "rose"
+        },
+        {
+          "type": "warning_box",
+          "title": "HAL YANG DILARANG & HARUS DIHINDARI",
+          "items": [
+            {
+              "title": "DILARANG Kontak dengan Orang Sakit",
+              "description": "DILARANG mengizinkan orang yang sedang sakit batuk, pilek, atau demam mendekati atau menggendong bayi."
+            },
+            {
+              "title": "DILARANG Membubuhi Ramuan Tradisional",
+              "description": "DILARANG membubuhi ramuan tradisional, bedak, alkohol, atau minyak gosok pada tali pusat dan dada bayi."
+            },
+            {
+              "title": "JANGAN Mengguncang Bayi (Shaken Baby Risk)",
+              "description": "JANGAN mengguncang-guncang tubuh bayi atau mengangkat bayi tanpa menyangga kepala dan leher secara stabil."
+            },
+            {
+              "title": "JANGAN Memberi Makanan Selain ASI",
+              "description": "JANGAN memberikan makanan atau minuman selain ASI perah/susu anjuran dokter sebelum usia yang diizinkan."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
