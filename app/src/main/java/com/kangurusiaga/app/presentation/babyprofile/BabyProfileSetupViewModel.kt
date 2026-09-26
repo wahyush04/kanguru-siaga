@@ -40,9 +40,19 @@ class BabyProfileSetupViewModel @Inject constructor(
         _uiState.update { it.copy(birthDateEpochMillis = epochMillis, errorMessage = null) }
     }
 
+    fun updateGestationalAge(weeks: String) {
+        val sanitized = weeks.filter { it.isDigit() }
+        _uiState.update { it.copy(gestationalAgeWeeks = sanitized, errorMessage = null) }
+    }
+
     fun updateBirthWeight(weight: String) {
         val sanitized = weight.filter { it.isDigit() }
         _uiState.update { it.copy(birthWeightInput = sanitized, errorMessage = null) }
+    }
+
+    fun updateCurrentWeight(weight: String) {
+        val sanitized = weight.filter { it.isDigit() }
+        _uiState.update { it.copy(currentWeightInput = sanitized, errorMessage = null) }
     }
 
     fun createTempCameraUri(): Uri {
@@ -70,72 +80,44 @@ class BabyProfileSetupViewModel @Inject constructor(
         }
     }
 
-    fun onNextStep(): Boolean {
+    fun proceedToConfirmation(): Boolean {
         val state = _uiState.value
-        when (state.currentStep) {
-            ProfileSetupStep.NAME -> {
-                if (state.name.trim().isBlank()) {
-                    _uiState.update { it.copy(errorMessage = "Nama bayi belum diisi") }
-                    return false
-                }
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.GENDER, errorMessage = null) }
-                return true
-            }
-            ProfileSetupStep.GENDER -> {
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.BIRTH_DATE, errorMessage = null) }
-                return true
-            }
-            ProfileSetupStep.BIRTH_DATE -> {
-                if (state.birthDateEpochMillis <= 0 || state.birthDateEpochMillis > System.currentTimeMillis()) {
-                    _uiState.update { it.copy(errorMessage = "Periksa kembali tanggal lahir") }
-                    return false
-                }
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.BIRTH_WEIGHT, errorMessage = null) }
-                return true
-            }
-            ProfileSetupStep.BIRTH_WEIGHT -> {
-                if (state.birthWeightGram <= 0) {
-                    _uiState.update { it.copy(errorMessage = "Masukkan berat lahir yang valid") }
-                    return false
-                }
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.PHOTO, errorMessage = null) }
-                return true
-            }
-            ProfileSetupStep.PHOTO -> {
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.CONFIRMATION, errorMessage = null) }
-                return true
-            }
-            ProfileSetupStep.CONFIRMATION -> {
-                saveProfile()
-                return true
-            }
+        if (state.name.trim().isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Nama bayi belum diisi") }
+            return false
+        }
+        if (state.birthWeightGram <= 0) {
+            _uiState.update { it.copy(errorMessage = "Masukkan berat lahir yang valid") }
+            return false
+        }
+        if (state.birthDateEpochMillis <= 0 || state.birthDateEpochMillis > System.currentTimeMillis()) {
+            _uiState.update { it.copy(errorMessage = "Periksa kembali tanggal lahir") }
+            return false
+        }
+
+        _uiState.update { it.copy(currentStep = ProfileSetupStep.CONFIRMATION, errorMessage = null) }
+        return true
+    }
+
+    fun backToForm() {
+        _uiState.update { it.copy(currentStep = ProfileSetupStep.FORM, errorMessage = null) }
+    }
+
+    fun onNextStep(): Boolean {
+        return if (_uiState.value.currentStep == ProfileSetupStep.FORM) {
+            proceedToConfirmation()
+        } else {
+            saveProfile()
+            true
         }
     }
 
     fun onPreviousStep(): Boolean {
-        val state = _uiState.value
-        return when (state.currentStep) {
-            ProfileSetupStep.NAME -> false
-            ProfileSetupStep.GENDER -> {
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.NAME, errorMessage = null) }
-                true
-            }
-            ProfileSetupStep.BIRTH_DATE -> {
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.GENDER, errorMessage = null) }
-                true
-            }
-            ProfileSetupStep.BIRTH_WEIGHT -> {
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.BIRTH_DATE, errorMessage = null) }
-                true
-            }
-            ProfileSetupStep.PHOTO -> {
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.BIRTH_WEIGHT, errorMessage = null) }
-                true
-            }
-            ProfileSetupStep.CONFIRMATION -> {
-                _uiState.update { it.copy(currentStep = ProfileSetupStep.PHOTO, errorMessage = null) }
-                true
-            }
+        return if (_uiState.value.currentStep == ProfileSetupStep.CONFIRMATION) {
+            backToForm()
+            true
+        } else {
+            false
         }
     }
 

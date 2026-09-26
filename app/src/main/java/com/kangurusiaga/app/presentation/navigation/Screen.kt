@@ -5,7 +5,6 @@ import com.kangurusiaga.app.core.navigation.NavigationDestination
 sealed class Screen(override val route: String, override val destination: String) : NavigationDestination {
     data object Splash : Screen(route = "splash", destination = "splash_destination")
     data object Onboarding : Screen(route = "onboarding", destination = "onboarding_destination")
-    data object ProfileIntro : Screen(route = "profile_intro", destination = "profile_intro_destination")
     data object ProfileSetup : Screen(route = "profile_setup", destination = "profile_setup_destination")
     data object Home : Screen(route = "home", destination = "home_destination")
     data object BabyProfile : Screen(route = "baby_profile", destination = "baby_profile_destination")

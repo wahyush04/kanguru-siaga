@@ -289,16 +289,7 @@ fun SplashScreen(
         label = "leaf_sway_rot"
     )
 
-    // 4. Progress bar fill & shimmer
-    val progressFillFraction by infiniteTransition.animateFloat(
-        initialValue = 0.18f,
-        targetValue = 0.65f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2400, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "progress_fill"
-    )
+    // 4. Button shimmer sweep
     val shimmerOffsetFraction by infiniteTransition.animateFloat(
         initialValue = -0.5f,
         targetValue = 1.5f,
@@ -306,7 +297,7 @@ fun SplashScreen(
             animation = tween(1800, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
-        label = "progress_shimmer"
+        label = "button_shimmer"
     )
 
     // 5. Button pulse and arrow nudge
@@ -612,82 +603,26 @@ fun SplashScreen(
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // Typography Section
-                Text(
-                    text = "KANGURU\nSIAGA",
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFF3A4D39),
-                    textAlign = TextAlign.Center,
-                    lineHeight = 32.sp,
-                    letterSpacing = 1.5.sp
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
+                // Subtitle
                 Text(
                     text = "Pendamping perawatan BBLR di rumah",
-                    fontSize = 14.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF64748B),
                     textAlign = TextAlign.Center,
-                    lineHeight = 20.sp
+                    lineHeight = 22.sp
                 )
             }
 
             // ==========================================
-            // 4. FOOTER PROGRESS & CTA CONTROLS
+            // 4. FOOTER CTA CONTROLS
             // ==========================================
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Animated Progress Bar with Shimmer Highlight
-                Box(
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(Color(0xFFFDE2E4))
-                ) {
-                    // Progress fill
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(progressFillFraction)
-                            .height(6.dp)
-                            .clip(RoundedCornerShape(3.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    listOf(
-                                        Color(0xFFF4727F),
-                                        Color(0xFFFB7185),
-                                        Color(0xFFF4727F)
-                                    )
-                                )
-                            )
-                    ) {
-                        // Shimmer sweep across the progress bar
-                        val shimmerX = shimmerOffsetFraction * 150f
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    Brush.horizontalGradient(
-                                        colors = listOf(
-                                            Color.Transparent,
-                                            Color.White.copy(alpha = 0.75f),
-                                            Color.Transparent
-                                        ),
-                                        startX = shimmerX - 40f,
-                                        endX = shimmerX + 40f
-                                    )
-                                )
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(18.dp))
-
                 // CTA "Mulai" Button with Pulse, Shimmer Sweep, and Arrow Nudge
                 Button(
                     onClick = {

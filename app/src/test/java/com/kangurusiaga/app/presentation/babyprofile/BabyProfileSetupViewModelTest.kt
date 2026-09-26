@@ -42,10 +42,11 @@ class BabyProfileSetupViewModelTest {
     @Test
     fun initialState_hasDefaultValues() {
         val state = viewModel.uiState.value
-        assertThat(state.currentStep).isEqualTo(ProfileSetupStep.NAME)
+        assertThat(state.currentStep).isEqualTo(ProfileSetupStep.FORM)
         assertThat(state.name).isEmpty()
         assertThat(state.gender).isEqualTo(Gender.FEMALE)
         assertThat(state.birthWeightGram).isEqualTo(1850)
+        assertThat(state.gestationalAgeWeeks).isEqualTo("32")
         assertThat(state.photoUri).isNull()
         assertThat(state.isComplete).isFalse()
         assertThat(state.errorMessage).isNull()
@@ -80,6 +81,12 @@ class BabyProfileSetupViewModelTest {
     }
 
     @Test
+    fun updateGestationalAge_sanitizesInput() {
+        viewModel.updateGestationalAge("34 minggu")
+        assertThat(viewModel.uiState.value.gestationalAgeWeeks).isEqualTo("34")
+    }
+
+    @Test
     fun updateBirthWeight_sanitizesInput() {
         viewModel.updateBirthWeight("2.100")
         assertThat(viewModel.uiState.value.birthWeightInput).isEqualTo("2100")
@@ -87,69 +94,45 @@ class BabyProfileSetupViewModelTest {
     }
 
     @Test
-    fun onNextStep_fromNameStep_whenNameEmpty_setsErrorAndReturnsFalse() {
+    fun updateCurrentWeight_sanitizesInput() {
+        viewModel.updateCurrentWeight("3.400")
+        assertThat(viewModel.uiState.value.currentWeightInput).isEqualTo("3400")
+        assertThat(viewModel.uiState.value.currentWeightGram).isEqualTo(3400)
+    }
+
+    @Test
+    fun proceedToConfirmation_whenNameEmpty_setsErrorAndReturnsFalse() {
         viewModel.updateName("")
-        val result = viewModel.onNextStep()
+        val result = viewModel.proceedToConfirmation()
 
         assertThat(result).isFalse()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.NAME)
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.FORM)
         assertThat(viewModel.uiState.value.errorMessage).isEqualTo("Nama bayi belum diisi")
     }
 
     @Test
-    fun onNextStep_walksThroughAllStepsCorrectly() {
-        // Step 1: NAME
+    fun proceedToConfirmation_withValidData_movesToConfirmation() {
         viewModel.updateName("Raka Pratama")
-        var nextResult = viewModel.onNextStep()
-        assertThat(nextResult).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.GENDER)
-
-        // Step 2: GENDER
         viewModel.updateGender(Gender.MALE)
-        nextResult = viewModel.onNextStep()
-        assertThat(nextResult).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.BIRTH_DATE)
-
-        // Step 3: BIRTH_DATE
         viewModel.updateBirthDate(System.currentTimeMillis() - 3600000L)
-        nextResult = viewModel.onNextStep()
-        assertThat(nextResult).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.BIRTH_WEIGHT)
-
-        // Step 4: BIRTH_WEIGHT
         viewModel.updateBirthWeight("1900")
-        nextResult = viewModel.onNextStep()
-        assertThat(nextResult).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.PHOTO)
 
-        // Step 5: PHOTO
-        nextResult = viewModel.onNextStep()
-        assertThat(nextResult).isTrue()
+        val result = viewModel.proceedToConfirmation()
+        assertThat(result).isTrue()
         assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.CONFIRMATION)
+        assertThat(viewModel.uiState.value.errorMessage).isNull()
     }
 
     @Test
-    fun onPreviousStep_navigatesBackwards() {
+    fun onPreviousStep_fromConfirmation_navigatesBackToForm() {
         viewModel.jumpToStep(ProfileSetupStep.CONFIRMATION)
 
         assertThat(viewModel.onPreviousStep()).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.PHOTO)
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.FORM)
 
-        assertThat(viewModel.onPreviousStep()).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.BIRTH_WEIGHT)
-
-        assertThat(viewModel.onPreviousStep()).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.BIRTH_DATE)
-
-        assertThat(viewModel.onPreviousStep()).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.GENDER)
-
-        assertThat(viewModel.onPreviousStep()).isTrue()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.NAME)
-
-        // Cannot go back before NAME
+        // Cannot go back before FORM
         assertThat(viewModel.onPreviousStep()).isFalse()
-        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.NAME)
+        assertThat(viewModel.uiState.value.currentStep).isEqualTo(ProfileSetupStep.FORM)
     }
 
     @Test
@@ -168,8 +151,7 @@ class BabyProfileSetupViewModelTest {
     @Test
     fun onRemovePhoto_deletesPhotoAndClearsState() = runTest {
         val dummyUri = "file:///dummy/path.jpg"
-        viewModel.jumpToStep(ProfileSetupStep.PHOTO)
-        // set photo directly through photo selection
+        viewModel.jumpToStep(ProfileSetupStep.FORM)
         val inputUri = mockk<Uri>()
         coEvery { photoStorageManager.saveImagePermanently(inputUri) } returns dummyUri
         viewModel.onPhotoSelected(inputUri)

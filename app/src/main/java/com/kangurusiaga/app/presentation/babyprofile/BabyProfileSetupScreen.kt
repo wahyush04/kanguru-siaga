@@ -1,11 +1,11 @@
 package com.kangurusiaga.app.presentation.babyprofile
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,12 +15,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -32,6 +32,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Female
@@ -40,8 +41,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Male
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -67,6 +66,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -89,6 +90,11 @@ fun formatEpochToIndonesianDate(epochMillis: Long): String {
     val date = Date(epochMillis)
     val formatter = SimpleDateFormat("d MMMM yyyy", Locale("id", "ID"))
     return formatter.format(date)
+}
+
+fun formatWeightString(weightInput: String): String {
+    val num = weightInput.filter { it.isDigit() }.toIntOrNull() ?: return weightInput
+    return String.format(Locale("id", "ID"), "%,d", num).replace(',', '.')
 }
 
 @Composable
@@ -131,76 +137,110 @@ fun BabyProfileSetupRoute(
         uri?.let { viewModel.onPhotoSelected(it) }
     }
 
-    BabyProfileSetupScreen(
-        uiState = uiState,
-        snackbarHostState = snackbarHostState,
-        onNameChange = viewModel::updateName,
-        onGenderChange = viewModel::updateGender,
-        onBirthDateChange = viewModel::updateBirthDate,
-        onBirthWeightChange = viewModel::updateBirthWeight,
-        onCameraClick = {
-            val uri = viewModel.createTempCameraUri()
-            tempCameraUri = uri
-            cameraLauncher.launch(uri)
-        },
-        onGalleryClick = {
-            galleryLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        },
-        onRemovePhoto = viewModel::onRemovePhoto,
-        onNextClick = { viewModel.onNextStep() },
-        onPreviousClick = {
-            val hasPrevious = viewModel.onPreviousStep()
-            if (!hasPrevious) {
-                onNavigateBackToIntro()
+    val onCameraClick: () -> Unit = {
+        val uri = viewModel.createTempCameraUri()
+        tempCameraUri = uri
+        cameraLauncher.launch(uri)
+    }
+
+    val onGalleryClick: () -> Unit = {
+        galleryLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
+
+    // Handle back button behavior:
+    // If in CONFIRMATION step -> returns to FORM
+    // If in FORM step -> returns to ProfileIntro
+    BackHandler(enabled = true) {
+        if (uiState.currentStep == ProfileSetupStep.CONFIRMATION) {
+            viewModel.backToForm()
+        } else {
+            onNavigateBackToIntro()
+        }
+    }
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = Color(0xFFFDFBF9)
+    ) { innerPadding ->
+        when (uiState.currentStep) {
+            ProfileSetupStep.FORM -> {
+                BabyProfileFormScreen(
+                    uiState = uiState,
+                    onBackClick = onNavigateBackToIntro,
+                    onNameChange = viewModel::updateName,
+                    onGenderChange = viewModel::updateGender,
+                    onBirthDateChange = viewModel::updateBirthDate,
+                    onGestationalAgeChange = viewModel::updateGestationalAge,
+                    onBirthWeightChange = viewModel::updateBirthWeight,
+                    onCurrentWeightChange = viewModel::updateCurrentWeight,
+                    onCameraClick = onCameraClick,
+                    onGalleryClick = onGalleryClick,
+                    onRemovePhoto = viewModel::onRemovePhoto,
+                    onProceedToConfirmation = { viewModel.proceedToConfirmation() },
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
-        },
-        onJumpToStep = viewModel::jumpToStep,
-        onSaveClick = viewModel::saveProfile,
-        modifier = modifier
-    )
+            ProfileSetupStep.CONFIRMATION -> {
+                BabyProfileConfirmationScreen(
+                    uiState = uiState,
+                    onBackClick = { viewModel.backToForm() },
+                    onEditPhotoClick = onGalleryClick,
+                    onSaveClick = { viewModel.saveProfile() },
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+        }
+    }
 }
 
+/**
+ * Screen 4: Kanguru Siaga - Formulir Lengkap Data Bayi
+ * Single-page consolidated form replacing multi-step inputs.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BabyProfileSetupScreen(
+fun BabyProfileFormScreen(
     uiState: BabyProfileSetupUiState,
-    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
     onNameChange: (String) -> Unit,
     onGenderChange: (Gender) -> Unit,
     onBirthDateChange: (Long) -> Unit,
+    onGestationalAgeChange: (String) -> Unit,
     onBirthWeightChange: (String) -> Unit,
+    onCurrentWeightChange: (String) -> Unit,
     onCameraClick: () -> Unit,
     onGalleryClick: () -> Unit,
     onRemovePhoto: () -> Unit,
-    onNextClick: () -> Unit,
-    onPreviousClick: () -> Unit,
-    onJumpToStep: (ProfileSetupStep) -> Unit,
-    onSaveClick: () -> Unit,
+    onProceedToConfirmation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showDatePickerDialog by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+    var showDatePicker by remember { mutableStateOf(false) }
 
-    if (showDatePickerDialog) {
+    if (showDatePicker) {
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = uiState.birthDateEpochMillis
         )
         DatePickerDialog(
-            onDismissRequest = { showDatePickerDialog = false },
+            onDismissRequest = { showDatePicker = false },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        datePickerState.selectedDateMillis?.let { onBirthDateChange(it) }
-                        showDatePickerDialog = false
+                        datePickerState.selectedDateMillis?.let { selected ->
+                            onBirthDateChange(selected)
+                        }
+                        showDatePicker = false
                     }
                 ) {
                     Text("Pilih", color = BrandPink, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePickerDialog = false }) {
-                    Text("Batal", color = Color.Gray)
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Batal", color = Color(0xFF64748B))
                 }
             }
         ) {
@@ -208,783 +248,102 @@ fun BabyProfileSetupScreen(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = Color(0xFFFAF7F2),
-        modifier = modifier.fillMaxSize()
-    ) { innerPadding ->
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFFFDFBF9))
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .statusBarsPadding()
         ) {
-            // Header with Step Indicator & Linear Progress Bar
-            Column(modifier = Modifier.fillMaxWidth()) {
-                // Step counter (e.g. "1/6") centered
-                Text(
-                    text = "${uiState.currentStep.stepNumber}/${uiState.currentStep.totalSteps}",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF94A3B8),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = onPreviousClick,
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
-                            tint = Color(0xFF1E293B)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    // Progress bar
-                    val animatedProgress by animateFloatAsState(
-                        targetValue = uiState.currentStep.stepNumber.toFloat() / uiState.currentStep.totalSteps.toFloat(),
-                        label = "progress"
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(6.dp)
-                            .clip(RoundedCornerShape(3.dp))
-                            .background(Color(0xFFF1F5F9))
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(animatedProgress)
-                                .height(6.dp)
-                                .clip(RoundedCornerShape(3.dp))
-                                .background(BrandPink)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(36.dp)) // balance back button width
-                }
-            }
-
-            // Dynamic Step Form Body
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                when (uiState.currentStep) {
-                    ProfileSetupStep.NAME -> {
-                        StepNameContent(
-                            name = uiState.name,
-                            onNameChange = onNameChange
-                        )
-                    }
-                    ProfileSetupStep.GENDER -> {
-                        StepGenderContent(
-                            selectedGender = uiState.gender,
-                            onGenderSelected = onGenderChange
-                        )
-                    }
-                    ProfileSetupStep.BIRTH_DATE -> {
-                        StepBirthDateContent(
-                            birthDateEpochMillis = uiState.birthDateEpochMillis,
-                            onCardClick = { showDatePickerDialog = true }
-                        )
-                    }
-                    ProfileSetupStep.BIRTH_WEIGHT -> {
-                        StepBirthWeightContent(
-                            weightInput = uiState.birthWeightInput,
-                            isBblr = uiState.isBblr,
-                            onWeightChange = onBirthWeightChange
-                        )
-                    }
-                    ProfileSetupStep.PHOTO -> {
-                        StepPhotoContent(
-                            photoUri = uiState.photoUri,
-                            onCameraClick = onCameraClick,
-                            onGalleryClick = onGalleryClick,
-                            onRemovePhoto = onRemovePhoto
-                        )
-                    }
-                    ProfileSetupStep.CONFIRMATION -> {
-                        StepConfirmationContent(
-                            uiState = uiState,
-                            onEditPhotoClick = { onJumpToStep(ProfileSetupStep.PHOTO) }
-                        )
-                    }
-                }
-            }
-
-            // Bottom Navigation CTA Buttons
+            // Top Navigation Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Secondary Button (Kembali)
-                OutlinedButton(
-                    onClick = onPreviousClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(52.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, BrandPink.copy(alpha = 0.5f)),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = BrandPink
-                    )
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = BrandPink,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Kembali",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-
-                // Primary Button (Lanjut / Simpan Data)
-                val isConfirmation = uiState.currentStep == ProfileSetupStep.CONFIRMATION
-                Button(
-                    onClick = {
-                        if (isConfirmation) {
-                            onSaveClick()
-                        } else {
-                            onNextClick()
-                        }
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(52.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
-                    enabled = !uiState.isLoading
-                ) {
-                    if (uiState.isLoading) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = if (isConfirmation) "Simpan Data" else "Lanjut",
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            if (!isConfirmation) {
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-// ======================== STEP CONTENTS ========================
-
-@Composable
-fun StepNameContent(
-    name: String,
-    onNameChange: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Nama Bayi",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1E293B),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Masukkan nama bayi sesuai dengan yang Anda inginkan.",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
-            color = Color(0xFF64748B),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Nama Bayi",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF475569),
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
-            OutlinedTextField(
-                value = name,
-                onValueChange = onNameChange,
-                placeholder = {
-                    Text(
-                        text = "Contoh: Nirmala Endang Elis",
-                        color = Color(0xFF94A3B8),
-                        fontSize = 14.sp
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedBorderColor = BrandPink,
-                    unfocusedBorderColor = Color(0xFFE2E8F0)
-                ),
-                singleLine = true
-            )
-        }
-    }
-}
-
-@Composable
-fun StepGenderContent(
-    selectedGender: Gender,
-    onGenderSelected: (Gender) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Jenis Kelamin",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1E293B),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Pilih jenis kelamin bayi.",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
-            color = Color(0xFF64748B),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(36.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Laki-laki
-            val isMale = selectedGender == Gender.MALE
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(0.9f)
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(Color(0xFFEFF6FF))
-                    .border(
-                        width = if (isMale) 2.dp else 1.dp,
-                        color = if (isMale) Color(0xFF2563EB) else Color(0xFFBFDBFE),
-                        shape = RoundedCornerShape(18.dp)
-                    )
-                    .clickable { onGenderSelected(Gender.MALE) }
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Male,
-                        contentDescription = "Laki-laki",
-                        tint = Color(0xFF2563EB),
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = "Laki-laki",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1D4ED8)
-                    )
-                }
-            }
-
-            // Perempuan
-            val isFemale = selectedGender == Gender.FEMALE
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(0.9f)
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(Color(0xFFFFF1F2))
-                    .border(
-                        width = if (isFemale) 2.dp else 1.dp,
-                        color = if (isFemale) BrandPink else Color(0xFFFECDD3),
-                        shape = RoundedCornerShape(18.dp)
-                    )
-                    .clickable { onGenderSelected(Gender.FEMALE) }
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Female,
-                        contentDescription = "Perempuan",
-                        tint = BrandPink,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = "Perempuan",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFFFF4D6D)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun StepBirthDateContent(
-    birthDateEpochMillis: Long,
-    onCardClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Tanggal Lahir",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1E293B),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Tanggal lahir digunakan untuk menghitung usia bayi dan menampilkan grafik pertumbuhan yang sesuai.",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
-            color = Color(0xFF64748B),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Tanggal Lahir",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF475569),
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
-                    .border(1.dp, Color(0xFFCBD5E1), RoundedCornerShape(16.dp))
-                    .clickable { onCardClick() }
-                    .padding(horizontal = 16.dp, vertical = 14.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = formatEpochToIndonesianDate(birthDateEpochMillis),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF0F172A)
-                    )
-                    Icon(
-                        imageVector = Icons.Default.CalendarMonth,
-                        contentDescription = "Pilih tanggal",
-                        tint = Color(0xFF94A3B8),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun StepBirthWeightContent(
-    weightInput: String,
-    isBblr: Boolean,
-    onWeightChange: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Berat Lahir",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1E293B),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Masukkan berat badan bayi saat lahir sesuai dengan yang tercatat.",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
-            color = Color(0xFF64748B),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Berat Lahir",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF475569),
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
-
-            OutlinedTextField(
-                value = weightInput,
-                onValueChange = onWeightChange,
-                placeholder = { Text("Contoh: 1850", color = Color(0xFF94A3B8)) },
-                trailingIcon = {
-                    Text(
-                        text = "gram",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color(0xFF94A3B8),
-                        modifier = Modifier.padding(end = 14.dp)
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedBorderColor = BrandPink,
-                    unfocusedBorderColor = Color(0xFFE2E8F0)
-                ),
-                singleLine = true
-            )
-
-            // Alert Callout for BBLR classification matching Stitch design
-            AnimatedVisibility(visible = isBblr) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFFFF0F2)
-                    ),
-                    border = BorderStroke(1.dp, Color(0xFFFFE2E5))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(14.dp),
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = null,
-                            tint = Color(0xFFFF4D6D),
-                            modifier = Modifier
-                                .size(18.dp)
-                                .padding(top = 2.dp)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "Bayi dengan berat lahir kurang dari 2.500 gram dikategorikan sebagai BBLR (Bayi Berat Lahir Rendah).",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color(0xFFE11D48),
-                            lineHeight = 16.sp
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun StepPhotoContent(
-    photoUri: String?,
-    onCameraClick: () -> Unit,
-    onGalleryClick: () -> Unit,
-    onRemovePhoto: () -> Unit
-) {
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Foto Bayi",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1E293B),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Tambahkan foto bayi untuk mempermudah identifikasi dan membuat pengalaman lebih personal.",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
-            color = Color(0xFF64748B),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Avatar Preview container matching Stitch
-        Box(
-            modifier = Modifier
-                .size(144.dp)
-                .clip(CircleShape)
-                .background(Color(0xFFEEF2F6))
-                .border(2.dp, Color(0xFFE2E8F0), CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            if (photoUri != null) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(Uri.parse(photoUri))
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Foto Bayi",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CameraAlt,
-                        contentDescription = "Pilih Foto Bayi",
-                        tint = Color(0xFF94A3B8),
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Pilih Foto Bayi",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF94A3B8)
-                    )
-                }
-            }
-        }
-
-        if (photoUri != null) {
-            Spacer(modifier = Modifier.height(8.dp))
-            TextButton(onClick = onRemovePhoto) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Hapus Foto",
-                    tint = Color(0xFFDC2626),
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "Hapus Foto",
-                    fontSize = 13.sp,
-                    color = Color(0xFFDC2626),
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(28.dp))
-
-        // 2 Action Buttons: Ambil Foto (Kamera) & Pilih dari Galeri
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            // Kamera
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
-                    .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(16.dp))
-                    .clickable { onCameraClick() }
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = Icons.Default.CameraAlt,
-                        contentDescription = "Ambil Foto dengan Kamera",
-                        tint = Color(0xFF334155),
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Ambil Foto",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1E293B)
-                    )
-                }
-            }
-
-            // Galeri
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
-                    .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(16.dp))
-                    .clickable { onGalleryClick() }
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = Icons.Default.Image,
-                        contentDescription = "Pilih dari Galeri",
-                        tint = BrandPink,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Pilih dari Galeri",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = BrandPink
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun StepConfirmationContent(
-    uiState: BabyProfileSetupUiState,
-    onEditPhotoClick: () -> Unit
-) {
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Konfirmasi Data Bayi",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1E293B),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = "Pastikan data yang Anda masukkan sudah benar.",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
-            color = Color(0xFF64748B),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Top Card: Photo Card matching Stitch
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFFFF5F7)
-            ),
-            border = BorderStroke(1.dp, Color(0xFFFFE2E7))
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Kembali",
+                        tint = Color(0xFF1E293B)
+                    )
+                }
+                Text(
+                    text = "IDENTITAS BAYI",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFA1A1AA),
+                    letterSpacing = 1.5.sp
+                )
+                Spacer(modifier = Modifier.size(40.dp))
+            }
+
+            // Scrollable Form Content
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 90.dp)
+            ) {
+                // Page Title & Guidance
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Data Bayi",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFF18181B),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Lengkapi data si kecil untuk menyesuaikan panduan, pengingat, dan grafik pertumbuhan.",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF71717A),
+                        textAlign = TextAlign.Center,
+                        lineHeight = 18.sp,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                }
+
+                // ==========================================
+                // Photo Section
+                // ==========================================
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Avatar Preview with Camera Badge
                     Box(
                         modifier = Modifier
-                            .size(56.dp)
+                            .size(112.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFE2E8F0)),
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(Color(0xFFFFF1F2), Color(0xFFF4F4F5))
+                                )
+                            )
+                            .border(2.dp, Color(0xFFFECDD3), CircleShape)
+                            .clickable { onGalleryClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         if (uiState.photoUri != null) {
                             AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(Uri.parse(uiState.photoUri))
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(uiState.photoUri)
                                     .crossfade(true)
                                     .build(),
                                 contentDescription = "Foto Bayi",
@@ -992,118 +351,914 @@ fun StepConfirmationContent(
                                 contentScale = ContentScale.Crop
                             )
                         } else {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CameraAlt,
+                                    contentDescription = null,
+                                    tint = Color(0xFFA1A1AA),
+                                    modifier = Modifier.size(32.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Pilih Foto",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFFA1A1AA)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Photo Action Buttons
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = onCameraClick,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(42.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            border = BorderStroke(1.dp, Color(0xFFE4E4E7)),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Color(0xFF3F3F46)
+                            )
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.CameraAlt,
                                 contentDescription = null,
-                                tint = Color.Gray,
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Ambil Foto",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                        OutlinedButton(
+                            onClick = onGalleryClick,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(42.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            border = BorderStroke(1.dp, Color(0xFFFECDD3)),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = BrandPink
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Image,
+                                contentDescription = null,
+                                tint = BrandPink,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Pilih Galeri",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.width(14.dp))
-
-                    Column {
-                        Text(
-                            text = "FOTO BAYI",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF94A3B8),
-                            letterSpacing = 0.5.sp
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = if (uiState.photoUri != null) "Tersimpan" else "Belum ditambahkan",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B)
-                        )
+                    if (uiState.photoUri != null) {
+                        TextButton(
+                            onClick = onRemovePhoto,
+                            modifier = Modifier.padding(top = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = Color(0xFFEF4444),
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Hapus Foto",
+                                fontSize = 11.sp,
+                                color = Color(0xFFEF4444),
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     }
                 }
 
-                OutlinedButton(
-                    onClick = onEditPhotoClick,
-                    shape = RoundedCornerShape(20.dp),
-                    border = BorderStroke(1.dp, BrandPink),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = BrandPink
-                    ),
-                    modifier = Modifier.height(36.dp)
+                // ==========================================
+                // Form Inputs Section
+                // ==========================================
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Ubah Foto",
-                        tint = BrandPink,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Ubah Foto",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    // 1. Nama Bayi Card
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White, RoundedCornerShape(16.dp))
+                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .padding(14.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = "NAMA BAYI",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF3F3F46),
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            OutlinedTextField(
+                                value = uiState.name,
+                                onValueChange = onNameChange,
+                                placeholder = {
+                                    Text(
+                                        "Contoh: Nirmala Endang Elis",
+                                        color = Color(0xFFA1A1AA),
+                                        fontSize = 14.sp
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = BrandPink,
+                                    unfocusedBorderColor = Color(0xFFE4E4E7),
+                                    focusedContainerColor = Color.White,
+                                    unfocusedContainerColor = Color(0xFFFAFAFA)
+                                ),
+                                singleLine = true
+                            )
+                        }
+                    }
+
+                    // 2. Tanggal Lahir Card
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White, RoundedCornerShape(16.dp))
+                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .clickable { showDatePicker = true }
+                            .padding(14.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = "TANGGAL LAHIR",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF3F3F46),
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color(0xFFFAFAFA), RoundedCornerShape(12.dp))
+                                    .border(1.dp, Color(0xFFE4E4E7), RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 14.dp, vertical = 13.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = formatEpochToIndonesianDate(uiState.birthDateEpochMillis),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF27272A)
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.CalendarMonth,
+                                    contentDescription = "Pilih Tanggal",
+                                    tint = BrandPink,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // 3. Usia Gestasi (Usia Kehamilan) Card
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White, RoundedCornerShape(16.dp))
+                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .padding(14.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = "USIA GESTASI (USIA KEHAMILAN)",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF3F3F46),
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            OutlinedTextField(
+                                value = uiState.gestationalAgeWeeks,
+                                onValueChange = onGestationalAgeChange,
+                                placeholder = {
+                                    Text("Contoh: 32", color = Color(0xFFA1A1AA), fontSize = 14.sp)
+                                },
+                                trailingIcon = {
+                                    Text(
+                                        "minggu",
+                                        color = Color(0xFFA1A1AA),
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(end = 12.dp)
+                                    )
+                                },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = BrandPink,
+                                    unfocusedBorderColor = Color(0xFFE4E4E7),
+                                    focusedContainerColor = Color.White,
+                                    unfocusedContainerColor = Color(0xFFFAFAFA)
+                                ),
+                                singleLine = true
+                            )
+                        }
+                    }
+
+                    // 4. Berat Lahir & Berat Sekarang + BBLR Alert
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White, RoundedCornerShape(16.dp))
+                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .padding(14.dp)
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                // Berat Lahir
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "BERAT LAHIR",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF3F3F46),
+                                        letterSpacing = 0.5.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    OutlinedTextField(
+                                        value = uiState.birthWeightInput,
+                                        onValueChange = onBirthWeightChange,
+                                        placeholder = { Text("1.850", fontSize = 13.sp) },
+                                        trailingIcon = {
+                                            Text(
+                                                "gram",
+                                                color = Color(0xFFA1A1AA),
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier.padding(end = 8.dp)
+                                            )
+                                        },
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = BrandPink,
+                                            unfocusedBorderColor = Color(0xFFE4E4E7),
+                                            focusedContainerColor = Color.White,
+                                            unfocusedContainerColor = Color(0xFFFAFAFA)
+                                        ),
+                                        singleLine = true
+                                    )
+                                }
+
+                                // Berat Sekarang
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "BERAT SEKARANG",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF3F3F46),
+                                        letterSpacing = 0.5.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    OutlinedTextField(
+                                        value = uiState.currentWeightInput,
+                                        onValueChange = onCurrentWeightChange,
+                                        placeholder = { Text("3.200", fontSize = 13.sp) },
+                                        trailingIcon = {
+                                            Text(
+                                                "gram",
+                                                color = Color(0xFFA1A1AA),
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier.padding(end = 8.dp)
+                                            )
+                                        },
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = BrandPink,
+                                            unfocusedBorderColor = Color(0xFFE4E4E7),
+                                            focusedContainerColor = Color.White,
+                                            unfocusedContainerColor = Color(0xFFFAFAFA)
+                                        ),
+                                        singleLine = true
+                                    )
+                                }
+                            }
+
+                            // Notice Edukasi BBLR Banner
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color(0xFFFFF1F2), RoundedCornerShape(12.dp))
+                                    .border(1.dp, Color(0xFFFFE4E6), RoundedCornerShape(12.dp))
+                                    .padding(10.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = null,
+                                    tint = BrandPink,
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .padding(top = 1.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Bayi dengan berat lahir kurang dari 2.500 gram dikategorikan sebagai BBLR (Bayi Berat Lahir Rendah).",
+                                    fontSize = 11.sp,
+                                    lineHeight = 16.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color(0xFFE11D48)
+                                )
+                            }
+                        }
+                    }
+
+                    // 5. Jenis Kelamin Card (Dual Cards)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White, RoundedCornerShape(16.dp))
+                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .padding(14.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = "JENIS KELAMIN",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF3F3F46),
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                // Laki-laki Option
+                                val isMale = uiState.gender == Gender.MALE
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .background(if (isMale) Color(0xFFEFF6FF) else Color(0xFFFAFAFA))
+                                        .border(
+                                            width = if (isMale) 2.dp else 1.dp,
+                                            color = if (isMale) Color(0xFF3B82F6) else Color(0xFFE4E4E7),
+                                            shape = RoundedCornerShape(14.dp)
+                                        )
+                                        .clickable { onGenderChange(Gender.MALE) }
+                                        .padding(vertical = 14.dp, horizontal = 8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (isMale) {
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(end = 4.dp, top = 0.dp)
+                                                .size(18.dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xFF3B82F6)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = null,
+                                                tint = Color.White,
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                        }
+                                    }
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xFFDBEAFE)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Male,
+                                                contentDescription = null,
+                                                tint = Color(0xFF2563EB),
+                                                modifier = Modifier.size(24.dp)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        Text(
+                                            text = "Laki-laki",
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isMale) Color(0xFF1D4ED8) else Color(0xFF52525B)
+                                        )
+                                    }
+                                }
+
+                                // Perempuan Option
+                                val isFemale = uiState.gender == Gender.FEMALE
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .background(if (isFemale) Color(0xFFFFF1F2) else Color(0xFFFAFAFA))
+                                        .border(
+                                            width = if (isFemale) 2.dp else 1.dp,
+                                            color = if (isFemale) BrandPink else Color(0xFFE4E4E7),
+                                            shape = RoundedCornerShape(14.dp)
+                                        )
+                                        .clickable { onGenderChange(Gender.FEMALE) }
+                                        .padding(vertical = 14.dp, horizontal = 8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (isFemale) {
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(end = 4.dp, top = 0.dp)
+                                                .size(18.dp)
+                                                .clip(CircleShape)
+                                                .background(BrandPink),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = null,
+                                                tint = Color.White,
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                        }
+                                    }
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xFFFFE4E6)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Female,
+                                                contentDescription = null,
+                                                tint = BrandPink,
+                                                modifier = Modifier.size(24.dp)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        Text(
+                                            text = "Perempuan",
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isFemale) Color(0xFFE11D48) else Color(0xFF52525B)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Data Summary Card matching Stitch
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            border = BorderStroke(1.dp, Color(0xFFF1F5F9))
+        // ==========================================
+        // Bottom Sticky Action Panel
+        // ==========================================
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0x00FDFBF9),
+                            Color(0xFFFDFBF9).copy(alpha = 0.95f),
+                            Color(0xFFFDFBF9)
+                        )
+                    )
+                )
+                .padding(horizontal = 24.dp, vertical = 14.dp)
         ) {
+            Button(
+                onClick = onProceedToConfirmation,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .shadow(
+                        elevation = 6.dp,
+                        shape = RoundedCornerShape(16.dp),
+                        spotColor = Color(0xFFFF5C77).copy(alpha = 0.35f)
+                    ),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = BrandPink)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Simpan Data",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "Lanjut",
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Screen 5: Kanguru Siaga - Konfirmasi Data Bayi
+ * Summary confirmation screen before saving to local database and navigating to Home.
+ */
+@Composable
+fun BabyProfileConfirmationScreen(
+    uiState: BabyProfileSetupUiState,
+    onBackClick: () -> Unit,
+    onEditPhotoClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(horizontal = 24.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Top Navigation Bar
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Kembali",
+                            tint = Color(0xFF1E293B)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Header Titles
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Konfirmasi Data Bayi",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1E293B),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Pastikan data yang Anda masukkan sudah benar.",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xFF64748B),
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Photo Summary Card
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFFFF1F2).copy(alpha = 0.5f), RoundedCornerShape(16.dp))
+                        .border(1.dp, Color(0xFFFFE4E6), RoundedCornerShape(16.dp))
+                        .padding(14.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            // Baby Avatar Thumbnail
+                            Box(
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFFFE4E6))
+                                    .border(2.dp, Color.White, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (uiState.photoUri != null) {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(uiState.photoUri)
+                                            .crossfade(true)
+                                            .build(),
+                                        contentDescription = "Foto Bayi",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.CameraAlt,
+                                        contentDescription = null,
+                                        tint = Color(0xFFFB7185),
+                                        modifier = Modifier.size(26.dp)
+                                    )
+                                }
+                            }
+
+                            Column {
+                                Text(
+                                    text = "FOTO BAYI",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF94A3B8),
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = if (uiState.photoUri != null) "Tersimpan" else "Belum ada foto",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF334155)
+                                )
+                            }
+                        }
+
+                        // Outlined "Ubah Foto" Button
+                        OutlinedButton(
+                            onClick = onEditPhotoClick,
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, BrandPink),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = BrandPink
+                            ),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                horizontal = 12.dp,
+                                vertical = 6.dp
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Ubah Foto",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Attributes Table Card
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            width = 1.dp,
+                            color = Color(0xFFF1F5F9),
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.White)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        ConfirmationDataRow(
+                            label = "Nama Bayi",
+                            value = uiState.name
+                        )
+                        HorizontalDivider(
+                            thickness = 0.8.dp,
+                            color = Color(0xFFF1F5F9)
+                        )
+
+                        ConfirmationDataRow(
+                            label = "Tanggal Lahir",
+                            value = formatEpochToIndonesianDate(uiState.birthDateEpochMillis)
+                        )
+                        HorizontalDivider(
+                            thickness = 0.8.dp,
+                            color = Color(0xFFF1F5F9)
+                        )
+
+                        ConfirmationDataRow(
+                            label = "Usia Gestasi",
+                            value = "${uiState.gestationalAgeWeeks} minggu"
+                        )
+                        HorizontalDivider(
+                            thickness = 0.8.dp,
+                            color = Color(0xFFF1F5F9)
+                        )
+
+                        ConfirmationDataRow(
+                            label = "Berat Lahir",
+                            value = "${formatWeightString(uiState.birthWeightInput)} gram"
+                        )
+                        HorizontalDivider(
+                            thickness = 0.8.dp,
+                            color = Color(0xFFF1F5F9)
+                        )
+
+                        ConfirmationDataRow(
+                            label = "Berat Sekarang",
+                            value = "${formatWeightString(uiState.currentWeightInput)} gram"
+                        )
+                        HorizontalDivider(
+                            thickness = 0.8.dp,
+                            color = Color(0xFFF1F5F9)
+                        )
+
+                        ConfirmationDataRow(
+                            label = "Jenis Kelamin",
+                            value = if (uiState.gender == Gender.MALE) "Laki-laki" else "Perempuan"
+                        )
+                    }
+                }
+
+                // Optional: BBLR Status Badge
+                if (uiState.isBblr) {
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFFFF1F2), RoundedCornerShape(12.dp))
+                            .border(1.dp, Color(0xFFFFE4E6), RoundedCornerShape(12.dp))
+                            .padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            tint = BrandPink,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Status: BBLR (${formatWeightString(uiState.birthWeightInput)} gram) — Panduan Perawatan BBLR & PMK diaktifkan.",
+                            fontSize = 11.sp,
+                            color = Color(0xFFE11D48),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
+
+            // Bottom Dual Buttons
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(bottom = 12.dp)
             ) {
-                SummaryRow(label = "Nama Bayi", value = uiState.name)
-                HorizontalDivider(color = Color(0xFFF1F5F9))
-                SummaryRow(
-                    label = "Tanggal Lahir",
-                    value = formatEpochToIndonesianDate(uiState.birthDateEpochMillis)
-                )
-                HorizontalDivider(color = Color(0xFFF1F5F9))
-                SummaryRow(
-                    label = "Berat Lahir",
-                    value = "${uiState.birthWeightGram} gram"
-                )
-                HorizontalDivider(color = Color(0xFFF1F5F9))
-                SummaryRow(
-                    label = "Jenis Kelamin",
-                    value = if (uiState.gender == Gender.MALE) "Laki-laki" else "Perempuan"
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Outlined Kembali Button
+                    OutlinedButton(
+                        onClick = onBackClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        border = BorderStroke(1.dp, BrandPink),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = BrandPink
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Kembali",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    // Filled Simpan Data Button
+                    Button(
+                        onClick = onSaveClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                            .shadow(
+                                elevation = 4.dp,
+                                shape = RoundedCornerShape(14.dp),
+                                spotColor = Color(0xFFFF5C77).copy(alpha = 0.35f)
+                            ),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
+                        enabled = !uiState.isLoading
+                    ) {
+                        if (uiState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text(
+                                text = "Simpan Data",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun SummaryRow(
+private fun ConfirmationDataRow(
     label: String,
     value: String
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 13.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
             fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
             color = Color(0xFF64748B)
         )
         Text(
             text = value,
-            fontSize = 14.sp,
+            fontSize = 13.5.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF0F172A)
+            color = Color(0xFF1E293B),
+            textAlign = TextAlign.End
         )
     }
 }
