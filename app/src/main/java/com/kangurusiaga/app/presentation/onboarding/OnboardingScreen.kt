@@ -175,7 +175,7 @@ fun OnboardingRoute(
                 }
 
                 // CTA Action Button
-                val buttonText = if (pagerState.currentPage == 0) "Mulai" else "Lanjut"
+                val buttonText = if (pagerState.currentPage == pages.size - 1) "Mulai" else "Lanjut"
                 Button(
                     onClick = {
                         if (pagerState.currentPage < pages.size - 1) {

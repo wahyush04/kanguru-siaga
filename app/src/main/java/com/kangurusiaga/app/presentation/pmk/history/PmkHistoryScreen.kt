@@ -77,6 +77,7 @@ fun PmkHistoryRoute(
     onNavigateToDetail: () -> Unit,
     onNavigateToManualLog: () -> Unit,
     onNavigateToHome: () -> Unit = {},
+    onNavigateToEducation: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: PmkStatisticsViewModel = hiltViewModel()
 ) {
@@ -96,6 +97,7 @@ fun PmkHistoryRoute(
         onNavigateToDetail = onNavigateToDetail,
         onNavigateToManualLog = onNavigateToManualLog,
         onNavigateToHome = onNavigateToHome,
+        onNavigateToEducation = onNavigateToEducation,
         onPeriodSelected = viewModel::onPeriodSelected,
         snackbarHostState = snackbarHostState,
         modifier = modifier
@@ -109,6 +111,7 @@ fun PmkHistoryScreen(
     onNavigateToDetail: () -> Unit,
     onNavigateToManualLog: () -> Unit,
     onNavigateToHome: () -> Unit = {},
+    onNavigateToEducation: () -> Unit = {},
     onPeriodSelected: (StatsPeriod) -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
@@ -176,6 +179,7 @@ fun PmkHistoryScreen(
                     when (tab) {
                         HomeTab.BERANDA -> onNavigateToHome()
                         HomeTab.PMK -> onNavigateBack()
+                        HomeTab.EDUKASI -> onNavigateToEducation()
                         else -> { /* Other tabs */ }
                     }
                 }

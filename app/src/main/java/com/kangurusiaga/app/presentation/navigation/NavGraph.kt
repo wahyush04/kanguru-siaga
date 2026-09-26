@@ -85,13 +85,19 @@ fun KanguruNavGraph(
         composable(route = Screen.Home.route) {
             HomeRoute(
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route)
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToProfileSetup = {
                     navController.navigate(Screen.ProfileSetup.route)
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route)
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToEmergency = {
                     navController.navigate(Screen.EmergencyWarningList.route)
@@ -116,6 +122,18 @@ fun KanguruNavGraph(
                 },
                 onNavigateToHistory = {
                     navController.navigate(Screen.PmkHistory.route)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -137,6 +155,18 @@ fun KanguruNavGraph(
                 },
                 onNavigateToHistory = {
                     navController.navigate(Screen.PmkHistory.route)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -174,6 +204,13 @@ fun KanguruNavGraph(
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -206,6 +243,13 @@ fun KanguruNavGraph(
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -232,6 +276,13 @@ fun KanguruNavGraph(
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -268,6 +319,13 @@ fun KanguruNavGraph(
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -285,10 +343,14 @@ fun KanguruNavGraph(
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route)
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -327,10 +389,14 @@ fun KanguruNavGraph(
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route)
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }

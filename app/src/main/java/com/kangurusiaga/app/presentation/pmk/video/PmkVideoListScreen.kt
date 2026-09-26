@@ -58,6 +58,7 @@ fun PmkVideoListScreen(
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (Int) -> Unit,
     onNavigateToHome: () -> Unit = {},
+    onNavigateToEducation: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val creamBg = Color(0xFFFAF8F5)
@@ -115,6 +116,7 @@ fun PmkVideoListScreen(
                     when (tab) {
                         HomeTab.BERANDA -> onNavigateToHome()
                         HomeTab.PMK -> onNavigateBack()
+                        HomeTab.EDUKASI -> onNavigateToEducation()
                         else -> { /* No-op for other uninitialized tabs */ }
                     }
                 }
