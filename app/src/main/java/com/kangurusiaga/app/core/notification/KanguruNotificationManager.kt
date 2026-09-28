@@ -26,6 +26,7 @@ class KanguruNotificationManager @Inject constructor(
 
         const val NOTIFICATION_ID_PMK_REMINDER = 1001
         const val NOTIFICATION_ID_PMK_TIMER = 1002
+        const val NOTIFICATION_ID_FEEDING_BASE = 2000
     }
 
     init {
@@ -95,6 +96,39 @@ class KanguruNotificationManager @Inject constructor(
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        try {
+            NotificationManagerCompat.from(context).notify(notificationId, builder.build())
+        } catch (_: SecurityException) {
+            // Handled when notification permission is not granted
+        }
+    }
+
+    fun showFeedingReminderNotification(scheduleId: Long, volumeMl: Int, methodDisplayName: String) {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigate_to", "feeding")
+        }
+
+        val notificationId = (NOTIFICATION_ID_FEEDING_BASE + (scheduleId % 1000)).toInt()
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val title = "Waktunya Pemberian ASI \uD83C\uDF7C"
+        val message = "Jadwal minum ASI $volumeMl ml via $methodDisplayName."
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_FEEDING_ID)
+            .setSmallIcon(R.drawable.ic_kangaroo_mascot)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
         try {

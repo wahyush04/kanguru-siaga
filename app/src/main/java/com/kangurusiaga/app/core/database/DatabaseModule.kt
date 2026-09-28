@@ -52,4 +52,10 @@ object DatabaseModule {
     fun provideEducationDao(database: KanguruDatabase): EducationDao {
         return database.educationDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideFeedingScheduleDao(database: KanguruDatabase): com.kangurusiaga.app.data.local.dao.FeedingScheduleDao {
+        return database.feedingScheduleDao()
+    }
 }

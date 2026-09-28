@@ -20,6 +20,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
             android:theme="@style/Theme.KanguruSiaga">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,6 +35,19 @@
 
         <receiver
             android:name=".core.notification.PmkBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".core.notification.FeedingAlarmReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".core.notification.FeedingBootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

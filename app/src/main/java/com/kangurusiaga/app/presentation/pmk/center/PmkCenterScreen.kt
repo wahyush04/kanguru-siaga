@@ -67,6 +67,7 @@ fun PmkCenterScreen(
     onNavigateToHistory: () -> Unit,
     onNavigateToHome: () -> Unit = onNavigateBack,
     onNavigateToEducation: () -> Unit = {},
+    onNavigateToAlarm: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -135,6 +136,7 @@ fun PmkCenterScreen(
                         HomeTab.BERANDA -> onNavigateToHome()
                         HomeTab.PMK -> { /* already on PMK */ }
                         HomeTab.EDUKASI -> onNavigateToEducation()
+                        HomeTab.ALARM -> onNavigateToAlarm()
                         else -> { /* other tabs reserved for future phases */ }
                     }
                 }

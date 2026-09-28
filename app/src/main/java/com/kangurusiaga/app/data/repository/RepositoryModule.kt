@@ -52,4 +52,10 @@ abstract class RepositoryModule {
     abstract fun bindEmergencyWarningRepository(
         impl: EmergencyWarningRepositoryImpl
     ): EmergencyWarningRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFeedingScheduleRepository(
+        impl: FeedingScheduleRepositoryImpl
+    ): com.kangurusiaga.app.domain.repository.FeedingScheduleRepository
 }

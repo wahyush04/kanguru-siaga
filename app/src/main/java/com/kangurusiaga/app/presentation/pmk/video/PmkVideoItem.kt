@@ -26,7 +26,7 @@ object PmkVideoDataSource {
             title = "1. Pengertian PMK",
             duration = "02:15",
             durationSeconds = 135,
-            thumbnailRes = R.drawable.thumb_pmk_video_1,
+            thumbnailRes = R.drawable.thumb_pmk_video_2,
             description = "Pengenalan dasar mengenai Perawatan Metode Kanguru (PMK) dan bagaimana metode ini membantu bayi BBLR tumbuh optimal.",
             keyPoints = listOf(
                 "Kontak kulit ke kulit (skin-to-skin contact) langsung antara bayi dan ibu/ayah",

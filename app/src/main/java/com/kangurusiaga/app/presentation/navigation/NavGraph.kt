@@ -17,6 +17,7 @@ import com.kangurusiaga.app.presentation.education.EducationDetailRoute
 import com.kangurusiaga.app.presentation.education.EducationListRoute
 import com.kangurusiaga.app.presentation.emergency.EmergencyWarningDetailRoute
 import com.kangurusiaga.app.presentation.emergency.EmergencyWarningListRoute
+import com.kangurusiaga.app.presentation.feeding.AlarmRoute
 import com.kangurusiaga.app.presentation.home.HomeRoute
 import com.kangurusiaga.app.presentation.onboarding.OnboardingRoute
 import com.kangurusiaga.app.presentation.onboarding.SplashRoute
@@ -93,6 +94,12 @@ fun KanguruNavGraph(
                 },
                 onNavigateToEmergency = {
                     navController.navigate(Screen.EmergencyWarningList.route)
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -126,6 +133,12 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -156,6 +169,12 @@ fun KanguruNavGraph(
                 },
                 onNavigateToEducation = {
                     navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -383,6 +402,12 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -429,6 +454,12 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -458,6 +489,60 @@ fun KanguruNavGraph(
             EmergencyWarningDetailRoute(
                 onNavigateBack = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        // Alarm Pemberian ASI (OGT/NGT)
+        composable(route = Screen.Feeding.route) {
+            AlarmRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        // Alarm Legacy / Friendly Alias
+        composable(route = "alarm") {
+            AlarmRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationList.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }

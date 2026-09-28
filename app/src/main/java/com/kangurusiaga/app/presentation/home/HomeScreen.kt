@@ -100,6 +100,7 @@ fun HomeRoute(
     onNavigateToProfileSetup: () -> Unit = {},
     onNavigateToEducation: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
+    onNavigateToAlarm: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -111,6 +112,7 @@ fun HomeRoute(
         onNavigateToProfileSetup = onNavigateToProfileSetup,
         onNavigateToEducation = onNavigateToEducation,
         onNavigateToEmergency = onNavigateToEmergency,
+        onNavigateToAlarm = onNavigateToAlarm,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
         onOpenNotification = viewModel::openNotificationSheet,
@@ -129,6 +131,7 @@ fun HomeScreen(
     onNavigateToProfileSetup: () -> Unit = {},
     onNavigateToEducation: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
+    onNavigateToAlarm: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     onCloseEmergency: () -> Unit = {},
     onOpenNotification: () -> Unit = {},
@@ -159,7 +162,7 @@ fun HomeScreen(
                         HomeTab.BERANDA -> { /* already here */ }
                         HomeTab.PMK -> onNavigateToPmk()
                         HomeTab.EDUKASI -> onNavigateToEducation()
-                        HomeTab.ALARM -> onShowInfo("Pengaturan Alarm ASI tersedia di fase berikutnya.")
+                        HomeTab.ALARM -> onNavigateToAlarm()
                         HomeTab.PROFIL -> onShowInfo("Pengaturan Profil Bayi tersedia di fase berikutnya.")
                     }
                 }
@@ -189,6 +192,7 @@ fun HomeScreen(
                         onNavigateToPmk = onNavigateToPmk,
                         onNavigateToEducation = onNavigateToEducation,
                         onNavigateToEmergency = onNavigateToEmergency,
+                        onNavigateToAlarm = onNavigateToAlarm,
                         onOpenEmergency = onOpenEmergency,
                         onOpenNotification = onOpenNotification,
                         onShowInfo = onShowInfo,
@@ -247,6 +251,7 @@ private fun HomeContent(
     onNavigateToPmk: () -> Unit,
     onNavigateToEducation: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
+    onNavigateToAlarm: () -> Unit,
     onOpenEmergency: () -> Unit,
     onOpenNotification: () -> Unit,
     onShowInfo: (String) -> Unit,
@@ -363,7 +368,7 @@ private fun HomeContent(
             ActionGridCard(
                 title = "Perawatan Metode\nKanguru (PMK)",
                 subtitle = "Video, Timer, Pengingat",
-                iconRes = R.drawable.ic_card_pmk,
+                iconRes = R.drawable.ic_pmk_mascot,
                 containerColor = BrandLightPink,
                 borderColor = Color(0xFFFFDDE4),
                 onClick = onNavigateToPmk,
@@ -406,7 +411,7 @@ private fun HomeContent(
                 iconRes = R.drawable.ic_card_asi,
                 containerColor = Color(0xFFEBF6FF),
                 borderColor = Color(0xFFD2E9FF),
-                onClick = { onShowInfo("Alarm Jadwal Pemberian ASI tersedia di modul Alarm.") },
+                onClick = onNavigateToAlarm,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -922,7 +927,7 @@ fun HomeBottomBar(
                         HomeTab.BERANDA -> Icons.Default.Home
                         HomeTab.PMK -> Icons.Default.VolunteerActivism
                         HomeTab.EDUKASI -> Icons.AutoMirrored.Filled.MenuBook
-                        HomeTab.ALARM -> Icons.Default.Alarm
+                        HomeTab.ALARM -> Icons.Default.Notifications
                         HomeTab.PROFIL -> Icons.Default.Person
                     }
 

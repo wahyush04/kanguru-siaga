@@ -256,7 +256,7 @@ fun PmkTimerScreen(
                 ) {
                     // Mascot Icon
                     Image(
-                        painter = painterResource(id = R.drawable.ic_pmk_timer_mascot),
+                        painter = painterResource(id = R.drawable.ic_pmk_mascot),
                         contentDescription = null,
                         modifier = Modifier.size(46.dp)
                     )

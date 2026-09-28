@@ -58,6 +58,7 @@ fun EducationListRoute(
     onNavigateToDetail: (String) -> Unit,
     onNavigateToHome: () -> Unit = onNavigateBack,
     onNavigateToPmk: () -> Unit = {},
+    onNavigateToAlarm: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: EducationListViewModel = hiltViewModel()
 ) {
@@ -69,6 +70,7 @@ fun EducationListRoute(
         onNavigateToDetail = onNavigateToDetail,
         onNavigateToHome = onNavigateToHome,
         onNavigateToPmk = onNavigateToPmk,
+        onNavigateToAlarm = onNavigateToAlarm,
         onSelectTab = viewModel::selectTab,
         onToggleBookmark = viewModel::toggleBookmark,
         modifier = modifier
@@ -82,6 +84,7 @@ fun EducationListScreen(
     onNavigateToDetail: (String) -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToPmk: () -> Unit,
+    onNavigateToAlarm: () -> Unit = {},
     onSelectTab: (EducationTab) -> Unit,
     onToggleBookmark: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -164,6 +167,7 @@ fun EducationListScreen(
                     when (tab) {
                         HomeTab.BERANDA -> onNavigateToHome()
                         HomeTab.PMK -> onNavigateToPmk()
+                        HomeTab.ALARM -> onNavigateToAlarm()
                         else -> {}
                     }
                 }

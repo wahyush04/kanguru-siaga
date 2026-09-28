@@ -19,4 +19,12 @@ object NotificationModule {
     ): KanguruNotificationManager {
         return KanguruNotificationManager(context)
     }
+
+    @Provides
+    @Singleton
+    fun provideFeedingReminderScheduler(
+        impl: FeedingReminderSchedulerImpl
+    ): FeedingReminderScheduler {
+        return impl
+    }
 }

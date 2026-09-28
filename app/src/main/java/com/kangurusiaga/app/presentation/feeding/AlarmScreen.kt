@@ -1,0 +1,524 @@
+package com.kangurusiaga.app.presentation.feeding
+
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
+import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.White
+import com.kangurusiaga.app.domain.model.FeedingSchedule
+import com.kangurusiaga.app.presentation.feeding.components.AddFeedingScheduleBottomSheet
+import com.kangurusiaga.app.presentation.feeding.components.DeleteFeedingScheduleDialog
+import com.kangurusiaga.app.presentation.feeding.components.EditFeedingScheduleBottomSheet
+import com.kangurusiaga.app.presentation.feeding.components.FeedingInfoDialog
+import com.kangurusiaga.app.presentation.home.HomeBottomBar
+import com.kangurusiaga.app.presentation.home.HomeTab
+
+import android.content.pm.PackageManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+
+@Composable
+fun AlarmRoute(
+    onNavigateBack: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    onNavigateToPmk: () -> Unit,
+    onNavigateToEducation: () -> Unit,
+    viewModel: AlarmViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // Notification permission launcher for Android 13+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { _ ->
+        // Gracefully handled; alarms still scheduled
+    }
+
+    val requestPermissionIfAppropriate = {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+            if (!hasPermission) {
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    AlarmScreen(
+        uiState = uiState,
+        onNavigateBack = onNavigateBack,
+        onNavigateToHome = onNavigateToHome,
+        onNavigateToPmk = onNavigateToPmk,
+        onNavigateToEducation = onNavigateToEducation,
+        onToggleSchedule = { id, enabled ->
+            if (enabled) {
+                requestPermissionIfAppropriate()
+            }
+            viewModel.onToggleSchedule(id, enabled)
+        },
+        onOpenAddSchedule = viewModel::onOpenAddSchedule,
+        onCloseAddSchedule = viewModel::onCloseAddSchedule,
+        onOpenEditSchedule = viewModel::onOpenEditSchedule,
+        onCloseEditSchedule = viewModel::onCloseEditSchedule,
+        onSaveNewSchedule = { hour, minute, volume, method, note, reminderEnabled, repeatType ->
+            if (reminderEnabled) {
+                requestPermissionIfAppropriate()
+            }
+            viewModel.onSaveNewSchedule(hour, minute, volume, method, note, reminderEnabled, repeatType)
+        },
+        onUpdateSchedule = { scheduleId, hour, minute, volume, method, note, reminderEnabled, repeatType ->
+            if (reminderEnabled) {
+                requestPermissionIfAppropriate()
+            }
+            viewModel.onUpdateSchedule(scheduleId, hour, minute, volume, method, note, reminderEnabled, repeatType)
+        },
+        onRequestDeleteSchedule = viewModel::onRequestDeleteSchedule,
+        onCancelDeleteSchedule = viewModel::onCancelDeleteSchedule,
+        onConfirmDeleteSchedule = viewModel::onConfirmDeleteSchedule,
+        onOpenInfoDialog = viewModel::onOpenInfoDialog,
+        onDismissInfoDialog = viewModel::onDismissInfoDialog,
+        onClearUserMessage = viewModel::onClearUserMessage
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlarmScreen(
+    uiState: AlarmUiState,
+    onNavigateBack: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    onNavigateToPmk: () -> Unit,
+    onNavigateToEducation: () -> Unit,
+    onToggleSchedule: (Long, Boolean) -> Unit,
+    onOpenAddSchedule: () -> Unit,
+    onCloseAddSchedule: () -> Unit,
+    onOpenEditSchedule: (FeedingSchedule) -> Unit,
+    onCloseEditSchedule: () -> Unit,
+    onSaveNewSchedule: (
+        hour: Int,
+        minute: Int,
+        volumeMl: Int,
+        method: com.kangurusiaga.app.domain.model.FeedingMethod,
+        note: String?,
+        reminderEnabled: Boolean,
+        repeatType: com.kangurusiaga.app.domain.model.RepeatType
+    ) -> Unit,
+    onUpdateSchedule: (
+        scheduleId: Long,
+        hour: Int,
+        minute: Int,
+        volumeMl: Int,
+        method: com.kangurusiaga.app.domain.model.FeedingMethod,
+        note: String?,
+        reminderEnabled: Boolean,
+        repeatType: com.kangurusiaga.app.domain.model.RepeatType
+    ) -> Unit,
+    onRequestDeleteSchedule: (FeedingSchedule) -> Unit,
+    onCancelDeleteSchedule: () -> Unit,
+    onConfirmDeleteSchedule: () -> Unit,
+    onOpenInfoDialog: () -> Unit,
+    onDismissInfoDialog: () -> Unit,
+    onClearUserMessage: () -> Unit
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val addSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val editSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    LaunchedEffect(uiState.userMessage) {
+        val msg = uiState.userMessage
+        if (msg != null) {
+            snackbarHostState.showSnackbar(msg)
+            onClearUserMessage()
+        }
+    }
+
+    Scaffold(
+        containerColor = BrandBackground,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            AlarmTopAppBar(
+                onNavigateBack = onNavigateBack,
+                onInfoClick = onOpenInfoDialog
+            )
+        },
+        bottomBar = {
+            HomeBottomBar(
+                currentTab = HomeTab.ALARM,
+                onTabSelected = { tab ->
+                    when (tab) {
+                        HomeTab.BERANDA -> onNavigateToHome()
+                        HomeTab.PMK -> onNavigateToPmk()
+                        HomeTab.EDUKASI -> onNavigateToEducation()
+                        HomeTab.ALARM -> { /* Already on Alarm */ }
+                        HomeTab.PROFIL -> { /* Profile */ }
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            if (uiState.isLoading && uiState.schedules.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = BrandPink)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    // Advisory Notice Card
+                    item {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        AlarmAdvisoryCard()
+                    }
+
+                    // Schedules Container Card
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(White)
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                        ) {
+                            // Section Header
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Jadwal Pemberian ASI (Setiap 2 jam)",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color(0xFF94A3B8)
+                                )
+                                Text(
+                                    text = "Volume & Status",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color(0xFF94A3B8)
+                                )
+                            }
+
+                            // Items
+                            uiState.schedules.forEachIndexed { index, schedule ->
+                                if (index > 0) {
+                                    HorizontalDivider(
+                                        thickness = 1.dp,
+                                        color = Color(0xFFF1F5F9)
+                                    )
+                                }
+
+                                AlarmScheduleItem(
+                                    schedule = schedule,
+                                    index = index,
+                                    onItemClick = { onOpenEditSchedule(schedule) },
+                                    onToggle = { isEnabled -> onToggleSchedule(schedule.id, isEnabled) }
+                                )
+                            }
+                        }
+                    }
+
+                    // Add Schedule Button (+ Tambah Jadwal)
+                    item {
+                        Button(
+                            onClick = onOpenAddSchedule,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = BrandPink,
+                                contentColor = White
+                            ),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Tambah Jadwal",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+            }
+        }
+    }
+
+    // Modal Bottom Sheet: Add Schedule
+    if (uiState.isAddSheetVisible) {
+        AddFeedingScheduleBottomSheet(
+            sheetState = addSheetState,
+            onSave = onSaveNewSchedule,
+            onDismiss = onCloseAddSchedule
+        )
+    }
+
+    // Modal Bottom Sheet: Edit Schedule
+    if (uiState.isEditSheetVisible && uiState.selectedScheduleForEdit != null) {
+        EditFeedingScheduleBottomSheet(
+            schedule = uiState.selectedScheduleForEdit,
+            sheetState = editSheetState,
+            onSave = onUpdateSchedule,
+            onRequestDelete = onRequestDeleteSchedule,
+            onDismiss = onCloseEditSchedule
+        )
+    }
+
+    // Confirmation Dialog: Delete Schedule
+    if (uiState.schedulePendingDelete != null) {
+        DeleteFeedingScheduleDialog(
+            onConfirm = onConfirmDeleteSchedule,
+            onDismiss = onCancelDeleteSchedule
+        )
+    }
+
+    // Information Dialog: Medical Notice
+    if (uiState.isInfoDialogVisible) {
+        FeedingInfoDialog(
+            onDismiss = onDismissInfoDialog
+        )
+    }
+}
+
+@Composable
+private fun AlarmTopAppBar(
+    onNavigateBack: () -> Unit,
+    onInfoClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(BrandBackground)
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(onClick = onNavigateBack) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Kembali",
+                tint = Color(0xFF1E293B)
+            )
+        }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Alarm Pemberian ASI",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1E293B),
+                fontSize = 16.5.sp,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "(OGT/NGT)",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1E293B),
+                fontSize = 14.5.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        IconButton(onClick = onInfoClick) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = "Informasi Medis",
+                tint = Color(0xFF64748B),
+                modifier = Modifier.size(22.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun AlarmAdvisoryCard() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFFFFF4F4))
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Warning,
+            contentDescription = null,
+            tint = Color(0xFFEF4444),
+            modifier = Modifier.size(24.dp)
+        )
+
+        Text(
+            text = "Jadwal pemberian ASI disesuaikan dengan instruksi tenaga kesehatan.",
+            color = Color(0xFFE11D48),
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Medium,
+            lineHeight = 18.sp
+        )
+    }
+}
+
+@Composable
+private fun AlarmScheduleItem(
+    schedule: FeedingSchedule,
+    index: Int,
+    onItemClick: () -> Unit,
+    onToggle: (Boolean) -> Unit
+) {
+    // Alternating soft accent colors for the clock icon (orange, blue, cyan, rose, amber)
+    val colorPalettes = listOf(
+        Pair(Color(0xFFFFF7ED), Color(0xFFF97316)), // orange
+        Pair(Color(0xFFEFF6FF), Color(0xFF3B82F6)), // blue
+        Pair(Color(0xFFECFEFF), Color(0xFF06B6D4)), // cyan
+        Pair(Color(0xFFFFF1F2), Color(0xFFF43F5E)), // rose
+        Pair(Color(0xFFFFFBEB), Color(0xFFF59E0B))  // amber
+    )
+    val (bgIconColor, iconColor) = colorPalettes[index % colorPalettes.size]
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onItemClick() }
+            .padding(horizontal = 8.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            // Clock Icon Circle
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(CircleShape)
+                    .background(bgIconColor),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccessTime,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            // Schedule Info
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = schedule.formattedTime,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1E293B),
+                        letterSpacing = (-0.3).sp
+                    )
+                    Text(
+                        text = "${schedule.volumeMl} ml",
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xFF94A3B8)
+                    )
+                }
+                Text(
+                    text = schedule.method.displayName,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color(0xFF94A3B8)
+                )
+            }
+        }
+
+        // Toggle Switch
+        Switch(
+            checked = schedule.isEnabled,
+            onCheckedChange = onToggle,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = White,
+                checkedTrackColor = Color(0xFF10B981),
+                uncheckedThumbColor = White,
+                uncheckedTrackColor = Color(0xFFE2E8F0)
+            )
+        )
+    }
+}
