@@ -1,7 +1,13 @@
 package com.kangurusiaga.app.presentation.pmk.video
 
+import android.content.Context
+import android.graphics.SurfaceTexture
+import android.media.MediaPlayer
 import android.net.Uri
-import android.widget.VideoView
+import android.util.Log
+import android.view.Surface
+import android.view.TextureView
+import androidx.annotation.RawRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,18 +36,21 @@ import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +73,157 @@ import com.kangurusiaga.app.core.designsystem.theme.White
 import kotlinx.coroutines.delay
 
 /**
+ * Controller class managing the lifecycle and playback of Android MediaPlayer.
+ * Encapsulates playback state to eliminate race conditions and MediaPlayer native errors.
+ */
+class VideoPlayerState(
+    private val context: Context,
+    @RawRes private val videoRes: Int,
+    fallbackDurationSeconds: Int
+) {
+    var isPlaying by mutableStateOf(false)
+    var isPrepared by mutableStateOf(false)
+    var hasStarted by mutableStateOf(false)
+    var currentPositionMs by mutableIntStateOf(0)
+    var totalDurationMs by mutableIntStateOf(fallbackDurationSeconds * 1000)
+    var isDragging by mutableStateOf(false)
+    var dragFraction by mutableFloatStateOf(0f)
+
+    private var mediaPlayer: MediaPlayer? = null
+    private var surface: Surface? = null
+
+    fun setSurface(surfaceTexture: SurfaceTexture?) {
+        if (surfaceTexture != null) {
+            val s = Surface(surfaceTexture)
+            surface = s
+            initMediaPlayer(s)
+        } else {
+            surface?.release()
+            surface = null
+            releasePlayer()
+        }
+    }
+
+    private fun initMediaPlayer(s: Surface) {
+        releasePlayer()
+        try {
+            val mp = MediaPlayer()
+            val afd = context.resources.openRawResourceFd(videoRes)
+            if (afd != null) {
+                mp.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                afd.close()
+            } else {
+                val uri = Uri.parse("android.resource://${context.packageName}/$videoRes")
+                mp.setDataSource(context, uri)
+            }
+            mp.setSurface(s)
+            mp.setOnPreparedListener { player ->
+                isPrepared = true
+                if (player.duration > 0) {
+                    totalDurationMs = player.duration
+                }
+                if (isPlaying) {
+                    player.start()
+                }
+            }
+            mp.setOnCompletionListener {
+                isPlaying = false
+                currentPositionMs = totalDurationMs
+            }
+            mp.setOnErrorListener { _, what, extra ->
+                Log.e("PmkVideo", "MediaPlayer error: what=$what, extra=$extra")
+                isPlaying = false
+                isPrepared = false
+                true
+            }
+            mp.prepareAsync()
+            mediaPlayer = mp
+        } catch (e: Exception) {
+            Log.e("PmkVideo", "Error initializing MediaPlayer", e)
+        }
+    }
+
+    fun togglePlayPause() {
+        val mp = mediaPlayer ?: return
+        if (!isPrepared) return
+
+        try {
+            if (isPlaying) {
+                mp.pause()
+                isPlaying = false
+            } else {
+                // If reached end, restart from beginning
+                if (currentPositionMs >= totalDurationMs - 300 && totalDurationMs > 0) {
+                    mp.seekTo(0)
+                    currentPositionMs = 0
+                }
+                mp.start()
+                isPlaying = true
+                hasStarted = true
+            }
+        } catch (e: Exception) {
+            Log.e("PmkVideo", "Error toggling play/pause", e)
+        }
+    }
+
+    fun seekTo(fraction: Float) {
+        val mp = mediaPlayer ?: return
+        if (!isPrepared || totalDurationMs <= 0) return
+        val targetMs = (fraction * totalDurationMs).toInt().coerceIn(0, totalDurationMs)
+        try {
+            mp.seekTo(targetMs)
+            currentPositionMs = targetMs
+        } catch (e: Exception) {
+            Log.e("PmkVideo", "Error in seekTo", e)
+        }
+    }
+
+    fun updatePosition() {
+        val mp = mediaPlayer ?: return
+        if (isPrepared && isPlaying && !isDragging) {
+            try {
+                currentPositionMs = mp.currentPosition
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
+
+    fun pause() {
+        val mp = mediaPlayer ?: return
+        if (isPrepared && isPlaying) {
+            try {
+                mp.pause()
+                isPlaying = false
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
+
+    private fun releasePlayer() {
+        try {
+            mediaPlayer?.let { mp ->
+                if (mp.isPlaying) mp.stop()
+                mp.reset()
+                mp.release()
+            }
+        } catch (e: Exception) {
+            // Ignore
+        }
+        mediaPlayer = null
+        isPrepared = false
+        isPlaying = false
+    }
+
+    fun release() {
+        releasePlayer()
+        surface?.release()
+        surface = null
+    }
+}
+
+/**
  * Screen: Kanguru Siaga - Detail Pemutar Video PMK
  * Stitch Screen ID: projects/10808370107038581899/screens/4d5792ceaa7d4c3f991d507feb72e5df
  */
@@ -73,33 +233,36 @@ fun PmkVideoScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val video = remember(videoId) { PmkVideoDataSource.getVideoById(videoId) }
-    var isPlaying by remember { mutableStateOf(false) }
-    var hasStarted by remember { mutableStateOf(false) }
     var isBookmarked by remember { mutableStateOf(false) }
-    var currentPositionMs by remember { mutableIntStateOf(0) }
-    var totalDurationMs by remember { mutableIntStateOf(video.durationSeconds * 1000) }
-    var videoViewRef by remember { mutableStateOf<VideoView?>(null) }
 
-    // Periodic position updater
-    LaunchedEffect(isPlaying) {
-        while (isPlaying) {
-            videoViewRef?.let { vv ->
-                currentPositionMs = vv.currentPosition
-                if (vv.duration > 0) totalDurationMs = vv.duration
-            }
-            delay(500)
+    val playerState = remember(videoId) {
+        VideoPlayerState(
+            context = context,
+            videoRes = video.videoRes,
+            fallbackDurationSeconds = video.durationSeconds
+        )
+    }
+
+    // Periodic position updater loop
+    LaunchedEffect(playerState.isPlaying, playerState.isDragging) {
+        while (playerState.isPlaying && !playerState.isDragging) {
+            playerState.updatePosition()
+            delay(200)
         }
     }
 
     DisposableEffect(videoId) {
         onDispose {
-            videoViewRef?.stopPlayback()
+            playerState.release()
         }
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(White),
         containerColor = White,
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
@@ -117,26 +280,31 @@ fun PmkVideoScreen(
                     .background(Color.Black),
                 contentAlignment = Alignment.Center
             ) {
-                // Native VideoView
+                // Native TextureView video player (renders in OpenGL ES texture layer without punching holes)
                 AndroidView(
                     factory = { ctx ->
-                        VideoView(ctx).apply {
-                            val videoUri = Uri.parse("android.resource://${ctx.packageName}/${video.videoRes}")
-                            setVideoURI(videoUri)
-                            setOnPreparedListener { mp ->
-                                if (mp.duration > 0) totalDurationMs = mp.duration
+                        TextureView(ctx).apply {
+                            surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                                override fun onSurfaceTextureAvailable(st: SurfaceTexture, width: Int, height: Int) {
+                                    playerState.setSurface(st)
+                                }
+
+                                override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, width: Int, height: Int) {}
+
+                                override fun onSurfaceTextureDestroyed(st: SurfaceTexture): Boolean {
+                                    playerState.setSurface(null)
+                                    return true
+                                }
+
+                                override fun onSurfaceTextureUpdated(st: SurfaceTexture) {}
                             }
-                            setOnCompletionListener {
-                                isPlaying = false
-                            }
-                            videoViewRef = this
                         }
                     },
                     modifier = Modifier.fillMaxSize()
                 )
 
                 // Poster overlay if not yet started
-                if (!hasStarted) {
+                if (!playerState.hasStarted) {
                     Image(
                         painter = painterResource(id = video.thumbnailRes),
                         contentDescription = video.title,
@@ -145,7 +313,7 @@ fun PmkVideoScreen(
                     )
                 }
 
-                // Gradient Overlay
+                // Gradient Overlay for controls visibility
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -158,6 +326,7 @@ fun PmkVideoScreen(
                                 )
                             )
                         )
+                        .clickable { playerState.togglePlayPause() }
                 )
 
                 // Top Controls
@@ -171,7 +340,10 @@ fun PmkVideoScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = onNavigateBack,
+                        onClick = {
+                            playerState.pause()
+                            onNavigateBack()
+                        },
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
@@ -219,48 +391,53 @@ fun PmkVideoScreen(
                 }
 
                 // Center Play/Pause Button
+                val isEnded = playerState.currentPositionMs >= playerState.totalDurationMs && playerState.totalDurationMs > 0
                 Box(
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(68.dp)
                         .clip(CircleShape)
-                        .background(White.copy(alpha = 0.75f))
-                        .clickable {
-                            videoViewRef?.let { vv ->
-                                if (isPlaying) {
-                                    vv.pause()
-                                    isPlaying = false
-                                } else {
-                                    vv.start()
-                                    isPlaying = true
-                                    hasStarted = true
-                                }
-                            }
-                        },
+                        .background(White.copy(alpha = 0.85f))
+                        .clickable { playerState.togglePlayPause() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = if (isPlaying) "Jeda" else "Putar Video",
+                        imageVector = when {
+                            isEnded -> Icons.Default.Replay
+                            playerState.isPlaying -> Icons.Default.Pause
+                            else -> Icons.Default.PlayArrow
+                        },
+                        contentDescription = when {
+                            isEnded -> "Putar Ulang"
+                            playerState.isPlaying -> "Jeda"
+                            else -> "Putar Video"
+                        },
                         tint = BrandPink,
                         modifier = Modifier.size(36.dp)
                     )
                 }
 
-                // Bottom Timeline Scrubber
-                val progressFraction = if (totalDurationMs > 0) {
-                    (currentPositionMs.toFloat() / totalDurationMs.toFloat()).coerceIn(0f, 1f)
-                } else 0f
+                // Bottom Timeline Scrubber (Interactive Seeker)
+                val currentMs = if (playerState.isDragging) {
+                    (playerState.dragFraction * playerState.totalDurationMs).toInt()
+                } else {
+                    playerState.currentPositionMs
+                }
+                val totalMs = if (playerState.totalDurationMs > 0) playerState.totalDurationMs else video.durationSeconds * 1000
 
-                val curSec = currentPositionMs / 1000
-                val totSec = if (totalDurationMs > 0) totalDurationMs / 1000 else video.durationSeconds
+                val curSec = currentMs / 1000
+                val totSec = totalMs / 1000
                 val curTimeStr = String.format("%02d:%02d", curSec / 60, curSec % 60)
                 val totTimeStr = String.format("%02d:%02d", totSec / 60, totSec % 60)
+
+                val progressFraction = if (totalMs > 0) {
+                    (playerState.currentPositionMs.toFloat() / totalMs.toFloat()).coerceIn(0f, 1f)
+                } else 0f
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -269,18 +446,29 @@ fun PmkVideoScreen(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    LinearProgressIndicator(
-                        progress = { progressFraction },
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Slider(
+                        value = if (playerState.isDragging) playerState.dragFraction else progressFraction,
+                        onValueChange = { newFrac ->
+                            playerState.isDragging = true
+                            playerState.dragFraction = newFrac
+                        },
+                        onValueChangeFinished = {
+                            playerState.seekTo(playerState.dragFraction)
+                            playerState.isDragging = false
+                        },
                         modifier = Modifier
                             .weight(1f)
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp)),
-                        color = BrandPink,
-                        trackColor = White.copy(alpha = 0.35f),
-                        strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                            .height(36.dp),
+                        colors = SliderDefaults.colors(
+                            thumbColor = BrandPink,
+                            activeTrackColor = BrandPink,
+                            inactiveTrackColor = White.copy(alpha = 0.35f)
+                        )
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = totTimeStr,
                         color = White,

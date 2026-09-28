@@ -66,7 +66,9 @@ fun PmkVideoListScreen(
     val cardBorder = Color(0xFFF1EFEA)
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(creamBg),
         containerColor = creamBg,
         topBar = {
             Surface(

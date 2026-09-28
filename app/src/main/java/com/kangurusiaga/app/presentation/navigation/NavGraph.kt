@@ -1,5 +1,9 @@
 package com.kangurusiaga.app.presentation.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -253,7 +257,21 @@ fun KanguruNavGraph(
         }
 
         // PMK Video Educational Module List (Stitch: Kanguru Siaga - Video Edukasi PMK)
-        composable(route = Screen.PmkVideoList.route) {
+        composable(
+            route = Screen.PmkVideoList.route,
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.End,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             PmkVideoListScreen(
                 onNavigateBack = {
                     navController.popBackStack()
@@ -284,7 +302,19 @@ fun KanguruNavGraph(
                     type = NavType.IntType
                     defaultValue = 4
                 }
-            )
+            ),
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.End,
+                    animationSpec = tween(300)
+                )
+            }
         ) { backStackEntry ->
             val videoId = backStackEntry.arguments?.getInt("videoId") ?: 4
             PmkVideoScreen(
@@ -296,7 +326,21 @@ fun KanguruNavGraph(
         }
 
         // PMK Video Legacy Alias -> navigates to Video List
-        composable(route = Screen.PmkVideo.route) {
+        composable(
+            route = Screen.PmkVideo.route,
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.End,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             PmkVideoListScreen(
                 onNavigateBack = {
                     navController.popBackStack()
