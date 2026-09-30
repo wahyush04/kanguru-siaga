@@ -25,11 +25,12 @@ sealed class Screen(override val route: String, override val destination: String
     data object PmkVideo : Screen(route = "pmk_video", destination = "pmk_video_destination") // legacy alias pointing to video list
 
     // Education Module Screens
+    data object EducationCenter : Screen(route = "education_center", destination = "education_center_destination")
     data object EducationList : Screen(route = "education_list", destination = "education_list_destination")
     data object EducationDetail : Screen(route = "education_detail/{moduleId}", destination = "education_detail_destination") {
         fun createRoute(moduleId: String): String = "education_detail/$moduleId"
     }
-    data object Education : Screen(route = "education", destination = "education_destination") // legacy alias
+    data object Education : Screen(route = "education", destination = "education_destination") // alias pointing to center
 
     // Emergency Warning Screens
     data object EmergencyWarningList : Screen(route = "emergency_warning_list", destination = "emergency_warning_list_destination")

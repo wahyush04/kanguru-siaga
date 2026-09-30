@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kangurusiaga.app.presentation.babyprofile.BabyProfileSetupRoute
+import com.kangurusiaga.app.presentation.education.EducationCenterScreen
 import com.kangurusiaga.app.presentation.education.EducationDetailRoute
 import com.kangurusiaga.app.presentation.education.EducationListRoute
 import com.kangurusiaga.app.presentation.emergency.EmergencyWarningDetailRoute
@@ -87,7 +88,7 @@ fun KanguruNavGraph(
                     navController.navigate(Screen.ProfileSetup.route)
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -129,7 +130,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -168,7 +169,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -219,7 +220,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -258,7 +259,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -305,7 +306,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -335,11 +336,19 @@ fun KanguruNavGraph(
                 )
             }
         ) { backStackEntry ->
-            val videoId = backStackEntry.arguments?.getInt("videoId") ?: 4
+            val videoId = backStackEntry.arguments?.getInt("videoId") ?: 1
             PmkVideoScreen(
                 videoId = videoId,
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToTimer = {
+                    navController.navigate(Screen.PmkTimer.route)
+                },
+                onNavigateToNextVideo = { nextVideoId ->
+                    navController.navigate(Screen.PmkVideoDetail.createRoute(nextVideoId)) {
+                        popUpTo(Screen.PmkVideoDetail.route) { inclusive = true }
+                    }
                 }
             )
         }
@@ -374,7 +383,34 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        // Screen: Kanguru Siaga - Edukasi (Pusat Edukasi & Panduan)
+        composable(route = Screen.EducationCenter.route) {
+            EducationCenterScreen(
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkVideoList.route)
+                },
+                onNavigateToBblrEducation = {
+                    navController.navigate(Screen.EducationList.route)
+                },
+                onNavigateToEmergencyWarning = {
+                    navController.navigate(Screen.EmergencyWarningList.route)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -408,6 +444,9 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToEducation = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -434,23 +473,20 @@ fun KanguruNavGraph(
             )
         }
 
-        // Education Legacy Alias -> navigates to EducationList
+        // Education Legacy Alias -> navigates to EducationCenter
         composable(route = Screen.Education.route) {
-            EducationListRoute(
-                onNavigateBack = {
-                    navController.popBackStack()
+            EducationCenterScreen(
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkVideoList.route)
                 },
-                onNavigateToDetail = { moduleId ->
-                    navController.navigate(Screen.EducationDetail.createRoute(moduleId))
+                onNavigateToBblrEducation = {
+                    navController.navigate(Screen.EducationList.route)
+                },
+                onNavigateToEmergencyWarning = {
+                    navController.navigate(Screen.EmergencyWarningList.route)
                 },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -512,7 +548,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -539,7 +575,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToEducation = {
-                    navController.navigate(Screen.EducationList.route) {
+                    navController.navigate(Screen.EducationCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }

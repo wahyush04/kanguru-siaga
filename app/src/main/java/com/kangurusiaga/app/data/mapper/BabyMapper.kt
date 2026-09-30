@@ -5,7 +5,7 @@ import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
 
 fun BabyEntity.toDomain(): Baby {
-    val domainGender = when (gender.uppercase()) {
+    val domainGender = when (gender?.uppercase()) {
         "MALE" -> Gender.MALE
         "FEMALE" -> Gender.FEMALE
         else -> Gender.UNSPECIFIED
@@ -29,7 +29,7 @@ fun Baby.toEntity(isActive: Boolean = true): BabyEntity {
     return BabyEntity(
         id = id,
         name = name,
-        gender = gender.name,
+        gender = gender?.name,
         birthDateEpochMillis = birthDateEpochMillis,
         birthWeightGram = birthWeightGram,
         birthLengthCm = birthLengthCm,

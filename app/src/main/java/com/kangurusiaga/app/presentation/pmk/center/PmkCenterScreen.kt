@@ -160,7 +160,7 @@ fun PmkCenterScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.il_pmk_hero),
+                    painter = painterResource(id = R.drawable.il_pmk_onboarding),
                     contentDescription = "Perawatan Metode Kanguru",
                     modifier = Modifier
                         .fillMaxWidth()

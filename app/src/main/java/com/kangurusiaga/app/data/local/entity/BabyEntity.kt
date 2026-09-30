@@ -8,7 +8,7 @@ data class BabyEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
-    val gender: String,
+    val gender: String? = null,
     val birthDateEpochMillis: Long,
     val birthWeightGram: Int,
     val birthLengthCm: Float = 0f,

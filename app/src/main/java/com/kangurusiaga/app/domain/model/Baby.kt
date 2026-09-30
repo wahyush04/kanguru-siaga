@@ -3,7 +3,7 @@ package com.kangurusiaga.app.domain.model
 data class Baby(
     val id: Long = 0,
     val name: String,
-    val gender: Gender,
+    val gender: Gender? = null,
     val birthDateEpochMillis: Long,
     val birthWeightGram: Int,
     val birthLengthCm: Float = 0f,

@@ -76,4 +76,26 @@ class PmkVideoTest {
         assertEquals("pmk_video_detail/{videoId}", Screen.PmkVideoDetail.route)
         assertEquals("pmk_video_detail/4", Screen.PmkVideoDetail.createRoute(4))
     }
+
+    @Test
+    fun `video detail fields support stitch layout with clinicalPoints and calloutTip`() {
+        PmkVideoDataSource.videos.forEach { video ->
+            assertTrue("Badge text should not be blank", video.badgeText.isNotBlank())
+            assertTrue("Clinical points should not be empty", video.clinicalPoints.isNotEmpty())
+            assertTrue("Callout tip should not be blank", video.calloutTip?.isNotBlank() == true)
+            video.clinicalPoints.forEach { point ->
+                assertTrue("Point number should be > 0", point.number > 0)
+                assertTrue("Point title should not be blank", point.title.isNotBlank())
+                assertTrue("Point description should not be blank", point.description.isNotBlank())
+            }
+        }
+
+        // Verify chaining / nextLessonId
+        val video1 = PmkVideoDataSource.getVideoById(1)
+        assertEquals(2, video1.nextLessonId)
+        val video5 = PmkVideoDataSource.getVideoById(5)
+        assertEquals(6, video5.nextLessonId)
+        val video6 = PmkVideoDataSource.getVideoById(6)
+        assertEquals(null, video6.nextLessonId)
+    }
 }

@@ -612,7 +612,7 @@ fun BabyProfileFormScreen(
                                     OutlinedTextField(
                                         value = uiState.birthWeightInput,
                                         onValueChange = onBirthWeightChange,
-                                        placeholder = { Text("1.850", fontSize = 13.sp) },
+                                        placeholder = { Text("Contoh: 1800", fontSize = 13.sp) },
                                         trailingIcon = {
                                             Text(
                                                 "gram",
@@ -648,7 +648,7 @@ fun BabyProfileFormScreen(
                                     OutlinedTextField(
                                         value = uiState.currentWeightInput,
                                         onValueChange = onCurrentWeightChange,
-                                        placeholder = { Text("3.200", fontSize = 13.sp) },
+                                        placeholder = { Text("Contoh: 3200", fontSize = 13.sp) },
                                         trailingIcon = {
                                             Text(
                                                 "gram",
