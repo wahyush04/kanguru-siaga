@@ -101,6 +101,7 @@ fun HomeRoute(
     onNavigateToEducation: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
+    onNavigateToGrowth: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -113,6 +114,7 @@ fun HomeRoute(
         onNavigateToEducation = onNavigateToEducation,
         onNavigateToEmergency = onNavigateToEmergency,
         onNavigateToAlarm = onNavigateToAlarm,
+        onNavigateToGrowth = onNavigateToGrowth,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
         onOpenNotification = viewModel::openNotificationSheet,
@@ -132,6 +134,7 @@ fun HomeScreen(
     onNavigateToEducation: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
+    onNavigateToGrowth: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     onCloseEmergency: () -> Unit = {},
     onOpenNotification: () -> Unit = {},
@@ -193,6 +196,7 @@ fun HomeScreen(
                         onNavigateToEducation = onNavigateToEducation,
                         onNavigateToEmergency = onNavigateToEmergency,
                         onNavigateToAlarm = onNavigateToAlarm,
+                        onNavigateToGrowth = onNavigateToGrowth,
                         onOpenEmergency = onOpenEmergency,
                         onOpenNotification = onOpenNotification,
                         onShowInfo = onShowInfo,
@@ -252,6 +256,7 @@ private fun HomeContent(
     onNavigateToEducation: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit,
+    onNavigateToGrowth: () -> Unit = {},
     onOpenEmergency: () -> Unit,
     onOpenNotification: () -> Unit,
     onShowInfo: (String) -> Unit,
@@ -377,7 +382,7 @@ private fun HomeContent(
 
             // Card 2: Bayi BBLR
             ActionGridCard(
-                title = "Perawatan\nBayi BBLR",
+                title = "Perawatan\nBayi Berat Lahir Rendah",
                 subtitle = "Panduan lengkap",
                 iconRes = R.drawable.ic_card_bblr,
                 containerColor = Color(0xFFEBF8F1),
@@ -423,7 +428,7 @@ private fun HomeContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, Color(0xFFFFDDE4), RoundedCornerShape(24.dp))
-                .clickable { onShowInfo("Grafik Pertumbuhan Fenton tersedia di fase berikutnya.") },
+                .clickable { onNavigateToGrowth() },
             colors = CardDefaults.cardColors(containerColor = BrandLightPink),
             shape = RoundedCornerShape(24.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)

@@ -58,4 +58,16 @@ abstract class RepositoryModule {
     abstract fun bindFeedingScheduleRepository(
         impl: FeedingScheduleRepositoryImpl
     ): com.kangurusiaga.app.domain.repository.FeedingScheduleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGrowthRepository(
+        impl: GrowthRepositoryImpl
+    ): com.kangurusiaga.app.domain.repository.GrowthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFentonGrowthRepository(
+        impl: FentonGrowthRepositoryImpl
+    ): FentonGrowthRepository
 }

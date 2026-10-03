@@ -46,7 +46,7 @@ object PmkVideoDataSource {
             durationSeconds = 135,
             thumbnailRes = R.drawable.thumb_pmk_video_2,
             videoRes = R.raw.video_module_pmk_1,
-            description = "Penjelasan dasar mengenai apa itu PMK (Kangaroo Mother Care), tujuan kontak kulit-ke-kulit (skin-to-skin contact), dan prinsip utamanya sebagai inkubator alami bagi bayi BBLR di rumah.",
+            description = "Penjelasan dasar mengenai apa itu PMK (Kangaroo Mother Care), tujuan kontak kulit-ke-kulit (skin-to-skin contact), dan prinsip utamanya sebagai inkubator alami bagi bayi berat lahir rendah di rumah.",
             clinicalPoints = listOf(
                 ClinicalPoint(
                     number = 1,
@@ -79,7 +79,7 @@ object PmkVideoDataSource {
         ),
         PmkVideoItem(
             id = 2,
-            title = "2. Manfaat PMK untuk bayi BBLR",
+            title = "2. Manfaat PMK untuk Bayi Berat Lahir Rendah",
             category = "Perawatan Metode Kanguru",
             duration = "03:20",
             durationSeconds = 200,
@@ -113,7 +113,7 @@ object PmkVideoDataSource {
                     description = "Stabilitas klinis yang lebih cepat dicapai memungkinkan bayi pulang lebih awal bersama keluarga."
                 )
             ),
-            calloutTip = "PMK terbukti menurunkan angka kematian neonatal pada bayi BBLR hingga lebih dari 30%.",
+            calloutTip = "PMK terbukti menurunkan angka kematian neonatal pada bayi berat lahir rendah (BBLR) hingga lebih dari 30%.",
             nextLessonId = 3
         ),
         PmkVideoItem(

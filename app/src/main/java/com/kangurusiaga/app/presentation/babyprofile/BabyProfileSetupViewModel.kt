@@ -144,6 +144,7 @@ class BabyProfileSetupViewModel @Inject constructor(
                 gender = state.gender,
                 birthDateEpochMillis = state.birthDateEpochMillis,
                 birthWeightGram = state.birthWeightGram,
+                gestationalAgeWeeks = state.gestationalAgeWeeks.toIntOrNull() ?: 32,
                 photoUri = state.photoUri
             )
 

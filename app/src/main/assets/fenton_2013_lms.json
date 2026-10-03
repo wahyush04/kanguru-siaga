@@ -1,0 +1,1394 @@
+[
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 22,
+    "l": 1.0,
+    "m": 19.0,
+    "s": 0.05749617
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 23,
+    "l": 1.0,
+    "m": 21.20865236,
+    "s": 0.0565786
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 24,
+    "l": 1.0,
+    "m": 21.34116222,
+    "s": 0.05655032
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 25,
+    "l": 1.0,
+    "m": 22.26957061,
+    "s": 0.05631412
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 26,
+    "l": 1.0,
+    "m": 23.1999059,
+    "s": 0.05599004
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 27,
+    "l": 1.0,
+    "m": 24.13246205,
+    "s": 0.05556468
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 28,
+    "l": 1.0,
+    "m": 25.06767785,
+    "s": 0.05501802
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 29,
+    "l": 1.0,
+    "m": 26.00595327,
+    "s": 0.05433182
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 30,
+    "l": 1.0,
+    "m": 26.94769871,
+    "s": 0.05348737
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 31,
+    "l": 1.0,
+    "m": 27.8929842,
+    "s": 0.05246716
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 32,
+    "l": 1.0,
+    "m": 28.83411671,
+    "s": 0.05127841
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 33,
+    "l": 1.0,
+    "m": 29.7556392,
+    "s": 0.04995312
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 34,
+    "l": 1.0,
+    "m": 30.64175716,
+    "s": 0.04852437
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 35,
+    "l": 1.0,
+    "m": 31.47667602,
+    "s": 0.04702524
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 36,
+    "l": 1.0,
+    "m": 32.24510352,
+    "s": 0.04548879
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 37,
+    "l": 1.0,
+    "m": 32.94329966,
+    "s": 0.04394812
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 38,
+    "l": 1.0,
+    "m": 33.5790767,
+    "s": 0.04243629
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 39,
+    "l": 1.0,
+    "m": 34.1607492,
+    "s": 0.04098639
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 40,
+    "l": 1.0,
+    "m": 34.6966317,
+    "s": 0.03963149
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 41,
+    "l": 1.0,
+    "m": 35.19493494,
+    "s": 0.03840367
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 42,
+    "l": 1.0,
+    "m": 35.6614821,
+    "s": 0.03731226
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 43,
+    "l": 1.0,
+    "m": 36.09970881,
+    "s": 0.03634376
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 44,
+    "l": 1.0,
+    "m": 36.51294686,
+    "s": 0.03548373
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 45,
+    "l": 1.0,
+    "m": 36.9045282,
+    "s": 0.03471769
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 46,
+    "l": 1.0,
+    "m": 37.27778411,
+    "s": 0.0340312
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 47,
+    "l": 1.0,
+    "m": 37.63604844,
+    "s": 0.03340978
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 48,
+    "l": 1.0,
+    "m": 37.98264541,
+    "s": 0.032839
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 49,
+    "l": 1.0,
+    "m": 38.32093526,
+    "s": 0.03230428
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "FEMALE",
+    "week": 50,
+    "l": 1.0,
+    "m": 38.65419574,
+    "s": 0.03179139
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 22,
+    "l": 1.0,
+    "m": 19.5,
+    "s": 0.06002347
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 23,
+    "l": 1.0,
+    "m": 21.60727803,
+    "s": 0.05767068
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 24,
+    "l": 1.0,
+    "m": 21.74744252,
+    "s": 0.05756756
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 25,
+    "l": 1.0,
+    "m": 22.72648153,
+    "s": 0.05683092
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 26,
+    "l": 1.0,
+    "m": 23.70067113,
+    "s": 0.05606028
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 27,
+    "l": 1.0,
+    "m": 24.66927146,
+    "s": 0.05525047
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 28,
+    "l": 1.0,
+    "m": 25.63117825,
+    "s": 0.05439375
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 29,
+    "l": 1.0,
+    "m": 26.58538485,
+    "s": 0.05348305
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 30,
+    "l": 1.0,
+    "m": 27.53085847,
+    "s": 0.05251115
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 31,
+    "l": 1.0,
+    "m": 28.46634433,
+    "s": 0.05147125
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 32,
+    "l": 1.0,
+    "m": 29.38531931,
+    "s": 0.05036575
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 33,
+    "l": 1.0,
+    "m": 30.27599432,
+    "s": 0.04920625
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 34,
+    "l": 1.0,
+    "m": 31.12635114,
+    "s": 0.04800475
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 35,
+    "l": 1.0,
+    "m": 31.92437159,
+    "s": 0.04677325
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 36,
+    "l": 1.0,
+    "m": 32.65849659,
+    "s": 0.04552375
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 37,
+    "l": 1.0,
+    "m": 33.32772614,
+    "s": 0.04426825
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 38,
+    "l": 1.0,
+    "m": 33.94161932,
+    "s": 0.04301875
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 39,
+    "l": 1.0,
+    "m": 34.51019432,
+    "s": 0.04178725
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 40,
+    "l": 1.0,
+    "m": 35.04346932,
+    "s": 0.04058575
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 41,
+    "l": 1.0,
+    "m": 35.55129602,
+    "s": 0.0394259
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 42,
+    "l": 1.0,
+    "m": 36.03969716,
+    "s": 0.0383113
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 43,
+    "l": 1.0,
+    "m": 36.51086648,
+    "s": 0.0372375
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 44,
+    "l": 1.0,
+    "m": 36.96683124,
+    "s": 0.0361997
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 45,
+    "l": 1.0,
+    "m": 37.40961879,
+    "s": 0.0351931
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 46,
+    "l": 1.0,
+    "m": 37.84125609,
+    "s": 0.0342129
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 47,
+    "l": 1.0,
+    "m": 38.26377163,
+    "s": 0.0332543
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 48,
+    "l": 1.0,
+    "m": 38.67918807,
+    "s": 0.0323125
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 49,
+    "l": 1.0,
+    "m": 39.08954996,
+    "s": 0.03138268
+  },
+  {
+    "metric": "HEAD_CIRCUMFERENCE",
+    "gender": "MALE",
+    "week": 50,
+    "l": 1.0,
+    "m": 39.4968517,
+    "s": 0.0304601
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 22,
+    "l": 1.0,
+    "m": 27.0,
+    "s": 0.06358042
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 23,
+    "l": 1.0,
+    "m": 30.07033148,
+    "s": 0.06156383
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 24,
+    "l": 1.0,
+    "m": 30.26179151,
+    "s": 0.06181091
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 25,
+    "l": 1.0,
+    "m": 31.60500091,
+    "s": 0.06342126
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 26,
+    "l": 1.0,
+    "m": 32.95507245,
+    "s": 0.0647578
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 27,
+    "l": 1.0,
+    "m": 34.31305304,
+    "s": 0.06577878
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 28,
+    "l": 1.0,
+    "m": 35.68050529,
+    "s": 0.06642183
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 29,
+    "l": 1.0,
+    "m": 37.05885364,
+    "s": 0.06663014
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 30,
+    "l": 1.0,
+    "m": 38.44955956,
+    "s": 0.06634537
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 31,
+    "l": 1.0,
+    "m": 39.85357032,
+    "s": 0.06551275
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 32,
+    "l": 1.0,
+    "m": 41.26023785,
+    "s": 0.06414925
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 33,
+    "l": 1.0,
+    "m": 42.64731534,
+    "s": 0.06234375
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 34,
+    "l": 1.0,
+    "m": 43.99205193,
+    "s": 0.06018825
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 35,
+    "l": 1.0,
+    "m": 45.2716967,
+    "s": 0.05777475
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 36,
+    "l": 1.0,
+    "m": 46.4642392,
+    "s": 0.05519525
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 37,
+    "l": 1.0,
+    "m": 47.56469943,
+    "s": 0.05254175
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 38,
+    "l": 1.0,
+    "m": 48.58512784,
+    "s": 0.04990625
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 39,
+    "l": 1.0,
+    "m": 49.53831534,
+    "s": 0.04738075
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 40,
+    "l": 1.0,
+    "m": 50.43705284,
+    "s": 0.04505725
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 41,
+    "l": 1.0,
+    "m": 51.29393824,
+    "s": 0.04302512
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 42,
+    "l": 1.0,
+    "m": 52.11713017,
+    "s": 0.04131337
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 43,
+    "l": 1.0,
+    "m": 52.91034802,
+    "s": 0.03989062
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 44,
+    "l": 1.0,
+    "m": 53.6771181,
+    "s": 0.03872287
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 45,
+    "l": 1.0,
+    "m": 54.42096695,
+    "s": 0.03777612
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 46,
+    "l": 1.0,
+    "m": 55.14542034,
+    "s": 0.03701638
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 47,
+    "l": 1.0,
+    "m": 55.8540068,
+    "s": 0.03640961
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 48,
+    "l": 1.0,
+    "m": 56.55024462,
+    "s": 0.03592191
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 49,
+    "l": 1.0,
+    "m": 57.23769028,
+    "s": 0.03551898
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "FEMALE",
+    "week": 50,
+    "l": 1.0,
+    "m": 57.9198129,
+    "s": 0.03516738
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 22,
+    "l": 1.0,
+    "m": 27.5,
+    "s": 0.06526188
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 23,
+    "l": 1.0,
+    "m": 30.7240939,
+    "s": 0.06356677
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 24,
+    "l": 1.0,
+    "m": 30.92383772,
+    "s": 0.06384423
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 25,
+    "l": 1.0,
+    "m": 32.3173016,
+    "s": 0.06546415
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 26,
+    "l": 1.0,
+    "m": 33.70004573,
+    "s": 0.06634974
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 27,
+    "l": 1.0,
+    "m": 35.0744484,
+    "s": 0.06652236
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 28,
+    "l": 1.0,
+    "m": 36.44594068,
+    "s": 0.06607633
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 29,
+    "l": 1.0,
+    "m": 37.82034121,
+    "s": 0.06512651
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 30,
+    "l": 1.0,
+    "m": 39.20340988,
+    "s": 0.06378374
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 31,
+    "l": 1.0,
+    "m": 40.60029911,
+    "s": 0.06215858
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 32,
+    "l": 1.0,
+    "m": 42.00182276,
+    "s": 0.06032978
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 33,
+    "l": 1.0,
+    "m": 43.38446154,
+    "s": 0.05834471
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 34,
+    "l": 1.0,
+    "m": 44.72407261,
+    "s": 0.05624933
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 35,
+    "l": 1.0,
+    "m": 45.99651323,
+    "s": 0.05408962
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 36,
+    "l": 1.0,
+    "m": 47.17853523,
+    "s": 0.05191142
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 37,
+    "l": 1.0,
+    "m": 48.26746662,
+    "s": 0.04975794
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 38,
+    "l": 1.0,
+    "m": 49.28121154,
+    "s": 0.04766971
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 39,
+    "l": 1.0,
+    "m": 50.23856877,
+    "s": 0.04568718
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 40,
+    "l": 1.0,
+    "m": 51.15833708,
+    "s": 0.04385077
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 41,
+    "l": 1.0,
+    "m": 52.05885,
+    "s": 0.04219975
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 42,
+    "l": 1.0,
+    "m": 52.94774077,
+    "s": 0.04074648
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 43,
+    "l": 1.0,
+    "m": 53.82194232,
+    "s": 0.03947644
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 44,
+    "l": 1.0,
+    "m": 54.67792228,
+    "s": 0.03837394
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 45,
+    "l": 1.0,
+    "m": 55.51214858,
+    "s": 0.03742329
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 46,
+    "l": 1.0,
+    "m": 56.32127433,
+    "s": 0.03660858
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 47,
+    "l": 1.0,
+    "m": 57.10624193,
+    "s": 0.03590914
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 48,
+    "l": 1.0,
+    "m": 57.87226316,
+    "s": 0.03529955
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 49,
+    "l": 1.0,
+    "m": 58.62479465,
+    "s": 0.03475394
+  },
+  {
+    "metric": "LENGTH",
+    "gender": "MALE",
+    "week": 50,
+    "l": 1.0,
+    "m": 59.36915908,
+    "s": 0.03424707
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 22,
+    "l": 0.09095614,
+    "m": 512.9417451,
+    "s": 0.14175331
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 23,
+    "l": 0.30371555,
+    "m": 554.5536099,
+    "s": 0.14998405
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 24,
+    "l": 0.52944866,
+    "m": 606.23788,
+    "s": 0.16135078
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 25,
+    "l": 0.82750244,
+    "m": 694.1299374,
+    "s": 0.18059744
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 26,
+    "l": 1.05097644,
+    "m": 791.8479483,
+    "s": 0.19867479
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 27,
+    "l": 1.19154509,
+    "m": 898.5086868,
+    "s": 0.21331501
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 28,
+    "l": 1.2591772,
+    "m": 1017.2971,
+    "s": 0.2239227
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 29,
+    "l": 1.26456372,
+    "m": 1151.840087,
+    "s": 0.2300789
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 30,
+    "l": 1.21839557,
+    "m": 1305.703411,
+    "s": 0.23134073
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 31,
+    "l": 1.13136368,
+    "m": 1482.294034,
+    "s": 0.22731548
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 32,
+    "l": 1.01415898,
+    "m": 1680.982739,
+    "s": 0.21861497
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 33,
+    "l": 0.87747241,
+    "m": 1897.111553,
+    "s": 0.20685778
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 34,
+    "l": 0.7319949,
+    "m": 2125.841433,
+    "s": 0.19370609
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 35,
+    "l": 0.58841738,
+    "m": 2362.35385,
+    "s": 0.18082214
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 36,
+    "l": 0.45743079,
+    "m": 2601.593015,
+    "s": 0.1698241
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 37,
+    "l": 0.34942639,
+    "m": 2835.084551,
+    "s": 0.16131757
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 38,
+    "l": 0.26790355,
+    "m": 3049.66826,
+    "s": 0.15489552
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 39,
+    "l": 0.20946967,
+    "m": 3239.306012,
+    "s": 0.1501069
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 40,
+    "l": 0.17043252,
+    "m": 3415.268552,
+    "s": 0.14650067
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 41,
+    "l": 0.14709983,
+    "m": 3595.664661,
+    "s": 0.14363313
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 42,
+    "l": 0.1357795,
+    "m": 3787.384395,
+    "s": 0.14122975
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 43,
+    "l": 0.13277872,
+    "m": 3987.366391,
+    "s": 0.13918514
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 44,
+    "l": 0.13440746,
+    "m": 4192.027788,
+    "s": 0.13740129
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 45,
+    "l": 0.13696519,
+    "m": 4397.806981,
+    "s": 0.13578017
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 46,
+    "l": 0.13679063,
+    "m": 4601.193312,
+    "s": 0.13422577
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 47,
+    "l": 0.130076,
+    "m": 4800.057931,
+    "s": 0.13268828
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 48,
+    "l": 0.11356027,
+    "m": 4993.597322,
+    "s": 0.13116417
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 49,
+    "l": 0.08354607,
+    "m": 5181.228351,
+    "s": 0.12965172
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "FEMALE",
+    "week": 50,
+    "l": 0.0779,
+    "m": 5362.0,
+    "s": 0.12814963
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 22,
+    "l": 0.67493508,
+    "m": 538.3337779,
+    "s": 0.13814013
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 23,
+    "l": 0.79707872,
+    "m": 592.5751,
+    "s": 0.15053941
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 24,
+    "l": 0.91320459,
+    "m": 651.0479355,
+    "s": 0.16230485
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 25,
+    "l": 1.0614997,
+    "m": 741.355579,
+    "s": 0.17727229
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 26,
+    "l": 1.18991812,
+    "m": 841.1864045,
+    "s": 0.19014618
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 27,
+    "l": 1.29378108,
+    "m": 952.6016988,
+    "s": 0.20043372
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 28,
+    "l": 1.36869215,
+    "m": 1078.745738,
+    "s": 0.20767184
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 29,
+    "l": 1.41017929,
+    "m": 1222.894209,
+    "s": 0.21139984
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 30,
+    "l": 1.4137907,
+    "m": 1388.303356,
+    "s": 0.21139659
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 31,
+    "l": 1.37541167,
+    "m": 1578.021161,
+    "s": 0.20769714
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 32,
+    "l": 1.29880701,
+    "m": 1790.184316,
+    "s": 0.20079173
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 33,
+    "l": 1.19561916,
+    "m": 2018.019995,
+    "s": 0.19161523
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 34,
+    "l": 1.07783318,
+    "m": 2254.541798,
+    "s": 0.18112185
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 35,
+    "l": 0.95743411,
+    "m": 2492.763349,
+    "s": 0.17026582
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 36,
+    "l": 0.8461229,
+    "m": 2725.69827,
+    "s": 0.15998463
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 37,
+    "l": 0.74906589,
+    "m": 2946.660647,
+    "s": 0.1508313
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 38,
+    "l": 0.66489486,
+    "m": 3155.875301,
+    "s": 0.14297436
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 39,
+    "l": 0.59195748,
+    "m": 3360.477788,
+    "s": 0.13656562
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 40,
+    "l": 0.5286014,
+    "m": 3567.904128,
+    "s": 0.13175691
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 41,
+    "l": 0.47319673,
+    "m": 3785.348823,
+    "s": 0.12868534
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 42,
+    "l": 0.42462944,
+    "m": 4014.451338,
+    "s": 0.12715008
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 43,
+    "l": 0.3823014,
+    "m": 4251.296186,
+    "s": 0.12661234
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 44,
+    "l": 0.34563692,
+    "m": 4491.726109,
+    "s": 0.12651868
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 45,
+    "l": 0.31406026,
+    "m": 4731.584772,
+    "s": 0.1263155
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 46,
+    "l": 0.28699026,
+    "m": 4966.79223,
+    "s": 0.12547129
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 47,
+    "l": 0.2637161,
+    "m": 5195.117581,
+    "s": 0.12394836
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 48,
+    "l": 0.24340048,
+    "m": 5416.118152,
+    "s": 0.12221192
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 49,
+    "l": 0.22519132,
+    "m": 5629.61009,
+    "s": 0.12072216
+  },
+  {
+    "metric": "WEIGHT",
+    "gender": "MALE",
+    "week": 50,
+    "l": 0.20825748,
+    "m": 5835.0,
+    "s": 0.12
+  }
+]

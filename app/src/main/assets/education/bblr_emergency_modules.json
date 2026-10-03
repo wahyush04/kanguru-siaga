@@ -199,7 +199,7 @@
         {
           "type": "action_alert",
           "title": "Apa yang harus dilakukan?",
-          "message": "Segera bawa bayi ke Rumah Sakit / Unit Gawat Darurat (IGD) terdekat jika mendapati salah satu dari tanda-tanda di atas. Kondisi infeksi atau gangguan pencernaan pada bayi BBLR dapat memburuk dengan sangat cepat dan memerlukan antibiotik atau evaluasi medis segera.",
+          "message": "Segera bawa bayi ke Rumah Sakit / Unit Gawat Darurat (IGD) terdekat jika mendapati salah satu dari tanda-tanda di atas. Kondisi infeksi atau gangguan pencernaan pada bayi berat lahir rendah dapat memburuk dengan sangat cepat dan memerlukan antibiotik atau evaluasi medis segera.",
           "themeColor": "amber"
         }
       ]

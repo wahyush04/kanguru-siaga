@@ -30,6 +30,12 @@ import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsRoute
 import com.kangurusiaga.app.presentation.pmk.timer.PmkTimerRoute
 import com.kangurusiaga.app.presentation.pmk.video.PmkVideoListScreen
 import com.kangurusiaga.app.presentation.pmk.video.PmkVideoScreen
+import com.kangurusiaga.app.domain.model.GrowthParameter
+import com.kangurusiaga.app.presentation.growth.about.AboutFentonScreen
+import com.kangurusiaga.app.presentation.growth.add.AddGrowthMeasurementScreen
+import com.kangurusiaga.app.presentation.growth.chart.GrowthChartScreen
+import com.kangurusiaga.app.presentation.growth.hub.GrowthHubScreen
+import com.kangurusiaga.app.presentation.growth.summary.GrowthSummaryScreen
 
 @Composable
 fun KanguruNavGraph(
@@ -101,6 +107,9 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToGrowth = {
+                    navController.navigate(Screen.GrowthHub.route)
                 }
             )
         }
@@ -188,6 +197,12 @@ fun KanguruNavGraph(
             PmkTimerRoute(
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToHistory = {
+                    navController.navigate(Screen.PmkHistory.route)
+                },
+                onNavigateToGuide = {
+                    navController.navigate(Screen.PmkVideoList.route)
                 }
             )
         }
@@ -579,6 +594,102 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        // Growth Module Screens
+        composable(route = Screen.GrowthHub.route) {
+            GrowthHubScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToChart = { param ->
+                    navController.navigate(Screen.GrowthChart.createRoute(param, tab = 0))
+                },
+                onNavigateToAdd = { param ->
+                    navController.navigate(Screen.GrowthAdd.createRoute(param))
+                },
+                onNavigateToSummary = {
+                    navController.navigate(Screen.GrowthSummary.route)
+                },
+                onNavigateToAboutFenton = {
+                    navController.navigate(Screen.AboutFenton.route)
+                }
+            )
+        }
+
+        composable(route = Screen.Growth.route) {
+            GrowthHubScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToChart = { param ->
+                    navController.navigate(Screen.GrowthChart.createRoute(param, tab = 0))
+                },
+                onNavigateToAdd = { param ->
+                    navController.navigate(Screen.GrowthAdd.createRoute(param))
+                },
+                onNavigateToSummary = {
+                    navController.navigate(Screen.GrowthSummary.route)
+                },
+                onNavigateToAboutFenton = {
+                    navController.navigate(Screen.AboutFenton.route)
+                }
+            )
+        }
+
+        composable(
+            route = Screen.GrowthChart.route,
+            arguments = listOf(
+                navArgument("parameter") { type = NavType.StringType },
+                navArgument("tab") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
+        ) {
+            GrowthChartScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToAdd = { param ->
+                    navController.navigate(Screen.GrowthAdd.createRoute(param))
+                },
+                onNavigateToAboutFenton = {
+                    navController.navigate(Screen.AboutFenton.route)
+                }
+            )
+        }
+
+        composable(
+            route = Screen.GrowthAdd.route,
+            arguments = listOf(
+                navArgument("parameter") { type = NavType.StringType }
+            )
+        ) {
+            AddGrowthMeasurementScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onSavedSuccessfully = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.GrowthSummary.route) {
+            GrowthSummaryScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.AboutFenton.route) {
+            AboutFentonScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

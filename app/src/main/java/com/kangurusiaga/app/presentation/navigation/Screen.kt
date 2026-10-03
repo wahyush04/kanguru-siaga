@@ -40,5 +40,14 @@ sealed class Screen(override val route: String, override val destination: String
     data object Emergency : Screen(route = "emergency_warning_list", destination = "emergency_destination") // legacy alias
 
     data object Feeding : Screen(route = "feeding", destination = "feeding_destination")
-    data object Growth : Screen(route = "growth", destination = "growth_destination")
+    data object Growth : Screen(route = "growth", destination = "growth_destination") // alias to GrowthHub
+    data object GrowthHub : Screen(route = "growth_hub", destination = "growth_hub_destination")
+    data object GrowthChart : Screen(route = "growth_chart/{parameter}?tab={tab}", destination = "growth_chart_destination") {
+        fun createRoute(parameter: com.kangurusiaga.app.domain.model.GrowthParameter, tab: Int = 0): String = "growth_chart/${parameter.name}?tab=$tab"
+    }
+    data object GrowthAdd : Screen(route = "growth_add/{parameter}", destination = "growth_add_destination") {
+        fun createRoute(parameter: com.kangurusiaga.app.domain.model.GrowthParameter): String = "growth_add/${parameter.name}"
+    }
+    data object GrowthSummary : Screen(route = "growth_summary", destination = "growth_summary_destination")
+    data object AboutFenton : Screen(route = "about_fenton", destination = "about_fenton_destination")
 }

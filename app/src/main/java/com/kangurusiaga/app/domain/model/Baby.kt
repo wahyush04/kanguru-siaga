@@ -8,6 +8,7 @@ data class Baby(
     val birthWeightGram: Int,
     val birthLengthCm: Float = 0f,
     val birthHeadCircumferenceCm: Float = 0f,
+    val gestationalAgeWeeks: Int = 32,
     val photoUri: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()

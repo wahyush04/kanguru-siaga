@@ -115,7 +115,7 @@ fun PmkCenterScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Metode sederhana dengan sentuhan penuh manfaat untuk bayi BBLR",
+                        text = "Metode sederhana dengan sentuhan penuh manfaat untuk bayi berat lahir rendah",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF64748B),
                         textAlign = TextAlign.Center,

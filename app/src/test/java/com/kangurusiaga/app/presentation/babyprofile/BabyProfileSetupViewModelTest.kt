@@ -44,9 +44,9 @@ class BabyProfileSetupViewModelTest {
         val state = viewModel.uiState.value
         assertThat(state.currentStep).isEqualTo(ProfileSetupStep.FORM)
         assertThat(state.name).isEmpty()
-        assertThat(state.gender).isEqualTo(Gender.FEMALE)
-        assertThat(state.birthWeightGram).isEqualTo(1850)
-        assertThat(state.gestationalAgeWeeks).isEqualTo("32")
+        assertThat(state.gender).isNull()
+        assertThat(state.birthWeightGram).isEqualTo(0)
+        assertThat(state.gestationalAgeWeeks).isEmpty()
         assertThat(state.photoUri).isNull()
         assertThat(state.isComplete).isFalse()
         assertThat(state.errorMessage).isNull()

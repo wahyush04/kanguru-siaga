@@ -58,4 +58,36 @@ object DatabaseModule {
     fun provideFeedingScheduleDao(database: KanguruDatabase): com.kangurusiaga.app.data.local.dao.FeedingScheduleDao {
         return database.feedingScheduleDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideGrowthMeasurementDao(database: KanguruDatabase): com.kangurusiaga.app.data.local.dao.GrowthMeasurementDao {
+        return database.growthMeasurementDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(
+        @ApplicationContext context: Context
+    ): com.kangurusiaga.app.data.local.AppDatabase {
+        return com.kangurusiaga.app.data.local.AppDatabase.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFentonLmsDao(database: com.kangurusiaga.app.data.local.AppDatabase): com.kangurusiaga.app.data.local.dao.FentonLmsDao {
+        return database.fentonLmsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGrowthRecordDao(database: com.kangurusiaga.app.data.local.AppDatabase): com.kangurusiaga.app.data.local.dao.GrowthRecordDao {
+        return database.growthRecordDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBabyProfileDao(database: com.kangurusiaga.app.data.local.AppDatabase): com.kangurusiaga.app.data.local.dao.BabyProfileDao {
+        return database.babyProfileDao()
+    }
 }

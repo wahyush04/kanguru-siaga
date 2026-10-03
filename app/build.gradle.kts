@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -21,6 +22,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        manifestPlaceholders["appName"] = "Kanguru Siaga"
     }
 
     buildTypes {
@@ -30,6 +32,26 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["appName"] = "Kanguru Siaga"
+            buildConfigField("String", "ENVIRONMENT", "\"PRODUCTION\"")
+            buildConfigField("Boolean", "IS_PREPRODUCTION", "false")
+        }
+
+        debug {
+            manifestPlaceholders["appName"] = "Kanguru Siaga"
+            buildConfigField("String", "ENVIRONMENT", "\"DEBUG\"")
+            buildConfigField("Boolean", "IS_PREPRODUCTION", "false")
+        }
+
+        create("preproduction") {
+            initWith(getByName("release"))
+            matchingFallbacks += listOf("release", "debug")
+            applicationIdSuffix = ".preprod"
+            versionNameSuffix = "-preprod"
+            manifestPlaceholders["appName"] = "Kanguru Siaga (Pre-Prod)"
+            signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("String", "ENVIRONMENT", "\"PREPRODUCTION\"")
+            buildConfigField("Boolean", "IS_PREPRODUCTION", "true")
         }
     }
 
@@ -44,6 +66,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -90,6 +113,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+
     // Unit Testing
     testImplementation(libs.junit)
     testImplementation(libs.truth)
@@ -106,4 +133,10 @@ dependencies {
     // Debugging Tools
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+tasks.register("assemblePreprod") {
+    dependsOn("assemblePreproduction")
+    description = "Assembles the pre-production APK (alias for assemblePreproduction)"
+    group = "build"
 }

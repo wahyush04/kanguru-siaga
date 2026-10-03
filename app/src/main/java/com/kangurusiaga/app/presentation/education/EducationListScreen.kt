@@ -128,7 +128,7 @@ fun EducationListScreen(
                         }
 
                         Text(
-                            text = "Perawatan Bayi BBLR",
+                            text = "Perawatan Bayi Berat Lahir Rendah",
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
