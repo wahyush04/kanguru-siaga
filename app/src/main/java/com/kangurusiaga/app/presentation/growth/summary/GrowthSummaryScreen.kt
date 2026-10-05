@@ -63,7 +63,7 @@ fun GrowthSummaryScreen(
     val baby = uiState.baby
 
     Scaffold(
-        containerColor = White
+        containerColor = BrandBackground
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -112,8 +112,8 @@ fun GrowthSummaryScreen(
                     modifier = Modifier
                         .size(56.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFFF0F3))
-                        .border(1.5.dp, Color(0xFFF1F5F9), CircleShape),
+                        .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer)
+                        .border(1.5.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -224,15 +224,15 @@ fun GrowthSummaryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFFFFFDF3))
-                    .border(1.dp, Color(0xFFFDE68A), RoundedCornerShape(14.dp))
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer)
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningBorder, RoundedCornerShape(14.dp))
                     .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = null,
-                    tint = Color(0xFFF59E0B),
+                    tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
@@ -240,7 +240,7 @@ fun GrowthSummaryScreen(
                     text = stringResource(R.string.growth_summary_status_fenton, babyName),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF78350F),
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
                     lineHeight = 17.sp
                 )
             }
@@ -366,7 +366,7 @@ private fun MetricSummaryCard(
             modifier = Modifier
                 .size(36.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(White),
+                .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -402,13 +402,13 @@ private fun MetricSummaryCard(
             text = percentile,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF16A34A)
+            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
         )
         Text(
             text = status,
             fontSize = 10.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF16A34A)
+            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
         )
     }
 }
@@ -426,8 +426,8 @@ private fun ProgressFromBirthRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .background(White)
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(14.dp))
+            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
+            .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(14.dp))
             .padding(horizontal = 14.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -460,15 +460,15 @@ private fun ProgressFromBirthRow(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFFEAF7EE))
-                    .border(1.dp, Color(0xFFD1F2DC), RoundedCornerShape(8.dp))
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer)
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successBorder, RoundedCornerShape(8.dp))
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
                     text = gainText,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF16A34A)
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))

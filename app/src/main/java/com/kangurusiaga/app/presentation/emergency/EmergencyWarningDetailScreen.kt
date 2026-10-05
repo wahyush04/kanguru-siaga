@@ -3,6 +3,7 @@ package com.kangurusiaga.app.presentation.emergency
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,7 +49,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.emergency.EmergencyWarningModule
@@ -81,10 +85,10 @@ fun EmergencyWarningDetailScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = White,
+        containerColor = BrandBackground,
         topBar = {
             Surface(
-                color = White,
+                color = KanguruTheme.colors.surface,
                 shadowElevation = 0.5.dp
             ) {
                 Column(
@@ -103,7 +107,8 @@ fun EmergencyWarningDetailScreen(
                             modifier = Modifier
                                 .size(38.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFF8FAFC))
+                                .background(KanguruTheme.colors.surfaceVariant)
+                                .border(1.dp, CardBorder, CircleShape)
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -129,7 +134,7 @@ fun EmergencyWarningDetailScreen(
         },
         bottomBar = {
             Surface(
-                color = White,
+                color = KanguruTheme.colors.surface,
                 shadowElevation = 6.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {

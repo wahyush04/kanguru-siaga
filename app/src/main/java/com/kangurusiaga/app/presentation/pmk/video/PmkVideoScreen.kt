@@ -112,7 +112,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.compose.ui.res.stringResource
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
+import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -509,12 +515,12 @@ fun PmkVideoScreen(
         playerState.toggleFullscreen(activity)
     }
 
-    val brandCream = Color(0xFFFFF9F6)
-    val brandBorder = Color(0xFFF1E5DE)
-    val brandDark = Color(0xFF2A1F1D)
-    val brandWarmGray = Color(0xFF786C67)
-    val brandRose = Color(0xFFFF5C77)
-    val brandRoseLight = Color(0xFFFFF0F2)
+    val brandCream = BrandBackground
+    val brandBorder = CardBorder
+    val brandDark = TextPrimary
+    val brandWarmGray = TextSecondary
+    val brandRose = BrandPink
+    val brandRoseLight = BrandLightPink
 
     if (playerState.isFullscreen) {
         // FULLSCREEN LANDSCAPE VIEW
@@ -575,7 +581,7 @@ fun PmkVideoScreen(
                             modifier = Modifier
                                 .size(38.dp)
                                 .clip(CircleShape)
-                                .background(White)
+                                .background(KanguruTheme.colors.surface)
                                 .border(1.dp, brandBorder, CircleShape)
                         ) {
                             Icon(
@@ -612,7 +618,7 @@ fun PmkVideoScreen(
                             modifier = Modifier
                                 .size(38.dp)
                                 .clip(CircleShape)
-                                .background(White)
+                                .background(KanguruTheme.colors.surface)
                                 .border(1.dp, brandBorder, CircleShape)
                         ) {
                             Icon(
@@ -628,7 +634,7 @@ fun PmkVideoScreen(
             bottomBar = {
                 // Sticky Bottom Action Area matching Stitch
                 Surface(
-                    color = White,
+                    color = KanguruTheme.colors.surface,
                     shadowElevation = 8.dp,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -682,7 +688,7 @@ fun PmkVideoScreen(
                                     .border(1.dp, brandBorder, RoundedCornerShape(12.dp)),
                                 shape = RoundedCornerShape(12.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = White,
+                                    containerColor = KanguruTheme.colors.surface,
                                     contentColor = brandDark
                                 )
                             ) {
@@ -774,7 +780,7 @@ fun PmkVideoScreen(
                         Row(
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .background(White)
+                                .background(KanguruTheme.colors.surface)
                                 .border(1.dp, brandBorder, CircleShape)
                                 .padding(horizontal = 10.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
@@ -1327,7 +1333,7 @@ private fun ClinicalKeyPointsCard(
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, brandBorder, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {

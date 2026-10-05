@@ -118,14 +118,14 @@ fun FentonChart(
                     text = stringResource(R.string.growth_chart_fenton_curve_title),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF374151)
+                    color = com.kangurusiaga.app.core.designsystem.theme.TextPrimary
                 )
             }
 
             // Gender Pill Badge
-            val genderBg = if (isBoy) Color(0xFFEFF6FF) else Color(0xFFFFF0F3)
-            val genderBorder = if (isBoy) Color(0xFFDBEAFE) else Color(0xFFFFE2E6)
-            val genderColor = if (isBoy) Color(0xFF2563EB) else BrandPink
+            val genderBg = if (isBoy) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoContainer else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer
+            val genderBorder = if (isBoy) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoBorder else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder
+            val genderColor = if (isBoy) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoText else BrandPink
             val genderSymbol = if (isBoy) "♂" else "♀"
             val genderLabel = if (isBoy) stringResource(R.string.baby_profile_gender_male) else stringResource(R.string.baby_profile_gender_female)
 
@@ -153,7 +153,7 @@ fun FentonChart(
             }
         }
 
-        HorizontalDivider(color = Color(0xFFF1F5F9), thickness = 1.dp)
+        HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider, thickness = 1.dp)
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -166,9 +166,14 @@ fun FentonChart(
             },
             fontSize = 10.5.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF9CA3AF),
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = 2.dp, bottom = 4.dp)
         )
+
+        val gridColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider
+        val baseLineColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
+        val axisTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+        val pointCenterColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
 
         // 3. Chart Canvas Container
         Box(
@@ -200,9 +205,6 @@ fun FentonChart(
                     return plotBottom - ((clamped - minY) / (maxY - minY)) * plotHeight
                 }
 
-                val gridColor = Color(0xFFF1F5F9)
-                val baseLineColor = Color(0xFFE2E8F0)
-                val axisTextColor = Color(0xFF9CA3AF)
                 val labelStyle = TextStyle(
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Medium,
@@ -326,22 +328,22 @@ fun FentonChart(
                         val isLatest = (index == validMeasurements.lastIndex)
 
                         if (isLatest) {
-                            // Latest point: larger filled circle with white border
+                            // Latest point: larger filled circle with surface border
                             drawCircle(
                                 color = BrandPink,
                                 radius = 4.5.dp.toPx(),
                                 center = Offset(x, y)
                             )
                             drawCircle(
-                                color = White,
+                                color = pointCenterColor,
                                 radius = 4.5.dp.toPx(),
                                 center = Offset(x, y),
                                 style = Stroke(width = 2.dp.toPx())
                             )
                         } else {
-                            // Historical point: white with BrandPink border
+                            // Historical point: surface with BrandPink border
                             drawCircle(
-                                color = White,
+                                color = pointCenterColor,
                                 radius = 3.2.dp.toPx(),
                                 center = Offset(x, y)
                             )
@@ -364,13 +366,13 @@ fun FentonChart(
             text = stringResource(R.string.growth_chart_x_axis_label),
             fontSize = 9.5.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF9CA3AF),
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(12.dp))
-        HorizontalDivider(color = Color(0xFFF1F5F9), thickness = 1.dp)
+        HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider, thickness = 1.dp)
         Spacer(modifier = Modifier.height(10.dp))
 
         // 5. Detailed Legend Section
@@ -383,13 +385,13 @@ fun FentonChart(
                 text = stringResource(R.string.growth_chart_legend_title),
                 fontSize = 10.5.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF374151)
+                color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.textPrimary
             )
             Text(
                 text = "Fenton Preterm Growth",
                 fontSize = 9.5.sp,
                 fontWeight = FontWeight.Normal,
-                color = Color(0xFF9CA3AF)
+                color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.textTertiary
             )
         }
 
@@ -400,8 +402,8 @@ fun FentonChart(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFFFFF1F3))
-                .border(1.dp, Color(0xFFFFE4E6), RoundedCornerShape(8.dp))
+                .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer)
+                .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder, RoundedCornerShape(8.dp))
                 .padding(horizontal = 10.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -422,7 +424,7 @@ fun FentonChart(
                         .size(7.dp)
                         .clip(CircleShape)
                         .background(BrandPink)
-                        .border(1.dp, White, CircleShape)
+                        .border(1.dp, pointCenterColor, CircleShape)
                 )
                 Box(
                     modifier = Modifier
@@ -441,6 +443,8 @@ fun FentonChart(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+
+        val legendDescColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
 
         // 2-Column Grid for percentiles
         Row(
@@ -465,10 +469,10 @@ fun FentonChart(
                     )
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF047857))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF10B981))) {
                                 append("P50")
                             }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = Color(0xFF4B5563))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
                                 append(" (Median / Normal)")
                             }
                         },
@@ -489,10 +493,10 @@ fun FentonChart(
                     )
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFD97706))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFF59E0B))) {
                                 append("P10")
                             }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = Color(0xFF4B5563))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
                                 append(" (Batas Bawah)")
                             }
                         },
@@ -519,10 +523,10 @@ fun FentonChart(
                     )
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFEA580C))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFF97316))) {
                                 append("P90")
                             }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = Color(0xFF4B5563))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
                                 append(" (Batas Atas)")
                             }
                         },
@@ -551,16 +555,16 @@ fun FentonChart(
                     }
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFDC2626))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))) {
                                 append("P97")
                             }
-                            withStyle(SpanStyle(color = Color(0xFF6B7280))) {
+                            withStyle(SpanStyle(color = legendDescColor)) {
                                 append(" & ")
                             }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFF43F5E))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFFB7185))) {
                                 append("P3")
                             }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = Color(0xFF6B7280))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
                                 append(" (Ekstrem)")
                             }
                         },

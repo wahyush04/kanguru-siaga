@@ -73,6 +73,8 @@ import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -126,11 +128,11 @@ fun PmkRemindersScreen(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Color(0xFFFDFBF9),
+        containerColor = BrandBackground,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
-                color = Color(0xFFFDFBF9),
+                color = BrandBackground,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
@@ -148,7 +150,7 @@ fun PmkRemindersScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.common_back),
-                                tint = Color(0xFF1E293B)
+                                tint = TextPrimary
                             )
                         }
 
@@ -156,14 +158,14 @@ fun PmkRemindersScreen(
                             text = stringResource(R.string.pmk_reminders_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A)
+                            color = TextPrimary
                         )
 
                         IconButton(onClick = onOpenInfoDialog) {
                             Icon(
                                 imageVector = Icons.Default.Info,
                                 contentDescription = stringResource(R.string.pmk_reminders_cd_info),
-                                tint = Color(0xFF475569)
+                                tint = TextSecondary
                             )
                         }
                     }
@@ -173,7 +175,7 @@ fun PmkRemindersScreen(
                     Text(
                         text = stringResource(R.string.pmk_reminders_subtitle),
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF64748B),
+                        color = TextSecondary,
                         textAlign = TextAlign.Center,
                         fontSize = 11.5.sp,
                         lineHeight = 16.sp,
@@ -215,9 +217,9 @@ fun PmkRemindersScreen(
             ) {
                 // 1. Medical Alert Banner
                 Surface(
-                    color = Color(0xFFFFF1F2),
+                    color = KanguruTheme.colors.errorContainer,
                     shape = RoundedCornerShape(18.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE4E6)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.errorBorder),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -228,13 +230,13 @@ fun PmkRemindersScreen(
                             modifier = Modifier
                                 .size(28.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFFFE4E8)),
+                                .background(KanguruTheme.colors.error.copy(alpha = 0.15f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Warning,
                                 contentDescription = null,
-                                tint = BrandPink,
+                                tint = KanguruTheme.colors.error,
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -244,7 +246,7 @@ fun PmkRemindersScreen(
                         Text(
                             text = stringResource(R.string.pmk_reminders_alert),
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFFBE123C),
+                            color = KanguruTheme.colors.onErrorContainer,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             lineHeight = 17.sp
@@ -256,8 +258,8 @@ fun PmkRemindersScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, Color(0xFFF2E8E2), RoundedCornerShape(22.dp)),
-                    colors = CardDefaults.cardColors(containerColor = White),
+                        .border(1.dp, CardBorder, RoundedCornerShape(22.dp)),
+                    colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
                     shape = RoundedCornerShape(22.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
@@ -276,7 +278,7 @@ fun PmkRemindersScreen(
                                     modifier = Modifier
                                         .size(30.dp)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(Color(0xFFFFE4E8)),
+                                        .background(BrandPink.copy(alpha = 0.15f)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
@@ -291,19 +293,19 @@ fun PmkRemindersScreen(
                                     text = stringResource(R.string.pmk_reminders_target_header),
                                     fontSize = 11.5.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF334155),
+                                    color = TextPrimary,
                                     letterSpacing = 0.5.sp
                                 )
                             }
 
                             Surface(
-                                color = Color(0xFFECFDF5),
+                                color = KanguruTheme.colors.successContainer,
                                 shape = RoundedCornerShape(12.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFD1FAE5))
+                                border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.successBorder)
                             ) {
                                 Text(
                                     text = stringResource(R.string.pmk_reminders_completed_count, uiState.todayCompletedSessions, uiState.todayTargetSessions),
-                                    color = Color(0xFF059669),
+                                    color = KanguruTheme.colors.onSuccessContainer,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
@@ -323,13 +325,13 @@ fun PmkRemindersScreen(
                                     text = "${uiState.todayCompletedMinutes}",
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.ExtraBold,
-                                    color = Color(0xFF1E293B)
+                                    color = TextPrimary
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = stringResource(R.string.pmk_reminders_target_minutes, uiState.todayTargetMinutes),
                                     fontSize = 12.sp,
-                                    color = Color(0xFF64748B),
+                                    color = TextSecondary,
                                     fontWeight = FontWeight.Medium
                                 )
                             }
@@ -351,7 +353,7 @@ fun PmkRemindersScreen(
                                 .height(9.dp)
                                 .clip(RoundedCornerShape(5.dp)),
                             color = BrandPink,
-                            trackColor = Color(0xFFF1F5F9),
+                            trackColor = KanguruTheme.colors.surfaceVariant,
                             strokeCap = StrokeCap.Round
                         )
                     }
@@ -369,12 +371,12 @@ fun PmkRemindersScreen(
                         text = stringResource(R.string.pmk_reminders_list_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = TextPrimary
                     )
                     Text(
                         text = stringResource(R.string.pmk_reminders_list_total, uiState.reminders.size),
                         fontSize = 12.sp,
-                        color = Color(0xFF94A3B8),
+                        color = TextSecondary,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -401,12 +403,13 @@ fun PmkRemindersScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                     shape = RoundedCornerShape(18.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = White)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = stringResource(R.string.pmk_reminders_btn_add),
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = White
                     )
                 }
 
@@ -431,6 +434,7 @@ fun PmkRemindersScreen(
                 Text(
                     text = stringResource(R.string.pmk_reminders_info_dialog_title),
                     fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
                     style = MaterialTheme.typography.titleMedium
                 )
             },
@@ -447,7 +451,7 @@ fun PmkRemindersScreen(
                     Text(text = stringResource(R.string.alarm_btn_understand), color = BrandPink, fontWeight = FontWeight.Bold)
                 }
             },
-            containerColor = White,
+            containerColor = KanguruTheme.colors.surface,
             shape = RoundedCornerShape(24.dp)
         )
     }
@@ -458,17 +462,33 @@ private fun ReminderCardItem(
     reminder: PmkReminder,
     onToggle: () -> Unit
 ) {
+    val isDark = KanguruTheme.colors.isDark
     val (iconBg, iconTint, badgeBg, badgeText) = when {
-        reminder.timeHour < 12 -> Quadruple(Color(0xFFFFF1F2), BrandPink, Color(0xFFFFF1F2), Color(0xFFE11D48))
-        reminder.timeHour < 17 -> Quadruple(Color(0xFFFFF7ED), Color(0xFFF97316), Color(0xFFFFF7ED), Color(0xFFC2410C))
-        else -> Quadruple(Color(0xFFEEF2FF), Color(0xFF6366F1), Color(0xFFEEF2FF), Color(0xFF4338CA))
+        reminder.timeHour < 12 -> Quadruple(
+            if (isDark) BrandPink.copy(alpha = 0.2f) else Color(0xFFFFF1F2),
+            BrandPink,
+            if (isDark) BrandPink.copy(alpha = 0.2f) else Color(0xFFFFF1F2),
+            if (isDark) Color(0xFFFFB3BA) else Color(0xFFE11D48)
+        )
+        reminder.timeHour < 17 -> Quadruple(
+            if (isDark) Color(0xFFF97316).copy(alpha = 0.2f) else Color(0xFFFFF7ED),
+            Color(0xFFF97316),
+            if (isDark) Color(0xFFF97316).copy(alpha = 0.2f) else Color(0xFFFFF7ED),
+            if (isDark) Color(0xFFFFCC99) else Color(0xFFC2410C)
+        )
+        else -> Quadruple(
+            if (isDark) Color(0xFF6366F1).copy(alpha = 0.2f) else Color(0xFFEEF2FF),
+            Color(0xFF6366F1),
+            if (isDark) Color(0xFF6366F1).copy(alpha = 0.2f) else Color(0xFFEEF2FF),
+            if (isDark) Color(0xFFC7D2FE) else Color(0xFF4338CA)
+        )
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFEFE5DE), RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = White),
+            .border(1.dp, CardBorder, RoundedCornerShape(20.dp)),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -503,7 +523,7 @@ private fun ReminderCardItem(
                             text = reminder.formattedTime,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (reminder.isEnabled) Color(0xFF0F172A) else Color(0xFF94A3B8)
+                            color = if (reminder.isEnabled) TextPrimary else TextSecondary.copy(alpha = 0.6f)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Surface(
@@ -525,7 +545,7 @@ private fun ReminderCardItem(
                     Text(
                         text = "Target ${reminder.targetMinutes} Menit • Setiap hari ${if (!reminder.isEnabled) "(Nonaktif)" else ""}",
                         fontSize = 11.5.sp,
-                        color = Color(0xFF94A3B8)
+                        color = TextSecondary
                     )
                 }
             }
@@ -535,9 +555,9 @@ private fun ReminderCardItem(
                 onCheckedChange = { onToggle() },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = White,
-                    checkedTrackColor = Color(0xFF10B981),
-                    uncheckedThumbColor = White,
-                    uncheckedTrackColor = Color(0xFFE2E8F0)
+                    checkedTrackColor = KanguruTheme.colors.success,
+                    uncheckedThumbColor = TextSecondary.copy(alpha = 0.7f),
+                    uncheckedTrackColor = KanguruTheme.colors.surfaceVariant
                 )
             )
         }
@@ -563,6 +583,7 @@ private fun AddReminderDialog(
             Text(
                 text = stringResource(R.string.pmk_reminders_btn_add),
                 fontWeight = FontWeight.Bold,
+                color = TextPrimary,
                 style = MaterialTheme.typography.titleMedium
             )
         },
@@ -574,13 +595,32 @@ private fun AddReminderDialog(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TimePicker(state = timePickerState)
+                TimePicker(
+                    state = timePickerState,
+                    colors = androidx.compose.material3.TimePickerDefaults.colors(
+                        clockDialColor = KanguruTheme.colors.surfaceVariant,
+                        clockDialSelectedContentColor = White,
+                        clockDialUnselectedContentColor = TextPrimary,
+                        selectorColor = BrandPink,
+                        containerColor = KanguruTheme.colors.surface,
+                        periodSelectorBorderColor = CardBorder,
+                        periodSelectorSelectedContainerColor = BrandLightPink,
+                        periodSelectorUnselectedContainerColor = KanguruTheme.colors.surfaceVariant,
+                        periodSelectorSelectedContentColor = BrandPink,
+                        periodSelectorUnselectedContentColor = TextSecondary,
+                        timeSelectorSelectedContainerColor = BrandLightPink,
+                        timeSelectorUnselectedContainerColor = KanguruTheme.colors.surfaceVariant,
+                        timeSelectorSelectedContentColor = BrandPink,
+                        timeSelectorUnselectedContentColor = TextPrimary
+                    )
+                )
 
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Label Jadwal:",
                         style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(
@@ -595,7 +635,14 @@ private fun AddReminderDialog(
                                 label = { Text(item, fontSize = 11.5.sp) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = BrandLightPink,
-                                    selectedLabelColor = BrandPink
+                                    selectedLabelColor = BrandPink,
+                                    containerColor = KanguruTheme.colors.surfaceVariant,
+                                    labelColor = TextPrimary
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    enabled = true,
+                                    selected = isSelected,
+                                    borderColor = if (isSelected) BrandPink else CardBorder
                                 )
                             )
                         }
@@ -606,7 +653,8 @@ private fun AddReminderDialog(
                     Text(
                         text = "Durasi Target: $targetMinutes menit",
                         style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     val targets = listOf(30, 45, 60, 90)
@@ -622,7 +670,14 @@ private fun AddReminderDialog(
                                 label = { Text("$min m", fontSize = 11.5.sp) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = BrandLightPink,
-                                    selectedLabelColor = BrandPink
+                                    selectedLabelColor = BrandPink,
+                                    containerColor = KanguruTheme.colors.surfaceVariant,
+                                    labelColor = TextPrimary
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    enabled = true,
+                                    selected = isSelected,
+                                    borderColor = if (isSelected) BrandPink else CardBorder
                                 )
                             )
                         }
@@ -638,7 +693,7 @@ private fun AddReminderDialog(
                 colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = stringResource(R.string.alarm_btn_save), fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.alarm_btn_save), fontWeight = FontWeight.Bold, color = White)
             }
         },
         dismissButton = {
@@ -646,7 +701,7 @@ private fun AddReminderDialog(
                 Text(text = stringResource(R.string.alarm_btn_cancel), color = TextSecondary)
             }
         },
-        containerColor = White,
+        containerColor = KanguruTheme.colors.surface,
         shape = RoundedCornerShape(24.dp)
     )
 }

@@ -98,13 +98,13 @@ fun AddGrowthMeasurementScreen(
     }
 
     Scaffold(
-        containerColor = White,
+        containerColor = BrandBackground,
         bottomBar = {
             // Footer Action Buttons
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(White)
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ) {
                 Row(
@@ -115,7 +115,7 @@ fun AddGrowthMeasurementScreen(
                         onClick = onNavigateBack,
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = White,
+                            containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
                             contentColor = BrandPink
                         ),
                         border = ButtonDefaults.outlinedButtonBorder.copy(
@@ -207,15 +207,15 @@ fun AddGrowthMeasurementScreen(
                 text = stringResource(R.string.growth_add_label_date),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF374151)
+                color = TextPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFFAFAFA))
-                    .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(12.dp))
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated)
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(12.dp))
                     .clickable { datePickerDialog.show() }
                     .padding(horizontal = 14.dp, vertical = 13.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -247,7 +247,7 @@ fun AddGrowthMeasurementScreen(
                     text = stringResource(R.string.growth_add_label_chronological),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF374151)
+                    color = TextPrimary
                 )
                 Box(
                     modifier = Modifier
@@ -268,29 +268,29 @@ fun AddGrowthMeasurementScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFF3F4F6))
-                    .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(12.dp)),
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated)
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(12.dp)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = uiState.chronologicalAgeDisplay,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF6B7280),
+                    color = TextPrimary,
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 14.dp, vertical = 13.dp)
                 )
                 Box(
                     modifier = Modifier
-                        .background(Color(0xFFF9FAFB))
+                        .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated)
                         .padding(horizontal = 16.dp, vertical = 13.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.growth_add_unit_weeks),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF6B7280)
+                        color = TextSecondary
                     )
                 }
             }
@@ -314,7 +314,7 @@ fun AddGrowthMeasurementScreen(
                         text = stringResource(R.string.growth_add_label_pma),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151)
+                        color = TextPrimary
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
@@ -343,29 +343,29 @@ fun AddGrowthMeasurementScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFF3F4F6))
-                    .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(12.dp)),
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated)
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(12.dp)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = uiState.pmaDisplay,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF6B7280),
+                    color = TextPrimary,
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 14.dp, vertical = 13.dp)
                 )
                 Box(
                     modifier = Modifier
-                        .background(Color(0xFFF9FAFB))
+                        .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated)
                         .padding(horizontal = 16.dp, vertical = 13.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.growth_add_unit_weeks),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF6B7280)
+                        color = TextSecondary
                     )
                 }
             }
@@ -383,7 +383,7 @@ fun AddGrowthMeasurementScreen(
                 text = parameter.displayName,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF374151)
+                color = TextPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -403,14 +403,14 @@ fun AddGrowthMeasurementScreen(
                 trailingIcon = {
                     Box(
                         modifier = Modifier
-                            .background(Color(0xFFF9FAFB))
+                            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated)
                             .padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
                         Text(
                             text = parameter.unit,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF6B7280)
+                            color = TextSecondary
                         )
                     }
                 },
@@ -418,9 +418,9 @@ fun AddGrowthMeasurementScreen(
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BrandPink,
-                    unfocusedBorderColor = Color(0xFFE5E7EB),
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = Color(0xFFFAFAFA)
+                    unfocusedBorderColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder,
+                    focusedContainerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                    unfocusedContainerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated
                 ),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -430,7 +430,7 @@ fun AddGrowthMeasurementScreen(
                 Text(
                     text = uiState.errorMessage ?: "",
                     fontSize = 11.5.sp,
-                    color = Color(0xFFDC2626),
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText,
                     modifier = Modifier.padding(top = 4.dp, start = 2.dp)
                 )
             }
@@ -442,7 +442,7 @@ fun AddGrowthMeasurementScreen(
                 text = stringResource(R.string.growth_add_label_note),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF374151)
+                color = TextPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -458,9 +458,9 @@ fun AddGrowthMeasurementScreen(
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BrandPink,
-                    unfocusedBorderColor = Color(0xFFE5E7EB),
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = Color(0xFFFAFAFA)
+                    unfocusedBorderColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder,
+                    focusedContainerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                    unfocusedContainerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated
                 ),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -473,7 +473,7 @@ fun AddGrowthMeasurementScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(White)
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
                     .border(1.dp, BrandCardBorder, RoundedCornerShape(16.dp))
                     .padding(14.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -527,8 +527,8 @@ fun AddGrowthMeasurementScreen(
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = White,
                         checkedTrackColor = BrandPink,
-                        uncheckedThumbColor = Color(0xFF9CA3AF),
-                        uncheckedTrackColor = Color(0xFFE5E7EB)
+                        uncheckedThumbColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.outline,
+                        uncheckedTrackColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider
                     )
                 )
             }
@@ -548,7 +548,7 @@ fun AddGrowthMeasurementScreen(
                 Icon(
                     imageVector = GrowthIcons.Lightbulb,
                     contentDescription = null,
-                    tint = Color(0xFFD97706),
+                    tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
                     modifier = Modifier
                         .size(18.dp)
                         .padding(top = 1.dp)

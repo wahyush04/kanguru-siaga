@@ -1,5 +1,6 @@
 package com.kangurusiaga.app.presentation.profile
 
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,6 +33,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,13 +55,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
-import com.kangurusiaga.app.core.designsystem.theme.BrandDarkPink
-import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPeach
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
-import com.kangurusiaga.app.core.designsystem.theme.BrandSoftBlue
-import com.kangurusiaga.app.core.designsystem.theme.BrandSoftGreen
-import com.kangurusiaga.app.core.designsystem.theme.BrandTextGreen
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.presentation.growth.components.GrowthIcons
@@ -141,7 +142,7 @@ fun BabyProfileScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Kembali",
-                        tint = Color(0xFF1E293B)
+                        tint = TextPrimary
                     )
                 }
 
@@ -149,14 +150,14 @@ fun BabyProfileScreen(
                     text = "Profil Bayi",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B)
+                    color = TextPrimary
                 )
 
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Pengaturan",
-                        tint = Color(0xFF1E293B)
+                        tint = TextPrimary
                     )
                 }
             }
@@ -177,7 +178,7 @@ fun BabyProfileScreen(
                 ) {
                     Text(
                         text = "Data profil bayi belum tersedia.",
-                        color = Color(0xFF64748B),
+                        color = TextSecondary,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -195,7 +196,7 @@ fun BabyProfileScreen(
                         modifier = Modifier
                             .size(112.dp)
                             .shadow(6.dp, CircleShape)
-                            .border(3.dp, White, CircleShape)
+                            .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
                             .clip(CircleShape)
                             .background(BrandPeach),
                         contentAlignment = Alignment.Center
@@ -226,7 +227,7 @@ fun BabyProfileScreen(
                         text = baby.name,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B),
+                        color = TextPrimary,
                         textAlign = TextAlign.Center
                     )
 
@@ -236,7 +237,7 @@ fun BabyProfileScreen(
                         text = "Lahir: ${uiState.formattedBirthDate}",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF64748B)
+                        color = TextSecondary
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -244,8 +245,8 @@ fun BabyProfileScreen(
                     // Pill Chip Status
                     Surface(
                         shape = RoundedCornerShape(100.dp),
-                        color = Color(0xFFFFF1F2),
-                        border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                        color = KanguruTheme.colors.primaryContainer,
+                        border = BorderStroke(1.dp, KanguruTheme.colors.outline)
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -278,8 +279,8 @@ fun BabyProfileScreen(
                         // Berat Badan Card
                         GrowthMetricCard(
                             modifier = Modifier.weight(1f),
-                            bgColor = Color(0xFFFFF1F2),
-                            borderColor = Color(0xFFFFE4E6),
+                            bgColor = KanguruTheme.colors.primaryContainer,
+                            borderColor = KanguruTheme.colors.outline,
                             icon = {
                                 Icon(
                                     imageVector = GrowthIcons.Weight,
@@ -296,13 +297,13 @@ fun BabyProfileScreen(
                         // Panjang Badan Card
                         GrowthMetricCard(
                             modifier = Modifier.weight(1f),
-                            bgColor = Color(0xFFF0FDF4),
-                            borderColor = Color(0xFFDCFCE7),
+                            bgColor = KanguruTheme.colors.successContainer,
+                            borderColor = KanguruTheme.colors.successBorder,
                             icon = {
                                 Icon(
                                     imageVector = Icons.Default.SquareFoot,
                                     contentDescription = null,
-                                    tint = Color(0xFF16A34A),
+                                    tint = KanguruTheme.colors.success,
                                     modifier = Modifier.size(20.dp)
                                 )
                             },
@@ -314,13 +315,13 @@ fun BabyProfileScreen(
                         // Lingkar Kepala Card
                         GrowthMetricCard(
                             modifier = Modifier.weight(1f),
-                            bgColor = Color(0xFFF0F9FF),
-                            borderColor = Color(0xFFE0F2FE),
+                            bgColor = KanguruTheme.colors.infoContainer,
+                            borderColor = KanguruTheme.colors.infoBorder,
                             icon = {
                                 Icon(
                                     imageVector = Icons.Default.ChildCare,
                                     contentDescription = null,
-                                    tint = Color(0xFF2563EB),
+                                    tint = KanguruTheme.colors.info,
                                     modifier = Modifier.size(20.dp)
                                 )
                             },
@@ -336,8 +337,8 @@ fun BabyProfileScreen(
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        color = White,
-                        border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+                        color = MaterialTheme.colorScheme.surface,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                         shadowElevation = 1.dp
                     ) {
                         Column(
@@ -357,7 +358,7 @@ fun BabyProfileScreen(
                                     text = "DATA KELAHIRAN & BIOLOGIS",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF0F172A),
+                                    color = TextPrimary,
                                     letterSpacing = 0.5.sp
                                 )
                             }
@@ -370,7 +371,7 @@ fun BabyProfileScreen(
                                 value = uiState.formattedBirthDate
                             )
 
-                            HorizontalDivider(color = Color(0xFFF8FAFC), thickness = 1.dp)
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                             // Row 2: Jenis Kelamin
                             Row(
@@ -384,15 +385,15 @@ fun BabyProfileScreen(
                                     text = "Jenis Kelamin",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF64748B)
+                                    color = TextSecondary
                                 )
                                 val isFemale = baby.gender == Gender.FEMALE
                                 Surface(
                                     shape = RoundedCornerShape(100.dp),
-                                    color = if (isFemale) Color(0xFFFFF1F2) else Color(0xFFEBF6FF),
+                                    color = if (isFemale) KanguruTheme.colors.primaryContainer else KanguruTheme.colors.infoContainer,
                                     border = BorderStroke(
                                         1.dp,
-                                        if (isFemale) Color(0xFFFFCCD5) else Color(0xFFBFDBFE)
+                                        if (isFemale) KanguruTheme.colors.outline else KanguruTheme.colors.infoBorder
                                     )
                                 ) {
                                     Row(
@@ -403,20 +404,20 @@ fun BabyProfileScreen(
                                         Icon(
                                             imageVector = if (isFemale) Icons.Default.Female else Icons.Default.Male,
                                             contentDescription = null,
-                                            tint = if (isFemale) BrandPink else Color(0xFF2563EB),
+                                            tint = if (isFemale) BrandPink else KanguruTheme.colors.info,
                                             modifier = Modifier.size(14.dp)
                                         )
                                         Text(
                                             text = if (isFemale) "Perempuan" else "Laki-laki",
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = if (isFemale) BrandPink else Color(0xFF2563EB)
+                                            color = if (isFemale) BrandPink else KanguruTheme.colors.onInfoContainer
                                         )
                                     }
                                 }
                             }
 
-                            HorizontalDivider(color = Color(0xFFF8FAFC), thickness = 1.dp)
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                             // Row 3: Berat Lahir
                             val formattedBirthWeight = String.format(Locale("id", "ID"), "%,d", baby.birthWeightGram).replace(',', '.')
@@ -431,7 +432,7 @@ fun BabyProfileScreen(
                                     text = "Berat Lahir",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF64748B)
+                                    color = TextSecondary
                                 )
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -441,19 +442,19 @@ fun BabyProfileScreen(
                                         text = "$formattedBirthWeight gram",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1E293B)
+                                        color = TextPrimary
                                     )
                                     if (uiState.isBblr) {
                                         Surface(
                                             shape = RoundedCornerShape(4.dp),
-                                            color = Color(0xFFFFFBEB),
-                                            border = BorderStroke(1.dp, Color(0xFFFDE68A))
+                                            color = KanguruTheme.colors.warningContainer,
+                                            border = BorderStroke(1.dp, KanguruTheme.colors.warningBorder)
                                         ) {
                                             Text(
                                                 text = "BBLR",
                                                 fontSize = 10.sp,
                                                 fontWeight = FontWeight.Bold,
-                                                color = Color(0xFFD97706),
+                                                color = KanguruTheme.colors.onWarningContainer,
                                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                             )
                                         }
@@ -461,7 +462,7 @@ fun BabyProfileScreen(
                                 }
                             }
 
-                            HorizontalDivider(color = Color(0xFFF8FAFC), thickness = 1.dp)
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                             // Row 4: Usia Gestasi saat Lahir
                             Row(
@@ -475,7 +476,7 @@ fun BabyProfileScreen(
                                     text = "Usia Gestasi saat Lahir",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF64748B)
+                                    color = TextSecondary
                                 )
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -485,28 +486,28 @@ fun BabyProfileScreen(
                                         text = "${baby.gestationalAgeWeeks} Minggu",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1E293B)
+                                        color = TextPrimary
                                     )
                                     Surface(
                                         shape = RoundedCornerShape(4.dp),
-                                        color = if (uiState.isPremature) Color(0xFFFFF1F2) else Color(0xFFF0FDF4),
+                                        color = if (uiState.isPremature) KanguruTheme.colors.primaryContainer else KanguruTheme.colors.successContainer,
                                         border = BorderStroke(
                                             1.dp,
-                                            if (uiState.isPremature) Color(0xFFFFCCD5) else Color(0xFFDCFCE7)
+                                            if (uiState.isPremature) KanguruTheme.colors.outline else KanguruTheme.colors.successBorder
                                         )
                                     ) {
                                         Text(
                                             text = if (uiState.isPremature) "Prematur" else "Aterm",
                                             fontSize = 10.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = if (uiState.isPremature) BrandPink else Color(0xFF16A34A),
+                                            color = if (uiState.isPremature) BrandPink else KanguruTheme.colors.onSuccessContainer,
                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                         )
                                     }
                                 }
                             }
 
-                            HorizontalDivider(color = Color(0xFFF8FAFC), thickness = 1.dp)
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                             // Row 5: Status Pertumbuhan
                             Row(
@@ -520,20 +521,20 @@ fun BabyProfileScreen(
                                     text = "Status Pertumbuhan",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF64748B)
+                                    color = TextSecondary
                                 )
                                 Column(horizontalAlignment = Alignment.End) {
                                     Text(
                                         text = uiState.growthStatusSummary,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF0D9488)
+                                        color = KanguruTheme.colors.success
                                     )
                                     Text(
                                         text = "Kurva Fenton",
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Normal,
-                                        color = Color(0xFF94A3B8)
+                                        color = TextTertiary
                                     )
                                 }
                             }
@@ -563,13 +564,13 @@ private fun InfoDataRow(
             text = label,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF64748B)
+            color = TextSecondary
         )
         Text(
             text = value,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1E293B)
+            color = TextPrimary
         )
     }
 }
@@ -597,7 +598,7 @@ private fun GrowthMetricCard(
             Box(
                 modifier = Modifier
                     .size(36.dp)
-                    .background(White, RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
                     .shadow(1.dp, RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center
             ) {
@@ -610,7 +611,7 @@ private fun GrowthMetricCard(
                 text = value,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B),
+                color = TextPrimary,
                 maxLines = 1
             )
 
@@ -620,7 +621,7 @@ private fun GrowthMetricCard(
                 text = percentile,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF0D9488),
+                color = KanguruTheme.colors.success,
                 maxLines = 1
             )
 
@@ -628,7 +629,7 @@ private fun GrowthMetricCard(
                 text = status,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF0D9488),
+                color = KanguruTheme.colors.success,
                 maxLines = 1
             )
         }

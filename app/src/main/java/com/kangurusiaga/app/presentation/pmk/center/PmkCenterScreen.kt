@@ -74,10 +74,10 @@ fun PmkCenterScreen(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Color(0xFFFBFBFC),
+        containerColor = BrandBackground,
         topBar = {
             Surface(
-                color = Color(0xFFFBFBFC),
+                color = BrandBackground,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
@@ -97,7 +97,7 @@ fun PmkCenterScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.common_back),
-                                tint = Color(0xFF1E293B)
+                                tint = TextPrimary
                             )
                         }
 
@@ -105,7 +105,7 @@ fun PmkCenterScreen(
                             text = stringResource(R.string.pmk_center_header_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A),
+                            color = TextPrimary,
                             textAlign = TextAlign.Center,
                             lineHeight = 20.sp,
                             modifier = Modifier
@@ -119,7 +119,7 @@ fun PmkCenterScreen(
                     Text(
                         text = stringResource(R.string.pmk_center_header_subtitle),
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF64748B),
+                        color = TextSecondary,
                         textAlign = TextAlign.Center,
                         fontSize = 11.5.sp,
                         lineHeight = 16.sp,
@@ -156,8 +156,8 @@ fun PmkCenterScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = White),
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(20.dp)),
+                colors = CardDefaults.cardColors(containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface),
                 shape = RoundedCornerShape(20.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
@@ -184,8 +184,8 @@ fun PmkCenterScreen(
                     title = stringResource(R.string.pmk_center_menu_video_title),
                     subtitle = stringResource(R.string.pmk_center_menu_video_sub),
                     iconVector = Icons.Default.PlayArrow,
-                    iconBgColor = Color(0xFFFFF1F2),
-                    iconTintColor = Color(0xFFF4727F),
+                    iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer,
+                    iconTintColor = BrandPink,
                     onClick = onNavigateToVideo
                 )
 
@@ -194,8 +194,8 @@ fun PmkCenterScreen(
                     title = stringResource(R.string.pmk_center_menu_start_title),
                     subtitle = stringResource(R.string.pmk_center_menu_start_sub),
                     iconVector = Icons.Default.AccessTime,
-                    iconBgColor = Color(0xFFFFF7ED),
-                    iconTintColor = Color(0xFFF97316),
+                    iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer,
+                    iconTintColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
                     onClick = onNavigateToTimer
                 )
 
@@ -204,8 +204,8 @@ fun PmkCenterScreen(
                     title = stringResource(R.string.pmk_center_menu_reminder_title),
                     subtitle = stringResource(R.string.pmk_center_menu_reminder_sub),
                     iconVector = Icons.Default.Notifications,
-                    iconBgColor = Color(0xFFECFDF5),
-                    iconTintColor = Color(0xFF10B981),
+                    iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer,
+                    iconTintColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText,
                     onClick = onNavigateToReminders
                 )
 
@@ -214,8 +214,8 @@ fun PmkCenterScreen(
                     title = stringResource(R.string.pmk_center_menu_history_title),
                     subtitle = stringResource(R.string.pmk_center_menu_history_sub),
                     iconVector = Icons.Default.Description,
-                    iconBgColor = Color(0xFFF0F9FF),
-                    iconTintColor = Color(0xFF0284C7),
+                    iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoContainer,
+                    iconTintColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoText,
                     onClick = onNavigateToHistory
                 )
             }
@@ -237,9 +237,9 @@ private fun PmkMenuItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(18.dp))
+            .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(18.dp))
             .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface),
         shape = RoundedCornerShape(18.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -271,14 +271,14 @@ private fun PmkMenuItem(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B),
+                    color = TextPrimary,
                     fontSize = 14.sp
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B),
+                    color = TextSecondary,
                     fontSize = 11.5.sp
                 )
             }
@@ -286,7 +286,7 @@ private fun PmkMenuItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = null,
-                tint = Color(0xFF94A3B8),
+                tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.outline,
                 modifier = Modifier.size(14.dp)
             )
         }

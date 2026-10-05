@@ -77,14 +77,14 @@ fun AddFeedingScheduleBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = {
             Box(
                 modifier = Modifier
                     .padding(top = 10.dp, bottom = 4.dp)
                     .size(width = 40.dp, height = 4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color(0xFFCBD5E1))
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder)
             )
         }
     ) {
@@ -155,7 +155,7 @@ fun AddFeedingScheduleForm(
             text = stringResource(R.string.alarm_label_time),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF334155)
+            color = TextPrimary
         )
         Spacer(modifier = Modifier.height(6.dp))
         Row(
@@ -163,8 +163,8 @@ fun AddFeedingScheduleForm(
                 .fillMaxWidth()
                 .height(52.dp)
                 .clip(RoundedCornerShape(14.dp))
-                .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(14.dp))
-                .background(White)
+                .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(14.dp))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { showTimePicker = true }
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -179,7 +179,7 @@ fun AddFeedingScheduleForm(
             Icon(
                 imageVector = Icons.Default.AccessTime,
                 contentDescription = stringResource(R.string.alarm_cd_select_time),
-                tint = Color(0xFF94A3B8),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -191,7 +191,7 @@ fun AddFeedingScheduleForm(
             text = stringResource(R.string.alarm_label_volume),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF334155)
+            color = TextPrimary
         )
         Spacer(modifier = Modifier.height(6.dp))
         OutlinedTextField(
@@ -209,7 +209,7 @@ fun AddFeedingScheduleForm(
             trailingIcon = {
                 Text(
                     text = stringResource(R.string.alarm_unit_ml),
-                    color = Color(0xFF94A3B8),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(end = 16.dp)
@@ -220,15 +220,15 @@ fun AddFeedingScheduleForm(
             isError = volumeError != null,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = BrandPink,
-                unfocusedBorderColor = Color(0xFFE2E8F0),
-                focusedContainerColor = White,
-                unfocusedContainerColor = White
+                unfocusedBorderColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )
         )
         if (volumeError != null) {
             Text(
                 text = volumeError ?: "",
-                color = Color(0xFFDC2626),
+                color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -241,7 +241,7 @@ fun AddFeedingScheduleForm(
             text = stringResource(R.string.alarm_label_note),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF334155)
+            color = TextPrimary
         )
         Spacer(modifier = Modifier.height(6.dp))
         OutlinedTextField(
@@ -252,16 +252,16 @@ fun AddFeedingScheduleForm(
             placeholder = {
                 Text(
                     text = stringResource(R.string.alarm_placeholder_note),
-                    color = Color(0xFF94A3B8),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
             },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = BrandPink,
-                unfocusedBorderColor = Color(0xFFE2E8F0),
-                focusedContainerColor = White,
-                unfocusedContainerColor = White
+                unfocusedBorderColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )
         )
 
@@ -277,7 +277,7 @@ fun AddFeedingScheduleForm(
                 text = stringResource(R.string.alarm_label_toggle_reminder),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF334155),
+                color = TextPrimary,
                 lineHeight = 18.sp
             )
 
@@ -288,7 +288,7 @@ fun AddFeedingScheduleForm(
                     checkedThumbColor = White,
                     checkedTrackColor = Color(0xFF10B981),
                     uncheckedThumbColor = White,
-                    uncheckedTrackColor = Color(0xFFE2E8F0)
+                    uncheckedTrackColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
                 )
             )
         }
@@ -305,7 +305,7 @@ fun AddFeedingScheduleForm(
                 text = stringResource(R.string.alarm_label_repeat),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF334155)
+                color = TextPrimary
             )
 
             Box {
@@ -319,13 +319,13 @@ fun AddFeedingScheduleForm(
                         text = selectedRepeatType.displayName,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF334155)
+                        color = TextPrimary
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
                         contentDescription = null,
-                        tint = Color(0xFF94A3B8),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -333,7 +333,7 @@ fun AddFeedingScheduleForm(
                 DropdownMenu(
                     expanded = showRepeatMenu,
                     onDismissRequest = { showRepeatMenu = false },
-                    modifier = Modifier.background(White)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                 ) {
                     RepeatType.entries.forEach { repeat ->
                         DropdownMenuItem(

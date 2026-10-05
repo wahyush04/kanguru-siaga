@@ -42,6 +42,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 
 @Composable
@@ -70,7 +73,7 @@ fun AboutAppScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Kembali",
-                        tint = Color(0xFF1E293B)
+                        tint = TextPrimary
                     )
                 }
 
@@ -78,7 +81,7 @@ fun AboutAppScreen(
                     text = "Tentang KANGURU SIAGA",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B),
+                    color = TextPrimary,
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
@@ -95,8 +98,8 @@ fun AboutAppScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
-                    color = White,
-                    border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                    border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
                     shadowElevation = 1.dp
                 ) {
                     Column(
@@ -106,7 +109,7 @@ fun AboutAppScreen(
                         Box(
                             modifier = Modifier
                                 .size(64.dp)
-                                .background(Color(0xFFFFF1F2), CircleShape),
+                                .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -123,7 +126,7 @@ fun AboutAppScreen(
                             text = "KANGURU SIAGA",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A),
+                            color = TextPrimary,
                             letterSpacing = 0.5.sp
                         )
 
@@ -131,7 +134,7 @@ fun AboutAppScreen(
                             text = "Versi 1.2.0 (Build 2026)",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF94A3B8),
+                            color = TextTertiary,
                             modifier = Modifier.padding(top = 2.dp)
                         )
 
@@ -141,7 +144,7 @@ fun AboutAppScreen(
                             text = "Mewujudkan setiap bayi prematur dan BBLR tumbuh optimal, hangat, dan sehat melalui pemberdayaan keluarga dengan panduan praktis berbasis bukti ilmiah klinis.",
                             fontSize = 12.sp,
                             lineHeight = 18.sp,
-                            color = Color(0xFF475569),
+                            color = TextSecondary,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -153,7 +156,7 @@ fun AboutAppScreen(
                         text = "4 PILAR LAYANAN UNGGULAN",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF94A3B8),
+                        color = TextSecondary,
                         letterSpacing = 0.5.sp,
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
@@ -163,7 +166,7 @@ fun AboutAppScreen(
                         description = "Timer terintegrasi untuk melacak target kontak kulit skin-to-skin harian, tutorial video langkah demi langkah, dan pencatatan riwayat sesi.",
                         icon = Icons.Default.Favorite,
                         iconColor = BrandPink,
-                        iconBg = Color(0xFFFFF1F2)
+                        iconBg = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer
                     )
 
                     PillarCard(
@@ -171,7 +174,7 @@ fun AboutAppScreen(
                         description = "Modul perawatan esensial di rumah mulai dari termoregulasi suhu, kebersihan tali pusat, hingga teknik menyusui.",
                         icon = Icons.AutoMirrored.Filled.MenuBook,
                         iconColor = Color(0xFF059669),
-                        iconBg = Color(0xFFECFDF5)
+                        iconBg = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer
                     )
 
                     PillarCard(
@@ -179,7 +182,7 @@ fun AboutAppScreen(
                         description = "Kalkulasi kurva pertumbuhan persentil khusus bayi prematur (Berat, Panjang Badan, Lingkar Kepala) sesuai usia gestasi koreksi.",
                         icon = Icons.Default.ShowChart,
                         iconColor = Color(0xFFE11D48),
-                        iconBg = Color(0xFFFFF1F2)
+                        iconBg = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer
                     )
 
                     PillarCard(
@@ -187,7 +190,7 @@ fun AboutAppScreen(
                         description = "Triase cepat mengenali apnea, perubahan warna kulit, kejang, dan hipotermia untuk mempercepat tindakan rujukan medis.",
                         icon = Icons.Default.Warning,
                         iconColor = Color(0xFFD97706),
-                        iconBg = Color(0xFFFFFBEB)
+                        iconBg = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer
                     )
                 }
 
@@ -195,8 +198,8 @@ fun AboutAppScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
-                    color = White,
-                    border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                    border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
                     shadowElevation = 1.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -207,13 +210,13 @@ fun AboutAppScreen(
                             Box(
                                 modifier = Modifier
                                     .size(28.dp)
-                                    .background(Color(0xFFEFF6FF), RoundedCornerShape(8.dp)),
+                                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoContainer, RoundedCornerShape(8.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Security,
                                     contentDescription = null,
-                                    tint = Color(0xFF2563EB),
+                                    tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoText,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -221,18 +224,18 @@ fun AboutAppScreen(
                                 text = "Rujukan & Standar Medis",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF0F172A)
+                                color = TextPrimary
                             )
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
 
                         StandardItem("Pedoman Klinis Ikatan Dokter Anak Indonesia (IDAI)")
-                        HorizontalDivider(color = Color(0xFFF8FAFC), thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+                        HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
                         StandardItem("Pedoman Pelayanan Neonatal Esensial Kementerian Kesehatan RI")
-                        HorizontalDivider(color = Color(0xFFF8FAFC), thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+                        HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
                         StandardItem("Fenton Preterm Growth Charts (Systematic Review & Meta-Analysis)")
-                        HorizontalDivider(color = Color(0xFFF8FAFC), thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+                        HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
                         StandardItem("World Health Organization (WHO) Kangaroo Mother Care Practical Guide")
                     }
                 }
@@ -241,7 +244,7 @@ fun AboutAppScreen(
                 Text(
                     text = "© 2026 KANGURU SIAGA • Hak Cipta Dilindungi Undang-Undang",
                     fontSize = 11.sp,
-                    color = Color(0xFF94A3B8),
+                    color = TextTertiary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -263,8 +266,8 @@ private fun PillarCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = White,
-        border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+        color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+        border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
         shadowElevation = 1.dp
     ) {
         Row(
@@ -290,14 +293,14 @@ private fun PillarCard(
                     text = title,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0F172A)
+                    color = TextPrimary
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = description,
                     fontSize = 11.sp,
                     lineHeight = 16.sp,
-                    color = Color(0xFF64748B)
+                    color = TextSecondary
                 )
             }
         }
@@ -320,7 +323,7 @@ private fun StandardItem(text: String) {
             text = text,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF475569)
+            color = TextSecondary
         )
     }
 }

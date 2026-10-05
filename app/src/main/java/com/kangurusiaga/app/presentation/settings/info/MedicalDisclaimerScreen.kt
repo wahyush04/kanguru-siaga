@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 
 @Composable
@@ -73,7 +75,7 @@ fun MedicalDisclaimerScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Kembali",
-                        tint = Color(0xFF1E293B)
+                        tint = TextPrimary
                     )
                 }
 
@@ -81,7 +83,7 @@ fun MedicalDisclaimerScreen(
                     text = "Disclaimer Medis",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B),
+                    color = TextPrimary,
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
@@ -98,15 +100,15 @@ fun MedicalDisclaimerScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
-                    color = White,
-                    border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                    border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
                     shadowElevation = 1.dp
                 ) {
                     Column(modifier = Modifier.padding(18.dp)) {
                         Surface(
                             shape = RoundedCornerShape(100.dp),
-                            color = Color(0xFFFFF1F2),
-                            border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer,
+                            border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder)
                         ) {
                             Text(
                                 text = "PEMBERITAHUAN PENTING & BATASAN",
@@ -124,7 +126,7 @@ fun MedicalDisclaimerScreen(
                             text = "Bukan Pengganti Konsultasi Medis Langsung",
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A)
+                            color = TextPrimary
                         )
 
                         Spacer(modifier = Modifier.height(6.dp))
@@ -133,11 +135,11 @@ fun MedicalDisclaimerScreen(
                             text = "Aplikasi Kanguru Siaga dirancang semata-mata sebagai media edukasi, pemantauan harian, dan alat bantu pencatatan mandiri bagi orang tua bayi BBLR (Bayi Berat Lahir Rendah) di rumah.",
                             fontSize = 12.sp,
                             lineHeight = 18.sp,
-                            color = Color(0xFF475569)
+                            color = TextSecondary
                         )
 
                         HorizontalDivider(
-                            color = Color(0xFFF8FAFC),
+                            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider,
                             thickness = 1.dp,
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
@@ -146,7 +148,7 @@ fun MedicalDisclaimerScreen(
                             text = "Aplikasi ini TIDAK MENGGANTIKAN anjuran, pemeriksaan fisik langsung, diagnosis, ataupun pengawasan medis dari dokter spesialis anak (Sp.A), dokter umum, bidan, maupun tenaga perinatologi di fasilitas kesehatan.",
                             fontSize = 12.sp,
                             lineHeight = 18.sp,
-                            color = Color(0xFF475569)
+                            color = TextSecondary
                         )
                     }
                 }
@@ -155,8 +157,8 @@ fun MedicalDisclaimerScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
-                    color = Color(0xFFFFF4F5),
-                    border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorContainer,
+                    border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorBorder)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
@@ -166,7 +168,7 @@ fun MedicalDisclaimerScreen(
                             Box(
                                 modifier = Modifier
                                     .size(36.dp)
-                                    .background(Color(0xFFFFE4E8), CircleShape),
+                                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -180,7 +182,7 @@ fun MedicalDisclaimerScreen(
                                 text = "Situasi Kegawatan & Darurat Medis",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF9F1239)
+                                color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
                             )
                         }
 
@@ -190,7 +192,7 @@ fun MedicalDisclaimerScreen(
                             text = "Jika bayi mengalami sesak napas berat, kejang, henti napas (apnea > 20 detik), kulit kebiruan (sianosis), atau suhu ekstrem yang tidak merespons penghangatan, JANGAN MENUNGGU arahan aplikasi. Segera bawa bayi ke Instalasi Gawat Darurat (IGD) Rumah Sakit terdekat!",
                             fontSize = 12.sp,
                             lineHeight = 18.sp,
-                            color = Color(0xFF881337)
+                            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -204,8 +206,8 @@ fun MedicalDisclaimerScreen(
                                 context.startActivity(intent)
                             },
                             shape = RoundedCornerShape(12.dp),
-                            color = White,
-                            border = BorderStroke(1.dp, Color(0xFFFDA4AF)),
+                            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                            border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorBorder),
                             shadowElevation = 1.dp
                         ) {
                             Row(
@@ -216,14 +218,14 @@ fun MedicalDisclaimerScreen(
                                 Icon(
                                     imageVector = Icons.Default.Call,
                                     contentDescription = null,
-                                    tint = Color(0xFFBE123C),
+                                    tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText,
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Text(
                                     text = "Kontak Darurat Neonatus / SPGDT: 119 / 112",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFFBE123C)
+                                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
                                 )
                             }
                         }
@@ -234,8 +236,8 @@ fun MedicalDisclaimerScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
-                    color = White,
-                    border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                    border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
                     shadowElevation = 1.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -246,13 +248,13 @@ fun MedicalDisclaimerScreen(
                             Box(
                                 modifier = Modifier
                                     .size(30.dp)
-                                    .background(Color(0xFFFFFBEB), RoundedCornerShape(8.dp)),
+                                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer, RoundedCornerShape(8.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Description,
                                     contentDescription = null,
-                                    tint = Color(0xFFD97706),
+                                    tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -260,7 +262,7 @@ fun MedicalDisclaimerScreen(
                                 text = "Batasan Penggunaan Fitur Aplikasi",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF0F172A)
+                                color = TextPrimary
                             )
                         }
 
@@ -273,7 +275,7 @@ fun MedicalDisclaimerScreen(
                         )
 
                         HorizontalDivider(
-                            color = Color(0xFFF8FAFC),
+                            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider,
                             thickness = 1.dp,
                             modifier = Modifier.padding(vertical = 10.dp)
                         )
@@ -285,7 +287,7 @@ fun MedicalDisclaimerScreen(
                         )
 
                         HorizontalDivider(
-                            color = Color(0xFFF8FAFC),
+                            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider,
                             thickness = 1.dp,
                             modifier = Modifier.padding(vertical = 10.dp)
                         )
@@ -323,7 +325,7 @@ private fun DisclaimerItem(
                 text = title,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B)
+                color = TextPrimary
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
@@ -331,7 +333,7 @@ private fun DisclaimerItem(
             text = description,
             fontSize = 12.sp,
             lineHeight = 17.sp,
-            color = Color(0xFF64748B),
+            color = TextSecondary,
             modifier = Modifier.padding(start = 12.dp)
         )
     }

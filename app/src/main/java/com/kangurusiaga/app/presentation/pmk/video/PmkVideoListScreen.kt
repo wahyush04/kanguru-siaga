@@ -46,6 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.presentation.home.HomeBottomBar
 import com.kangurusiaga.app.presentation.home.HomeTab
@@ -63,18 +68,14 @@ fun PmkVideoListScreen(
     onNavigateToEducation: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val creamBg = Color(0xFFFAF8F5)
-    val darkText = Color(0xFF1E293B)
-    val cardBorder = Color(0xFFF1EFEA)
-
     Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .background(creamBg),
-        containerColor = creamBg,
+            .background(BrandBackground),
+        containerColor = BrandBackground,
         topBar = {
             Surface(
-                color = creamBg,
+                color = BrandBackground,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -93,7 +94,7 @@ fun PmkVideoListScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.common_back),
-                            tint = darkText,
+                            tint = TextPrimary,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -102,7 +103,7 @@ fun PmkVideoListScreen(
                         text = stringResource(R.string.pmk_video_list_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = darkText,
+                        color = TextPrimary,
                         fontSize = 17.sp,
                         textAlign = TextAlign.Center,
                         letterSpacing = (-0.2).sp,
@@ -141,8 +142,8 @@ fun PmkVideoListScreen(
                 PmkVideoModuleCard(
                     video = video,
                     onClick = { onNavigateToDetail(video.id) },
-                    borderColor = cardBorder,
-                    titleColor = darkText
+                    borderColor = CardBorder,
+                    titleColor = TextPrimary
                 )
             }
         }
@@ -162,7 +163,7 @@ private fun PmkVideoModuleCard(
             .fillMaxWidth()
             .border(1.dp, borderColor, RoundedCornerShape(16.dp))
             .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -177,7 +178,7 @@ private fun PmkVideoModuleCard(
                 modifier = Modifier
                     .size(width = 100.dp, height = 68.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFE2E8F0))
+                    .background(KanguruTheme.colors.surfaceVariant)
             ) {
                 Image(
                     painter = painterResource(id = video.thumbnailRes),
@@ -227,7 +228,7 @@ private fun PmkVideoModuleCard(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(R.string.pmk_video_cd_open),
-                tint = Color(0xFF94A3B8),
+                tint = TextSecondary,
                 modifier = Modifier.size(20.dp)
             )
         }

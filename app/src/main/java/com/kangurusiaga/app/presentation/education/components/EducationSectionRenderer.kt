@@ -38,10 +38,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.education.EducationSection
 
@@ -51,7 +53,7 @@ fun EducationSectionRenderer(
     moduleThemeColor: String,
     modifier: Modifier = Modifier
 ) {
-    val palette = EducationThemeHelper.getPalette(moduleThemeColor)
+    val palette = EducationThemeHelper.getPalette(moduleThemeColor, isDark = KanguruTheme.colors.isDark)
 
     when (section) {
         is EducationSection.Overview -> OverviewBlock(section, palette, modifier)
@@ -74,8 +76,8 @@ private fun OverviewBlock(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = White),
-        border = androidx.compose.foundation.BorderStroke(1.dp, BrandCardBorder)
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+        border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
             if (overview.title.isNotBlank()) {
@@ -104,7 +106,7 @@ private fun OverviewBlock(
                 Text(
                     text = paragraph,
                     fontSize = 13.sp,
-                    color = Color(0xFF475569),
+                    color = TextSecondary,
                     lineHeight = 20.sp
                 )
             }
@@ -130,19 +132,19 @@ private fun ClassificationListBlock(
                 text = block.title.uppercase(),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF64748B),
+                color = TextTertiary,
                 letterSpacing = 0.5.sp
             )
             if (block.standardBadge.isNotBlank()) {
                 Surface(
-                    color = Color(0xFFF1F5F9),
+                    color = KanguruTheme.colors.surfaceVariant,
                     shape = RoundedCornerShape(6.dp)
                 ) {
                     Text(
                         text = block.standardBadge,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF475569),
+                        color = TextSecondary,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                     )
                 }
@@ -150,12 +152,12 @@ private fun ClassificationListBlock(
         }
 
         block.items.forEach { item ->
-            val itemPalette = EducationThemeHelper.getPalette(item.themeColor)
+            val itemPalette = EducationThemeHelper.getPalette(item.themeColor, isDark = KanguruTheme.colors.isDark)
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = White),
-                border = androidx.compose.foundation.BorderStroke(1.dp, BrandCardBorder)
+                colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
             ) {
                 Row(
                     modifier = Modifier
@@ -228,8 +230,8 @@ private fun IconListBlock(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = White),
-        border = androidx.compose.foundation.BorderStroke(1.dp, BrandCardBorder)
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+        border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
             Text(
@@ -252,7 +254,7 @@ private fun IconListBlock(
 
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 block.items.forEach { item ->
-                    val itemPalette = EducationThemeHelper.getPalette(item.themeColor)
+                    val itemPalette = EducationThemeHelper.getPalette(item.themeColor, isDark = KanguruTheme.colors.isDark)
                     val icon = getSectionIcon(item.iconType)
 
                     Row(
@@ -287,7 +289,7 @@ private fun IconListBlock(
                             Text(
                                 text = item.description,
                                 fontSize = 11.sp,
-                                color = Color(0xFF475569),
+                                color = TextSecondary,
                                 lineHeight = 16.sp
                             )
                         }
@@ -312,7 +314,7 @@ private fun StepListBlock(
             text = block.title.uppercase(),
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF64748B),
+            color = TextTertiary,
             letterSpacing = 0.5.sp
         )
 
@@ -320,8 +322,8 @@ private fun StepListBlock(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = White),
-                border = androidx.compose.foundation.BorderStroke(1.dp, BrandCardBorder)
+                colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
             ) {
                 Row(
                     modifier = Modifier
@@ -359,7 +361,7 @@ private fun StepListBlock(
                         Text(
                             text = step.description,
                             fontSize = 12.sp,
-                            color = Color(0xFF475569),
+                            color = TextSecondary,
                             lineHeight = 17.sp
                         )
                     }
@@ -387,20 +389,20 @@ private fun ProtocolBoxBlock(
                 text = block.title.uppercase(),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF64748B),
+                color = TextTertiary,
                 letterSpacing = 0.5.sp
             )
             if (block.badgeText.isNotBlank()) {
                 Surface(
-                    color = Color(0xFFECFDF5),
+                    color = KanguruTheme.colors.successContainer,
                     shape = RoundedCornerShape(6.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFA7F3D0))
+                    border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.successBorder)
                 ) {
                     Text(
                         text = block.badgeText,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF059669),
+                        color = KanguruTheme.colors.success,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                     )
                 }
@@ -410,8 +412,8 @@ private fun ProtocolBoxBlock(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = White),
-            border = androidx.compose.foundation.BorderStroke(1.dp, BrandCardBorder)
+            colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+            border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 if (block.header.isNotBlank()) {
@@ -423,13 +425,13 @@ private fun ProtocolBoxBlock(
                             modifier = Modifier
                                 .size(24.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFECFDF5)),
+                                .background(KanguruTheme.colors.successContainer),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = null,
-                                tint = Color(0xFF059669),
+                                tint = KanguruTheme.colors.success,
                                 modifier = Modifier.size(14.dp)
                             )
                         }
@@ -451,7 +453,7 @@ private fun ProtocolBoxBlock(
                                     .padding(top = 6.dp)
                                     .size(6.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFF059669))
+                                    .background(KanguruTheme.colors.success)
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Column {
@@ -464,7 +466,7 @@ private fun ProtocolBoxBlock(
                                 Text(
                                     text = item.description,
                                     fontSize = 11.sp,
-                                    color = Color(0xFF475569),
+                                    color = TextSecondary,
                                     lineHeight = 16.sp
                                 )
                             }
@@ -484,8 +486,8 @@ private fun WarningBoxBlock(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFBEB)),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFDE68A))
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.warningContainer),
+        border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.warningBorder)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -495,14 +497,14 @@ private fun WarningBoxBlock(
                 Icon(
                     imageVector = Icons.Default.Warning,
                     contentDescription = null,
-                    tint = Color(0xFFB45309),
+                    tint = KanguruTheme.colors.warning,
                     modifier = Modifier.size(18.dp)
                 )
                 Text(
                     text = block.title.uppercase(),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF92400E),
+                    color = KanguruTheme.colors.warning,
                     letterSpacing = 0.5.sp
                 )
             }
@@ -516,7 +518,7 @@ private fun WarningBoxBlock(
                             text = "•",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFFB45309),
+                            color = KanguruTheme.colors.warning,
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Column {
@@ -525,13 +527,13 @@ private fun WarningBoxBlock(
                                     text = item.title,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF78350F)
+                                    color = TextPrimary
                                 )
                             }
                             Text(
                                 text = item.description,
                                 fontSize = 11.sp,
-                                color = Color(0xFF92400E),
+                                color = TextSecondary,
                                 lineHeight = 16.sp
                             )
                         }
@@ -547,7 +549,7 @@ private fun CalloutBoxBlock(
     block: EducationSection.CalloutBox,
     modifier: Modifier = Modifier
 ) {
-    val palette = EducationThemeHelper.getPalette(block.themeColor)
+    val palette = EducationThemeHelper.getPalette(block.themeColor, isDark = KanguruTheme.colors.isDark)
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -589,7 +591,7 @@ private fun CalloutBoxBlock(
                 Text(
                     text = block.message,
                     fontSize = 12.sp,
-                    color = Color(0xFF475569),
+                    color = TextSecondary,
                     lineHeight = 17.sp
                 )
             }
@@ -606,8 +608,8 @@ private fun ScreeningBoxBlock(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = White),
-        border = androidx.compose.foundation.BorderStroke(1.dp, BrandCardBorder)
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+        border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -649,7 +651,7 @@ private fun ScreeningBoxBlock(
                             Text(
                                 text = item.description,
                                 fontSize = 11.sp,
-                                color = Color(0xFF475569),
+                                color = TextSecondary,
                                 lineHeight = 16.sp
                             )
                         }

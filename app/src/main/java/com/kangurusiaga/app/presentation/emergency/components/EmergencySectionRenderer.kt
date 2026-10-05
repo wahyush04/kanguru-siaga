@@ -37,7 +37,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.emergency.EmergencySection
 
@@ -51,12 +54,13 @@ fun EmergencyHeroCard(
     val imageRes = remember(heroDrawableName) {
         resolveDrawableRes(context, heroDrawableName)
     }
+    val isDark = KanguruTheme.colors.isDark
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFE0F0F7), RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF6FB)),
+            .border(1.dp, if (isDark) CardBorder else Color(0xFFE0F0F7), RoundedCornerShape(24.dp)),
+        colors = CardDefaults.cardColors(containerColor = if (isDark) KanguruTheme.colors.surfaceVariant else Color(0xFFEFF6FB)),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -72,8 +76,8 @@ fun EmergencyHeroCard(
                     .fillMaxWidth()
                     .aspectRatio(16f / 10f)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(White)
-                    .border(1.dp, Color(0xFFE2E8F0).copy(alpha = 0.6f), RoundedCornerShape(16.dp)),
+                    .background(KanguruTheme.colors.surface)
+                    .border(1.dp, CardBorder, RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -90,8 +94,8 @@ fun EmergencyHeroCard(
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
-                        .background(White)
-                        .border(1.dp, Color(0xFFBAE6FD), CircleShape)
+                        .background(KanguruTheme.colors.surface)
+                        .border(1.dp, if (isDark) KanguruTheme.colors.infoBorder else Color(0xFFBAE6FD), CircleShape)
                         .padding(horizontal = 16.dp, vertical = 6.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -99,7 +103,7 @@ fun EmergencyHeroCard(
                         text = heroTag.uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0284C7),
+                        color = if (isDark) KanguruTheme.colors.info else Color(0xFF0284C7),
                         letterSpacing = 0.6.sp,
                         fontSize = 10.5.sp
                     )
@@ -140,12 +144,12 @@ fun EmergencySymptomsSection(
                             .padding(top = 7.dp, end = 12.dp)
                             .size(7.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF1E293B))
+                            .background(TextPrimary)
                     )
                     Text(
                         text = symptomText,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF334155),
+                        color = TextSecondary,
                         lineHeight = 22.sp,
                         fontSize = 14.sp
                     )
@@ -162,11 +166,29 @@ fun EmergencyActionAlertCard(
     themeColor: String = "amber",
     modifier: Modifier = Modifier
 ) {
-    val bgColor = if (themeColor == "red" || themeColor == "rose") Color(0xFFFFF5F5) else Color(0xFFFFF9EB)
-    val borderColor = if (themeColor == "red" || themeColor == "rose") Color(0xFFFED7D7) else Color(0xFFFDE68A)
-    val iconColor = if (themeColor == "red" || themeColor == "rose") Color(0xFFE11D48) else Color(0xFFD97706)
-    val titleColor = if (themeColor == "red" || themeColor == "rose") Color(0xFF9F1239) else Color(0xFF92400E)
-    val textColor = if (themeColor == "red" || themeColor == "rose") Color(0xFF881337) else Color(0xFF78350F)
+    val isDark = KanguruTheme.colors.isDark
+    val isRed = themeColor == "red" || themeColor == "rose"
+    val bgColor = if (isRed) {
+        if (isDark) KanguruTheme.colors.errorContainer else Color(0xFFFFF5F5)
+    } else {
+        if (isDark) KanguruTheme.colors.warningContainer else Color(0xFFFFF9EB)
+    }
+    val borderColor = if (isRed) {
+        if (isDark) KanguruTheme.colors.errorBorder else Color(0xFFFED7D7)
+    } else {
+        if (isDark) KanguruTheme.colors.warningBorder else Color(0xFFFDE68A)
+    }
+    val iconColor = if (isRed) KanguruTheme.colors.error else KanguruTheme.colors.warning
+    val titleColor = if (isRed) {
+        if (isDark) KanguruTheme.colors.error else Color(0xFF9F1239)
+    } else {
+        if (isDark) KanguruTheme.colors.warning else Color(0xFF92400E)
+    }
+    val textColor = if (isRed) {
+        if (isDark) TextSecondary else Color(0xFF881337)
+    } else {
+        if (isDark) TextSecondary else Color(0xFF78350F)
+    }
 
     Card(
         modifier = modifier

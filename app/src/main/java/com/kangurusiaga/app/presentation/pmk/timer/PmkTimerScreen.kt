@@ -101,6 +101,7 @@ import com.kangurusiaga.app.core.designsystem.theme.BrandSoftAmber
 import com.kangurusiaga.app.core.designsystem.theme.BrandSoftGreen
 import com.kangurusiaga.app.core.designsystem.theme.BrandTextAmber
 import com.kangurusiaga.app.core.designsystem.theme.BrandTextGreen
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
@@ -755,8 +756,8 @@ fun PmkTimerScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = BrandSoftAmber),
-                            border = BorderStroke(1.dp, BrandTextAmber.copy(alpha = 0.25f)),
+                            colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.warningContainer),
+                            border = BorderStroke(1.dp, KanguruTheme.colors.warningBorder),
                             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                         ) {
                             Row(
@@ -770,13 +771,13 @@ fun PmkTimerScreen(
                                     modifier = Modifier
                                         .size(26.dp)
                                         .clip(CircleShape)
-                                        .background(BrandTextAmber.copy(alpha = 0.15f)),
+                                        .background(KanguruTheme.colors.warning.copy(alpha = 0.15f)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Lightbulb,
                                         contentDescription = null,
-                                        tint = BrandTextAmber,
+                                        tint = KanguruTheme.colors.warning,
                                         modifier = Modifier.size(15.dp)
                                     )
                                 }
@@ -786,7 +787,7 @@ fun PmkTimerScreen(
                                         withStyle(
                                             SpanStyle(
                                                 fontWeight = FontWeight.Bold,
-                                                color = BrandTextAmber
+                                                color = KanguruTheme.colors.warning
                                             )
                                         ) {
                                             append(stringResource(R.string.pmk_timer_tip_title))

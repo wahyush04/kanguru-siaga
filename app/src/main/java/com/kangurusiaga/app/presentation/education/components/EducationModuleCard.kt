@@ -45,8 +45,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.education.EducationModule
 
@@ -57,15 +60,17 @@ fun EducationModuleCard(
     onToggleBookmark: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val palette = EducationThemeHelper.getPalette(module.themeColor)
+    val isDark = KanguruTheme.colors.isDark
+    val palette = EducationThemeHelper.getPalette(module.themeColor, isDark = isDark)
     val icon = getModuleIcon(module.order)
 
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .border(1.dp, CardBorder, RoundedCornerShape(20.dp))
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
@@ -121,7 +126,7 @@ fun EducationModuleCard(
                                 modifier = Modifier
                                     .size(14.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFF10B981)),
+                                    .background(KanguruTheme.colors.success),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -135,7 +140,7 @@ fun EducationModuleCard(
                             Text(
                                 text = stringResource(R.string.edu_card_completed),
                                 fontSize = 11.sp,
-                                color = Color(0xFF059669),
+                                color = KanguruTheme.colors.onSuccessContainer,
                                 fontWeight = FontWeight.Medium
                             )
                         }
@@ -159,7 +164,7 @@ fun EducationModuleCard(
                     Icon(
                         imageVector = if (module.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                         contentDescription = stringResource(R.string.edu_detail_bookmark_save),
-                        tint = if (module.isBookmarked) BrandPink else Color(0xFFCBD5E1),
+                        tint = if (module.isBookmarked) BrandPink else TextTertiary,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -167,7 +172,7 @@ fun EducationModuleCard(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                     contentDescription = null,
-                    tint = Color(0xFF94A3B8),
+                    tint = TextSecondary,
                     modifier = Modifier.size(14.dp)
                 )
             }

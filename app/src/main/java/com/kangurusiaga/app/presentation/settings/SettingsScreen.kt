@@ -58,8 +58,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
+import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
+import androidx.compose.material3.MaterialTheme
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.settings.AppTextScale
 import com.kangurusiaga.app.domain.model.settings.AppThemeMode
@@ -204,7 +210,7 @@ fun SettingsScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Kembali",
-                                tint = Color(0xFF1E293B),
+                                tint = TextPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -213,7 +219,7 @@ fun SettingsScreen(
                             text = "Pengaturan",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF111827),
+                            color = TextPrimary,
                             textAlign = TextAlign.Center
                         )
 
@@ -221,7 +227,7 @@ fun SettingsScreen(
                     }
 
                     HorizontalDivider(
-                        color = Color(0xFFF2ECE9),
+                        color = MaterialTheme.colorScheme.outlineVariant,
                         thickness = 1.dp
                     )
                 }
@@ -260,14 +266,14 @@ fun SettingsScreen(
                                     text = "PROFIL BAYI",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF9CA3AF),
+                                    color = TextSecondary,
                                     letterSpacing = 0.5.sp
                                 )
                                 Text(
                                     text = "Edit Cepat",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFFE11D48),
+                                    color = BrandPink,
                                     modifier = Modifier.clickable(onClick = onOpenEditProfile)
                                 )
                             }
@@ -275,8 +281,8 @@ fun SettingsScreen(
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(16.dp),
-                                color = White,
-                                border = BorderStroke(1.dp, Color(0xFFF2ECE9)),
+                                color = MaterialTheme.colorScheme.surface,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                                 shadowElevation = 0.5.dp
                             ) {
                                 Column {
@@ -298,8 +304,8 @@ fun SettingsScreen(
                                                     modifier = Modifier
                                                         .fillMaxSize()
                                                         .clip(CircleShape)
-                                                        .border(2.dp, Color(0xFFFFE4E6), CircleShape)
-                                                        .background(Color(0xFFFFF1F2)),
+                                                        .border(2.dp, KanguruTheme.colors.outline, CircleShape)
+                                                        .background(KanguruTheme.colors.primaryContainer),
                                                     contentAlignment = Alignment.Center
                                                 ) {
                                                     if (!baby.photoUri.isNullOrBlank()) {
@@ -326,8 +332,8 @@ fun SettingsScreen(
                                                     modifier = Modifier
                                                         .size(14.dp)
                                                         .align(Alignment.BottomEnd)
-                                                        .border(2.dp, White, CircleShape)
-                                                        .background(Color(0xFF10B981), CircleShape)
+                                                        .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                                                        .background(KanguruTheme.colors.success, CircleShape)
                                                 )
                                             }
 
@@ -336,12 +342,12 @@ fun SettingsScreen(
                                                     text = "Foto Bayi",
                                                     fontSize = 14.sp,
                                                     fontWeight = FontWeight.SemiBold,
-                                                    color = Color(0xFF1F2937)
+                                                    color = TextPrimary
                                                 )
                                                 Text(
                                                     text = "Perbarui foto profil si kecil",
                                                     fontSize = 12.sp,
-                                                    color = Color(0xFF6B7280),
+                                                    color = TextSecondary,
                                                     modifier = Modifier.padding(top = 2.dp)
                                                 )
                                             }
@@ -350,12 +356,12 @@ fun SettingsScreen(
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                             contentDescription = null,
-                                            tint = Color(0xFF9CA3AF),
+                                            tint = TextTertiary,
                                             modifier = Modifier.size(16.dp)
                                         )
                                     }
 
-                                    HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                     // Row 2: Nama Bayi
                                     Row(
@@ -370,7 +376,7 @@ fun SettingsScreen(
                                             text = "Nama Bayi",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium,
-                                            color = Color(0xFF374151)
+                                            color = TextSecondary
                                         )
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -380,18 +386,18 @@ fun SettingsScreen(
                                                 text = baby.name,
                                                 fontSize = 14.sp,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = Color(0xFF111827)
+                                                color = TextPrimary
                                             )
                                             Icon(
                                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                                 contentDescription = null,
-                                                tint = Color(0xFF9CA3AF),
+                                                tint = TextTertiary,
                                                 modifier = Modifier.size(16.dp)
                                             )
                                         }
                                     }
 
-                                    HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                     // Row 3: Tanggal Lahir
                                     Row(
@@ -406,7 +412,7 @@ fun SettingsScreen(
                                             text = "Tanggal Lahir",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium,
-                                            color = Color(0xFF374151)
+                                            color = TextSecondary
                                         )
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -416,18 +422,18 @@ fun SettingsScreen(
                                                 text = uiState.formattedBirthDate,
                                                 fontSize = 14.sp,
                                                 fontWeight = FontWeight.Medium,
-                                                color = Color(0xFF4B5563)
+                                                color = TextPrimary
                                             )
                                             Icon(
                                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                                 contentDescription = null,
-                                                tint = Color(0xFF9CA3AF),
+                                                tint = TextTertiary,
                                                 modifier = Modifier.size(16.dp)
                                             )
                                         }
                                     }
 
-                                    HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                     // Row 4: Jenis Kelamin
                                     Row(
@@ -442,7 +448,7 @@ fun SettingsScreen(
                                             text = "Jenis Kelamin",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium,
-                                            color = Color(0xFF374151)
+                                            color = TextSecondary
                                         )
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -451,27 +457,27 @@ fun SettingsScreen(
                                             val isFemale = baby.gender == Gender.FEMALE
                                             Surface(
                                                 shape = RoundedCornerShape(100.dp),
-                                                color = if (isFemale) Color(0xFFFFF1F2) else Color(0xFFEFF6FF),
-                                                border = BorderStroke(1.dp, if (isFemale) Color(0xFFFFE4E6) else Color(0xFFDBEAFE))
+                                                color = if (isFemale) KanguruTheme.colors.primaryContainer else KanguruTheme.colors.infoContainer,
+                                                border = BorderStroke(1.dp, if (isFemale) KanguruTheme.colors.outline else KanguruTheme.colors.infoBorder)
                                             ) {
                                                 Text(
                                                     text = if (isFemale) "Perempuan" else "Laki-laki",
                                                     fontSize = 12.sp,
                                                     fontWeight = FontWeight.SemiBold,
-                                                    color = if (isFemale) Color(0xFFE11D48) else Color(0xFF2563EB),
+                                                    color = if (isFemale) BrandPink else KanguruTheme.colors.onInfoContainer,
                                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp)
                                                 )
                                             }
                                             Icon(
                                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                                 contentDescription = null,
-                                                tint = Color(0xFF9CA3AF),
+                                                tint = TextTertiary,
                                                 modifier = Modifier.size(16.dp)
                                             )
                                         }
                                     }
 
-                                    HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                     // Row 5: Berat Lahir
                                     Row(
@@ -486,7 +492,7 @@ fun SettingsScreen(
                                             text = "Berat Lahir",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium,
-                                            color = Color(0xFF374151)
+                                            color = TextSecondary
                                         )
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -502,19 +508,19 @@ fun SettingsScreen(
                                                     text = "$formattedWeight gram",
                                                     fontSize = 14.sp,
                                                     fontWeight = FontWeight.SemiBold,
-                                                    color = Color(0xFF1F2937)
+                                                    color = TextPrimary
                                                 )
                                                 if (isBblr) {
                                                     Surface(
                                                         shape = RoundedCornerShape(4.dp),
-                                                        color = Color(0xFFFFFBEB),
-                                                        border = BorderStroke(1.dp, Color(0xFFFDE68A))
+                                                        color = KanguruTheme.colors.warningContainer,
+                                                        border = BorderStroke(1.dp, KanguruTheme.colors.warningBorder)
                                                     ) {
                                                         Text(
                                                             text = "BBLR",
                                                             fontSize = 11.sp,
                                                             fontWeight = FontWeight.Medium,
-                                                            color = Color(0xFFD97706),
+                                                            color = KanguruTheme.colors.onWarningContainer,
                                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                                         )
                                                     }
@@ -523,7 +529,7 @@ fun SettingsScreen(
                                             Icon(
                                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                                 contentDescription = null,
-                                                tint = Color(0xFF9CA3AF),
+                                                tint = TextTertiary,
                                                 modifier = Modifier.size(16.dp)
                                             )
                                         }
@@ -541,7 +547,7 @@ fun SettingsScreen(
                             text = "PENGINGAT & NOTIFIKASI",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF9CA3AF),
+                            color = TextSecondary,
                             letterSpacing = 0.5.sp,
                             modifier = Modifier.padding(horizontal = 4.dp)
                         )
@@ -549,8 +555,8 @@ fun SettingsScreen(
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            color = White,
-                            border = BorderStroke(1.dp, Color(0xFFF2ECE9)),
+                            color = MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                             shadowElevation = 0.5.dp
                         ) {
                             Column {
@@ -571,12 +577,12 @@ fun SettingsScreen(
                                             text = "Notifikasi Umum",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = Color(0xFF1F2937)
+                                            color = TextPrimary
                                         )
                                         Text(
                                             text = "Izinkan push notification di perangkat",
                                             fontSize = 12.sp,
-                                            color = Color(0xFF6B7280),
+                                            color = TextSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
                                     }
@@ -587,13 +593,13 @@ fun SettingsScreen(
                                             checkedThumbColor = White,
                                             checkedTrackColor = BrandPink,
                                             uncheckedThumbColor = White,
-                                            uncheckedTrackColor = Color(0xFFE5E7EB),
+                                            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
                                             uncheckedBorderColor = Color.Transparent
                                         )
                                     )
                                 }
 
-                                HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                 // Pengingat PMK
                                 Row(
@@ -613,12 +619,12 @@ fun SettingsScreen(
                                             text = "Pengingat PMK",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = Color(0xFF1F2937)
+                                            color = TextPrimary
                                         )
                                         Text(
                                             text = "Jadwal alarm kontak kulit harian",
                                             fontSize = 12.sp,
-                                            color = Color(0xFF6B7280),
+                                            color = TextSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
                                     }
@@ -628,27 +634,27 @@ fun SettingsScreen(
                                     ) {
                                         Surface(
                                             shape = RoundedCornerShape(100.dp),
-                                            color = Color(0xFFFFF1F2),
-                                            border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                                            color = KanguruTheme.colors.primaryContainer,
+                                            border = BorderStroke(1.dp, KanguruTheme.colors.outline)
                                         ) {
                                             Text(
                                                 text = uiState.pmkScheduleBadgeText,
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = Color(0xFFE11D48),
+                                                color = BrandPink,
                                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                                             )
                                         }
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                             contentDescription = null,
-                                            tint = Color(0xFF9CA3AF),
+                                            tint = TextTertiary,
                                             modifier = Modifier.size(16.dp)
                                         )
                                     }
                                 }
 
-                                HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                 // Pengingat ASI OGT/NGT
                                 Row(
@@ -668,12 +674,12 @@ fun SettingsScreen(
                                             text = "Pengingat ASI OGT/NGT",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = Color(0xFF1F2937)
+                                            color = TextPrimary
                                         )
                                         Text(
                                             text = "Jadwal minum ASI per 2-3 jam",
                                             fontSize = 12.sp,
-                                            color = Color(0xFF6B7280),
+                                            color = TextSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
                                     }
@@ -683,21 +689,21 @@ fun SettingsScreen(
                                     ) {
                                         Surface(
                                             shape = RoundedCornerShape(100.dp),
-                                            color = Color(0xFFECFDF5),
-                                            border = BorderStroke(1.dp, Color(0xFFA7F3D0))
+                                            color = KanguruTheme.colors.successContainer,
+                                            border = BorderStroke(1.dp, KanguruTheme.colors.successBorder)
                                         ) {
                                             Text(
                                                 text = uiState.feedingAlarmBadgeText,
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = Color(0xFF047857),
+                                                color = KanguruTheme.colors.onSuccessContainer,
                                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                                             )
                                         }
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                             contentDescription = null,
-                                            tint = Color(0xFF9CA3AF),
+                                            tint = TextTertiary,
                                             modifier = Modifier.size(16.dp)
                                         )
                                     }
@@ -714,7 +720,7 @@ fun SettingsScreen(
                             text = "TAMPILAN",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF9CA3AF),
+                            color = TextSecondary,
                             letterSpacing = 0.5.sp,
                             modifier = Modifier.padding(horizontal = 4.dp)
                         )
@@ -722,8 +728,8 @@ fun SettingsScreen(
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            color = White,
-                            border = BorderStroke(1.dp, Color(0xFFF2ECE9)),
+                            color = MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                             shadowElevation = 0.5.dp
                         ) {
                             Column {
@@ -734,7 +740,7 @@ fun SettingsScreen(
                                     onClick = onOpenTextSize
                                 )
 
-                                HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                 // Tema Aplikasi
                                 SettingsItemRow(
@@ -754,7 +760,7 @@ fun SettingsScreen(
                             text = "DATA & PRIVASI",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF9CA3AF),
+                            color = TextSecondary,
                             letterSpacing = 0.5.sp,
                             modifier = Modifier.padding(horizontal = 4.dp)
                         )
@@ -762,8 +768,8 @@ fun SettingsScreen(
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            color = White,
-                            border = BorderStroke(1.dp, Color(0xFFF2ECE9)),
+                            color = MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                             shadowElevation = 0.5.dp
                         ) {
                             Column {
@@ -784,24 +790,24 @@ fun SettingsScreen(
                                             text = "Data Tersimpan di Perangkat",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = Color(0xFF1F2937)
+                                            color = TextPrimary
                                         )
                                         Text(
                                             text = "Penyimpanan lokal aman & terenkripsi",
                                             fontSize = 12.sp,
-                                            color = Color(0xFF6B7280),
+                                            color = TextSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
                                     }
                                     Icon(
                                         imageVector = Icons.Default.CheckCircle,
                                         contentDescription = null,
-                                        tint = Color(0xFF059669),
+                                        tint = KanguruTheme.colors.success,
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
 
-                                HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                 // Hapus Riwayat Aktivitas
                                 Row(
@@ -821,24 +827,24 @@ fun SettingsScreen(
                                             text = "Hapus Riwayat Aktivitas",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = Color(0xFFE11D48)
+                                            color = KanguruTheme.colors.error
                                         )
                                         Text(
                                             text = "Hapus log PMK & jadwal lama",
                                             fontSize = 12.sp,
-                                            color = Color(0xFF9CA3AF),
+                                            color = TextTertiary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
                                     }
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         contentDescription = null,
-                                        tint = Color(0xFFFB7185),
+                                        tint = KanguruTheme.colors.error.copy(alpha = 0.7f),
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
 
-                                HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                 // Reset Data Aplikasi
                                 Row(
@@ -858,19 +864,19 @@ fun SettingsScreen(
                                             text = "Reset Data Aplikasi",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = Color(0xFFDC2626)
+                                            color = KanguruTheme.colors.error
                                         )
                                         Text(
                                             text = "Kembalikan ke pengaturan awal",
                                             fontSize = 12.sp,
-                                            color = Color(0xFF9CA3AF),
+                                            color = TextTertiary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
                                     }
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         contentDescription = null,
-                                        tint = Color(0xFFF87171),
+                                        tint = KanguruTheme.colors.error.copy(alpha = 0.7f),
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
@@ -886,7 +892,7 @@ fun SettingsScreen(
                             text = "INFORMASI",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF9CA3AF),
+                            color = TextSecondary,
                             letterSpacing = 0.5.sp,
                             modifier = Modifier.padding(horizontal = 4.dp)
                         )
@@ -894,8 +900,8 @@ fun SettingsScreen(
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            color = White,
-                            border = BorderStroke(1.dp, Color(0xFFF2ECE9)),
+                            color = MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                             shadowElevation = 0.5.dp
                         ) {
                             Column {
@@ -906,7 +912,7 @@ fun SettingsScreen(
                                     onClick = onNavigateToAboutApp
                                 )
 
-                                HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                 // Versi Aplikasi
                                 Row(
@@ -920,23 +926,23 @@ fun SettingsScreen(
                                         text = "Versi Aplikasi",
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = Color(0xFF1F2937)
+                                        color = TextPrimary
                                     )
                                     Surface(
                                         shape = RoundedCornerShape(4.dp),
-                                        color = Color(0xFFF3F4F6)
+                                        color = MaterialTheme.colorScheme.surfaceVariant
                                     ) {
                                         Text(
                                             text = "v1.2.0 (Build 2026)",
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = Color(0xFF9CA3AF),
+                                            color = TextSecondary,
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                                         )
                                     }
                                 }
 
-                                HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                 // Sumber Informasi & Panduan Klinis
                                 SettingsNavigationItem(
@@ -945,7 +951,7 @@ fun SettingsScreen(
                                     onClick = onNavigateToClinicalGuidelines
                                 )
 
-                                HorizontalDivider(color = Color(0xFFF3F4F6), thickness = 1.dp)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
                                 // Disclaimer Medis
                                 SettingsNavigationItem(
@@ -965,7 +971,7 @@ fun SettingsScreen(
                             text = "BANTUAN",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF9CA3AF),
+                            color = TextSecondary,
                             letterSpacing = 0.5.sp,
                             modifier = Modifier.padding(horizontal = 4.dp)
                         )
@@ -973,8 +979,8 @@ fun SettingsScreen(
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            color = White,
-                            border = BorderStroke(1.dp, Color(0xFFF2ECE9)),
+                            color = MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                             shadowElevation = 0.5.dp
                         ) {
                             SettingsNavigationItem(
@@ -998,7 +1004,7 @@ fun SettingsScreen(
                             text = "KANGURU SIAGA • Pendamping BBLR Mandiri",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF9CA3AF)
+                            color = TextTertiary
                         )
                     }
 
@@ -1062,7 +1068,7 @@ fun SettingsScreen(
                 Text(
                     text = "Catatan sesi PMK yang telah selesai dan riwayat jadwal lama akan dibersihkan dari penyimpanan lokal. Data profil bayi dan riwayat pengukuran pertumbuhan tetap aman.",
                     fontSize = 14.sp,
-                    color = Color(0xFF64748B)
+                    color = TextSecondary
                 )
             },
             confirmButton = {
@@ -1072,11 +1078,11 @@ fun SettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = onCloseClearHistory) {
-                    Text(text = "Batal", color = Color(0xFF64748B))
+                    Text(text = "Batal", color = TextSecondary)
                 }
             },
             shape = RoundedCornerShape(16.dp),
-            containerColor = White
+            containerColor = MaterialTheme.colorScheme.surface
         )
     }
 
@@ -1095,7 +1101,7 @@ fun SettingsScreen(
                 Text(
                     text = "Perhatian: Tindakan ini akan mengembalikan aplikasi ke pengaturan awal. Anda perlu mengatur ulang profil bayi.",
                     fontSize = 14.sp,
-                    color = Color(0xFF64748B)
+                    color = TextSecondary
                 )
             },
             confirmButton = {
@@ -1105,11 +1111,11 @@ fun SettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = onCloseResetApp) {
-                    Text(text = "Batal", color = Color(0xFF64748B))
+                    Text(text = "Batal", color = TextSecondary)
                 }
             },
             shape = RoundedCornerShape(16.dp),
-            containerColor = White
+            containerColor = MaterialTheme.colorScheme.surface
         )
     }
 }
@@ -1132,7 +1138,7 @@ private fun SettingsItemRow(
             text = label,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF1F2937)
+            color = TextPrimary
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -1142,12 +1148,12 @@ private fun SettingsItemRow(
                 text = value,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF6B7280)
+                color = TextSecondary
             )
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = Color(0xFF9CA3AF),
+                tint = TextTertiary,
                 modifier = Modifier.size(16.dp)
             )
         }
@@ -1173,19 +1179,19 @@ private fun SettingsNavigationItem(
                 text = title,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1F2937)
+                color = TextPrimary
             )
             Text(
                 text = subtitle,
                 fontSize = 12.sp,
-                color = Color(0xFF6B7280),
+                color = TextSecondary,
                 modifier = Modifier.padding(top = 2.dp)
             )
         }
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = Color(0xFF9CA3AF),
+            tint = TextTertiary,
             modifier = Modifier.size(16.dp)
         )
     }

@@ -71,8 +71,11 @@ import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.DailyDuration
 import com.kangurusiaga.app.domain.model.PmkSession
@@ -125,11 +128,11 @@ fun PmkStatisticsScreen(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Color(0xFFFFF9F6),
+        containerColor = BrandBackground,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
-                color = Color(0xFFFFF9F6),
+                color = BrandBackground,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -144,7 +147,7 @@ fun PmkStatisticsScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.common_back),
-                            tint = Color(0xFF1E293B)
+                            tint = TextPrimary
                         )
                     }
 
@@ -152,14 +155,14 @@ fun PmkStatisticsScreen(
                         text = stringResource(R.string.pmk_stats_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = TextPrimary
                     )
 
                     IconButton(onClick = { /* Unduh laporan ringkasan */ }) {
                         Icon(
                             imageVector = Icons.Default.Download,
                             contentDescription = stringResource(R.string.pmk_stats_cd_download),
-                            tint = Color(0xFF475569)
+                            tint = TextSecondary
                         )
                     }
                 }
@@ -199,7 +202,7 @@ fun PmkStatisticsScreen(
             ) {
                 // 1. Period Selector Segmented Buttons
                 Surface(
-                    color = Color(0xFFFFF0F3),
+                    color = KanguruTheme.colors.surfaceVariant,
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -224,7 +227,7 @@ fun PmkStatisticsScreen(
                                     text = period.title,
                                     fontSize = 11.5.sp,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) White else Color(0xFF475569)
+                                    color = if (isSelected) White else TextSecondary
                                 )
                             }
                         }
@@ -249,18 +252,19 @@ fun PmkStatisticsScreen(
                             text = stats.dateRangeText,
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF64748B),
+                            color = TextSecondary,
                             fontSize = 11.5.sp
                         )
                     }
 
                     Surface(
-                        color = Color(0xFFECFDF5),
-                        shape = RoundedCornerShape(12.dp)
+                        color = KanguruTheme.colors.successContainer,
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.successBorder)
                     ) {
                         Text(
                             text = stringResource(R.string.pmk_stats_verified_badge),
-                            color = Color(0xFF059669),
+                            color = KanguruTheme.colors.onSuccessContainer,
                             fontSize = 10.5.sp,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
@@ -272,8 +276,8 @@ fun PmkStatisticsScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, Color(0xFFFFE4E8), RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = White),
+                        .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
+                    colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
                     shape = RoundedCornerShape(24.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
@@ -291,7 +295,7 @@ fun PmkStatisticsScreen(
                                 Text(
                                     text = stringResource(R.string.pmk_stats_compliance_title),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Color(0xFF64748B),
+                                    color = TextSecondary,
                                     fontWeight = FontWeight.Medium
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
@@ -300,11 +304,11 @@ fun PmkStatisticsScreen(
                                         text = "${stats.compliancePercentage}%",
                                         fontSize = 28.sp,
                                         fontWeight = FontWeight.ExtraBold,
-                                        color = Color(0xFF1E293B)
+                                        color = TextPrimary
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Surface(
-                                        color = if (stats.compliancePercentage >= 80) Color(0xFF10B981) else Color(0xFFF59E0B),
+                                        color = if (stats.compliancePercentage >= 80) KanguruTheme.colors.success else KanguruTheme.colors.warning,
                                         shape = RoundedCornerShape(12.dp)
                                     ) {
                                         Text(
@@ -322,7 +326,7 @@ fun PmkStatisticsScreen(
                                 modifier = Modifier
                                     .size(46.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFFFFE4E8)),
+                                    .background(BrandPink.copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -345,12 +349,12 @@ fun PmkStatisticsScreen(
                                 text = stats.totalDurationFormatted,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF334155)
+                                color = TextPrimary
                             )
                             Text(
                                 text = stats.targetDurationFormatted,
                                 fontSize = 12.sp,
-                                color = Color(0xFF94A3B8)
+                                color = TextSecondary
                             )
                         }
 
@@ -363,7 +367,7 @@ fun PmkStatisticsScreen(
                                 .height(10.dp)
                                 .clip(RoundedCornerShape(5.dp)),
                             color = BrandPink,
-                            trackColor = Color(0xFFF1F5F9),
+                            trackColor = KanguruTheme.colors.surfaceVariant,
                             strokeCap = StrokeCap.Round
                         )
 
@@ -371,7 +375,7 @@ fun PmkStatisticsScreen(
 
                         // Motivational Tip
                         Surface(
-                            color = Color(0xFFFFF9F6),
+                            color = KanguruTheme.colors.surfaceVariant,
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -389,7 +393,7 @@ fun PmkStatisticsScreen(
                                 Text(
                                     text = stats.motivationalTip,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Color(0xFF475569),
+                                    color = TextPrimary,
                                     fontSize = 11.5.sp,
                                     lineHeight = 16.sp
                                 )
@@ -399,6 +403,7 @@ fun PmkStatisticsScreen(
                 }
 
                 // 3. Key Metrics Grid (2x2)
+                val isDark = KanguruTheme.colors.isDark
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -407,8 +412,8 @@ fun PmkStatisticsScreen(
                         title = stringResource(R.string.pmk_stats_total_duration),
                         value = "${stats.totalDurationMinutes / 60}j ${stats.totalDurationMinutes % 60}m",
                         badge = "Optimal",
-                        badgeBg = Color(0xFFECFDF5),
-                        badgeColor = Color(0xFF059669),
+                        badgeBg = if (isDark) Color(0xFF10B981).copy(alpha = 0.2f) else Color(0xFFECFDF5),
+                        badgeColor = if (isDark) Color(0xFF34D399) else Color(0xFF059669),
                         modifier = Modifier.weight(1f)
                     )
 
@@ -416,8 +421,8 @@ fun PmkStatisticsScreen(
                         title = stringResource(R.string.pmk_stats_avg_session),
                         value = "${stats.averageMinutesPerSession} Menit",
                         badge = "Min 60m",
-                        badgeBg = Color(0xFFFFF7ED),
-                        badgeColor = Color(0xFFD97706),
+                        badgeBg = if (isDark) Color(0xFFF59E0B).copy(alpha = 0.2f) else Color(0xFFFFF7ED),
+                        badgeColor = if (isDark) Color(0xFFFBBF24) else Color(0xFFD97706),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -430,8 +435,8 @@ fun PmkStatisticsScreen(
                         title = stringResource(R.string.pmk_stats_completed_sessions),
                         value = "${stats.totalSessions} Sesi",
                         badge = "Tuntas",
-                        badgeBg = Color(0xFFF3E8FF),
-                        badgeColor = Color(0xFF7E22CE),
+                        badgeBg = if (isDark) Color(0xFF8B5CF6).copy(alpha = 0.2f) else Color(0xFFF3E8FF),
+                        badgeColor = if (isDark) Color(0xFFA78BFA) else Color(0xFF7E22CE),
                         modifier = Modifier.weight(1f)
                     )
 
@@ -439,8 +444,8 @@ fun PmkStatisticsScreen(
                         title = stringResource(R.string.pmk_stats_longest_session),
                         value = "${stats.longestSessionMinutes} Menit",
                         badge = "Terbaik",
-                        badgeBg = Color(0xFFFEF3C7),
-                        badgeColor = Color(0xFFB45309),
+                        badgeBg = if (isDark) Color(0xFFF59E0B).copy(alpha = 0.2f) else Color(0xFFFEF3C7),
+                        badgeColor = if (isDark) Color(0xFFFDE68A) else Color(0xFFB45309),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -452,8 +457,8 @@ fun PmkStatisticsScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = White),
+                        .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
+                    colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
                     shape = RoundedCornerShape(24.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
@@ -471,7 +476,7 @@ fun PmkStatisticsScreen(
                                 text = stringResource(R.string.pmk_stats_distribution_title),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1E293B)
+                                color = TextPrimary
                             )
 
                             Text(
@@ -518,8 +523,8 @@ fun PmkStatisticsScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, Color(0xFFFFE8D6), RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFBF6)),
+                        .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
+                    colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
                     shape = RoundedCornerShape(24.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
@@ -533,7 +538,7 @@ fun PmkStatisticsScreen(
                                 modifier = Modifier
                                     .size(30.dp)
                                     .clip(RoundedCornerShape(8.dp))
-                                    .background(Color(0xFFFFE4E8)),
+                                    .background(BrandPink.copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(text = "🩺", fontSize = 14.sp)
@@ -543,7 +548,7 @@ fun PmkStatisticsScreen(
                                 text = stringResource(R.string.pmk_stats_clinical_title, babyName),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1E293B)
+                                color = TextPrimary
                             )
                         }
 
@@ -554,33 +559,33 @@ fun PmkStatisticsScreen(
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Surface(
-                                color = White,
+                                color = KanguruTheme.colors.surfaceVariant,
                                 shape = RoundedCornerShape(14.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF1F5F9)),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
                                         text = stringResource(R.string.pmk_stats_avg_temp),
                                         fontSize = 11.sp,
-                                        color = Color(0xFF64748B)
+                                        color = TextSecondary
                                     )
                                     Text(
                                         text = "${stats.averageTemperature} °C",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1E293B)
+                                        color = TextPrimary
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Surface(
-                                        color = Color(0xFFECFDF5),
+                                        color = KanguruTheme.colors.successContainer,
                                         shape = RoundedCornerShape(6.dp)
                                     ) {
                                         Text(
                                             text = stringResource(R.string.pmk_stats_temp_status),
                                             fontSize = 9.5.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF059669),
+                                            color = KanguruTheme.colors.onSuccessContainer,
                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                         )
                                     }
@@ -588,33 +593,33 @@ fun PmkStatisticsScreen(
                             }
 
                             Surface(
-                                color = White,
+                                color = KanguruTheme.colors.surfaceVariant,
                                 shape = RoundedCornerShape(14.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF1F5F9)),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
                                         text = stringResource(R.string.pmk_stats_calmness),
                                         fontSize = 11.sp,
-                                        color = Color(0xFF64748B)
+                                        color = TextSecondary
                                     )
                                     Text(
                                         text = "${stats.calmnessPercentage}%",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1E293B)
+                                        color = TextPrimary
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Surface(
-                                        color = Color(0xFFFFF1F2),
+                                        color = KanguruTheme.colors.errorContainer,
                                         shape = RoundedCornerShape(6.dp)
                                     ) {
                                         Text(
                                             text = stringResource(R.string.pmk_stats_calmness_status),
                                             fontSize = 9.5.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = BrandPink,
+                                            color = KanguruTheme.colors.onErrorContainer,
                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                         )
                                     }
@@ -637,7 +642,7 @@ fun PmkStatisticsScreen(
                             Text(
                                 text = stats.clinicalNote,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color(0xFF475569),
+                                color = TextSecondary,
                                 fontSize = 11.5.sp,
                                 lineHeight = 16.sp
                             )
@@ -654,9 +659,9 @@ fun PmkStatisticsScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                     shape = RoundedCornerShape(18.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.AddCircle, contentDescription = null)
+                    Icon(imageVector = Icons.Default.AddCircle, contentDescription = null, tint = White)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = stringResource(R.string.pmk_stats_btn_add_new), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(text = stringResource(R.string.pmk_stats_btn_add_new), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = White)
                 }
 
                 OutlinedButton(
@@ -667,7 +672,8 @@ fun PmkStatisticsScreen(
                         .fillMaxWidth()
                         .height(48.dp),
                     shape = RoundedCornerShape(18.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF475569))
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Download,
@@ -696,8 +702,8 @@ private fun MetricCard(
 ) {
     Card(
         modifier = modifier
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = White),
+            .border(1.dp, CardBorder, RoundedCornerShape(20.dp)),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -731,13 +737,13 @@ private fun MetricCard(
                 text = value,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF1E293B)
+                color = TextPrimary
             )
 
             Text(
                 text = title,
                 fontSize = 11.sp,
-                color = Color(0xFF94A3B8),
+                color = TextSecondary,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -748,11 +754,15 @@ private fun MetricCard(
 private fun DailyBarChartSection(
     dailyDurations: List<DailyDuration>
 ) {
+    val isDark = KanguruTheme.colors.isDark
+    val standardBarColor = if (isDark) BrandPink.copy(alpha = 0.35f) else Color(0xFFFFCCD5)
+    val dashedLineColor = BrandPink.copy(alpha = 0.4f)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = White),
+            .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -771,12 +781,12 @@ private fun DailyBarChartSection(
                         text = "Durasi Harian (Menit)",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = TextPrimary
                     )
                     Text(
                         text = "Garis putus-putus: Target 60m",
                         fontSize = 11.sp,
-                        color = Color(0xFF94A3B8)
+                        color = TextSecondary
                     )
                 }
 
@@ -792,17 +802,17 @@ private fun DailyBarChartSection(
                                 .background(BrandPink)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "≥ Target", fontSize = 10.sp, color = Color(0xFF64748B))
+                        Text(text = "≥ Target", fontSize = 10.sp, color = TextSecondary)
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
                                 .size(8.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFFFCCD5))
+                                .background(standardBarColor)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "Standar", fontSize = 10.sp, color = Color(0xFF64748B))
+                        Text(text = "Standar", fontSize = 10.sp, color = TextSecondary)
                     }
                 }
             }
@@ -823,7 +833,7 @@ private fun DailyBarChartSection(
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val lineY = size.height * (1f - targetFraction)
                     drawLine(
-                        color = Color(0xFFFDA4AF),
+                        color = dashedLineColor,
                         start = Offset(0f, lineY),
                         end = Offset(size.width, lineY),
                         strokeWidth = 2.dp.toPx(),
@@ -839,7 +849,7 @@ private fun DailyBarChartSection(
                 ) {
                     dailyDurations.forEach { day ->
                         val barFraction = (day.durationMinutes.toFloat() / maxMinutes.toFloat()).coerceIn(0.05f, 1f)
-                        val barColor = if (day.isAboveTarget) BrandPink else Color(0xFFFFCCD5)
+                        val barColor = if (day.isAboveTarget) BrandPink else standardBarColor
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -850,7 +860,7 @@ private fun DailyBarChartSection(
                                 text = if (day.durationMinutes > 0) "${day.durationMinutes}" else "-",
                                 fontSize = 10.sp,
                                 fontWeight = if (day.isAboveTarget) FontWeight.Bold else FontWeight.Medium,
-                                color = if (day.isAboveTarget) BrandPink else Color(0xFF64748B)
+                                color = if (day.isAboveTarget) BrandPink else TextSecondary
                             )
 
                             Spacer(modifier = Modifier.height(4.dp))
@@ -869,7 +879,7 @@ private fun DailyBarChartSection(
                                 text = day.dayLabel,
                                 fontSize = 10.5.sp,
                                 fontWeight = if (day.isAboveTarget) FontWeight.Bold else FontWeight.Normal,
-                                color = if (day.isAboveTarget) BrandPink else Color(0xFF64748B)
+                                color = if (day.isAboveTarget) BrandPink else TextSecondary
                             )
                         }
                     }
@@ -895,13 +905,13 @@ private fun TimeDistributionItem(
                 text = label,
                 fontSize = 11.5.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF334155)
+                color = TextSecondary
             )
             Text(
                 text = "$count Sesi ($percent%)",
                 fontSize = 11.5.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B)
+                color = TextPrimary
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
@@ -912,7 +922,7 @@ private fun TimeDistributionItem(
                 .height(7.dp)
                 .clip(RoundedCornerShape(4.dp)),
             color = fillColor,
-            trackColor = Color(0xFFF1F5F9),
+            trackColor = KanguruTheme.colors.surfaceVariant,
             strokeCap = StrokeCap.Round
         )
     }
@@ -929,8 +939,8 @@ private fun SessionHistoryItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = White),
+            .border(1.dp, CardBorder, RoundedCornerShape(16.dp)),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -947,18 +957,18 @@ private fun SessionHistoryItem(
                         text = "${session.durationMinutes} Menit",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = TextPrimary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Surface(
-                        color = if (session.source.name == "TIMER") BrandLightPink else Color(0xFFF1F5F9),
+                        color = if (session.source.name == "TIMER") BrandLightPink else KanguruTheme.colors.surfaceVariant,
                         shape = RoundedCornerShape(6.dp)
                     ) {
                         Text(
                             text = session.source.name,
                             fontSize = 9.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (session.source.name == "TIMER") BrandPink else Color(0xFF64748B),
+                            color = if (session.source.name == "TIMER") BrandPink else TextSecondary,
                             modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
                         )
                     }
@@ -969,7 +979,7 @@ private fun SessionHistoryItem(
                 Text(
                     text = formattedTime,
                     fontSize = 11.sp,
-                    color = Color(0xFF94A3B8)
+                    color = TextTertiary
                 )
 
                 if (session.babyTemperature != null || session.babyResponse != null) {
@@ -981,7 +991,7 @@ private fun SessionHistoryItem(
                     Text(
                         text = details,
                         fontSize = 10.5.sp,
-                        color = Color(0xFF64748B)
+                        color = TextSecondary
                     )
                 }
 
@@ -990,7 +1000,7 @@ private fun SessionHistoryItem(
                     Text(
                         text = "\"${session.notes}\"",
                         fontSize = 11.sp,
-                        color = Color(0xFF475569),
+                        color = TextSecondary,
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
                     )
                 }
@@ -1000,7 +1010,7 @@ private fun SessionHistoryItem(
                 Icon(
                     imageVector = Icons.Default.DeleteOutline,
                     contentDescription = "Hapus",
-                    tint = Color(0xFF94A3B8),
+                    tint = TextSecondary,
                     modifier = Modifier.size(20.dp)
                 )
             }

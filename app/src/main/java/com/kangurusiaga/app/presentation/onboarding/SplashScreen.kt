@@ -65,6 +65,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -338,10 +341,12 @@ fun SplashScreen(
         )
     }
 
+    val isDark = KanguruTheme.isDark
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFAF6F0))
+            .background(BrandBackground)
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
                     triggerBurst(offset.x, offset.y)
@@ -361,8 +366,8 @@ fun SplashScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFFFEF3C7).copy(alpha = amberPulseAlpha),
-                            Color(0xFFFEF3C7).copy(alpha = amberPulseAlpha * 0.4f),
+                            Color(0xFFFEF3C7).copy(alpha = if (isDark) amberPulseAlpha * 0.15f else amberPulseAlpha),
+                            Color(0xFFFEF3C7).copy(alpha = (if (isDark) amberPulseAlpha * 0.15f else amberPulseAlpha) * 0.4f),
                             Color.Transparent
                         )
                     ),
@@ -379,8 +384,8 @@ fun SplashScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFFFFE4E6).copy(alpha = rosePulseAlpha),
-                            Color(0xFFFFE4E6).copy(alpha = rosePulseAlpha * 0.4f),
+                            Color(0xFFFFE4E6).copy(alpha = if (isDark) rosePulseAlpha * 0.15f else rosePulseAlpha),
+                            Color(0xFFFFE4E6).copy(alpha = (if (isDark) rosePulseAlpha * 0.15f else rosePulseAlpha) * 0.4f),
                             Color.Transparent
                         )
                     ),
@@ -401,7 +406,11 @@ fun SplashScreen(
             // Soft radial base tint at the bottom
             drawRect(
                 brush = Brush.radialGradient(
-                    colors = listOf(
+                    colors = if (isDark) listOf(
+                        Color(0xFF2A2421).copy(alpha = 0.5f),
+                        Color(0xFF1E1B18).copy(alpha = 0.3f),
+                        Color.Transparent
+                    ) else listOf(
                         Color(0xFFFBEBE1).copy(alpha = 0.9f),
                         Color(0xFFFBF3EB).copy(alpha = 0.5f),
                         Color.Transparent
@@ -425,7 +434,7 @@ fun SplashScreen(
                 lineTo(0f, h)
                 close()
             }
-            drawPath(path1, color = Color(0xFFF8E5D8).copy(alpha = 0.65f))
+            drawPath(path1, color = if (isDark) Color(0xFF25221F).copy(alpha = 0.5f) else Color(0xFFF8E5D8).copy(alpha = 0.65f))
 
             // Wave 2: Path D: M0,110 C140,50 280,140 390,110 L390,180 L0,180 Z (scaled)
             val path2 = Path().apply {
@@ -439,7 +448,7 @@ fun SplashScreen(
                 lineTo(0f, h)
                 close()
             }
-            drawPath(path2, color = Color(0xFFF3D8C8).copy(alpha = 0.40f))
+            drawPath(path2, color = if (isDark) Color(0xFF2D2824).copy(alpha = 0.35f) else Color(0xFFF3D8C8).copy(alpha = 0.40f))
         }
 
         // ==========================================
@@ -583,7 +592,7 @@ fun SplashScreen(
                         modifier = Modifier
                             .size(175.dp)
                             .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.50f))
+                            .background(if (isDark) Color.White.copy(alpha = 0.08f) else Color.White.copy(alpha = 0.50f))
                     )
 
                     // Kangaroo mascot image with gentle breathing animation
@@ -609,7 +618,7 @@ fun SplashScreen(
                     text = stringResource(R.string.splash_subtitle),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF64748B),
+                    color = TextSecondary,
                     textAlign = TextAlign.Center,
                     lineHeight = 22.sp
                 )

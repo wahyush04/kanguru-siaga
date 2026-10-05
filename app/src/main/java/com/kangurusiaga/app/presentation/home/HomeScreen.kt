@@ -84,6 +84,7 @@ import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.BrandSoftAmber
 import com.kangurusiaga.app.core.designsystem.theme.BrandSoftBlue
 import com.kangurusiaga.app.core.designsystem.theme.BrandSoftGreen
@@ -342,7 +343,7 @@ private fun HomeContent(
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = stringResource(R.string.home_cd_notifications),
-                    tint = Color(0xFF475569),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(24.dp)
                 )
 
@@ -379,7 +380,7 @@ private fun HomeContent(
                 subtitle = stringResource(R.string.home_card_pmk_subtitle),
                 iconRes = R.drawable.ic_pmk_mascot,
                 containerColor = BrandLightPink,
-                borderColor = Color(0xFFFFDDE4),
+                borderColor = KanguruTheme.colors.outline,
                 onClick = onNavigateToPmk,
                 modifier = Modifier.weight(1f)
             )
@@ -389,8 +390,8 @@ private fun HomeContent(
                 title = stringResource(R.string.home_card_bblr_title),
                 subtitle = stringResource(R.string.home_card_bblr_subtitle),
                 iconRes = R.drawable.ic_card_bblr,
-                containerColor = Color(0xFFEBF8F1),
-                borderColor = Color(0xFFD3F3E1),
+                containerColor = KanguruTheme.colors.successContainer,
+                borderColor = KanguruTheme.colors.successBorder,
                 onClick = onNavigateToEducation,
                 modifier = Modifier.weight(1f)
             )
@@ -407,8 +408,8 @@ private fun HomeContent(
                 title = stringResource(R.string.home_card_emergency_title),
                 subtitle = stringResource(R.string.home_card_emergency_subtitle),
                 iconRes = R.drawable.ic_card_emergency,
-                containerColor = Color(0xFFFFF6E9),
-                borderColor = Color(0xFFFFE7C6),
+                containerColor = KanguruTheme.colors.warningContainer,
+                borderColor = KanguruTheme.colors.warningBorder,
                 onClick = onNavigateToEmergency,
                 modifier = Modifier.weight(1f)
             )
@@ -418,8 +419,8 @@ private fun HomeContent(
                 title = stringResource(R.string.home_card_asi_title),
                 subtitle = stringResource(R.string.home_card_asi_subtitle),
                 iconRes = R.drawable.ic_card_asi,
-                containerColor = Color(0xFFEBF6FF),
-                borderColor = Color(0xFFD2E9FF),
+                containerColor = KanguruTheme.colors.infoContainer,
+                borderColor = KanguruTheme.colors.infoBorder,
                 onClick = onNavigateToAlarm,
                 modifier = Modifier.weight(1f)
             )
@@ -431,7 +432,7 @@ private fun HomeContent(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, Color(0xFFFFDDE4), RoundedCornerShape(24.dp))
+                .border(1.dp, KanguruTheme.colors.outline, RoundedCornerShape(24.dp))
                 .clickable { onNavigateToGrowth() },
             colors = CardDefaults.cardColors(containerColor = BrandLightPink),
             shape = RoundedCornerShape(24.dp),
@@ -507,9 +508,9 @@ private fun HomeContent(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, Color(0xFFFFE8D1), RoundedCornerShape(20.dp))
+                .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(20.dp))
                 .clickable { onNavigateToPmk() },
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFBF6)),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
@@ -524,7 +525,7 @@ private fun HomeContent(
                     modifier = Modifier
                         .size(42.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFFFF1DC)),
+                        .background(KanguruTheme.colors.warningContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -565,8 +566,8 @@ private fun HomeContent(
                             .fillMaxWidth()
                             .height(8.dp)
                             .clip(RoundedCornerShape(4.dp)),
-                        color = Color(0xFF10B981),
-                        trackColor = Color(0xFFE2E8F0),
+                        color = KanguruTheme.colors.success,
+                        trackColor = MaterialTheme.colorScheme.outlineVariant,
                         strokeCap = StrokeCap.Round
                     )
                 }
@@ -655,7 +656,7 @@ private fun EmergencyBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
     ) {
         Column(
@@ -697,14 +698,14 @@ private fun EmergencyBottomSheet(
 
             // Alert Box
             Surface(
-                color = BrandLightPink,
+                color = KanguruTheme.colors.errorContainer,
                 shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFD6DD))
+                border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.errorBorder)
             ) {
                 Text(
                     text = stringResource(R.string.home_emergency_sheet_alert),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFFBE123C),
+                    color = KanguruTheme.colors.onErrorContainer,
                     fontWeight = FontWeight.Medium,
                     lineHeight = 18.sp,
                     modifier = Modifier.padding(14.dp)
@@ -718,32 +719,32 @@ private fun EmergencyBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(18.dp))
-                    .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(18.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(18.dp))
             ) {
                 DangerItemRow(
                     icon = "🚨",
                     title = stringResource(R.string.home_emergency_item_1_title),
                     subtitle = stringResource(R.string.home_emergency_item_1_sub)
                 )
-                HorizontalDivider(color = Color(0xFFF1F5F9))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DangerItemRow(
                     icon = "🚨",
                     title = stringResource(R.string.home_emergency_item_2_title),
                     subtitle = stringResource(R.string.home_emergency_item_2_sub)
                 )
-                HorizontalDivider(color = Color(0xFFF1F5F9))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DangerItemRow(
                     icon = "🚨",
                     title = stringResource(R.string.home_emergency_item_3_title),
                     subtitle = stringResource(R.string.home_emergency_item_3_sub)
                 )
-                HorizontalDivider(color = Color(0xFFF1F5F9))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DangerItemRow(
                     icon = "🚨",
                     title = stringResource(R.string.home_emergency_item_4_title),
                     subtitle = stringResource(R.string.home_emergency_item_4_sub)
                 )
-                HorizontalDivider(color = Color(0xFFF1F5F9))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DangerItemRow(
                     icon = "🚨",
                     title = stringResource(R.string.home_emergency_item_5_title),
@@ -789,7 +790,7 @@ private fun DangerItemRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(White)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -825,7 +826,7 @@ private fun NotificationBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
     ) {
         Column(
@@ -845,16 +846,16 @@ private fun NotificationBottomSheet(
                     color = TextPrimary
                 )
                 IconButton(onClick = onDismiss) {
-                    Icon(imageVector = Icons.Default.Close, contentDescription = stringResource(R.string.home_cd_close))
+                    Icon(imageVector = Icons.Default.Close, contentDescription = stringResource(R.string.home_cd_close), tint = TextSecondary)
                 }
             }
 
             Spacer(modifier = Modifier.height(14.dp))
 
             Surface(
-                color = Color(0xFFFFF9F5),
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE8D6)),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onNavigateToPmk() }
@@ -913,9 +914,9 @@ fun HomeBottomBar(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = White,
+        color = MaterialTheme.colorScheme.surface,
         shadowElevation = 8.dp,
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF1F5F9))
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column(
             modifier = Modifier
@@ -931,7 +932,7 @@ fun HomeBottomBar(
             ) {
                 HomeTab.entries.forEach { tab ->
                     val isSelected = tab == currentTab
-                    val contentColor = if (isSelected) BrandPink else Color(0xFF94A3B8)
+                    val contentColor = if (isSelected) BrandPink else MaterialTheme.colorScheme.onSurfaceVariant
                     val icon: ImageVector = when (tab) {
                         HomeTab.BERANDA -> Icons.Default.Home
                         HomeTab.PMK -> Icons.Default.VolunteerActivism

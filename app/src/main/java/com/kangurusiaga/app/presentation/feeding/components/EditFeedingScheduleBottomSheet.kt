@@ -114,14 +114,14 @@ fun EditFeedingScheduleBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = {
             Box(
                 modifier = Modifier
                     .padding(top = 10.dp, bottom = 4.dp)
                     .size(width = 40.dp, height = 4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color(0xFFCBD5E1))
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder)
             )
         }
     ) {
@@ -171,12 +171,12 @@ fun EditFeedingScheduleBottomSheet(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF1F5F9))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(R.string.alarm_cd_close),
-                        tint = Color(0xFF64748B),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -185,7 +185,7 @@ fun EditFeedingScheduleBottomSheet(
             Text(
                 text = stringResource(R.string.alarm_edit_subtitle),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF64748B),
+                color = TextSecondary,
                 modifier = Modifier.padding(top = 4.dp, bottom = 18.dp)
             )
 
@@ -194,7 +194,7 @@ fun EditFeedingScheduleBottomSheet(
                 text = stringResource(R.string.alarm_label_time_required),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF475569),
+                color = TextPrimary,
                 letterSpacing = 0.5.sp
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -203,8 +203,8 @@ fun EditFeedingScheduleBottomSheet(
                     .fillMaxWidth()
                     .height(52.dp)
                     .clip(RoundedCornerShape(14.dp))
-                    .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(14.dp))
-                    .background(White)
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(14.dp))
+                    .background(MaterialTheme.colorScheme.surface)
                     .clickable { showTimePicker = true }
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -219,7 +219,7 @@ fun EditFeedingScheduleBottomSheet(
                 Icon(
                     imageVector = Icons.Default.AccessTime,
                     contentDescription = null,
-                    tint = Color(0xFF94A3B8),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -231,7 +231,7 @@ fun EditFeedingScheduleBottomSheet(
                 text = stringResource(R.string.alarm_label_volume_required),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF475569),
+                color = TextPrimary,
                 letterSpacing = 0.5.sp
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -250,7 +250,7 @@ fun EditFeedingScheduleBottomSheet(
                 trailingIcon = {
                     Text(
                         text = stringResource(R.string.alarm_unit_ml),
-                        color = Color(0xFF94A3B8),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(end = 16.dp)
@@ -261,15 +261,15 @@ fun EditFeedingScheduleBottomSheet(
                 isError = volumeError != null,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BrandPink,
-                    unfocusedBorderColor = Color(0xFFE2E8F0),
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
             if (volumeError != null) {
                 Text(
                     text = volumeError ?: "",
-                    color = Color(0xFFDC2626),
+                    color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -277,7 +277,7 @@ fun EditFeedingScheduleBottomSheet(
                 Text(
                     text = stringResource(R.string.alarm_tip_doctor_notice),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B),
+                    color = TextSecondary,
                     fontSize = 11.5.sp,
                     modifier = Modifier.padding(top = 6.dp)
                 )
@@ -290,7 +290,7 @@ fun EditFeedingScheduleBottomSheet(
                 text = stringResource(R.string.alarm_label_method),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF475569),
+                color = TextPrimary,
                 letterSpacing = 0.5.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -307,16 +307,16 @@ fun EditFeedingScheduleBottomSheet(
                             .clip(RoundedCornerShape(12.dp))
                             .border(
                                 width = if (isSelected) 1.5.dp else 1.dp,
-                                color = if (isSelected) BrandPink else Color(0xFFE2E8F0),
+                                color = if (isSelected) BrandPink else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder,
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .background(if (isSelected) Color(0xFFFFF1F2) else White)
+                            .background(if (isSelected) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated else MaterialTheme.colorScheme.surface)
                             .clickable { selectedMethod = method },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = method.displayName,
-                            color = if (isSelected) BrandPink else Color(0xFF475569),
+                            color = if (isSelected) BrandPink else TextPrimary,
                             fontSize = 11.5.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             textAlign = TextAlign.Center
@@ -332,7 +332,7 @@ fun EditFeedingScheduleBottomSheet(
                 text = stringResource(R.string.alarm_label_note_optional),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF475569),
+                color = TextPrimary,
                 letterSpacing = 0.5.sp
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -344,16 +344,16 @@ fun EditFeedingScheduleBottomSheet(
                 placeholder = {
                     Text(
                         text = stringResource(R.string.alarm_placeholder_note_edit),
-                        color = Color(0xFF94A3B8),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp
                     )
                 },
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BrandPink,
-                    unfocusedBorderColor = Color(0xFFE2E8F0),
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 
@@ -364,8 +364,8 @@ fun EditFeedingScheduleBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(18.dp))
-                    .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(18.dp))
-                    .background(Color(0xFFF8FAFC))
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(18.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(14.dp)
             ) {
                 // Reminder Toggle Row
@@ -379,12 +379,12 @@ fun EditFeedingScheduleBottomSheet(
                             text = stringResource(R.string.alarm_toggle_reminder_title),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B)
+                            color = TextPrimary
                         )
                         Text(
                             text = stringResource(R.string.alarm_toggle_reminder_desc),
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF64748B),
+                            color = TextSecondary,
                             fontSize = 11.sp
                         )
                     }
@@ -396,7 +396,7 @@ fun EditFeedingScheduleBottomSheet(
                             checkedThumbColor = White,
                             checkedTrackColor = Color(0xFF10B981),
                             uncheckedThumbColor = White,
-                            uncheckedTrackColor = Color(0xFFE2E8F0)
+                            uncheckedTrackColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
                         )
                     )
                 }
@@ -404,7 +404,7 @@ fun EditFeedingScheduleBottomSheet(
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 10.dp),
                     thickness = 1.dp,
-                    color = Color(0xFFE2E8F0).copy(alpha = 0.6f)
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider
                 )
 
                 // Repeat Dropdown Row
@@ -417,15 +417,15 @@ fun EditFeedingScheduleBottomSheet(
                         text = stringResource(R.string.alarm_label_repeat_schedule),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = TextPrimary
                     )
 
                     Box {
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(8.dp))
-                                .background(White)
+                                .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.surface)
                                 .clickable { showRepeatMenu = true }
                                 .padding(horizontal = 10.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically
@@ -434,14 +434,14 @@ fun EditFeedingScheduleBottomSheet(
                                 text = selectedRepeatType.displayName,
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF334155),
+                                color = TextPrimary,
                                 fontSize = 11.5.sp
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowDown,
                                 contentDescription = null,
-                                tint = Color(0xFF94A3B8),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -449,7 +449,7 @@ fun EditFeedingScheduleBottomSheet(
                         DropdownMenu(
                             expanded = showRepeatMenu,
                             onDismissRequest = { showRepeatMenu = false },
-                            modifier = Modifier.background(White)
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                         ) {
                             RepeatType.entries.forEach { repeat ->
                                 DropdownMenuItem(

@@ -26,6 +26,7 @@ import androidx.compose.ui.window.Dialog
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +46,7 @@ fun FeedingTimePickerDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(20.dp),
-            color = White,
+            color = MaterialTheme.colorScheme.surface,
             shadowElevation = 6.dp
         ) {
             Column(
@@ -64,9 +65,9 @@ fun FeedingTimePickerDialog(
                 TimePicker(
                     state = state,
                     colors = TimePickerDefaults.colors(
-                        clockDialColor = Color(0xFFF8FAFC),
+                        clockDialColor = MaterialTheme.colorScheme.surfaceVariant,
                         selectorColor = BrandPink,
-                        containerColor = White,
+                        containerColor = MaterialTheme.colorScheme.surface,
                         periodSelectorBorderColor = BrandPink,
                         timeSelectorSelectedContainerColor = BrandPink.copy(alpha = 0.15f),
                         timeSelectorSelectedContentColor = BrandPink
@@ -81,7 +82,7 @@ fun FeedingTimePickerDialog(
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.alarm_btn_cancel), color = Color(0xFF64748B))
+                        Text(stringResource(R.string.alarm_btn_cancel), color = TextSecondary)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(

@@ -46,9 +46,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
+import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.education.EducationModule
 import com.kangurusiaga.app.presentation.education.components.EducationModuleCard
@@ -100,7 +104,7 @@ fun EducationListScreen(
         containerColor = BrandBackground,
         topBar = {
             Surface(
-                color = White,
+                color = KanguruTheme.colors.surface,
                 shadowElevation = 0.5.dp
             ) {
                 Column(
@@ -120,7 +124,7 @@ fun EducationListScreen(
                             modifier = Modifier
                                 .size(38.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFF8FAFC))
+                                .background(KanguruTheme.colors.surfaceVariant)
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -162,7 +166,7 @@ fun EducationListScreen(
                         )
                     }
 
-                    HorizontalDivider(color = Color(0xFFF1F5F9), thickness = 1.dp)
+                    HorizontalDivider(color = CardBorder, thickness = 1.dp)
                 }
             }
         },
@@ -238,7 +242,7 @@ private fun TabButton(
             text = title,
             fontSize = 14.sp,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-            color = if (selected) BrandPink else Color(0xFF94A3B8)
+            color = if (selected) BrandPink else TextTertiary
         )
         Spacer(modifier = Modifier.height(6.dp))
         Box(
@@ -266,7 +270,7 @@ private fun EmptyEducationContent(
             modifier = Modifier
                 .size(64.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFFFF0F2)),
+                .background(BrandLightPink),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -306,8 +310,8 @@ private fun EmptyEducationContent(
             Surface(
                 modifier = Modifier.clickable(onClick = onGoToAllModules),
                 shape = RoundedCornerShape(12.dp),
-                color = Color(0xFFFFF0F2),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFDCE2))
+                color = BrandLightPink,
+                border = androidx.compose.foundation.BorderStroke(1.dp, BrandPink.copy(alpha = 0.3f))
             ) {
                 Text(
                     text = stringResource(R.string.edu_list_btn_see_all),

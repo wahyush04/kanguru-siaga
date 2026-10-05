@@ -65,8 +65,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.emergency.EmergencyWarningModule
 
@@ -98,10 +101,10 @@ fun EmergencyWarningListScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Color(0xFFFAFAFA),
+        containerColor = BrandBackground,
         topBar = {
             Surface(
-                color = White,
+                color = KanguruTheme.colors.surface,
                 shadowElevation = 0.5.dp
             ) {
                 Column(
@@ -120,7 +123,8 @@ fun EmergencyWarningListScreen(
                             modifier = Modifier
                                 .size(38.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFF8FAFC))
+                                .background(KanguruTheme.colors.surfaceVariant)
+                                .border(1.dp, CardBorder, CircleShape)
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -170,8 +174,8 @@ fun EmergencyWarningListScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, Color(0xFFFED7D7), RoundedCornerShape(16.dp)),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF5F5)),
+                            .border(1.dp, KanguruTheme.colors.errorBorder, RoundedCornerShape(16.dp)),
+                        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.errorContainer),
                         shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
@@ -185,13 +189,13 @@ fun EmergencyWarningListScreen(
                                 modifier = Modifier
                                     .size(26.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFFFEE2E2)),
+                                    .background(KanguruTheme.colors.error.copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Warning,
                                     contentDescription = null,
-                                    tint = Color(0xFFEF4444),
+                                    tint = KanguruTheme.colors.error,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -202,7 +206,7 @@ fun EmergencyWarningListScreen(
                                 text = stringResource(R.string.emergency_banner_warning),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFFDC2626),
+                                color = KanguruTheme.colors.error,
                                 lineHeight = 18.sp,
                                 fontSize = 12.5.sp
                             )
@@ -222,13 +226,14 @@ fun EmergencyWarningListScreen(
 
                 // Call Emergency Hotline (119) Action Button
                 item {
+                    val isDark = KanguruTheme.colors.isDark
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, Color(0xFFFFDDE4), RoundedCornerShape(18.dp)),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF0F3)),
+                            .border(1.dp, if (isDark) KanguruTheme.colors.errorBorder else Color(0xFFFFDDE4), RoundedCornerShape(18.dp)),
+                        colors = CardDefaults.cardColors(containerColor = if (isDark) KanguruTheme.colors.errorContainer else Color(0xFFFFF0F3)),
                         shape = RoundedCornerShape(18.dp)
                     ) {
                         Row(
@@ -243,13 +248,13 @@ fun EmergencyWarningListScreen(
                                     text = stringResource(R.string.emergency_hotline_card_title),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFFE11D48)
+                                    color = if (isDark) KanguruTheme.colors.error else Color(0xFFE11D48)
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = stringResource(R.string.emergency_hotline_card_desc),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Color(0xFF9F1239),
+                                    color = if (isDark) TextSecondary else Color(0xFF9F1239),
                                     fontSize = 11.5.sp
                                 )
                             }
@@ -294,16 +299,25 @@ private fun EmergencyModuleCardItem(
     modifier: Modifier = Modifier
 ) {
     val isOrangeTheme = module.themeColor == "orange"
-    val iconBadgeBg = if (isOrangeTheme) Color(0xFFFFF7ED) else Color(0xFFFFF1F2)
-    val iconTint = if (isOrangeTheme) Color(0xFFF97316) else Color(0xFFF43F5E)
+    val isDark = KanguruTheme.colors.isDark
+    val iconBadgeBg = if (isOrangeTheme) {
+        if (isDark) KanguruTheme.colors.warning.copy(alpha = 0.16f) else Color(0xFFFFF7ED)
+    } else {
+        if (isDark) KanguruTheme.colors.error.copy(alpha = 0.16f) else Color(0xFFFFF1F2)
+    }
+    val iconTint = if (isOrangeTheme) {
+        if (isDark) Color(0xFFFB923C) else Color(0xFFF97316)
+    } else {
+        if (isDark) Color(0xFFFB7185) else Color(0xFFF43F5E)
+    }
     val iconVector = resolveIconVector(module.iconType)
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(18.dp))
+            .border(1.dp, CardBorder, RoundedCornerShape(18.dp))
             .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(18.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
     ) {
@@ -336,7 +350,7 @@ private fun EmergencyModuleCardItem(
                 text = module.title,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1E293B),
+                color = TextPrimary,
                 fontSize = 14.sp,
                 modifier = Modifier.weight(1f)
             )
@@ -345,7 +359,7 @@ private fun EmergencyModuleCardItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = null,
-                tint = Color(0xFFCBD5E1),
+                tint = TextTertiary,
                 modifier = Modifier.size(14.dp)
             )
         }

@@ -45,7 +45,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.White
 import kotlinx.coroutines.launch
 
 @Composable
@@ -92,7 +98,7 @@ fun OnboardingPagerScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFDF9))
+            .background(BrandBackground)
     ) {
         Column(
             modifier = Modifier
@@ -122,7 +128,7 @@ fun OnboardingPagerScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.onboarding_cd_back_welcome),
-                            tint = Color(0xFF1E293B)
+                            tint = TextPrimary
                         )
                     }
                 }
@@ -153,7 +159,7 @@ fun OnboardingPagerScreen(
                         .height(8.dp)
                         .width(if (pagerState.currentPage == 0) 24.dp else 8.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(if (pagerState.currentPage == 0) BrandPink else Color(0xFFE2E8F0))
+                        .background(if (pagerState.currentPage == 0) BrandPink else CardBorder)
                         .animateContentSize()
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -163,7 +169,7 @@ fun OnboardingPagerScreen(
                         .height(8.dp)
                         .width(if (pagerState.currentPage == 1) 24.dp else 8.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(if (pagerState.currentPage == 1) BrandPink else Color(0xFFE2E8F0))
+                        .background(if (pagerState.currentPage == 1) BrandPink else CardBorder)
                         .animateContentSize()
                 )
             }
@@ -205,7 +211,7 @@ fun OnboardingPagerScreen(
                             text = if (pagerState.currentPage == 0) stringResource(R.string.onboarding_btn_next) else stringResource(R.string.onboarding_btn_fill_baby_data),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White,
+                            color = White,
                             letterSpacing = 0.5.sp
                         )
                         if (pagerState.currentPage == 1) {
@@ -213,7 +219,7 @@ fun OnboardingPagerScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = null,
-                                tint = Color.White,
+                                tint = White,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -229,6 +235,7 @@ fun OnboardingPagerScreen(
  */
 @Composable
 private fun WelcomePageContent() {
+    val isDark = KanguruTheme.colors.isDark
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -245,10 +252,11 @@ private fun WelcomePageContent() {
                     .clip(CircleShape)
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0xFFFFF0F3),
-                                Color(0xFFFFF6EA)
-                            )
+                            colors = if (isDark) {
+                                listOf(Color(0xFF3B252C), Color(0xFF2C2520))
+                            } else {
+                                listOf(Color(0xFFFFF0F3), Color(0xFFFFF6EA))
+                            }
                         )
                     )
             )
@@ -267,7 +275,7 @@ private fun WelcomePageContent() {
             text = stringResource(R.string.onboarding_welcome_title),
             fontSize = 26.sp,
             fontWeight = FontWeight.ExtraBold,
-            color = Color(0xFF1E293B),
+            color = TextPrimary,
             textAlign = TextAlign.Center,
             lineHeight = 34.sp,
             letterSpacing = (-0.5).sp
@@ -280,7 +288,7 @@ private fun WelcomePageContent() {
             text = stringResource(R.string.onboarding_welcome_desc),
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-            color = Color(0xFF64748B),
+            color = TextSecondary,
             textAlign = TextAlign.Center,
             lineHeight = 22.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -293,6 +301,7 @@ private fun WelcomePageContent() {
  */
 @Composable
 private fun ProfileIntroPageContent() {
+    val isDark = KanguruTheme.colors.isDark
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -309,11 +318,19 @@ private fun ProfileIntroPageContent() {
                     .clip(CircleShape)
                     .background(
                         Brush.radialGradient(
-                            colors = listOf(
-                                Color(0xFFFFE4E6).copy(alpha = 0.6f),
-                                Color(0xFFFEF3C7).copy(alpha = 0.4f),
-                                Color(0xFFFFF0F2).copy(alpha = 0.8f)
-                            )
+                            colors = if (isDark) {
+                                listOf(
+                                    Color(0xFF4A252F).copy(alpha = 0.6f),
+                                    Color(0xFF382F1E).copy(alpha = 0.4f),
+                                    Color(0xFF2B2024).copy(alpha = 0.8f)
+                                )
+                            } else {
+                                listOf(
+                                    Color(0xFFFFE4E6).copy(alpha = 0.6f),
+                                    Color(0xFFFEF3C7).copy(alpha = 0.4f),
+                                    Color(0xFFFFF0F2).copy(alpha = 0.8f)
+                                )
+                            }
                         )
                     )
             )
@@ -331,7 +348,7 @@ private fun ProfileIntroPageContent() {
             text = stringResource(R.string.onboarding_profile_intro_title),
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1A2530),
+            color = TextPrimary,
             textAlign = TextAlign.Center,
             lineHeight = 34.sp
         )
@@ -342,7 +359,7 @@ private fun ProfileIntroPageContent() {
             text = stringResource(R.string.onboarding_profile_intro_desc),
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-            color = Color(0xFF687787),
+            color = TextSecondary,
             textAlign = TextAlign.Center,
             lineHeight = 22.sp,
             modifier = Modifier.padding(horizontal = 16.dp)

@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 
 data class GuidelineSource(
@@ -137,7 +139,7 @@ fun ClinicalGuidelinesScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Kembali",
-                        tint = Color(0xFF1E293B)
+                        tint = TextPrimary
                     )
                 }
 
@@ -145,7 +147,7 @@ fun ClinicalGuidelinesScreen(
                     text = "Sumber Informasi & Panduan Klinis",
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B),
+                    color = TextPrimary,
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
@@ -162,7 +164,7 @@ fun ClinicalGuidelinesScreen(
                     text = "PEDOMAN & LANDASAN TEORI RUJUKAN",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF94A3B8),
+                    color = TextSecondary,
                     letterSpacing = 0.5.sp,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
@@ -171,8 +173,8 @@ fun ClinicalGuidelinesScreen(
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        color = White,
-                        border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+                        color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                        border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
                         shadowElevation = 1.dp
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
@@ -200,7 +202,7 @@ fun ClinicalGuidelinesScreen(
                                         text = source.title,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF0F172A)
+                                        color = TextPrimary
                                     )
 
                                     Surface(
@@ -239,7 +241,7 @@ fun ClinicalGuidelinesScreen(
                                         text = item,
                                         fontSize = 12.sp,
                                         lineHeight = 17.sp,
-                                        color = Color(0xFF475569)
+                                        color = TextSecondary
                                     )
                                 }
                             }

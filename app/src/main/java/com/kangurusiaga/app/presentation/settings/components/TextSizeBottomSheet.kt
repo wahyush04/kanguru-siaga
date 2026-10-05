@@ -21,12 +21,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
@@ -42,6 +44,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.settings.AppTextScale
 
@@ -65,7 +71,7 @@ fun TextSizeBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = {
             Box(
                 modifier = Modifier
@@ -76,7 +82,7 @@ fun TextSizeBottomSheet(
                 Box(
                     modifier = Modifier
                         .size(width = 44.dp, height = 4.dp)
-                        .background(Color(0xFFE2E8F0), CircleShape)
+                        .background(MaterialTheme.colorScheme.outline, CircleShape)
                 )
             }
         }
@@ -101,12 +107,12 @@ fun TextSizeBottomSheet(
                             text = "Ukuran Teks",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A)
+                            color = TextPrimary
                         )
                         Surface(
                             shape = RoundedCornerShape(100.dp),
-                            color = Color(0xFFFFF1F2),
-                            border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                            color = KanguruTheme.colors.primaryContainer,
+                            border = BorderStroke(1.dp, KanguruTheme.colors.outline)
                         ) {
                             Text(
                                 text = "Tampilan",
@@ -118,9 +124,9 @@ fun TextSizeBottomSheet(
                         }
                     }
                     Text(
-                        text = "Sesuaikan ukuran huruf teks panduan dan angka pemantauan agar nyaman dibaca saat merawat si kecil.",
+                        text = "Sesuaikan ukuran huruf pada seluruh modul edukasi dan pemantauan agar nyaman dibaca saat menggendong si kecil.",
                         fontSize = 12.sp,
-                        color = Color(0xFF64748B),
+                        color = TextSecondary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
@@ -129,12 +135,12 @@ fun TextSizeBottomSheet(
                     onClick = onDismiss,
                     modifier = Modifier
                         .size(32.dp)
-                        .background(Color(0xFFF1F5F9), CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Tutup",
-                        tint = Color(0xFF64748B),
+                        tint = TextSecondary,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -142,63 +148,89 @@ fun TextSizeBottomSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Body
+            // Body Options
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Stepper Slider Card
+                // Interactive Visual Slider Card
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color(0xFFFAF8F6),
-                    border = BorderStroke(1.dp, Color(0xFFE2E8F0))
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = "A",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF94A3B8)
-                            )
-
-                            Slider(
-                                value = stepIndex,
-                                onValueChange = { value ->
-                                    val newScale = when (value.toInt()) {
-                                        0 -> AppTextScale.SMALL
-                                        1 -> AppTextScale.STANDARD
-                                        2 -> AppTextScale.LARGE
-                                        else -> AppTextScale.EXTRA_LARGE
-                                    }
-                                    onSelectScale(newScale)
-                                },
-                                valueRange = 0f..3f,
-                                steps = 2,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 12.dp),
-                                colors = SliderDefaults.colors(
-                                    thumbColor = BrandPink,
-                                    activeTrackColor = BrandPink,
-                                    inactiveTrackColor = Color(0xFFE2E8F0)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .background(KanguruTheme.colors.primaryContainer, CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.FormatSize,
+                                        contentDescription = null,
+                                        tint = BrandPink,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                                Text(
+                                    text = "Skala Ukuran",
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPrimary
                                 )
-                            )
-
-                            Text(
-                                text = "A",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1E293B)
-                            )
+                            }
+                            Surface(
+                                shape = RoundedCornerShape(100.dp),
+                                color = MaterialTheme.colorScheme.surface,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                            ) {
+                                Text(
+                                    text = selectedScale.percentageLabel,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = BrandPink,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
                         }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Slider(
+                            value = stepIndex,
+                            onValueChange = { newStep ->
+                                val targetScale = when (newStep.toInt()) {
+                                    0 -> AppTextScale.SMALL
+                                    1 -> AppTextScale.STANDARD
+                                    2 -> AppTextScale.LARGE
+                                    else -> AppTextScale.EXTRA_LARGE
+                                }
+                                onSelectScale(targetScale)
+                            },
+                            valueRange = 0f..3f,
+                            steps = 2,
+                            colors = SliderDefaults.colors(
+                                thumbColor = BrandPink,
+                                activeTrackColor = BrandPink,
+                                inactiveTrackColor = MaterialTheme.colorScheme.outlineVariant,
+                                activeTickColor = White,
+                                inactiveTickColor = MaterialTheme.colorScheme.outline
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -207,25 +239,25 @@ fun TextSizeBottomSheet(
                             Text(
                                 text = "Kecil",
                                 fontSize = 11.sp,
-                                color = if (selectedScale == AppTextScale.SMALL) BrandPink else Color(0xFF94A3B8),
+                                color = if (selectedScale == AppTextScale.SMALL) BrandPink else TextTertiary,
                                 fontWeight = if (selectedScale == AppTextScale.SMALL) FontWeight.Bold else FontWeight.Normal
                             )
                             Text(
                                 text = "Sedang (Standar)",
                                 fontSize = 11.sp,
-                                color = if (selectedScale == AppTextScale.STANDARD) BrandPink else Color(0xFF94A3B8),
+                                color = if (selectedScale == AppTextScale.STANDARD) BrandPink else TextTertiary,
                                 fontWeight = if (selectedScale == AppTextScale.STANDARD) FontWeight.Bold else FontWeight.Normal
                             )
                             Text(
                                 text = "Besar",
                                 fontSize = 11.sp,
-                                color = if (selectedScale == AppTextScale.LARGE) BrandPink else Color(0xFF94A3B8),
+                                color = if (selectedScale == AppTextScale.LARGE) BrandPink else TextTertiary,
                                 fontWeight = if (selectedScale == AppTextScale.LARGE) FontWeight.Bold else FontWeight.Normal
                             )
                             Text(
                                 text = "Ekstra",
                                 fontSize = 11.sp,
-                                color = if (selectedScale == AppTextScale.EXTRA_LARGE) BrandPink else Color(0xFF94A3B8),
+                                color = if (selectedScale == AppTextScale.EXTRA_LARGE) BrandPink else TextTertiary,
                                 fontWeight = if (selectedScale == AppTextScale.EXTRA_LARGE) FontWeight.Bold else FontWeight.Normal
                             )
                         }
@@ -240,10 +272,10 @@ fun TextSizeBottomSheet(
                             .fillMaxWidth()
                             .clickable { onSelectScale(scale) },
                         shape = RoundedCornerShape(16.dp),
-                        color = if (isSelected) Color(0xFFFFF1F2).copy(alpha = 0.5f) else White,
+                        color = if (isSelected) KanguruTheme.colors.primaryContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface,
                         border = BorderStroke(
                             if (isSelected) 2.dp else 1.dp,
-                            if (isSelected) BrandPink else Color(0xFFE2E8F0)
+                            if (isSelected) BrandPink else MaterialTheme.colorScheme.outline
                         )
                     ) {
                         Row(
@@ -255,7 +287,7 @@ fun TextSizeBottomSheet(
                                 modifier = Modifier
                                     .size(38.dp)
                                     .background(
-                                        if (isSelected) BrandPink else Color(0xFFF1F5F9),
+                                        if (isSelected) BrandPink else MaterialTheme.colorScheme.surfaceVariant,
                                         RoundedCornerShape(10.dp)
                                     ),
                                 contentAlignment = Alignment.Center
@@ -264,7 +296,7 @@ fun TextSizeBottomSheet(
                                     text = scale.percentageLabel,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isSelected) White else Color(0xFF475569)
+                                    color = if (isSelected) White else TextSecondary
                                 )
                             }
 
@@ -277,13 +309,13 @@ fun TextSizeBottomSheet(
                                         text = scale.title,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF0F172A)
+                                        color = TextPrimary
                                     )
                                     if (scale == AppTextScale.STANDARD) {
                                         Surface(
                                             shape = RoundedCornerShape(4.dp),
-                                            color = Color(0xFFFFF1F2),
-                                            border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                                            color = KanguruTheme.colors.primaryContainer,
+                                            border = BorderStroke(1.dp, KanguruTheme.colors.outline)
                                         ) {
                                             Text(
                                                 text = "Direkomendasikan",
@@ -298,7 +330,7 @@ fun TextSizeBottomSheet(
                                 Text(
                                     text = scale.description,
                                     fontSize = 11.sp,
-                                    color = Color(0xFF64748B),
+                                    color = TextSecondary,
                                     lineHeight = 15.sp,
                                     modifier = Modifier.padding(top = 2.dp)
                                 )
@@ -314,7 +346,7 @@ fun TextSizeBottomSheet(
                                     )
                                     .border(
                                         if (isSelected) 0.dp else 2.dp,
-                                        if (isSelected) Color.Transparent else Color(0xFFCBD5E1),
+                                        if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline,
                                         CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
@@ -336,8 +368,8 @@ fun TextSizeBottomSheet(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color(0xFFFFF7F2),
-                    border = BorderStroke(1.dp, Color(0xFFF1E5DE))
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
                         Row(
@@ -367,7 +399,7 @@ fun TextSizeBottomSheet(
                                 text = "Skala ${selectedScale.percentageLabel}",
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF94A3B8)
+                                color = TextTertiary
                             )
                         }
 
@@ -376,8 +408,8 @@ fun TextSizeBottomSheet(
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
-                            color = White.copy(alpha = 0.85f),
-                            border = BorderStroke(1.dp, Color(0xFFF1ECE6))
+                            color = MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(
@@ -385,14 +417,14 @@ fun TextSizeBottomSheet(
                                     fontSize = (13 * selectedScale.scaleFactor).sp,
                                     lineHeight = (18 * selectedScale.scaleFactor).sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF0F172A)
+                                    color = TextPrimary
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = "Jaga kontak kulit-ke-kulit (Kangaroo Mother Care) secara teratur untuk menjaga kestabilan suhu tubuh si kecil.",
                                     fontSize = (11 * selectedScale.scaleFactor).sp,
                                     lineHeight = (16 * selectedScale.scaleFactor).sp,
-                                    color = Color(0xFF475569)
+                                    color = TextSecondary
                                 )
                             }
                         }
@@ -415,12 +447,12 @@ fun TextSizeBottomSheet(
                         .weight(1f)
                         .height(48.dp),
                     shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color(0xFFCBD5E1))
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
                     Text(
                         text = "Batal",
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF475569)
+                        color = TextSecondary
                     )
                 }
 

@@ -30,6 +30,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -46,6 +47,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.settings.AppThemeMode
 
@@ -62,7 +67,7 @@ fun ThemeSelectionBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = {
             Box(
                 modifier = Modifier
@@ -73,7 +78,7 @@ fun ThemeSelectionBottomSheet(
                 Box(
                     modifier = Modifier
                         .size(width = 44.dp, height = 4.dp)
-                        .background(Color(0xFFE2E8F0), CircleShape)
+                        .background(MaterialTheme.colorScheme.outline, CircleShape)
                 )
             }
         }
@@ -98,12 +103,12 @@ fun ThemeSelectionBottomSheet(
                             text = "Tema Aplikasi",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A)
+                            color = TextPrimary
                         )
                         Surface(
                             shape = RoundedCornerShape(100.dp),
-                            color = Color(0xFFFFF1F2),
-                            border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                            color = KanguruTheme.colors.primaryContainer,
+                            border = BorderStroke(1.dp, KanguruTheme.colors.outline)
                         ) {
                             Text(
                                 text = "Tampilan",
@@ -117,7 +122,7 @@ fun ThemeSelectionBottomSheet(
                     Text(
                         text = "Pilih skema warna dan pencahayaan yang paling nyaman untuk mata Ayah & Bunda saat memantau si kecil.",
                         fontSize = 12.sp,
-                        color = Color(0xFF64748B),
+                        color = TextSecondary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
@@ -126,12 +131,12 @@ fun ThemeSelectionBottomSheet(
                     onClick = onDismiss,
                     modifier = Modifier
                         .size(32.dp)
-                        .background(Color(0xFFF1F5F9), CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Tutup",
-                        tint = Color(0xFF64748B),
+                        tint = TextSecondary,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -166,9 +171,9 @@ fun ThemeSelectionBottomSheet(
                     description = "Latar gelap lembut dengan kontras rendah, ideal digunakan saat memantau suhu, timer PMK, atau jadwal ASI tanpa mengganggu tidur bayi.",
                     icon = Icons.Default.NightlightRound,
                     iconColor = Color(0xFFFCD34D),
-                    iconBgColor = Color(0xFF1E293B),
+                    iconBgColor = Color(0xFF282522),
                     isSelected = selectedTheme == AppThemeMode.DIM_NURSING,
-                    swatches = listOf(Color(0xFF1E293B), Color(0xFFFDA4AF), Color(0xFF475569)),
+                    swatches = listOf(Color(0xFF141312), Color(0xFFFF5C77), Color(0xFFA8A399)),
                     onClick = { onSelectTheme(AppThemeMode.DIM_NURSING) }
                 )
 
@@ -178,11 +183,11 @@ fun ThemeSelectionBottomSheet(
                     badgeText = "Dinamis",
                     description = "Secara otomatis beralih antara Terang Hangat di siang hari dan Mode Redup pada malam hari mengikuti setelan perangkat Anda.",
                     icon = Icons.Default.BrightnessMedium,
-                    iconColor = Color(0xFF475569),
-                    iconBgColor = Color(0xFFF1F5F9),
+                    iconColor = Color(0xFF60A5FA),
+                    iconBgColor = MaterialTheme.colorScheme.surfaceVariant,
                     isSelected = selectedTheme == AppThemeMode.SYSTEM,
                     gradientSwatch = Brush.horizontalGradient(
-                        listOf(Color(0xFFFFFBF8), Color(0xFFFF8598), Color(0xFF1E293B))
+                        listOf(Color(0xFFFAF7F2), Color(0xFFFF8598), Color(0xFF141312))
                     ),
                     onClick = { onSelectTheme(AppThemeMode.SYSTEM) }
                 )
@@ -191,8 +196,8 @@ fun ThemeSelectionBottomSheet(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    color = Color(0xFFFFFBEB),
-                    border = BorderStroke(1.dp, Color(0xFFFDE68A))
+                    color = KanguruTheme.colors.warningContainer,
+                    border = BorderStroke(1.dp, KanguruTheme.colors.warningBorder)
                 ) {
                     Row(
                         modifier = Modifier.padding(12.dp),
@@ -202,13 +207,13 @@ fun ThemeSelectionBottomSheet(
                         Box(
                             modifier = Modifier
                                 .size(24.dp)
-                                .background(Color(0xFFFEF3C7), RoundedCornerShape(6.dp)),
+                                .background(KanguruTheme.colors.warningBorder.copy(alpha = 0.25f), RoundedCornerShape(6.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Lightbulb,
                                 contentDescription = null,
-                                tint = Color(0xFFD97706),
+                                tint = KanguruTheme.colors.warning,
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -217,7 +222,7 @@ fun ThemeSelectionBottomSheet(
                             fontSize = 11.sp,
                             lineHeight = 16.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF78350F)
+                            color = KanguruTheme.colors.onWarningContainer
                         )
                     }
                 }
@@ -238,12 +243,12 @@ fun ThemeSelectionBottomSheet(
                         .weight(1f)
                         .height(48.dp),
                     shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color(0xFFCBD5E1))
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
                     Text(
                         text = "Batal",
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF475569)
+                        color = TextSecondary
                     )
                 }
 
@@ -290,10 +295,10 @@ private fun ThemeOptionCard(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        color = if (isSelected) Color(0xFFFFFBF8) else White,
+        color = if (isSelected) KanguruTheme.colors.primaryContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface,
         border = BorderStroke(
             if (isSelected) 2.dp else 1.dp,
-            if (isSelected) BrandPink else Color(0xFFE2E8F0)
+            if (isSelected) BrandPink else MaterialTheme.colorScheme.outline
         )
     ) {
         Row(
@@ -324,18 +329,18 @@ private fun ThemeOptionCard(
                         text = title,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        color = TextPrimary
                     )
                     Surface(
                         shape = RoundedCornerShape(4.dp),
-                        color = if (isSelected) Color(0xFFFEF3C7) else Color(0xFFF1F5F9),
-                        border = BorderStroke(1.dp, if (isSelected) Color(0xFFFDE68A) else Color(0xFFE2E8F0))
+                        color = if (isSelected) KanguruTheme.colors.warningContainer else MaterialTheme.colorScheme.surfaceVariant,
+                        border = BorderStroke(1.dp, if (isSelected) KanguruTheme.colors.warningBorder else MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Text(
                             text = badgeText,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (isSelected) Color(0xFF92400E) else Color(0xFF475569),
+                            color = if (isSelected) KanguruTheme.colors.onWarningContainer else TextSecondary,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                         )
                     }
@@ -347,7 +352,7 @@ private fun ThemeOptionCard(
                     text = description,
                     fontSize = 11.sp,
                     lineHeight = 16.sp,
-                    color = Color(0xFF64748B)
+                    color = TextSecondary
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -361,7 +366,7 @@ private fun ThemeOptionCard(
                         text = "Palet:",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF94A3B8)
+                        color = TextTertiary
                     )
                     if (gradientSwatch != null) {
                         Box(
@@ -369,7 +374,7 @@ private fun ThemeOptionCard(
                                 .size(width = 48.dp, height = 12.dp)
                                 .clip(RoundedCornerShape(100.dp))
                                 .background(gradientSwatch)
-                                .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(100.dp))
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(100.dp))
                         )
                     } else {
                         Row(horizontalArrangement = Arrangement.spacedBy((-4).dp)) {
@@ -378,7 +383,7 @@ private fun ThemeOptionCard(
                                     modifier = Modifier
                                         .size(16.dp)
                                         .background(color, CircleShape)
-                                        .border(1.dp, White, CircleShape)
+                                        .border(1.dp, MaterialTheme.colorScheme.surface, CircleShape)
                                 )
                             }
                         }
@@ -396,7 +401,7 @@ private fun ThemeOptionCard(
                     )
                     .border(
                         if (isSelected) 0.dp else 2.dp,
-                        if (isSelected) Color.Transparent else Color(0xFFCBD5E1),
+                        if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline,
                         CircleShape
                     ),
                 contentAlignment = Alignment.Center

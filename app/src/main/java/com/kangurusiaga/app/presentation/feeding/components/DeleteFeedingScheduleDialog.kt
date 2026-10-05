@@ -26,7 +26,7 @@ fun DeleteFeedingScheduleDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(20.dp),
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.surface,
         title = {
             Text(
                 text = stringResource(R.string.alarm_delete_dialog_title),
@@ -58,8 +58,8 @@ fun DeleteFeedingScheduleDialog(
             OutlinedButton(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(12.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0)),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF64748B))
+                border = androidx.compose.foundation.BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary)
             ) {
                 Text(stringResource(R.string.alarm_btn_cancel))
             }

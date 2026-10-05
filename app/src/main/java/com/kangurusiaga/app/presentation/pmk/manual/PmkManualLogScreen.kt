@@ -70,6 +70,8 @@ import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -149,7 +151,7 @@ fun PmkManualLogScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.common_back),
-                            tint = Color(0xFF1E293B)
+                            tint = TextPrimary
                         )
                     }
 
@@ -157,7 +159,7 @@ fun PmkManualLogScreen(
                         text = stringResource(R.string.pmk_manual_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B),
+                        color = TextPrimary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .weight(1f)
@@ -177,8 +179,8 @@ fun PmkManualLogScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(24.dp)),
-                colors = CardDefaults.cardColors(containerColor = White),
+                    .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
                 shape = RoundedCornerShape(24.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
@@ -201,9 +203,9 @@ fun PmkManualLogScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(14.dp))
-                                .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(14.dp))
+                                .border(1.dp, KanguruTheme.colors.outline, RoundedCornerShape(14.dp))
                                 .clickable { showDatePicker = true },
-                            color = Color(0xFFF8FAFC)
+                            color = KanguruTheme.colors.surfaceVariant
                         ) {
                             Row(
                                 modifier = Modifier
@@ -241,9 +243,9 @@ fun PmkManualLogScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(14.dp))
-                                .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(14.dp))
+                                .border(1.dp, KanguruTheme.colors.outline, RoundedCornerShape(14.dp))
                                 .clickable { showTimePicker = true },
-                            color = Color(0xFFF8FAFC)
+                            color = KanguruTheme.colors.surfaceVariant
                         ) {
                             Row(
                                 modifier = Modifier
@@ -292,7 +294,9 @@ fun PmkManualLogScreen(
                                     label = { Text("${minutes}m") },
                                     colors = FilterChipDefaults.filterChipColors(
                                         selectedContainerColor = BrandLightPink,
-                                        selectedLabelColor = BrandPink
+                                        selectedLabelColor = BrandPink,
+                                        containerColor = KanguruTheme.colors.surfaceVariant,
+                                        labelColor = TextPrimary
                                     )
                                 )
                             }
@@ -317,7 +321,9 @@ fun PmkManualLogScreen(
                             shape = RoundedCornerShape(14.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = BrandPink,
-                                unfocusedBorderColor = Color(0xFFE2E8F0)
+                                unfocusedBorderColor = KanguruTheme.colors.outline,
+                                focusedTextColor = TextPrimary,
+                                unfocusedTextColor = TextPrimary
                             )
                         )
                     }
@@ -344,7 +350,9 @@ fun PmkManualLogScreen(
                                     label = { Text(item) },
                                     colors = FilterChipDefaults.filterChipColors(
                                         selectedContainerColor = BrandLightPink,
-                                        selectedLabelColor = BrandPink
+                                        selectedLabelColor = BrandPink,
+                                        containerColor = KanguruTheme.colors.surfaceVariant,
+                                        labelColor = TextPrimary
                                     )
                                 )
                             }
@@ -361,7 +369,9 @@ fun PmkManualLogScreen(
                                     label = { Text(item) },
                                     colors = FilterChipDefaults.filterChipColors(
                                         selectedContainerColor = BrandLightPink,
-                                        selectedLabelColor = BrandPink
+                                        selectedLabelColor = BrandPink,
+                                        containerColor = KanguruTheme.colors.surfaceVariant,
+                                        labelColor = TextPrimary
                                     )
                                 )
                             }
@@ -386,7 +396,9 @@ fun PmkManualLogScreen(
                             maxLines = 3,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = BrandPink,
-                                unfocusedBorderColor = Color(0xFFE2E8F0)
+                                unfocusedBorderColor = KanguruTheme.colors.outline,
+                                focusedTextColor = TextPrimary,
+                                unfocusedTextColor = TextPrimary
                             )
                         )
                     }
@@ -441,7 +453,10 @@ fun PmkManualLogScreen(
                 TextButton(onClick = { showDatePicker = false }) {
                     Text(stringResource(R.string.alarm_btn_cancel), color = TextSecondary)
                 }
-            }
+            },
+            colors = androidx.compose.material3.DatePickerDefaults.colors(
+                containerColor = KanguruTheme.colors.surface
+            )
         ) {
             DatePicker(state = datePickerState)
         }
@@ -471,6 +486,7 @@ fun PmkManualLogScreen(
                     Text(stringResource(R.string.alarm_btn_cancel), color = TextSecondary)
                 }
             },
+            containerColor = KanguruTheme.colors.surface,
             text = {
                 TimePicker(state = timePickerState)
             }

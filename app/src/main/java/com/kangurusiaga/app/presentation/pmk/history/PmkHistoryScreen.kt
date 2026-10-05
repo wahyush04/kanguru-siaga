@@ -56,7 +56,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.model.StatsPeriod
@@ -118,17 +123,13 @@ fun PmkHistoryScreen(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
-    val creamBg = Color(0xFFFFF9F6)
-    val darkText = Color(0xFF1E293B)
-    val mutedText = Color(0xFF64748B)
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = creamBg,
+        containerColor = BrandBackground,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
-                color = creamBg,
+                color = BrandBackground,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -146,7 +147,7 @@ fun PmkHistoryScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.common_back),
-                            tint = darkText,
+                            tint = TextPrimary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -155,7 +156,7 @@ fun PmkHistoryScreen(
                         text = stringResource(R.string.pmk_history_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = darkText,
+                        color = TextPrimary,
                         fontSize = 18.sp,
                         textAlign = TextAlign.Center
                     )
@@ -167,7 +168,7 @@ fun PmkHistoryScreen(
                         Icon(
                             imageVector = Icons.Default.CalendarToday,
                             contentDescription = stringResource(R.string.pmk_history_cd_filter),
-                            tint = Color(0xFF475569),
+                            tint = TextSecondary,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -200,7 +201,7 @@ fun PmkHistoryScreen(
                 Text(
                     text = stringResource(R.string.pmk_history_header_desc),
                     style = MaterialTheme.typography.bodySmall,
-                    color = mutedText,
+                    color = TextSecondary,
                     fontSize = 12.sp,
                     lineHeight = 17.sp,
                     textAlign = TextAlign.Center,
@@ -230,7 +231,7 @@ fun PmkHistoryScreen(
                             color = BrandPink.copy(alpha = 0.5f),
                             shape = RoundedCornerShape(16.dp)
                         )
-                        .background(Color(0xFFFFF0F3).copy(alpha = 0.6f))
+                        .background(KanguruTheme.colors.primaryContainer)
                         .clickable(onClick = onNavigateToManualLog)
                         .padding(vertical = 12.dp, horizontal = 16.dp),
                     contentAlignment = Alignment.Center
@@ -286,27 +287,27 @@ fun PmkHistoryScreen(
                                     modifier = Modifier
                                         .size(8.dp)
                                         .clip(CircleShape)
-                                        .background(if (isToday) BrandPink else Color(0xFFCBD5E1))
+                                        .background(if (isToday) BrandPink else KanguruTheme.colors.outline)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = dateHeader,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isToday) Color(0xFF334155) else Color(0xFF475569)
+                                    color = if (isToday) TextPrimary else TextSecondary
                                 )
                             }
 
                             Surface(
-                                color = White,
+                                color = KanguruTheme.colors.surface,
                                 shape = RoundedCornerShape(12.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0))
+                                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
                             ) {
                                 Text(
                                     text = "$sessionCount Sesi · $totalMinutesDay Menit",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF64748B),
+                                    color = TextSecondary,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                                 )
                             }
@@ -350,8 +351,8 @@ private fun WeeklySummaryCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFF6E6DF), RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = White),
+            .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -370,14 +371,14 @@ private fun WeeklySummaryCard(
                     text = stringResource(R.string.pmk_history_summary_title),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF64748B),
+                    color = TextSecondary,
                     letterSpacing = 0.6.sp
                 )
 
                 Surface(
-                    color = Color(0xFFF8F3F0),
+                    color = KanguruTheme.colors.surfaceVariant,
                     shape = RoundedCornerShape(20.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFE4E8))
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
                 ) {
                     Row(modifier = Modifier.padding(2.dp)) {
                         val isWeek = uiState.selectedPeriod == StatsPeriod.THIS_WEEK
@@ -392,7 +393,7 @@ private fun WeeklySummaryCard(
                                 text = stringResource(R.string.pmk_history_tab_week),
                                 fontSize = 11.sp,
                                 fontWeight = if (isWeek) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isWeek) White else Color(0xFF64748B)
+                                color = if (isWeek) White else TextSecondary
                             )
                         }
 
@@ -407,7 +408,7 @@ private fun WeeklySummaryCard(
                                 text = stringResource(R.string.pmk_history_tab_month),
                                 fontSize = 11.sp,
                                 fontWeight = if (!isWeek) FontWeight.Bold else FontWeight.Medium,
-                                color = if (!isWeek) White else Color(0xFF64748B)
+                                color = if (!isWeek) White else TextSecondary
                             )
                         }
                     }
@@ -425,8 +426,8 @@ private fun WeeklySummaryCard(
                 MetricBox(
                     label = stringResource(R.string.pmk_history_metric_duration),
                     value = totalDurationStr,
-                    bgColor = Color(0xFFFFF5F6),
-                    borderColor = Color(0xFFFFE4E8),
+                    bgColor = KanguruTheme.colors.primaryContainer,
+                    borderColor = KanguruTheme.colors.primary.copy(alpha = 0.25f),
                     modifier = Modifier.weight(1f)
                 )
 
@@ -434,8 +435,8 @@ private fun WeeklySummaryCard(
                 MetricBox(
                     label = stringResource(R.string.pmk_history_metric_avg),
                     value = avgMinutesStr,
-                    bgColor = Color(0xFFFFF8F0),
-                    borderColor = Color(0xFFFEF3C7),
+                    bgColor = KanguruTheme.colors.warningContainer,
+                    borderColor = KanguruTheme.colors.warningBorder,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -443,8 +444,8 @@ private fun WeeklySummaryCard(
                 MetricBox(
                     label = stringResource(R.string.pmk_history_metric_sessions),
                     value = totalSessionsStr,
-                    bgColor = Color(0xFFF0FAF7),
-                    borderColor = Color(0xFFD1FAE5),
+                    bgColor = KanguruTheme.colors.successContainer,
+                    borderColor = KanguruTheme.colors.successBorder,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -456,9 +457,9 @@ private fun WeeklySummaryCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(onClick = onNavigateToDetail),
-                color = Color(0xFFFFF0F3),
+                color = KanguruTheme.colors.primaryContainer,
                 shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFCCD5))
+                border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.primary.copy(alpha = 0.25f))
             ) {
                 Row(
                     modifier = Modifier
@@ -492,7 +493,7 @@ private fun WeeklySummaryCard(
                             text = stringResource(R.string.pmk_history_target_reached, compliancePct),
                             fontSize = 11.5.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF334155),
+                            color = TextPrimary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -532,7 +533,7 @@ private fun MetricBox(
             Text(
                 text = label,
                 fontSize = 10.5.sp,
-                color = Color(0xFF64748B),
+                color = TextSecondary,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center
             )
@@ -541,7 +542,7 @@ private fun MetricBox(
                 text = value,
                 fontSize = 13.5.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B),
+                color = TextPrimary,
                 textAlign = TextAlign.Center
             )
         }
@@ -556,9 +557,9 @@ private fun HistorySessionCard(
     val cal = Calendar.getInstance().apply { timeInMillis = session.startTimeEpoch }
     val hour = cal.get(Calendar.HOUR_OF_DAY)
     val periodInfo = when {
-        hour in 6..10 -> Triple("Pagi", Color(0xFFFFF0F3), Color(0xFFE11D48))
-        hour in 11..15 -> Triple("Siang", Color(0xFFFFF8F0), Color(0xFFD97706))
-        else -> Triple("Malam", Color(0xFFEEF2FF), Color(0xFF4F46E5))
+        hour in 6..10 -> Triple("Pagi", KanguruTheme.colors.primaryContainer, BrandPink)
+        hour in 11..15 -> Triple("Siang", KanguruTheme.colors.warningContainer, KanguruTheme.colors.warning)
+        else -> Triple("Malam", KanguruTheme.colors.infoContainer, KanguruTheme.colors.info)
     }
 
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -577,8 +578,8 @@ private fun HistorySessionCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFF3E7E1), RoundedCornerShape(18.dp)),
-        colors = CardDefaults.cardColors(containerColor = White),
+            .border(1.dp, CardBorder, RoundedCornerShape(18.dp)),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         shape = RoundedCornerShape(18.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
     ) {
@@ -614,7 +615,7 @@ private fun HistorySessionCard(
                         text = timeRangeText,
                         fontSize = 13.5.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = TextPrimary
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -638,8 +639,8 @@ private fun HistorySessionCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFFFF0F3))
-                        .border(1.dp, Color(0xFFFFCCD5), RoundedCornerShape(12.dp))
+                        .background(KanguruTheme.colors.primaryContainer)
+                        .border(1.dp, BrandPink.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
                         .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Text(
@@ -652,7 +653,7 @@ private fun HistorySessionCard(
             }
 
             Spacer(modifier = Modifier.height(10.dp))
-            HorizontalDivider(color = Color(0xFFF1F5F9))
+            HorizontalDivider(color = KanguruTheme.colors.divider)
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(
@@ -664,7 +665,7 @@ private fun HistorySessionCard(
                     text = noteText,
                     fontSize = 11.sp,
                     fontStyle = FontStyle.Italic,
-                    color = Color(0xFF64748B),
+                    color = TextSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
@@ -675,14 +676,14 @@ private fun HistorySessionCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFECFDF5))
+                        .background(KanguruTheme.colors.successContainer)
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                 ) {
                     Text(
                         text = statusText,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF059669)
+                        color = KanguruTheme.colors.onSuccessContainer
                     )
                 }
             }

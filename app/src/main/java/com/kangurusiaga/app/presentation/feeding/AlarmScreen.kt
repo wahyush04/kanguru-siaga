@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,7 +59,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.FeedingSchedule
 import com.kangurusiaga.app.presentation.feeding.components.AddFeedingScheduleBottomSheet
@@ -247,7 +251,8 @@ fun AlarmScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(White)
+                                .background(MaterialTheme.colorScheme.surface)
+                                .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(20.dp))
                                 .padding(horizontal = 12.dp, vertical = 6.dp)
                         ) {
                             // Section Header
@@ -262,13 +267,13 @@ fun AlarmScreen(
                                     text = stringResource(R.string.alarm_section_header_schedule),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF94A3B8)
+                                    color = TextSecondary
                                 )
                                 Text(
                                     text = stringResource(R.string.alarm_section_header_status),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF94A3B8)
+                                    color = TextSecondary
                                 )
                             }
 
@@ -277,7 +282,7 @@ fun AlarmScreen(
                                 if (index > 0) {
                                     HorizontalDivider(
                                         thickness = 1.dp,
-                                        color = Color(0xFFF1F5F9)
+                                        color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider
                                     )
                                 }
 
@@ -377,7 +382,7 @@ private fun AlarmTopAppBar(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(R.string.common_back),
-                tint = Color(0xFF1E293B)
+                tint = TextPrimary
             )
         }
 
@@ -386,7 +391,7 @@ private fun AlarmTopAppBar(
                 text = stringResource(R.string.alarm_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B),
+                color = TextPrimary,
                 fontSize = 16.5.sp,
                 textAlign = TextAlign.Center
             )
@@ -394,7 +399,7 @@ private fun AlarmTopAppBar(
                 text = stringResource(R.string.alarm_subtitle_ogt),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B),
+                color = TextPrimary,
                 fontSize = 14.5.sp,
                 textAlign = TextAlign.Center
             )
@@ -404,7 +409,7 @@ private fun AlarmTopAppBar(
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = stringResource(R.string.alarm_info_cd),
-                tint = Color(0xFF64748B),
+                tint = TextSecondary,
                 modifier = Modifier.size(22.dp)
             )
         }
@@ -417,7 +422,8 @@ private fun AlarmAdvisoryCard() {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFFFF4F4))
+            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer)
+            .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningBorder, RoundedCornerShape(16.dp))
             .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -425,13 +431,13 @@ private fun AlarmAdvisoryCard() {
         Icon(
             imageVector = Icons.Default.Warning,
             contentDescription = null,
-            tint = Color(0xFFEF4444),
+            tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
             modifier = Modifier.size(24.dp)
         )
 
         Text(
             text = stringResource(R.string.alarm_advisory),
-            color = Color(0xFFE11D48),
+            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
             lineHeight = 18.sp
@@ -448,13 +454,14 @@ private fun AlarmScheduleItem(
 ) {
     // Alternating soft accent colors for the clock icon (orange, blue, cyan, rose, amber)
     val colorPalettes = listOf(
-        Pair(Color(0xFFFFF7ED), Color(0xFFF97316)), // orange
-        Pair(Color(0xFFEFF6FF), Color(0xFF3B82F6)), // blue
-        Pair(Color(0xFFECFEFF), Color(0xFF06B6D4)), // cyan
-        Pair(Color(0xFFFFF1F2), Color(0xFFF43F5E)), // rose
-        Pair(Color(0xFFFFFBEB), Color(0xFFF59E0B))  // amber
+        Color(0xFFF97316), // orange
+        Color(0xFF3B82F6), // blue
+        Color(0xFF06B6D4), // cyan
+        Color(0xFFF43F5E), // rose
+        Color(0xFFF59E0B)  // amber
     )
-    val (bgIconColor, iconColor) = colorPalettes[index % colorPalettes.size]
+    val iconColor = colorPalettes[index % colorPalettes.size]
+    val bgIconColor = iconColor.copy(alpha = 0.15f)
 
     Row(
         modifier = Modifier
@@ -495,21 +502,21 @@ private fun AlarmScheduleItem(
                         text = schedule.formattedTime,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B),
+                        color = TextPrimary,
                         letterSpacing = (-0.3).sp
                     )
                     Text(
                         text = stringResource(R.string.alarm_volume_unit, schedule.volumeMl),
                         fontSize = 13.5.sp,
                         fontWeight = FontWeight.Normal,
-                        color = Color(0xFF94A3B8)
+                        color = TextSecondary
                     )
                 }
                 Text(
                     text = schedule.method.displayName,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color(0xFF94A3B8)
+                    color = TextSecondary
                 )
             }
         }
@@ -522,7 +529,7 @@ private fun AlarmScheduleItem(
                 checkedThumbColor = White,
                 checkedTrackColor = Color(0xFF10B981),
                 uncheckedThumbColor = White,
-                uncheckedTrackColor = Color(0xFFE2E8F0)
+                uncheckedTrackColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
             )
         )
     }

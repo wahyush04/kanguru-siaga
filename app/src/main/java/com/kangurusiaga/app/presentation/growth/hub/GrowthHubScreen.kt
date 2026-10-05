@@ -56,6 +56,7 @@ import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBorder
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipText
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.presentation.growth.components.GrowthIcons
@@ -195,7 +196,7 @@ fun GrowthHubScreen(
                 onClick = onNavigateToSummary,
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = White,
+                    containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
                     contentColor = BrandPink
                 ),
                 border = ButtonDefaults.outlinedButtonBorder.copy(
@@ -255,8 +256,8 @@ fun GrowthHubScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFFFF9F2))
-                    .border(1.dp, Color(0xFFFDECD7), RoundedCornerShape(16.dp))
+                    .background(GrowthTipBg)
+                    .border(1.dp, GrowthTipBorder, RoundedCornerShape(16.dp))
                     .clickable { onNavigateToAboutFenton() }
                     .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -265,13 +266,13 @@ fun GrowthHubScreen(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFEF2DC)),
+                        .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = GrowthIcons.Lightbulb,
                         contentDescription = null,
-                        tint = Color(0xFFF59E0B),
+                        tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -289,7 +290,7 @@ fun GrowthHubScreen(
                         text = stringResource(R.string.growth_hub_about_card_desc),
                         fontSize = 11.5.sp,
                         fontWeight = FontWeight.Normal,
-                        color = TextSecondary,
+                        color = GrowthTipText,
                         lineHeight = 16.sp,
                         modifier = Modifier.padding(top = 2.dp)
                     )
@@ -323,7 +324,7 @@ private fun GrowthCardItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(White)
+            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
             .border(1.dp, BrandCardBorder, RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
             .padding(14.dp),
@@ -357,7 +358,7 @@ private fun GrowthCardItem(
                 text = subtitle,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF9CA3AF),
+                color = TextSecondary,
                 modifier = Modifier.padding(top = 2.dp)
             )
         }
@@ -365,7 +366,7 @@ private fun GrowthCardItem(
         Icon(
             imageVector = GrowthIcons.ChevronRight,
             contentDescription = null,
-            tint = Color(0xFFCBD5E1),
+            tint = TextTertiary,
             modifier = Modifier.size(18.dp)
         )
     }

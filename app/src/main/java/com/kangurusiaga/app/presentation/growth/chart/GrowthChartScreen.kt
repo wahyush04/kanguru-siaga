@@ -109,7 +109,7 @@ fun GrowthChartScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFFFCFCFD)
+        containerColor = BrandBackground
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -120,7 +120,7 @@ fun GrowthChartScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(White)
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
                     .padding(horizontal = 16.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -151,7 +151,7 @@ fun GrowthChartScreen(
             // Segmented Tabs: Grafik vs Data
             TabRow(
                 selectedTabIndex = uiState.selectedTab,
-                containerColor = White,
+                containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
                 contentColor = BrandPink,
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
@@ -161,7 +161,7 @@ fun GrowthChartScreen(
                     )
                 },
                 divider = {
-                    HorizontalDivider(color = Color(0xFFF1F5F9))
+                    HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider)
                 }
             ) {
                 Tab(
@@ -208,8 +208,8 @@ fun GrowthChartScreen(
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(White)
-                                .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(12.dp))
+                                .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
+                                .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(12.dp))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -223,7 +223,7 @@ fun GrowthChartScreen(
                             Icon(
                                 imageVector = GrowthIcons.ArrowDown,
                                 contentDescription = null,
-                                tint = Color(0xFF6B7280),
+                                tint = TextSecondary,
                                 modifier = Modifier.size(14.dp)
                             )
                         }
@@ -257,7 +257,7 @@ fun GrowthChartScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(18.dp))
-                            .background(White)
+                            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
                             .border(1.dp, BrandCardBorder, RoundedCornerShape(18.dp))
                             .padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -324,23 +324,23 @@ fun GrowthChartScreen(
                                     }
                                 }
 
+                                val deltaBg = if (deltaPositive) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorContainer
+                                val deltaBorder = if (deltaPositive) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successBorder else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorBorder
+                                val deltaTextColor = if (deltaPositive) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
+
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(if (deltaPositive) Color(0xFFEAF7EE) else Color(0xFFFEECEB))
-                                        .border(
-                                            1.dp,
-                                            if (deltaPositive) Color(0xFFD1F2DC) else Color(0xFFFED7D7),
-                                            RoundedCornerShape(8.dp)
-                                        )
+                                        .background(deltaBg)
+                                        .border(1.dp, deltaBorder, RoundedCornerShape(8.dp))
                                         .padding(horizontal = 8.dp, vertical = 3.dp)
                                 ) {
                                     Text(
                                         text = (if (deltaPositive) "↑ " else "") + deltaStr,
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = if (deltaPositive) Color(0xFF16A34A) else Color(0xFFDC2626)
+                                        color = deltaTextColor
                                     )
                                 }
                             }
@@ -366,7 +366,7 @@ fun GrowthChartScreen(
                                 text = percentileClassification?.statusText ?: "Normal",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF16A34A)
+                                color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
                             )
                         }
                     }
@@ -380,7 +380,7 @@ fun GrowthChartScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(18.dp))
-                            .background(White)
+                            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
                             .border(1.dp, BrandCardBorder, RoundedCornerShape(18.dp))
                             .padding(14.dp)
                     ) {
@@ -411,13 +411,13 @@ fun GrowthChartScreen(
                             modifier = Modifier
                                 .size(24.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFFEF3C7)),
+                                .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = GrowthIcons.Lightbulb,
                                 contentDescription = null,
-                                tint = Color(0xFFD97706),
+                                tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
                                 modifier = Modifier.size(15.dp)
                             )
                         }
@@ -428,7 +428,7 @@ fun GrowthChartScreen(
                             text = stringResource(R.string.growth_chart_insight_text, parameter.displayName, babyName, pName, pCat),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
-                            color = Color(0xFF4A3B24),
+                            color = GrowthTipText,
                             lineHeight = 18.sp
                         )
                     }
@@ -440,7 +440,7 @@ fun GrowthChartScreen(
                         onClick = { onNavigateToAdd(parameter) },
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = White,
+                            containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
                             contentColor = BrandPink
                         ),
                         border = androidx.compose.foundation.BorderStroke(1.2.dp, BrandPink),
@@ -498,7 +498,7 @@ fun GrowthChartScreen(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(White)
+                            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
                             .padding(horizontal = 20.dp)
                     ) {
                         items(uiState.measurementsDesc, key = { it.id }) { item ->
@@ -541,8 +541,8 @@ fun GrowthChartScreen(
 
                                 // Percentile Pill
                                 val isNormal = item.percentileBadge in listOf("P25", "P50", "P75")
-                                val pillBg = if (isNormal) Color(0xFFEAF7EE) else Color(0xFFFEECEB)
-                                val pillText = if (isNormal) Color(0xFF16A34A) else Color(0xFFEF4444)
+                                val pillBg = if (isNormal) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorContainer
+                                val pillText = if (isNormal) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
 
                                 Box(
                                     modifier = Modifier
@@ -563,11 +563,11 @@ fun GrowthChartScreen(
                                 Icon(
                                     imageVector = GrowthIcons.ChevronRight,
                                     contentDescription = null,
-                                    tint = Color(0xFFCBD5E1),
+                                    tint = TextTertiary,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
-                            HorizontalDivider(color = Color(0xFFF1F5F9))
+                            HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider)
                         }
 
                         item {

@@ -63,7 +63,7 @@ fun SelectGrowthParameterBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        containerColor = White,
+        containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         dragHandle = {
             Box(
@@ -72,7 +72,7 @@ fun SelectGrowthParameterBottomSheet(
                     .width(44.dp)
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color(0xFFE2E8F0))
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider)
             )
         }
     ) {
@@ -106,7 +106,7 @@ fun SelectGrowthParameterBottomSheet(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF1F5F9))
+                        .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceElevated)
                 ) {
                     Icon(
                         imageVector = GrowthIcons.Close,
@@ -157,7 +157,7 @@ fun SelectGrowthParameterBottomSheet(
                 }
 
                 val borderColor = if (isSelected) iconTint else BrandCardBorder
-                val cardBg = if (isSelected) iconBg.copy(alpha = 0.4f) else White
+                val cardBg = if (isSelected) iconBg.copy(alpha = 0.4f) else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface
 
                 Row(
                     modifier = Modifier
@@ -231,7 +231,7 @@ fun SelectGrowthParameterBottomSheet(
                             .size(20.dp)
                             .border(
                                 width = 2.dp,
-                                color = if (isSelected) iconTint else Color(0xFFCBD5E1),
+                                color = if (isSelected) iconTint else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.outline,
                                 shape = CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -263,7 +263,7 @@ fun SelectGrowthParameterBottomSheet(
                 Icon(
                     imageVector = GrowthIcons.Lightbulb,
                     contentDescription = null,
-                    tint = Color(0xFFF59E0B),
+                    tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
                     modifier = Modifier
                         .size(18.dp)
                         .padding(top = 1.dp)

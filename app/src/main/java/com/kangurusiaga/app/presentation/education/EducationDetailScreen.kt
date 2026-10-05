@@ -62,9 +62,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
+import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.presentation.education.components.EducationSectionRenderer
 import com.kangurusiaga.app.presentation.education.components.EducationThemeHelper
@@ -104,7 +108,7 @@ fun EducationDetailScreen(
         containerColor = BrandBackground,
         topBar = {
             Surface(
-                color = White,
+                color = KanguruTheme.colors.surface,
                 shadowElevation = 0.5.dp
             ) {
                 Row(
@@ -120,8 +124,8 @@ fun EducationDetailScreen(
                         modifier = Modifier
                             .size(38.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFF8FAFC))
-                            .border(1.dp, Color(0xFFE2E8F0), CircleShape)
+                            .background(KanguruTheme.colors.surfaceVariant)
+                            .border(1.dp, CardBorder, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -148,8 +152,8 @@ fun EducationDetailScreen(
                         modifier = Modifier
                             .size(38.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFFFF0F2))
-                            .border(1.dp, Color(0xFFFFDCE2), CircleShape)
+                            .background(BrandLightPink)
+                            .border(1.dp, CardBorder, CircleShape)
                     ) {
                         Icon(
                             imageVector = if (uiState.module?.isBookmarked == true) {
@@ -180,7 +184,7 @@ fun EducationDetailScreen(
                 }
             } else {
                 val module = uiState.module
-                val palette = EducationThemeHelper.getPalette(module.themeColor)
+                val palette = EducationThemeHelper.getPalette(module.themeColor, isDark = KanguruTheme.colors.isDark)
 
                 Column(
                     modifier = Modifier
@@ -215,12 +219,12 @@ fun EducationDetailScreen(
                                 Text(
                                     text = "•",
                                     fontSize = 11.sp,
-                                    color = Color(0xFFCBD5E1)
+                                    color = TextTertiary
                                 )
                                 Text(
                                     text = stringResource(R.string.edu_detail_read_time, module.readingTimeMinutes),
                                     fontSize = 11.sp,
-                                    color = Color(0xFF64748B),
+                                    color = TextSecondary,
                                     fontWeight = FontWeight.Medium
                                 )
                             }
@@ -234,7 +238,7 @@ fun EducationDetailScreen(
                             .fillMaxWidth()
                             .height(200.dp)
                             .clip(RoundedCornerShape(24.dp))
-                            .background(Color(0xFFF1F5F9))
+                            .background(KanguruTheme.colors.surfaceVariant)
                     ) {
                         Image(
                             painter = painterResource(id = drawableResId),
@@ -260,7 +264,7 @@ fun EducationDetailScreen(
                                 .align(Alignment.BottomStart)
                                 .padding(12.dp),
                             shape = RoundedCornerShape(50),
-                            color = White.copy(alpha = 0.95f),
+                            color = KanguruTheme.colors.surface.copy(alpha = 0.95f),
                             shadowElevation = 2.dp
                         ) {
                             Row(
@@ -315,7 +319,7 @@ fun EducationDetailScreen(
                                 .height(48.dp),
                             shape = RoundedCornerShape(50),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (module.isCompleted) Color(0xFF10B981) else BrandPink
+                                containerColor = if (module.isCompleted) KanguruTheme.colors.success else BrandPink
                             )
                         ) {
                             Icon(
@@ -344,7 +348,7 @@ fun EducationDetailScreen(
                                 colors = ButtonDefaults.outlinedButtonColors(
                                     contentColor = TextPrimary
                                 ),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1))
+                                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
                             ) {
                                 Text(
                                     text = stringResource(R.string.edu_detail_btn_next, uiState.nextModuleOrder ?: 0, uiState.nextModuleTitle.orEmpty()),
@@ -367,7 +371,10 @@ fun EducationDetailScreen(
                                     .fillMaxWidth()
                                     .height(48.dp),
                                 shape = RoundedCornerShape(50),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1))
+                                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = TextPrimary
+                                )
                             ) {
                                 Text(
                                     text = stringResource(R.string.edu_detail_btn_back_to_list),

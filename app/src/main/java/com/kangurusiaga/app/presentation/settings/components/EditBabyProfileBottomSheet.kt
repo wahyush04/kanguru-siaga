@@ -42,6 +42,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -60,7 +61,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -71,6 +71,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.Gender
 import java.text.SimpleDateFormat
@@ -99,22 +103,23 @@ fun EditBabyProfileBottomSheet(
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showDatePicker by remember { mutableStateOf(false) }
-
-    // Camera launcher
     var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success) {
-            tempCameraUri?.let { onPhotoSelected(it) }
+    var showPhotoOptions by remember { mutableStateOf(false) }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            onPhotoSelected(uri)
         }
     }
 
-    // Photo gallery launcher
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        uri?.let { onPhotoSelected(it) }
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success && tempCameraUri != null) {
+            onPhotoSelected(tempCameraUri!!)
+        }
     }
 
     val dateFormatter = remember { SimpleDateFormat("d MMMM yyyy", Locale("id", "ID")) }
@@ -132,7 +137,7 @@ fun EditBabyProfileBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = {
             Box(
                 modifier = Modifier
@@ -143,7 +148,7 @@ fun EditBabyProfileBottomSheet(
                 Box(
                     modifier = Modifier
                         .size(width = 44.dp, height = 4.dp)
-                        .background(Color(0xFFE2E8F0), CircleShape)
+                        .background(MaterialTheme.colorScheme.outline, CircleShape)
                 )
             }
         }
@@ -159,24 +164,24 @@ fun EditBabyProfileBottomSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Edit Data Bayi",
+                            text = "Edit Profil Bayi",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A)
+                            color = TextPrimary
                         )
                         Surface(
                             shape = RoundedCornerShape(100.dp),
-                            color = Color(0xFFFFF1F2),
-                            border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                            color = KanguruTheme.colors.primaryContainer,
+                            border = BorderStroke(1.dp, KanguruTheme.colors.outline)
                         ) {
                             Text(
-                                text = "Profil Pasien",
+                                text = "Klinis",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = BrandPink,
@@ -185,9 +190,9 @@ fun EditBabyProfileBottomSheet(
                         }
                     }
                     Text(
-                        text = "Perbarui identitas dan data klinis kelahiran si kecil",
+                        text = "Data klinis penting untuk penyesuaian perhitungan pertumbuhan & usia koreksi si kecil.",
                         fontSize = 12.sp,
-                        color = Color(0xFF64748B),
+                        color = TextSecondary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
@@ -196,12 +201,12 @@ fun EditBabyProfileBottomSheet(
                     onClick = onDismiss,
                     modifier = Modifier
                         .size(32.dp)
-                        .background(Color(0xFFF1F5F9), CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Tutup",
-                        tint = Color(0xFF64748B),
+                        tint = TextSecondary,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -209,15 +214,14 @@ fun EditBabyProfileBottomSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Form Body (Scrollable)
+            // Body Form Scrollable
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f, fill = false)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Photo Editor
+                // Section: Avatar Photo
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -225,20 +229,13 @@ fun EditBabyProfileBottomSheet(
                     Box(
                         modifier = Modifier
                             .size(96.dp)
-                            .background(
-                                brush = Brush.linearGradient(listOf(BrandPink, Color(0xFFFDA4AF))),
-                                shape = CircleShape
-                            )
-                            .padding(3.dp),
-                        contentAlignment = Alignment.Center
+                            .clip(CircleShape)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                                .background(Color(0xFFFFF1F2))
-                                .border(2.dp, White, CircleShape),
-                            contentAlignment = Alignment.Center
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            shape = CircleShape,
+                            color = KanguruTheme.colors.primaryContainer,
+                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline)
                         ) {
                             if (!photoUri.isNullOrBlank()) {
                                 AsyncImage(
@@ -246,79 +243,122 @@ fun EditBabyProfileBottomSheet(
                                         .data(photoUri)
                                         .crossfade(true)
                                         .build(),
-                                    contentDescription = null,
+                                    contentDescription = "Foto Bayi",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize()
                                 )
                             } else {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = null,
-                                    tint = BrandPink,
-                                    modifier = Modifier.size(48.dp)
-                                )
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Person,
+                                        contentDescription = null,
+                                        tint = BrandPink,
+                                        modifier = Modifier.size(54.dp)
+                                    )
+                                }
                             }
+                        }
+
+                        // Camera Button on bottom-right
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(30.dp)
+                                .clip(CircleShape)
+                                .background(BrandPink)
+                                .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                                .clickable { showPhotoOptions = !showPhotoOptions },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CameraAlt,
+                                contentDescription = "Ubah Foto",
+                                tint = White,
+                                modifier = Modifier.size(15.dp)
+                            )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Ketuk ikon kamera untuk memperbarui foto",
+                        fontSize = 11.sp,
+                        color = TextSecondary
+                    )
+
+                    // Photo Source Options Accordion
+                    if (showPhotoOptions) {
                         Surface(
-                            shape = RoundedCornerShape(100.dp),
-                            color = Color(0xFFFFF1F2),
-                            modifier = Modifier.clickable {
-                                val uri = createTempCameraUri()
-                                tempCameraUri = uri
-                                cameraLauncher.launch(uri)
-                            }
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.CameraAlt,
-                                    contentDescription = null,
-                                    tint = BrandPink,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Text(
-                                    text = "Ambil Foto",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = BrandPink
-                                )
-                            }
-                        }
+                                Row(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable {
+                                            showPhotoOptions = false
+                                            val uri = createTempCameraUri()
+                                            tempCameraUri = uri
+                                            cameraLauncher.launch(uri)
+                                        }
+                                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.CameraAlt,
+                                        contentDescription = null,
+                                        tint = BrandPink,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Text(
+                                        text = "Ambil Foto",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextPrimary
+                                    )
+                                }
 
-                        Surface(
-                            shape = RoundedCornerShape(100.dp),
-                            color = Color(0xFFF1F5F9),
-                            modifier = Modifier.clickable {
-                                galleryLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                )
-                            }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Image,
-                                    contentDescription = null,
-                                    tint = Color(0xFF475569),
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Text(
-                                    text = "Pilih Galeri",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF475569)
-                                )
+                                Row(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable {
+                                            showPhotoOptions = false
+                                            photoPickerLauncher.launch(
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                            )
+                                        }
+                                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Image,
+                                        contentDescription = null,
+                                        tint = BrandPink,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Text(
+                                        text = "Pilih Galeri",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextPrimary
+                                    )
+                                }
                             }
                         }
                     }
@@ -330,7 +370,7 @@ fun EditBabyProfileBottomSheet(
                         text = "NAMA LENGKAP BAYI *",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF475569),
+                        color = TextSecondary,
                         letterSpacing = 0.5.sp
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -340,12 +380,14 @@ fun EditBabyProfileBottomSheet(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         singleLine = true,
-                        placeholder = { Text("Masukkan nama bayi...", fontSize = 14.sp) },
+                        placeholder = { Text("Masukkan nama bayi...", fontSize = 14.sp, color = TextTertiary) },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = BrandPink,
-                            unfocusedBorderColor = Color(0xFFE2E8F0),
-                            focusedContainerColor = White,
-                            unfocusedContainerColor = Color(0xFFFAF8F6)
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary
                         ),
                         trailingIcon = {
                             if (name.isNotEmpty()) {
@@ -353,7 +395,7 @@ fun EditBabyProfileBottomSheet(
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Hapus nama",
-                                        tint = Color(0xFF94A3B8),
+                                        tint = TextTertiary,
                                         modifier = Modifier.size(18.dp)
                                     )
                                 }
@@ -368,7 +410,7 @@ fun EditBabyProfileBottomSheet(
                         text = "TANGGAL LAHIR *",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF475569),
+                        color = TextSecondary,
                         letterSpacing = 0.5.sp
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -382,9 +424,11 @@ fun EditBabyProfileBottomSheet(
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = BrandPink,
-                            unfocusedBorderColor = Color(0xFFE2E8F0),
-                            focusedContainerColor = Color(0xFFFAF8F6),
-                            unfocusedContainerColor = Color(0xFFFAF8F6)
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary
                         ),
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
@@ -401,7 +445,7 @@ fun EditBabyProfileBottomSheet(
                             text = "Usia saat ini: $weeks minggu ($months bulan)",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF64748B),
+                            color = TextSecondary,
                             modifier = Modifier.padding(top = 4.dp, start = 4.dp)
                         )
                     }
@@ -413,7 +457,7 @@ fun EditBabyProfileBottomSheet(
                         text = "JENIS KELAMIN *",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF475569),
+                        color = TextSecondary,
                         letterSpacing = 0.5.sp
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -428,10 +472,10 @@ fun EditBabyProfileBottomSheet(
                                 .weight(1f)
                                 .clickable { onGenderChange(Gender.MALE) },
                             shape = RoundedCornerShape(12.dp),
-                            color = if (isMale) Color(0xFFEFF6FF) else Color(0xFFFAF8F6),
+                            color = if (isMale) KanguruTheme.colors.infoContainer else MaterialTheme.colorScheme.surfaceVariant,
                             border = BorderStroke(
                                 if (isMale) 2.dp else 1.dp,
-                                if (isMale) Color(0xFF3B82F6) else Color(0xFFE2E8F0)
+                                if (isMale) KanguruTheme.colors.infoBorder else MaterialTheme.colorScheme.outline
                             )
                         ) {
                             Row(
@@ -442,7 +486,7 @@ fun EditBabyProfileBottomSheet(
                                 Icon(
                                     imageVector = Icons.Default.Male,
                                     contentDescription = null,
-                                    tint = Color(0xFF3B82F6),
+                                    tint = if (isMale) KanguruTheme.colors.info else TextTertiary,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
@@ -450,7 +494,7 @@ fun EditBabyProfileBottomSheet(
                                     text = "Laki-laki",
                                     fontSize = 13.sp,
                                     fontWeight = if (isMale) FontWeight.Bold else FontWeight.SemiBold,
-                                    color = if (isMale) Color(0xFF1E40AF) else Color(0xFF475569)
+                                    color = if (isMale) KanguruTheme.colors.onInfoContainer else TextSecondary
                                 )
                             }
                         }
@@ -462,10 +506,10 @@ fun EditBabyProfileBottomSheet(
                                 .weight(1f)
                                 .clickable { onGenderChange(Gender.FEMALE) },
                             shape = RoundedCornerShape(12.dp),
-                            color = if (isFemale) Color(0xFFFFF1F2) else Color(0xFFFAF8F6),
+                            color = if (isFemale) KanguruTheme.colors.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
                             border = BorderStroke(
                                 if (isFemale) 2.dp else 1.dp,
-                                if (isFemale) BrandPink else Color(0xFFE2E8F0)
+                                if (isFemale) BrandPink else MaterialTheme.colorScheme.outline
                             )
                         ) {
                             Row(
@@ -476,7 +520,7 @@ fun EditBabyProfileBottomSheet(
                                 Icon(
                                     imageVector = Icons.Default.Female,
                                     contentDescription = null,
-                                    tint = BrandPink,
+                                    tint = if (isFemale) BrandPink else TextTertiary,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
@@ -484,7 +528,7 @@ fun EditBabyProfileBottomSheet(
                                     text = "Perempuan",
                                     fontSize = 13.sp,
                                     fontWeight = if (isFemale) FontWeight.Bold else FontWeight.SemiBold,
-                                    color = if (isFemale) BrandPink else Color(0xFF475569)
+                                    color = if (isFemale) BrandPink else TextSecondary
                                 )
                             }
                         }
@@ -502,23 +546,23 @@ fun EditBabyProfileBottomSheet(
                             text = "BERAT LAHIR BAYI *",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF475569),
+                            color = TextSecondary,
                             letterSpacing = 0.5.sp
                         )
                         if (weightGram > 0) {
                             Surface(
                                 shape = RoundedCornerShape(4.dp),
-                                color = if (isBblr) Color(0xFFFFFBEB) else Color(0xFFF0FDF4),
+                                color = if (isBblr) KanguruTheme.colors.warningContainer else KanguruTheme.colors.successContainer,
                                 border = BorderStroke(
                                     1.dp,
-                                    if (isBblr) Color(0xFFFDE68A) else Color(0xFFDCFCE7)
+                                    if (isBblr) KanguruTheme.colors.warningBorder else KanguruTheme.colors.successBorder
                                 )
                             ) {
                                 Text(
                                     text = if (isBblr) "Status: BBLR" else "Status: Normal",
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isBblr) Color(0xFFD97706) else Color(0xFF16A34A),
+                                    color = if (isBblr) KanguruTheme.colors.onWarningContainer else KanguruTheme.colors.onSuccessContainer,
                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                 )
                             }
@@ -534,16 +578,18 @@ fun EditBabyProfileBottomSheet(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = BrandPink,
-                            unfocusedBorderColor = Color(0xFFE2E8F0),
-                            focusedContainerColor = White,
-                            unfocusedContainerColor = Color(0xFFFAF8F6)
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary
                         ),
                         trailingIcon = {
                             Text(
                                 text = "gram",
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF94A3B8),
+                                color = TextTertiary,
                                 modifier = Modifier.padding(end = 12.dp)
                             )
                         }
@@ -556,8 +602,8 @@ fun EditBabyProfileBottomSheet(
                                 .fillMaxWidth()
                                 .padding(top = 8.dp),
                             shape = RoundedCornerShape(12.dp),
-                            color = Color(0xFFFFFBEB),
-                            border = BorderStroke(1.dp, Color(0xFFFDE68A))
+                            color = KanguruTheme.colors.warningContainer,
+                            border = BorderStroke(1.dp, KanguruTheme.colors.warningBorder)
                         ) {
                             Row(
                                 modifier = Modifier.padding(12.dp),
@@ -567,7 +613,7 @@ fun EditBabyProfileBottomSheet(
                                 Icon(
                                     imageVector = Icons.Default.Warning,
                                     contentDescription = null,
-                                    tint = Color(0xFFD97706),
+                                    tint = KanguruTheme.colors.warning,
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Text(
@@ -575,7 +621,7 @@ fun EditBabyProfileBottomSheet(
                                     fontSize = 11.sp,
                                     lineHeight = 16.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF78350F)
+                                    color = KanguruTheme.colors.onWarningContainer
                                 )
                             }
                         }
@@ -588,7 +634,7 @@ fun EditBabyProfileBottomSheet(
                         text = errorMessage,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFFDC2626),
+                        color = KanguruTheme.colors.error,
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
                 }
@@ -609,12 +655,12 @@ fun EditBabyProfileBottomSheet(
                         .weight(1f)
                         .height(48.dp),
                     shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color(0xFFCBD5E1))
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
                     Text(
                         text = "Batal",
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF475569)
+                        color = TextSecondary
                     )
                 }
 

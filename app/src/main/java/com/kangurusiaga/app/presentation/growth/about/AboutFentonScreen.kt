@@ -52,12 +52,12 @@ fun AboutFentonScreen(
     onNavigateBack: () -> Unit
 ) {
     Scaffold(
-        containerColor = White,
+        containerColor = com.kangurusiaga.app.core.designsystem.theme.BrandBackground,
         bottomBar = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(White)
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
                     .padding(horizontal = 20.dp, vertical = 14.dp)
             ) {
                 Button(
@@ -145,8 +145,8 @@ fun AboutFentonScreen(
                     .fillMaxWidth()
                     .height(180.dp)
                     .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFFF8FAFC))
-                    .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp)),
+                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
+                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(20.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -198,7 +198,7 @@ fun AboutFentonScreen(
                 text = explanationText,
                 fontSize = 12.5.sp,
                 fontWeight = FontWeight.Normal,
-                color = Color(0xFF556070),
+                color = TextSecondary,
                 lineHeight = 20.sp,
                 textAlign = TextAlign.Justify
             )
@@ -251,7 +251,7 @@ fun AboutFentonScreen(
                         text = step,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF475467)
+                        color = TextSecondary
                     )
                 }
             }

@@ -53,6 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 
 data class GuideStep(
@@ -163,7 +166,7 @@ fun UserGuideScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Kembali",
-                        tint = Color(0xFF1E293B)
+                        tint = TextPrimary
                     )
                 }
 
@@ -171,7 +174,7 @@ fun UserGuideScreen(
                     text = "Panduan Penggunaan",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B),
+                    color = TextPrimary,
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
@@ -188,15 +191,15 @@ fun UserGuideScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
-                    color = White,
-                    border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                    border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
                     shadowElevation = 1.dp
                 ) {
                     Column(modifier = Modifier.padding(18.dp)) {
                         Surface(
                             shape = RoundedCornerShape(100.dp),
-                            color = Color(0xFFFFF1F2),
-                            border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer,
+                            border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder)
                         ) {
                             Text(
                                 text = "PANDUAN LENGKAP APLIKASI",
@@ -214,7 +217,7 @@ fun UserGuideScreen(
                             text = "Cara Mengoptimalkan Kanguru Siaga",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A)
+                            color = TextPrimary
                         )
 
                         Spacer(modifier = Modifier.height(6.dp))
@@ -223,7 +226,7 @@ fun UserGuideScreen(
                             text = "Panduan praktis langkah demi langkah untuk membantu Ayah dan Bunda memanfaatkan seluruh fitur pemantauan BBLR dengan mudah, aman, dan tepat.",
                             fontSize = 12.sp,
                             lineHeight = 18.sp,
-                            color = Color(0xFF64748B)
+                            color = TextSecondary
                         )
                     }
                 }
@@ -240,12 +243,12 @@ fun UserGuideScreen(
                         text = "Petunjuk Fitur Utama",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = TextPrimary
                     )
                     Surface(
                         shape = RoundedCornerShape(100.dp),
-                        color = Color(0xFFFFF1F2),
-                        border = BorderStroke(1.dp, Color(0xFFFFCCD5))
+                        color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer,
+                        border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder)
                     ) {
                         Text(
                             text = "5 Fitur Inti",
@@ -263,8 +266,8 @@ fun UserGuideScreen(
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        color = White,
-                        border = BorderStroke(1.dp, Color(0xFFF1ECE6)),
+                        color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
+                        border = BorderStroke(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder),
                         shadowElevation = 1.dp
                     ) {
                         Column {
@@ -283,7 +286,7 @@ fun UserGuideScreen(
                                     Box(
                                         modifier = Modifier
                                             .size(40.dp)
-                                            .background(Color(0xFFFFF1F2), RoundedCornerShape(12.dp)),
+                                            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer, RoundedCornerShape(12.dp)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(
@@ -305,7 +308,7 @@ fun UserGuideScreen(
                                             text = feature.title,
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF1E293B)
+                                            color = TextPrimary
                                         )
                                     }
                                 }
@@ -313,7 +316,7 @@ fun UserGuideScreen(
                                 Icon(
                                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                                     contentDescription = null,
-                                    tint = Color(0xFF94A3B8)
+                                    tint = TextTertiary
                                 )
                             }
 
@@ -328,7 +331,7 @@ fun UserGuideScreen(
                                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                                 ) {
                                     HorizontalDivider(
-                                        color = Color(0xFFF8FAFC),
+                                        color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider,
                                         thickness = 1.dp,
                                         modifier = Modifier.padding(bottom = 12.dp)
                                     )
@@ -344,8 +347,8 @@ fun UserGuideScreen(
                                             Box(
                                                 modifier = Modifier
                                                     .size(22.dp)
-                                                    .background(Color(0xFFFFF1F2), CircleShape)
-                                                    .border(1.dp, Color(0xFFFFCCD5), CircleShape),
+                                                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer, CircleShape)
+                                                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder, CircleShape),
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 Text(
@@ -360,7 +363,7 @@ fun UserGuideScreen(
                                                 text = step.text,
                                                 fontSize = 12.sp,
                                                 lineHeight = 18.sp,
-                                                color = Color(0xFF475569)
+                                                color = TextSecondary
                                             )
                                         }
                                     }

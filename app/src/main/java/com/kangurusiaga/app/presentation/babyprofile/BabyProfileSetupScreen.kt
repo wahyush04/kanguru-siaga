@@ -82,7 +82,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
+import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.Gender
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -242,7 +249,7 @@ fun BabyProfileFormScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text(stringResource(R.string.baby_profile_date_picker_cancel), color = Color(0xFF64748B))
+                    Text(stringResource(R.string.baby_profile_date_picker_cancel), color = TextSecondary)
                 }
             }
         ) {
@@ -250,10 +257,12 @@ fun BabyProfileFormScreen(
         }
     }
 
+    val isDark = KanguruTheme.colors.isDark
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFDFBF9))
+            .background(BrandBackground)
     ) {
         Column(
             modifier = Modifier
@@ -272,14 +281,14 @@ fun BabyProfileFormScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.common_back),
-                        tint = Color(0xFF1E293B)
+                        tint = TextPrimary
                     )
                 }
                 Text(
                     text = stringResource(R.string.baby_profile_header_tag),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFA1A1AA),
+                    color = TextTertiary,
                     letterSpacing = 1.5.sp
                 )
                 Spacer(modifier = Modifier.size(40.dp))
@@ -304,7 +313,7 @@ fun BabyProfileFormScreen(
                         text = stringResource(R.string.baby_profile_form_title),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        color = Color(0xFF18181B),
+                        color = TextPrimary,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -312,7 +321,7 @@ fun BabyProfileFormScreen(
                         text = stringResource(R.string.baby_profile_form_guidance),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF71717A),
+                        color = TextSecondary,
                         textAlign = TextAlign.Center,
                         lineHeight = 18.sp,
                         modifier = Modifier.padding(horizontal = 8.dp)
@@ -335,10 +344,13 @@ fun BabyProfileFormScreen(
                             .clip(CircleShape)
                             .background(
                                 Brush.verticalGradient(
-                                    listOf(Color(0xFFFFF1F2), Color(0xFFF4F4F5))
+                                    listOf(
+                                        if (isDark) Color(0xFF3B252C) else Color(0xFFFFF1F2),
+                                        if (isDark) Color(0xFF2C2520) else Color(0xFFF4F4F5)
+                                    )
                                 )
                             )
-                            .border(2.dp, Color(0xFFFECDD3), CircleShape)
+                            .border(2.dp, if (isDark) BrandPink.copy(alpha = 0.5f) else Color(0xFFFECDD3), CircleShape)
                             .clickable { onGalleryClick() },
                         contentAlignment = Alignment.Center
                     ) {
@@ -360,7 +372,7 @@ fun BabyProfileFormScreen(
                                 Icon(
                                     imageVector = Icons.Default.CameraAlt,
                                     contentDescription = null,
-                                    tint = Color(0xFFA1A1AA),
+                                    tint = TextTertiary,
                                     modifier = Modifier.size(32.dp)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
@@ -368,7 +380,7 @@ fun BabyProfileFormScreen(
                                     text = stringResource(R.string.baby_profile_photo_select),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFFA1A1AA)
+                                    color = TextTertiary
                                 )
                             }
                         }
@@ -387,9 +399,9 @@ fun BabyProfileFormScreen(
                                 .weight(1f)
                                 .height(42.dp),
                             shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, Color(0xFFE4E4E7)),
+                            border = BorderStroke(1.dp, CardBorder),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color(0xFF3F3F46)
+                                contentColor = TextPrimary
                             )
                         ) {
                             Icon(
@@ -411,7 +423,7 @@ fun BabyProfileFormScreen(
                                 .weight(1f)
                                 .height(42.dp),
                             shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, Color(0xFFFECDD3)),
+                            border = BorderStroke(1.dp, BrandPink),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = BrandPink
                             )
@@ -439,14 +451,14 @@ fun BabyProfileFormScreen(
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = null,
-                                tint = Color(0xFFEF4444),
+                                tint = KanguruTheme.colors.error,
                                 modifier = Modifier.size(14.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.baby_profile_photo_delete),
                                 fontSize = 11.sp,
-                                color = Color(0xFFEF4444),
+                                color = KanguruTheme.colors.error,
                                 fontWeight = FontWeight.Medium
                             )
                         }
@@ -463,8 +475,8 @@ fun BabyProfileFormScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White, RoundedCornerShape(16.dp))
-                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .background(KanguruTheme.colors.surface, RoundedCornerShape(16.dp))
+                            .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
                         Column {
@@ -472,7 +484,7 @@ fun BabyProfileFormScreen(
                                 text = stringResource(R.string.baby_profile_label_name),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF3F3F46),
+                                color = TextSecondary,
                                 letterSpacing = 1.sp
                             )
                             Spacer(modifier = Modifier.height(8.dp))
@@ -482,7 +494,7 @@ fun BabyProfileFormScreen(
                                 placeholder = {
                                     Text(
                                         stringResource(R.string.baby_profile_placeholder_name),
-                                        color = Color(0xFFA1A1AA),
+                                        color = TextTertiary,
                                         fontSize = 14.sp
                                     )
                                 },
@@ -490,9 +502,13 @@ fun BabyProfileFormScreen(
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = BrandPink,
-                                    unfocusedBorderColor = Color(0xFFE4E4E7),
-                                    focusedContainerColor = Color.White,
-                                    unfocusedContainerColor = Color(0xFFFAFAFA)
+                                    unfocusedBorderColor = CardBorder,
+                                    focusedContainerColor = KanguruTheme.colors.surface,
+                                    unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
+                                    focusedTextColor = TextPrimary,
+                                    unfocusedTextColor = TextPrimary,
+                                    focusedPlaceholderColor = TextTertiary,
+                                    unfocusedPlaceholderColor = TextTertiary
                                 ),
                                 singleLine = true
                             )
@@ -503,8 +519,8 @@ fun BabyProfileFormScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White, RoundedCornerShape(16.dp))
-                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .background(KanguruTheme.colors.surface, RoundedCornerShape(16.dp))
+                            .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
                             .clickable { showDatePicker = true }
                             .padding(14.dp)
                     ) {
@@ -513,15 +529,15 @@ fun BabyProfileFormScreen(
                                 text = stringResource(R.string.baby_profile_label_birth_date),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF3F3F46),
+                                color = TextSecondary,
                                 letterSpacing = 1.sp
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(Color(0xFFFAFAFA), RoundedCornerShape(12.dp))
-                                    .border(1.dp, Color(0xFFE4E4E7), RoundedCornerShape(12.dp))
+                                    .background(KanguruTheme.colors.surfaceVariant, RoundedCornerShape(12.dp))
+                                    .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
                                     .padding(horizontal = 14.dp, vertical = 13.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
@@ -530,7 +546,7 @@ fun BabyProfileFormScreen(
                                     text = formatEpochToIndonesianDate(uiState.birthDateEpochMillis),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF27272A)
+                                    color = TextPrimary
                                 )
                                 Icon(
                                     imageVector = Icons.Default.CalendarMonth,
@@ -546,8 +562,8 @@ fun BabyProfileFormScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White, RoundedCornerShape(16.dp))
-                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .background(KanguruTheme.colors.surface, RoundedCornerShape(16.dp))
+                            .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
                         Column {
@@ -555,7 +571,7 @@ fun BabyProfileFormScreen(
                                 text = stringResource(R.string.baby_profile_label_gestational_age),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF3F3F46),
+                                color = TextSecondary,
                                 letterSpacing = 1.sp
                             )
                             Spacer(modifier = Modifier.height(8.dp))
@@ -563,12 +579,12 @@ fun BabyProfileFormScreen(
                                 value = uiState.gestationalAgeWeeks,
                                 onValueChange = onGestationalAgeChange,
                                 placeholder = {
-                                    Text(stringResource(R.string.baby_profile_placeholder_gestational_age), color = Color(0xFFA1A1AA), fontSize = 14.sp)
+                                    Text(stringResource(R.string.baby_profile_placeholder_gestational_age), color = TextTertiary, fontSize = 14.sp)
                                 },
                                 trailingIcon = {
                                     Text(
                                         stringResource(R.string.baby_profile_unit_weeks),
-                                        color = Color(0xFFA1A1AA),
+                                        color = TextTertiary,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(end = 12.dp)
@@ -579,9 +595,13 @@ fun BabyProfileFormScreen(
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = BrandPink,
-                                    unfocusedBorderColor = Color(0xFFE4E4E7),
-                                    focusedContainerColor = Color.White,
-                                    unfocusedContainerColor = Color(0xFFFAFAFA)
+                                    unfocusedBorderColor = CardBorder,
+                                    focusedContainerColor = KanguruTheme.colors.surface,
+                                    unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
+                                    focusedTextColor = TextPrimary,
+                                    unfocusedTextColor = TextPrimary,
+                                    focusedPlaceholderColor = TextTertiary,
+                                    unfocusedPlaceholderColor = TextTertiary
                                 ),
                                 singleLine = true
                             )
@@ -592,8 +612,8 @@ fun BabyProfileFormScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White, RoundedCornerShape(16.dp))
-                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .background(KanguruTheme.colors.surface, RoundedCornerShape(16.dp))
+                            .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -607,7 +627,7 @@ fun BabyProfileFormScreen(
                                         text = stringResource(R.string.baby_profile_label_birth_weight),
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF3F3F46),
+                                        color = TextSecondary,
                                         letterSpacing = 0.5.sp
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
@@ -618,7 +638,7 @@ fun BabyProfileFormScreen(
                                         trailingIcon = {
                                             Text(
                                                 stringResource(R.string.baby_profile_unit_grams),
-                                                color = Color(0xFFA1A1AA),
+                                                color = TextTertiary,
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 modifier = Modifier.padding(end = 8.dp)
@@ -629,9 +649,13 @@ fun BabyProfileFormScreen(
                                         shape = RoundedCornerShape(12.dp),
                                         colors = OutlinedTextFieldDefaults.colors(
                                             focusedBorderColor = BrandPink,
-                                            unfocusedBorderColor = Color(0xFFE4E4E7),
-                                            focusedContainerColor = Color.White,
-                                            unfocusedContainerColor = Color(0xFFFAFAFA)
+                                            unfocusedBorderColor = CardBorder,
+                                            focusedContainerColor = KanguruTheme.colors.surface,
+                                            unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
+                                            focusedTextColor = TextPrimary,
+                                            unfocusedTextColor = TextPrimary,
+                                            focusedPlaceholderColor = TextTertiary,
+                                            unfocusedPlaceholderColor = TextTertiary
                                         ),
                                         singleLine = true
                                     )
@@ -643,7 +667,7 @@ fun BabyProfileFormScreen(
                                         text = stringResource(R.string.baby_profile_label_current_weight),
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF3F3F46),
+                                        color = TextSecondary,
                                         letterSpacing = 0.5.sp
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
@@ -654,7 +678,7 @@ fun BabyProfileFormScreen(
                                         trailingIcon = {
                                             Text(
                                                 stringResource(R.string.baby_profile_unit_grams),
-                                                color = Color(0xFFA1A1AA),
+                                                color = TextTertiary,
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 modifier = Modifier.padding(end = 8.dp)
@@ -665,9 +689,13 @@ fun BabyProfileFormScreen(
                                         shape = RoundedCornerShape(12.dp),
                                         colors = OutlinedTextFieldDefaults.colors(
                                             focusedBorderColor = BrandPink,
-                                            unfocusedBorderColor = Color(0xFFE4E4E7),
-                                            focusedContainerColor = Color.White,
-                                            unfocusedContainerColor = Color(0xFFFAFAFA)
+                                            unfocusedBorderColor = CardBorder,
+                                            focusedContainerColor = KanguruTheme.colors.surface,
+                                            unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
+                                            focusedTextColor = TextPrimary,
+                                            unfocusedTextColor = TextPrimary,
+                                            focusedPlaceholderColor = TextTertiary,
+                                            unfocusedPlaceholderColor = TextTertiary
                                         ),
                                         singleLine = true
                                     )
@@ -678,8 +706,8 @@ fun BabyProfileFormScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(Color(0xFFFFF1F2), RoundedCornerShape(12.dp))
-                                    .border(1.dp, Color(0xFFFFE4E6), RoundedCornerShape(12.dp))
+                                    .background(if (isDark) KanguruTheme.colors.errorContainer else Color(0xFFFFF1F2), RoundedCornerShape(12.dp))
+                                    .border(1.dp, if (isDark) KanguruTheme.colors.errorBorder else Color(0xFFFFE4E6), RoundedCornerShape(12.dp))
                                     .padding(10.dp),
                                 verticalAlignment = Alignment.Top
                             ) {
@@ -697,7 +725,7 @@ fun BabyProfileFormScreen(
                                     fontSize = 11.sp,
                                     lineHeight = 16.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color(0xFFE11D48)
+                                    color = if (isDark) KanguruTheme.colors.error else Color(0xFFE11D48)
                                 )
                             }
                         }
@@ -707,8 +735,8 @@ fun BabyProfileFormScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White, RoundedCornerShape(16.dp))
-                            .border(1.dp, Color(0xFFF2ECE8), RoundedCornerShape(16.dp))
+                            .background(KanguruTheme.colors.surface, RoundedCornerShape(16.dp))
+                            .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
                         Column {
@@ -716,7 +744,7 @@ fun BabyProfileFormScreen(
                                 text = stringResource(R.string.baby_profile_label_gender),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF3F3F46),
+                                color = TextSecondary,
                                 letterSpacing = 1.sp
                             )
                             Spacer(modifier = Modifier.height(10.dp))
@@ -730,10 +758,10 @@ fun BabyProfileFormScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clip(RoundedCornerShape(14.dp))
-                                        .background(if (isMale) Color(0xFFEFF6FF) else Color(0xFFFAFAFA))
+                                        .background(if (isMale) (if (isDark) Color(0xFF1E293B) else Color(0xFFEFF6FF)) else KanguruTheme.colors.surfaceVariant)
                                         .border(
                                             width = if (isMale) 2.dp else 1.dp,
-                                            color = if (isMale) Color(0xFF3B82F6) else Color(0xFFE4E4E7),
+                                            color = if (isMale) Color(0xFF3B82F6) else CardBorder,
                                             shape = RoundedCornerShape(14.dp)
                                         )
                                         .clickable { onGenderChange(Gender.MALE) }
@@ -753,7 +781,7 @@ fun BabyProfileFormScreen(
                                             Icon(
                                                 imageVector = Icons.Default.Check,
                                                 contentDescription = null,
-                                                tint = Color.White,
+                                                tint = White,
                                                 modifier = Modifier.size(12.dp)
                                             )
                                         }
@@ -766,13 +794,13 @@ fun BabyProfileFormScreen(
                                             modifier = Modifier
                                                 .size(40.dp)
                                                 .clip(CircleShape)
-                                                .background(Color(0xFFDBEAFE)),
+                                                .background(if (isDark) Color(0xFF1E3A8A) else Color(0xFFDBEAFE)),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Male,
                                                 contentDescription = null,
-                                                tint = Color(0xFF2563EB),
+                                                tint = Color(0xFF3B82F6),
                                                 modifier = Modifier.size(24.dp)
                                             )
                                         }
@@ -781,7 +809,7 @@ fun BabyProfileFormScreen(
                                             text = stringResource(R.string.baby_profile_gender_male),
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = if (isMale) Color(0xFF1D4ED8) else Color(0xFF52525B)
+                                            color = if (isMale) (if (isDark) Color(0xFF60A5FA) else Color(0xFF1D4ED8)) else TextSecondary
                                         )
                                     }
                                 }
@@ -792,10 +820,10 @@ fun BabyProfileFormScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clip(RoundedCornerShape(14.dp))
-                                        .background(if (isFemale) Color(0xFFFFF1F2) else Color(0xFFFAFAFA))
+                                        .background(if (isFemale) (if (isDark) Color(0xFF381E28) else Color(0xFFFFF1F2)) else KanguruTheme.colors.surfaceVariant)
                                         .border(
                                             width = if (isFemale) 2.dp else 1.dp,
-                                            color = if (isFemale) BrandPink else Color(0xFFE4E4E7),
+                                            color = if (isFemale) BrandPink else CardBorder,
                                             shape = RoundedCornerShape(14.dp)
                                         )
                                         .clickable { onGenderChange(Gender.FEMALE) }
@@ -815,7 +843,7 @@ fun BabyProfileFormScreen(
                                             Icon(
                                                 imageVector = Icons.Default.Check,
                                                 contentDescription = null,
-                                                tint = Color.White,
+                                                tint = White,
                                                 modifier = Modifier.size(12.dp)
                                             )
                                         }
@@ -828,7 +856,7 @@ fun BabyProfileFormScreen(
                                             modifier = Modifier
                                                 .size(40.dp)
                                                 .clip(CircleShape)
-                                                .background(Color(0xFFFFE4E6)),
+                                                .background(if (isDark) Color(0xFF4C1D24) else Color(0xFFFFE4E6)),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
@@ -843,7 +871,7 @@ fun BabyProfileFormScreen(
                                             text = stringResource(R.string.baby_profile_gender_female),
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = if (isFemale) Color(0xFFE11D48) else Color(0xFF52525B)
+                                            color = if (isFemale) (if (isDark) BrandPink else Color(0xFFE11D48)) else TextSecondary
                                         )
                                     }
                                 }
@@ -864,9 +892,9 @@ fun BabyProfileFormScreen(
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color(0x00FDFBF9),
-                            Color(0xFFFDFBF9).copy(alpha = 0.95f),
-                            Color(0xFFFDFBF9)
+                            BrandBackground.copy(alpha = 0f),
+                            BrandBackground.copy(alpha = 0.95f),
+                            BrandBackground
                         )
                     )
                 )
@@ -893,13 +921,13 @@ fun BabyProfileFormScreen(
                         text = stringResource(R.string.baby_profile_btn_save),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = White
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = stringResource(R.string.baby_profile_cd_next),
-                        tint = Color.White,
+                        tint = White,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -920,10 +948,11 @@ fun BabyProfileConfirmationScreen(
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDark = KanguruTheme.isDark
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(BrandBackground)
     ) {
         Column(
             modifier = Modifier
@@ -946,7 +975,7 @@ fun BabyProfileConfirmationScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.common_back),
-                            tint = Color(0xFF1E293B)
+                            tint = TextPrimary
                         )
                     }
                 }
@@ -962,7 +991,7 @@ fun BabyProfileConfirmationScreen(
                         text = stringResource(R.string.baby_profile_confirm_title),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B),
+                        color = TextPrimary,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -970,7 +999,7 @@ fun BabyProfileConfirmationScreen(
                         text = stringResource(R.string.baby_profile_confirm_subtitle),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
-                        color = Color(0xFF64748B),
+                        color = TextSecondary,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -981,8 +1010,15 @@ fun BabyProfileConfirmationScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFFFFF1F2).copy(alpha = 0.5f), RoundedCornerShape(16.dp))
-                        .border(1.dp, Color(0xFFFFE4E6), RoundedCornerShape(16.dp))
+                        .background(
+                            if (isDark) KanguruTheme.colors.surface else Color(0xFFFFF1F2).copy(alpha = 0.5f),
+                            RoundedCornerShape(16.dp)
+                        )
+                        .border(
+                            1.dp,
+                            if (isDark) CardBorder else Color(0xFFFFE4E6),
+                            RoundedCornerShape(16.dp)
+                        )
                         .padding(14.dp)
                 ) {
                     Row(
@@ -999,8 +1035,8 @@ fun BabyProfileConfirmationScreen(
                                 modifier = Modifier
                                     .size(64.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFFFFE4E6))
-                                    .border(2.dp, Color.White, CircleShape),
+                                    .background(if (isDark) KanguruTheme.colors.surfaceVariant else Color(0xFFFFE4E6))
+                                    .border(2.dp, if (isDark) CardBorder else Color.White, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (uiState.photoUri != null) {
@@ -1017,7 +1053,7 @@ fun BabyProfileConfirmationScreen(
                                     Icon(
                                         imageVector = Icons.Default.CameraAlt,
                                         contentDescription = null,
-                                        tint = Color(0xFFFB7185),
+                                        tint = if (isDark) KanguruTheme.colors.primary else Color(0xFFFB7185),
                                         modifier = Modifier.size(26.dp)
                                     )
                                 }
@@ -1028,7 +1064,7 @@ fun BabyProfileConfirmationScreen(
                                     text = stringResource(R.string.baby_profile_photo_label),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF94A3B8),
+                                    color = TextTertiary,
                                     letterSpacing = 1.sp
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
@@ -1036,7 +1072,7 @@ fun BabyProfileConfirmationScreen(
                                     text = if (uiState.photoUri != null) stringResource(R.string.baby_profile_photo_saved) else stringResource(R.string.baby_profile_photo_none),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF334155)
+                                    color = TextPrimary
                                 )
                             }
                         }
@@ -1077,11 +1113,11 @@ fun BabyProfileConfirmationScreen(
                         .fillMaxWidth()
                         .border(
                             width = 1.dp,
-                            color = Color(0xFFF1F5F9),
+                            color = CardBorder,
                             shape = RoundedCornerShape(16.dp)
                         )
                         .clip(RoundedCornerShape(16.dp))
-                        .background(Color.White)
+                        .background(KanguruTheme.colors.surface)
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
@@ -1092,7 +1128,7 @@ fun BabyProfileConfirmationScreen(
                         )
                         HorizontalDivider(
                             thickness = 0.8.dp,
-                            color = Color(0xFFF1F5F9)
+                            color = CardBorder
                         )
 
                         ConfirmationDataRow(
@@ -1101,7 +1137,7 @@ fun BabyProfileConfirmationScreen(
                         )
                         HorizontalDivider(
                             thickness = 0.8.dp,
-                            color = Color(0xFFF1F5F9)
+                            color = CardBorder
                         )
 
                         ConfirmationDataRow(
@@ -1110,7 +1146,7 @@ fun BabyProfileConfirmationScreen(
                         )
                         HorizontalDivider(
                             thickness = 0.8.dp,
-                            color = Color(0xFFF1F5F9)
+                            color = CardBorder
                         )
 
                         ConfirmationDataRow(
@@ -1119,7 +1155,7 @@ fun BabyProfileConfirmationScreen(
                         )
                         HorizontalDivider(
                             thickness = 0.8.dp,
-                            color = Color(0xFFF1F5F9)
+                            color = CardBorder
                         )
 
                         ConfirmationDataRow(
@@ -1128,7 +1164,7 @@ fun BabyProfileConfirmationScreen(
                         )
                         HorizontalDivider(
                             thickness = 0.8.dp,
-                            color = Color(0xFFF1F5F9)
+                            color = CardBorder
                         )
 
                         ConfirmationDataRow(
@@ -1144,22 +1180,29 @@ fun BabyProfileConfirmationScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color(0xFFFFF1F2), RoundedCornerShape(12.dp))
-                            .border(1.dp, Color(0xFFFFE4E6), RoundedCornerShape(12.dp))
+                            .background(
+                                if (isDark) KanguruTheme.colors.errorContainer else Color(0xFFFFF1F2),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                1.dp,
+                                if (isDark) KanguruTheme.colors.errorBorder else Color(0xFFFFE4E6),
+                                RoundedCornerShape(12.dp)
+                            )
                             .padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.Info,
                             contentDescription = null,
-                            tint = BrandPink,
+                            tint = if (isDark) KanguruTheme.colors.error else BrandPink,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(R.string.baby_profile_confirm_bblr_status, formatWeightString(uiState.birthWeightInput)),
                             fontSize = 11.sp,
-                            color = Color(0xFFE11D48),
+                            color = if (isDark) KanguruTheme.colors.error else Color(0xFFE11D48),
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -1183,9 +1226,9 @@ fun BabyProfileConfirmationScreen(
                             .weight(1f)
                             .height(50.dp),
                         shape = RoundedCornerShape(14.dp),
-                        border = BorderStroke(1.dp, BrandPink),
+                        border = BorderStroke(1.dp, CardBorder),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = BrandPink
+                            contentColor = TextPrimary
                         )
                     ) {
                         Icon(
@@ -1219,7 +1262,7 @@ fun BabyProfileConfirmationScreen(
                         if (uiState.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = Color.White,
+                                color = White,
                                 strokeWidth = 2.dp
                             )
                         } else {
@@ -1227,7 +1270,7 @@ fun BabyProfileConfirmationScreen(
                                 text = stringResource(R.string.baby_profile_btn_save),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = White
                             )
                         }
                     }
@@ -1253,13 +1296,13 @@ private fun ConfirmationDataRow(
             text = label,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF64748B)
+            color = TextSecondary
         )
         Text(
             text = value,
             fontSize = 13.5.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1E293B),
+            color = TextPrimary,
             textAlign = TextAlign.End
         )
     }

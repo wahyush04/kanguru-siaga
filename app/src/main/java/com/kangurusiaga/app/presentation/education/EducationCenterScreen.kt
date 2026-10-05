@@ -82,6 +82,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
+import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
+import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
+import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.presentation.home.HomeBottomBar
 import com.kangurusiaga.app.presentation.home.HomeTab
@@ -115,16 +123,17 @@ fun EducationCenterScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     // Design System Colors matching Google Stitch HTML
-    val bgCream = Color(0xFFFAFAFD)
-    val brandCoral = Color(0xFFFF5C77)
-    val brandRoseSoft = Color(0xFFFFE4E8)
-    val slate900 = Color(0xFF0F172A)
-    val slate800 = Color(0xFF1E293B)
-    val slate600 = Color(0xFF475569)
-    val slate500 = Color(0xFF64748B)
-    val slate400 = Color(0xFF94A3B8)
-    val slate200 = Color(0xFFE2E8F0)
-    val slate100 = Color(0xFFF1F5F9)
+    val isDark = KanguruTheme.colors.isDark
+    val bgCream = BrandBackground
+    val brandCoral = BrandPink
+    val brandRoseSoft = if (isDark) BrandPink.copy(alpha = 0.2f) else Color(0xFFFFE4E8)
+    val slate900 = TextPrimary
+    val slate800 = TextPrimary
+    val slate600 = TextSecondary
+    val slate500 = TextSecondary
+    val slate400 = TextTertiary
+    val slate200 = CardBorder
+    val slate100 = CardBorder
 
     Scaffold(
         modifier = modifier
@@ -210,7 +219,7 @@ fun EducationCenterScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(White)
+                        .background(KanguruTheme.colors.surface)
                         .border(1.dp, if (isSearchActive) brandRoseSoft else slate200, RoundedCornerShape(14.dp))
                         .shadow(2.dp, RoundedCornerShape(14.dp))
                 ) {
@@ -242,8 +251,8 @@ fun EducationCenterScreen(
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = White,
-                        unfocusedContainerColor = White,
+                        focusedContainerColor = KanguruTheme.colors.surface,
+                        unfocusedContainerColor = KanguruTheme.colors.surface,
                         focusedBorderColor = brandCoral,
                         unfocusedBorderColor = slate200,
                         focusedTextColor = slate800,
@@ -303,11 +312,11 @@ fun EducationCenterScreen(
                         tagIcon = Icons.Default.SmartDisplay,
                         bulletText = stringResource(R.string.edu_center_pmk_bullet),
                         iconVector = Icons.Default.VolunteerActivism,
-                        iconGradientColors = listOf(Color(0xFFFFE8EC), Color(0xFFFFD8DF)),
+                        iconGradientColors = if (isDark) listOf(brandCoral.copy(alpha = 0.25f), brandCoral.copy(alpha = 0.15f)) else listOf(Color(0xFFFFE8EC), Color(0xFFFFD8DF)),
                         iconTint = brandCoral,
-                        tagBgColor = Color(0xFFFFF0F2),
+                        tagBgColor = if (isDark) brandCoral.copy(alpha = 0.2f) else Color(0xFFFFF0F2),
                         tagTextColor = brandCoral,
-                        tagBorderColor = Color(0xFFFFE4E8),
+                        tagBorderColor = if (isDark) brandCoral.copy(alpha = 0.35f) else Color(0xFFFFE4E8),
                         cardBorderColor = slate100,
                         onClick = onNavigateToPmk
                     )
@@ -315,6 +324,7 @@ fun EducationCenterScreen(
 
                 // Menu Item 2: Perawatan Bayi BBLR
                 if (showBblr) {
+                    val tealColor = Color(0xFF0D9488)
                     EducationTopicCard(
                         title = stringResource(R.string.edu_center_bblr_title),
                         description = stringResource(R.string.edu_center_bblr_desc),
@@ -322,11 +332,11 @@ fun EducationCenterScreen(
                         tagIcon = Icons.AutoMirrored.Filled.MenuBook,
                         bulletText = stringResource(R.string.edu_center_bblr_bullet),
                         iconVector = Icons.AutoMirrored.Filled.MenuBook,
-                        iconGradientColors = listOf(Color(0xFFE2F7F2), Color(0xFFCBF1E8)),
-                        iconTint = Color(0xFF0D9488),
-                        tagBgColor = Color(0xFFECFDF5),
-                        tagTextColor = Color(0xFF047857),
-                        tagBorderColor = Color(0xFFD1FAE5),
+                        iconGradientColors = if (isDark) listOf(tealColor.copy(alpha = 0.25f), tealColor.copy(alpha = 0.15f)) else listOf(Color(0xFFE2F7F2), Color(0xFFCBF1E8)),
+                        iconTint = tealColor,
+                        tagBgColor = if (isDark) tealColor.copy(alpha = 0.2f) else Color(0xFFECFDF5),
+                        tagTextColor = if (isDark) Color(0xFF34D399) else Color(0xFF047857),
+                        tagBorderColor = if (isDark) tealColor.copy(alpha = 0.35f) else Color(0xFFD1FAE5),
                         cardBorderColor = slate100,
                         onClick = onNavigateToBblrEducation
                     )
@@ -334,6 +344,7 @@ fun EducationCenterScreen(
 
                 // Menu Item 3: Tanda Kegawatan pada BBLR
                 if (showEmergency) {
+                    val amberColor = Color(0xFFD97706)
                     EducationTopicCard(
                         title = stringResource(R.string.edu_center_emergency_title),
                         description = stringResource(R.string.edu_center_emergency_desc),
@@ -341,12 +352,12 @@ fun EducationCenterScreen(
                         tagIcon = Icons.Default.Warning,
                         bulletText = stringResource(R.string.edu_center_emergency_bullet),
                         iconVector = Icons.Default.Warning,
-                        iconGradientColors = listOf(Color(0xFFFEF4DC), Color(0xFFFDE8B5)),
-                        iconTint = Color(0xFFD97706),
-                        tagBgColor = Color(0xFFFEF3C7),
-                        tagTextColor = Color(0xFF92400E),
-                        tagBorderColor = Color(0xFFFDE68A),
-                        cardBorderColor = Color(0xFFFEF08A).copy(alpha = 0.4f),
+                        iconGradientColors = if (isDark) listOf(amberColor.copy(alpha = 0.25f), amberColor.copy(alpha = 0.15f)) else listOf(Color(0xFFFEF4DC), Color(0xFFFDE8B5)),
+                        iconTint = amberColor,
+                        tagBgColor = if (isDark) amberColor.copy(alpha = 0.2f) else Color(0xFFFEF3C7),
+                        tagTextColor = if (isDark) Color(0xFFFBBF24) else Color(0xFF92400E),
+                        tagBorderColor = if (isDark) amberColor.copy(alpha = 0.35f) else Color(0xFFFDE68A),
+                        cardBorderColor = if (isDark) amberColor.copy(alpha = 0.35f) else Color(0xFFFEF08A).copy(alpha = 0.4f),
                         onClick = onNavigateToEmergencyWarning
                     )
                 }
@@ -391,10 +402,13 @@ private fun HeroIllustrationBanner(
     slate900: Color,
     slate600: Color
 ) {
+    val isDark = KanguruTheme.colors.isDark
+    val surfaceColor = KanguruTheme.colors.surface
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, brandRoseSoft, RoundedCornerShape(24.dp)),
+            .border(1.dp, if (isDark) CardBorder else brandRoseSoft, RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -403,13 +417,22 @@ private fun HeroIllustrationBanner(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFFFFF7F6),
-                            Color(0xFFFFF0F2),
-                            Color(0xFFF0FDF4)
+                    if (isDark) {
+                        Brush.linearGradient(
+                            listOf(
+                                KanguruTheme.colors.surface,
+                                KanguruTheme.colors.surfaceVariant
+                            )
                         )
-                    )
+                    } else {
+                        Brush.linearGradient(
+                            listOf(
+                                Color(0xFFFFF7F6),
+                                Color(0xFFFFF0F2),
+                                Color(0xFFF0FDF4)
+                            )
+                        )
+                    }
                 )
                 .padding(18.dp)
         ) {
@@ -427,8 +450,8 @@ private fun HeroIllustrationBanner(
                     Row(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(White.copy(alpha = 0.95f))
-                            .border(1.dp, brandRoseSoft, CircleShape)
+                            .background(surfaceColor.copy(alpha = 0.95f))
+                            .border(1.dp, if (isDark) CardBorder else brandRoseSoft, CircleShape)
                             .padding(horizontal = 10.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -438,7 +461,7 @@ private fun HeroIllustrationBanner(
                             text = stringResource(R.string.edu_center_idai_tag),
                             fontSize = 10.5.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF334155)
+                            color = slate900
                         )
                     }
 
@@ -484,8 +507,8 @@ private fun HeroIllustrationBanner(
                             .rotate(2.5f)
                             .shadow(4.dp, RoundedCornerShape(18.dp))
                             .clip(RoundedCornerShape(18.dp))
-                            .background(White)
-                            .border(2.dp, White, RoundedCornerShape(18.dp))
+                            .background(surfaceColor)
+                            .border(2.dp, surfaceColor, RoundedCornerShape(18.dp))
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.il_welcome_mother_baby),
@@ -502,8 +525,8 @@ private fun HeroIllustrationBanner(
                             .size(24.dp)
                             .shadow(3.dp, CircleShape)
                             .clip(CircleShape)
-                            .background(White)
-                            .border(1.dp, brandRoseSoft, CircleShape),
+                            .background(surfaceColor)
+                            .border(1.dp, if (isDark) CardBorder else brandRoseSoft, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -541,14 +564,14 @@ private fun EducationTopicCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, cardBorderColor, RoundedCornerShape(24.dp))
+            .border(1.dp, CardBorder, RoundedCornerShape(24.dp))
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = onClick
             ),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
@@ -583,7 +606,7 @@ private fun EducationTopicCard(
                     text = title,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B),
+                    color = TextPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -592,7 +615,7 @@ private fun EducationTopicCard(
                     text = description,
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color(0xFF64748B),
+                    color = TextSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -631,7 +654,7 @@ private fun EducationTopicCard(
                         text = bulletText,
                         fontSize = 10.5.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF94A3B8)
+                        color = TextTertiary
                     )
                 }
             }
@@ -640,7 +663,7 @@ private fun EducationTopicCard(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = Color(0xFFCBD5E1),
+                tint = TextSecondary,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -654,10 +677,11 @@ private fun EducationTopicCard(
 private fun EmergencyHotlineBanner(
     onContactClick: () -> Unit
 ) {
+    val isDark = KanguruTheme.colors.isDark
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFDBEAFE), RoundedCornerShape(18.dp)),
+            .border(1.dp, if (isDark) KanguruTheme.colors.infoBorder else Color(0xFFDBEAFE), RoundedCornerShape(18.dp)),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -666,12 +690,21 @@ private fun EmergencyHotlineBanner(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(
-                            Color(0xFFEFF6FF),
-                            Color(0xFFEEF2FF)
+                    if (isDark) {
+                        Brush.horizontalGradient(
+                            listOf(
+                                KanguruTheme.colors.infoContainer,
+                                KanguruTheme.colors.surface
+                            )
                         )
-                    )
+                    } else {
+                        Brush.horizontalGradient(
+                            listOf(
+                                Color(0xFFEFF6FF),
+                                Color(0xFFEEF2FF)
+                            )
+                        )
+                    }
                 )
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -702,13 +735,13 @@ private fun EmergencyHotlineBanner(
                         text = stringResource(R.string.edu_center_hotline_title),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = TextPrimary
                     )
                     Text(
                         text = stringResource(R.string.edu_center_hotline_desc),
                         fontSize = 10.5.sp,
                         fontWeight = FontWeight.Normal,
-                        color = Color(0xFF64748B)
+                        color = TextSecondary
                     )
                 }
             }
