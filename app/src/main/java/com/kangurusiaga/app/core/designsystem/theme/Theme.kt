@@ -12,6 +12,8 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.kangurusiaga.app.domain.model.settings.AppTextScale
+import com.kangurusiaga.app.domain.model.settings.AppThemeMode
 
 private val LightColorScheme = lightColorScheme(
     primary = BrandPink,
@@ -64,11 +66,18 @@ object KanguruTheme {
 
 @Composable
 fun KanguruSiagaTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: AppThemeMode = AppThemeMode.WARM_LIGHT,
+    textScale: AppTextScale = AppTextScale.STANDARD,
+    darkTheme: Boolean = when (themeMode) {
+        AppThemeMode.WARM_LIGHT -> false
+        AppThemeMode.DIM_NURSING -> true
+        AppThemeMode.SYSTEM -> isSystemInDarkTheme()
+    },
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val dimensions = Dimensions()
+    val scaledTypography = getScaledTypography(textScale.scaleFactor)
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -82,10 +91,13 @@ fun KanguruSiagaTheme(
         }
     }
 
-    CompositionLocalProvider(LocalDimensions provides dimensions) {
+    CompositionLocalProvider(
+        LocalDimensions provides dimensions,
+        LocalTextScaleFactor provides textScale.scaleFactor
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography,
+            typography = scaledTypography,
             shapes = KanguruShapes,
             content = content
         )

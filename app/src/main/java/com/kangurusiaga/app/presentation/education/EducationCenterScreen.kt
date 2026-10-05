@@ -104,6 +104,7 @@ fun EducationCenterScreen(
     onNavigateToEmergencyWarning: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToAlarm: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -139,9 +140,7 @@ fun EducationCenterScreen(
                         HomeTab.PMK -> onNavigateToPmk()
                         HomeTab.EDUKASI -> { /* Already here */ }
                         HomeTab.ALARM -> onNavigateToAlarm()
-                        HomeTab.PROFIL -> {
-                            Toast.makeText(context, context.getString(R.string.edu_center_profile_toast), Toast.LENGTH_SHORT).show()
-                        }
+                        HomeTab.PROFIL -> onNavigateToProfile()
                     }
                 }
             )

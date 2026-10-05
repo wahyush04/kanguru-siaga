@@ -103,6 +103,7 @@ fun HomeRoute(
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
     onNavigateToGrowth: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -116,6 +117,7 @@ fun HomeRoute(
         onNavigateToEmergency = onNavigateToEmergency,
         onNavigateToAlarm = onNavigateToAlarm,
         onNavigateToGrowth = onNavigateToGrowth,
+        onNavigateToProfile = onNavigateToProfile,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
         onOpenNotification = viewModel::openNotificationSheet,
@@ -136,6 +138,7 @@ fun HomeScreen(
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
     onNavigateToGrowth: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     onCloseEmergency: () -> Unit = {},
     onOpenNotification: () -> Unit = {},
@@ -159,7 +162,6 @@ fun HomeScreen(
         containerColor = BrandBackground,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
-            val profileMsg = stringResource(R.string.home_toast_profile_phase)
             HomeBottomBar(
                 currentTab = HomeTab.BERANDA,
                 onTabSelected = { tab ->
@@ -168,7 +170,7 @@ fun HomeScreen(
                         HomeTab.PMK -> onNavigateToPmk()
                         HomeTab.EDUKASI -> onNavigateToEducation()
                         HomeTab.ALARM -> onNavigateToAlarm()
-                        HomeTab.PROFIL -> onShowInfo(profileMsg)
+                        HomeTab.PROFIL -> onNavigateToProfile()
                     }
                 }
             )

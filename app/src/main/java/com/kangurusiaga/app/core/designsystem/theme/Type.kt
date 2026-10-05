@@ -75,3 +75,56 @@ val Typography = Typography(
         lineHeight = 14.sp
     )
 )
+
+val LocalTextScaleFactor = androidx.compose.runtime.staticCompositionLocalOf { 1.0f }
+
+fun getScaledTypography(scaleFactor: Float = 1.0f): Typography {
+    if (scaleFactor == 1.0f) return Typography
+    return Typography(
+        displayLarge = Typography.displayLarge.copy(
+            fontSize = (32 * scaleFactor).sp,
+            lineHeight = (40 * scaleFactor).sp
+        ),
+        displayMedium = Typography.displayMedium.copy(
+            fontSize = (28 * scaleFactor).sp,
+            lineHeight = (36 * scaleFactor).sp
+        ),
+        headlineLarge = Typography.headlineLarge.copy(
+            fontSize = (24 * scaleFactor).sp,
+            lineHeight = (32 * scaleFactor).sp
+        ),
+        headlineMedium = Typography.headlineMedium.copy(
+            fontSize = (20 * scaleFactor).sp,
+            lineHeight = (28 * scaleFactor).sp
+        ),
+        titleLarge = Typography.titleLarge.copy(
+            fontSize = (18 * scaleFactor).sp,
+            lineHeight = (24 * scaleFactor).sp
+        ),
+        titleMedium = Typography.titleMedium.copy(
+            fontSize = (16 * scaleFactor).sp,
+            lineHeight = (22 * scaleFactor).sp
+        ),
+        bodyLarge = Typography.bodyLarge.copy(
+            fontSize = (16 * scaleFactor).sp,
+            lineHeight = (24 * scaleFactor).sp
+        ),
+        bodyMedium = Typography.bodyMedium.copy(
+            fontSize = (14 * scaleFactor).sp,
+            lineHeight = (20 * scaleFactor).sp
+        ),
+        labelLarge = Typography.labelLarge.copy(
+            fontSize = (14 * scaleFactor).sp,
+            lineHeight = (20 * scaleFactor).sp
+        ),
+        labelMedium = Typography.labelMedium.copy(
+            fontSize = (12 * scaleFactor).sp,
+            lineHeight = (16 * scaleFactor).sp
+        ),
+        labelSmall = Typography.labelSmall.copy(
+            fontSize = (11 * scaleFactor).sp,
+            lineHeight = (14 * scaleFactor).sp
+        )
+    )
+}
+

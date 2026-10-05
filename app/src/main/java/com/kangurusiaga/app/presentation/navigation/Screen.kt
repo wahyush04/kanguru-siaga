@@ -50,4 +50,11 @@ sealed class Screen(override val route: String, override val destination: String
     }
     data object GrowthSummary : Screen(route = "growth_summary", destination = "growth_summary_destination")
     data object AboutFenton : Screen(route = "about_fenton", destination = "about_fenton_destination")
+
+    // Profile & Settings Module Screens
+    data object Settings : Screen(route = "settings", destination = "settings_destination")
+    data object UserGuide : Screen(route = "user_guide", destination = "user_guide_destination")
+    data object MedicalDisclaimer : Screen(route = "medical_disclaimer", destination = "medical_disclaimer_destination")
+    data object AboutApp : Screen(route = "about_app", destination = "about_app_destination")
+    data object ClinicalGuidelines : Screen(route = "clinical_guidelines", destination = "clinical_guidelines_destination")
 }

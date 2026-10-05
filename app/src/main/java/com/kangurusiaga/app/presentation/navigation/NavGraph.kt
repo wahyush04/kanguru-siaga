@@ -36,6 +36,12 @@ import com.kangurusiaga.app.presentation.growth.add.AddGrowthMeasurementScreen
 import com.kangurusiaga.app.presentation.growth.chart.GrowthChartScreen
 import com.kangurusiaga.app.presentation.growth.hub.GrowthHubScreen
 import com.kangurusiaga.app.presentation.growth.summary.GrowthSummaryScreen
+import com.kangurusiaga.app.presentation.profile.BabyProfileRoute
+import com.kangurusiaga.app.presentation.settings.SettingsRoute
+import com.kangurusiaga.app.presentation.settings.info.AboutAppScreen
+import com.kangurusiaga.app.presentation.settings.info.ClinicalGuidelinesScreen
+import com.kangurusiaga.app.presentation.settings.info.MedicalDisclaimerScreen
+import com.kangurusiaga.app.presentation.settings.info.UserGuideScreen
 
 @Composable
 fun KanguruNavGraph(
@@ -110,6 +116,12 @@ fun KanguruNavGraph(
                 },
                 onNavigateToGrowth = {
                     navController.navigate(Screen.GrowthHub.route)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -149,6 +161,12 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -185,6 +203,12 @@ fun KanguruNavGraph(
                 },
                 onNavigateToAlarm = {
                     navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -429,6 +453,12 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -511,6 +541,12 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -567,6 +603,12 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -591,6 +633,12 @@ fun KanguruNavGraph(
                 },
                 onNavigateToEducation = {
                     navController.navigate(Screen.EducationCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -688,6 +736,100 @@ fun KanguruNavGraph(
 
         composable(route = Screen.AboutFenton.route) {
             AboutFentonScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Baby Profile & Settings Module
+        composable(route = Screen.BabyProfile.route) {
+            BabyProfileRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Screen.Settings.route)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(route = Screen.Settings.route) {
+            SettingsRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToPmkReminders = {
+                    navController.navigate(Screen.PmkReminders.route)
+                },
+                onNavigateToFeedingAlarm = {
+                    navController.navigate(Screen.Feeding.route)
+                },
+                onNavigateToUserGuide = {
+                    navController.navigate(Screen.UserGuide.route)
+                },
+                onNavigateToAboutApp = {
+                    navController.navigate(Screen.AboutApp.route)
+                },
+                onNavigateToClinicalGuidelines = {
+                    navController.navigate(Screen.ClinicalGuidelines.route)
+                },
+                onNavigateToMedicalDisclaimer = {
+                    navController.navigate(Screen.MedicalDisclaimer.route)
+                }
+            )
+        }
+
+        composable(route = Screen.UserGuide.route) {
+            UserGuideScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.MedicalDisclaimer.route) {
+            MedicalDisclaimerScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.AboutApp.route) {
+            AboutAppScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.ClinicalGuidelines.route) {
+            ClinicalGuidelinesScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 }

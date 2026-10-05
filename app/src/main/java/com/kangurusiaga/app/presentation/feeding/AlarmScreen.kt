@@ -80,6 +80,7 @@ fun AlarmRoute(
     onNavigateToHome: () -> Unit,
     onNavigateToPmk: () -> Unit,
     onNavigateToEducation: () -> Unit,
+    onNavigateToProfile: () -> Unit = {},
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -110,6 +111,7 @@ fun AlarmRoute(
         onNavigateToHome = onNavigateToHome,
         onNavigateToPmk = onNavigateToPmk,
         onNavigateToEducation = onNavigateToEducation,
+        onNavigateToProfile = onNavigateToProfile,
         onToggleSchedule = { id, enabled ->
             if (enabled) {
                 requestPermissionIfAppropriate()
@@ -149,6 +151,7 @@ fun AlarmScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToPmk: () -> Unit,
     onNavigateToEducation: () -> Unit,
+    onNavigateToProfile: () -> Unit = {},
     onToggleSchedule: (Long, Boolean) -> Unit,
     onOpenAddSchedule: () -> Unit,
     onCloseAddSchedule: () -> Unit,
@@ -210,7 +213,7 @@ fun AlarmScreen(
                         HomeTab.PMK -> onNavigateToPmk()
                         HomeTab.EDUKASI -> onNavigateToEducation()
                         HomeTab.ALARM -> { /* Already on Alarm */ }
-                        HomeTab.PROFIL -> { /* Profile */ }
+                        HomeTab.PROFIL -> onNavigateToProfile()
                     }
                 }
             )

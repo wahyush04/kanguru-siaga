@@ -10,6 +10,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.core.util.Consumer
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.activity.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.core.designsystem.theme.KanguruSiagaTheme
 import com.kangurusiaga.app.presentation.navigation.KanguruNavGraph
 import com.kangurusiaga.app.presentation.navigation.Screen
@@ -17,6 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -28,7 +32,11 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            KanguruSiagaTheme {
+            val settings = mainViewModel.settings.collectAsStateWithLifecycle().value
+            KanguruSiagaTheme(
+                themeMode = settings.themeMode,
+                textScale = settings.textScale
+            ) {
                 val navController = rememberNavController()
 
                 DisposableEffect(Unit) {
