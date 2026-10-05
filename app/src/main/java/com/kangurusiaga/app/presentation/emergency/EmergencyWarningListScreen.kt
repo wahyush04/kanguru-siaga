@@ -55,12 +55,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
@@ -122,14 +124,14 @@ fun EmergencyWarningListScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali",
+                                contentDescription = stringResource(R.string.common_back),
                                 tint = TextPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
 
                         Text(
-                            text = "Tanda Kegawatan pada BBLR",
+                            text = stringResource(R.string.emergency_list_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
@@ -197,7 +199,7 @@ fun EmergencyWarningListScreen(
                             Spacer(modifier = Modifier.width(12.dp))
 
                             Text(
-                                text = "Jika menemukan tanda-tanda berikut, segera hubungi tenaga kesehatan atau ke fasilitas layanan kesehatan terdekat.",
+                                text = stringResource(R.string.emergency_banner_warning),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium,
                                 color = Color(0xFFDC2626),
@@ -238,14 +240,14 @@ fun EmergencyWarningListScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Butuh Bantuan Cepat?",
+                                    text = stringResource(R.string.emergency_hotline_card_title),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFFE11D48)
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "Hubungi layanan gawat darurat medis / IGD terdekat.",
+                                    text = stringResource(R.string.emergency_hotline_card_desc),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color(0xFF9F1239),
                                     fontSize = 11.5.sp
@@ -269,7 +271,7 @@ fun EmergencyWarningListScreen(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = "119",
+                                    text = stringResource(R.string.emergency_hotline_number),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp,
                                     color = White

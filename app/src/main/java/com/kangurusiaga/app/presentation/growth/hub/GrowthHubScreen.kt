@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -103,7 +104,7 @@ fun GrowthHubScreen(
                 ) {
                     Icon(
                         imageVector = GrowthIcons.Back,
-                        contentDescription = "Kembali",
+                        contentDescription = stringResource(R.string.common_back),
                         tint = TextPrimary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -117,7 +118,7 @@ fun GrowthHubScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Pertumbuhan Bayi",
+                    text = stringResource(R.string.growth_hub_title),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
@@ -125,7 +126,7 @@ fun GrowthHubScreen(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Pantau perkembangan si kecil dengan grafik Fenton untuk bayi prematur.",
+                    text = stringResource(R.string.growth_hub_subtitle),
                     fontSize = 12.5.sp,
                     fontWeight = FontWeight.Medium,
                     color = TextSecondary,
@@ -145,7 +146,7 @@ fun GrowthHubScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.il_pertumbuhan_bayi),
-                    contentDescription = "Ilustrasi Pertumbuhan Bayi",
+                    contentDescription = stringResource(R.string.growth_hub_img_cd),
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 12.dp),
@@ -157,8 +158,8 @@ fun GrowthHubScreen(
 
             // 3 Measurement Cards
             GrowthCardItem(
-                title = "Berat Badan",
-                subtitle = "Grafik pertumbuhan berat badan per minggu",
+                title = stringResource(R.string.growth_hub_weight_title),
+                subtitle = stringResource(R.string.growth_hub_weight_sub),
                 iconVector = GrowthIcons.Weight,
                 iconBg = GrowthCardRed,
                 iconTint = BrandPink,
@@ -168,8 +169,8 @@ fun GrowthHubScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             GrowthCardItem(
-                title = "Panjang Badan",
-                subtitle = "Grafik pertumbuhan panjang badan per minggu",
+                title = stringResource(R.string.growth_hub_length_title),
+                subtitle = stringResource(R.string.growth_hub_length_sub),
                 iconVector = GrowthIcons.Length,
                 iconBg = GrowthCardGreen,
                 iconTint = Color(0xFF10B981),
@@ -179,8 +180,8 @@ fun GrowthHubScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             GrowthCardItem(
-                title = "Lingkar Kepala",
-                subtitle = "Grafik pertumbuhan lingkar kepala per minggu",
+                title = stringResource(R.string.growth_hub_head_title),
+                subtitle = stringResource(R.string.growth_hub_head_sub),
                 iconVector = GrowthIcons.Head,
                 iconBg = GrowthCardBlue,
                 iconTint = Color(0xFF3B82F6),
@@ -213,7 +214,7 @@ fun GrowthHubScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Ringkasan Pertumbuhan",
+                    text = stringResource(R.string.growth_hub_btn_summary),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = BrandPink
@@ -240,7 +241,7 @@ fun GrowthHubScreen(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Tambah Data Pertumbuhan",
+                    text = stringResource(R.string.growth_hub_btn_add),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = White
@@ -279,13 +280,13 @@ fun GrowthHubScreen(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Tentang Grafik Fenton",
+                        text = stringResource(R.string.growth_hub_about_card_title),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Grafik Fenton digunakan untuk menilai pertumbuhan bayi prematur sesuai usia koreksi.",
+                        text = stringResource(R.string.growth_hub_about_card_desc),
                         fontSize = 11.5.sp,
                         fontWeight = FontWeight.Normal,
                         color = TextSecondary,

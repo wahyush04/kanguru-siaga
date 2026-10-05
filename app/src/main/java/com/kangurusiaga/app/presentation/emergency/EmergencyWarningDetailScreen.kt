@@ -40,12 +40,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -105,14 +107,14 @@ fun EmergencyWarningDetailScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali",
+                                contentDescription = stringResource(R.string.common_back),
                                 tint = TextPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
 
                         Text(
-                            text = module?.title ?: "Detail Tanda Kegawatan",
+                            text = module?.title ?: stringResource(R.string.emergency_detail_default_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
@@ -156,7 +158,7 @@ fun EmergencyWarningDetailScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Hubungi Nakes / Ambulans (119)",
+                            text = stringResource(R.string.emergency_btn_call_nakes),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
                             color = White
@@ -211,7 +213,7 @@ fun EmergencyWarningDetailScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = uiState.errorMessage ?: "Modul tidak ditemukan",
+                    text = uiState.errorMessage ?: stringResource(R.string.emergency_not_found),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextPrimary
                 )

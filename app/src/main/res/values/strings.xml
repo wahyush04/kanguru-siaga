@@ -1,3 +1,463 @@
 <resources>
     <string name="app_name">Kanguru Siaga</string>
+    <string name="common_back">Kembali</string>
+
+    <!-- Baby Profile Setup & Confirmation -->
+    <string name="baby_profile_header_tag">IDENTITAS BAYI</string>
+    <string name="baby_profile_form_title">Data Bayi</string>
+    <string name="baby_profile_form_guidance">Lengkapi data si kecil untuk menyesuaikan panduan, pengingat, dan grafik pertumbuhan.</string>
+    <string name="baby_profile_confirm_title">Konfirmasi Data Bayi</string>
+    <string name="baby_profile_confirm_subtitle">Pastikan data yang Anda masukkan sudah benar.</string>
+
+    <string name="baby_profile_photo_desc">Foto Bayi</string>
+    <string name="baby_profile_photo_select">Pilih Foto</string>
+    <string name="baby_profile_photo_take">Ambil Foto</string>
+    <string name="baby_profile_photo_gallery">Pilih Galeri</string>
+    <string name="baby_profile_photo_delete">Hapus Foto</string>
+    <string name="baby_profile_photo_label">FOTO BAYI</string>
+    <string name="baby_profile_photo_saved">Tersimpan</string>
+    <string name="baby_profile_photo_none">Belum ada foto</string>
+    <string name="baby_profile_photo_edit">Ubah Foto</string>
+
+    <string name="baby_profile_label_name">NAMA BAYI</string>
+    <string name="baby_profile_placeholder_name">Contoh: Nirmala Endang Elis</string>
+    <string name="baby_profile_label_birth_date">TANGGAL LAHIR</string>
+    <string name="baby_profile_cd_select_date">Pilih Tanggal</string>
+    <string name="baby_profile_label_gestational_age">USIA GESTASI (USIA KEHAMILAN)</string>
+    <string name="baby_profile_placeholder_gestational_age">Contoh: 32</string>
+    <string name="baby_profile_unit_weeks">minggu</string>
+    <string name="baby_profile_label_birth_weight">BERAT LAHIR</string>
+    <string name="baby_profile_placeholder_weight_birth">Contoh: 1800</string>
+    <string name="baby_profile_label_current_weight">BERAT SEKARANG</string>
+    <string name="baby_profile_placeholder_weight_current">Contoh: 3200</string>
+    <string name="baby_profile_unit_grams">gram</string>
+    <string name="baby_profile_bblr_notice">Bayi dengan berat lahir kurang dari 2.500 gram dikategorikan sebagai BBLR (Bayi Berat Lahir Rendah).</string>
+    <string name="baby_profile_label_gender">JENIS KELAMIN</string>
+    <string name="baby_profile_gender_male">Laki-laki</string>
+    <string name="baby_profile_gender_female">Perempuan</string>
+
+    <string name="baby_profile_confirm_label_name">Nama Bayi</string>
+    <string name="baby_profile_confirm_label_birth_date">Tanggal Lahir</string>
+    <string name="baby_profile_confirm_label_gestational_age">Usia Gestasi</string>
+    <string name="baby_profile_confirm_label_birth_weight">Berat Lahir</string>
+    <string name="baby_profile_confirm_label_current_weight">Berat Sekarang</string>
+    <string name="baby_profile_confirm_label_gender">Jenis Kelamin</string>
+    <string name="baby_profile_value_weeks">%1$s minggu</string>
+    <string name="baby_profile_value_grams">%1$s gram</string>
+    <string name="baby_profile_confirm_bblr_status">Status: BBLR (%1$s gram) — Panduan Perawatan BBLR &amp; PMK diaktifkan.</string>
+
+    <string name="baby_profile_btn_save">Simpan Data</string>
+    <string name="baby_profile_btn_back">Kembali</string>
+    <string name="baby_profile_cd_next">Lanjut</string>
+    <string name="baby_profile_date_picker_select">Pilih</string>
+    <string name="baby_profile_date_picker_cancel">Batal</string>
+
+    <string name="baby_profile_error_invalid_birth_date">Periksa kembali tanggal lahir</string>
+    <string name="baby_profile_error_photo_failed">Foto belum berhasil dipilih</string>
+    <string name="baby_profile_error_empty_name">Nama bayi belum diisi</string>
+    <string name="baby_profile_error_invalid_birth_weight">Masukkan berat lahir yang valid</string>
+    <string name="baby_profile_error_save_failed">Gagal menyimpan data bayi</string>
+
+    <!-- Education Module -->
+    <string name="edu_center_pill_tag">Pusat Edukasi</string>
+    <string name="edu_center_header_title">Edukasi &amp; Panduan</string>
+    <string name="edu_center_header_subtitle">Panduan lengkap perawatan BBLR &amp; Metode Kanguru di rumah</string>
+    <string name="edu_center_search_cd">Cari Edukasi</string>
+    <string name="edu_center_search_close_cd">Tutup Pencarian</string>
+    <string name="edu_center_search_placeholder">Cari topik (PMK, ASI, Suhu, Tanda Bahaya)&#8230;</string>
+    <string name="edu_center_topic_section">PILIH TOPIK PEMBELAJARAN</string>
+    <string name="edu_center_modules_available">3 Modul Tersedia</string>
+    <string name="edu_center_idai_tag">Standar IDAI &amp; Kemenkes</string>
+    <string name="edu_center_hero_title_1">Belajar Merawat</string>
+    <string name="edu_center_hero_title_2">Si Kecil Tercinta</string>
+    <string name="edu_center_hero_desc">Pahami panduan praktis dan kenali tanda vital untuk tumbuh kembang optimal si kecil.</string>
+    <string name="edu_center_hero_img_cd">Ibu mendekap bayi dengan hangat dan penuh kasih</string>
+    <string name="edu_center_no_results">Tidak ada materi yang sesuai dengan \"%1$s\"</string>
+    <string name="edu_center_hotline_title">Butuh Bantuan Bidan/Nakes?</string>
+    <string name="edu_center_hotline_desc">Hubungi faskes terdaftar jika suhu &lt;36.5°C</string>
+    <string name="edu_center_hotline_btn">Kontak</string>
+    <string name="edu_center_hotline_toast">Layanan darurat faskes: 119</string>
+    <string name="edu_center_profile_toast">Pengaturan Profil Bayi tersedia di fase berikutnya.</string>
+
+    <string name="edu_center_pmk_title">Perawatan Metode Kanguru (PMK)</string>
+    <string name="edu_center_pmk_desc">Video tutorial, timer panduan, dan kontak kulit (skin-to-skin)</string>
+    <string name="edu_center_pmk_tag">6 Modul Video</string>
+    <string name="edu_center_pmk_bullet">• Durasi ~15 mnt</string>
+
+    <string name="edu_center_bblr_title">Perawatan Bayi BBLR</string>
+    <string name="edu_center_bblr_desc">9 materi lengkap: kehangatan, ASI, tali pusat, dan kebersihan</string>
+    <string name="edu_center_bblr_tag">9 Materi Teks</string>
+    <string name="edu_center_bblr_bullet">• Panduan Harian</string>
+
+    <string name="edu_center_emergency_title">Tanda Kegawatan pada BBLR</string>
+    <string name="edu_center_emergency_desc">Kenali 7 tanda bahaya, panduan triase, dan rujukan cepat</string>
+    <string name="edu_center_emergency_tag">Penting &amp; Darurat</string>
+    <string name="edu_center_emergency_bullet">• Siaga 24 Jam</string>
+
+    <string name="edu_list_title">Perawatan Bayi Berat Lahir Rendah</string>
+    <string name="edu_list_tab_all">Daftar Materi</string>
+    <string name="edu_list_tab_favorites">Materi Favorit</string>
+    <string name="edu_list_empty_fav_title">Belum Ada Materi Favorit</string>
+    <string name="edu_list_empty_all_title">Materi Tidak Ditemukan</string>
+    <string name="edu_list_empty_fav_desc">Tandai materi edukasi favorit dengan ikon bintang di kartu materi agar tersimpan rapi di sini.</string>
+    <string name="edu_list_empty_all_desc">Modul materi edukasi belum tersedia.</string>
+    <string name="edu_list_btn_see_all">Lihat Semua Materi</string>
+
+    <string name="edu_detail_default_title">Materi Edukasi</string>
+    <string name="edu_detail_module_progress">Modul %1$d dari 9</string>
+    <string name="edu_detail_read_time">Waktu baca: %1$d mnt</string>
+    <string name="edu_detail_bookmark_save">Simpan Favorit</string>
+    <string name="edu_detail_btn_completed">Sudah Selesai Dibaca</string>
+    <string name="edu_detail_btn_mark_completed">Tandai Selesai Dibaca</string>
+    <string name="edu_detail_btn_next">Lanjut: %1$d. %2$s</string>
+    <string name="edu_detail_btn_back_to_list">Kembali ke Daftar Materi</string>
+
+    <string name="edu_card_completed">Selesai dibaca</string>
+    <string name="edu_card_meta">%1$s • %2$d mnt</string>
+
+    <!-- Emergency Module -->
+    <string name="emergency_list_title">Tanda Kegawatan pada BBLR</string>
+    <string name="emergency_banner_warning">Jika menemukan tanda-tanda berikut, segera hubungi tenaga kesehatan atau ke fasilitas layanan kesehatan terdekat.</string>
+    <string name="emergency_hotline_card_title">Butuh Bantuan Cepat?</string>
+    <string name="emergency_hotline_card_desc">Hubungi layanan gawat darurat medis / IGD terdekat.</string>
+    <string name="emergency_hotline_number">119</string>
+    <string name="emergency_detail_default_title">Detail Tanda Kegawatan</string>
+    <string name="emergency_btn_call_nakes">Hubungi Nakes / Ambulans (119)</string>
+    <string name="emergency_not_found">Modul tidak ditemukan</string>
+
+    <!-- Feeding / Alarm Module -->
+    <string name="alarm_title">Alarm Pemberian ASI</string>
+    <string name="alarm_subtitle_ogt">(OGT/NGT)</string>
+    <string name="alarm_info_cd">Informasi Medis</string>
+    <string name="alarm_advisory">Jadwal pemberian ASI disesuaikan dengan instruksi tenaga kesehatan.</string>
+    <string name="alarm_section_header_schedule">Jadwal Pemberian ASI (Setiap 2 jam)</string>
+    <string name="alarm_section_header_status">Volume &amp; Status</string>
+    <string name="alarm_btn_add">Tambah Jadwal</string>
+    <string name="alarm_volume_unit">%1$d ml</string>
+
+    <!-- Add Feeding Schedule BottomSheet -->
+    <string name="alarm_add_title">Tambah Jadwal ASI</string>
+    <string name="alarm_label_time">Waktu</string>
+    <string name="alarm_cd_select_time">Pilih Waktu</string>
+    <string name="alarm_label_volume">Jumlah ASI</string>
+    <string name="alarm_unit_ml">ml</string>
+    <string name="alarm_label_note">Catatan (Opsional)</string>
+    <string name="alarm_placeholder_note">Contoh: melalui OGT</string>
+    <string name="alarm_label_toggle_reminder">Aktifkan\nPengingat</string>
+    <string name="alarm_label_repeat">Ulangi</string>
+    <string name="alarm_error_volume">Jumlah ASI harus lebih dari 0 ml</string>
+    <string name="alarm_btn_cancel">Batal</string>
+    <string name="alarm_btn_save">Simpan</string>
+
+    <!-- Edit Feeding Schedule BottomSheet -->
+    <string name="alarm_edit_title">Edit Jadwal ASI</string>
+    <string name="alarm_cd_close">Tutup</string>
+    <string name="alarm_edit_subtitle">Perbarui waktu &amp; takaran atau hapus jadwal rutin si kecil.</string>
+    <string name="alarm_label_time_required">WAKTU PEMBERIAN *</string>
+    <string name="alarm_label_volume_required">JUMLAH ASI *</string>
+    <string name="alarm_tip_doctor_notice">💡 Jadwal &amp; takaran disesuaikan dengan instruksi tenaga medis / DPJP.</string>
+    <string name="alarm_label_method">METODE PEMBERIAN</string>
+    <string name="alarm_label_note_optional">CATATAN TAMBAHAN (OPSIONAL)</string>
+    <string name="alarm_placeholder_note_edit">Contoh: Berikan perlahan via gravitasi OGT</string>
+    <string name="alarm_toggle_reminder_title">Aktifkan Pengingat</string>
+    <string name="alarm_toggle_reminder_desc">Berdering 10 menit sebelum waktu minum</string>
+    <string name="alarm_label_repeat_schedule">Ulangi Jadwal</string>
+    <string name="alarm_btn_save_changes">Simpan Perubahan</string>
+    <string name="alarm_btn_delete_this">Hapus Jadwal Ini</string>
+
+    <!-- Delete Feeding Schedule Dialog -->
+    <string name="alarm_delete_dialog_title">Hapus Jadwal?</string>
+    <string name="alarm_delete_dialog_msg">Jadwal pemberian ASI ini akan dihapus.</string>
+    <string name="alarm_btn_delete">Hapus</string>
+
+    <!-- Feeding Info Dialog -->
+    <string name="alarm_info_dialog_title">Informasi &amp; Panduan Medis</string>
+    <string name="alarm_info_dialog_point1">• Jadwal dan volume pemberian ASI/nutrisi si kecil WAJIB disesuaikan dengan instruksi tenaga kesehatan atau dokter spesialis anak (DPJP).</string>
+    <string name="alarm_info_dialog_point2">• Nilai takaran (seperti 30 ml) adalah target acuan yang diatur oleh pengguna atau tenaga medis, bukan rekomendasi dosis otomatis dari sistem.</string>
+    <string name="alarm_info_dialog_point3">• Aplikasi Kanguru Siaga berfungsi sebagai sarana pengingat dan pencatatan, dan tidak menggantikan pemeriksaan serta keputusan klinis tenaga medis.</string>
+    <string name="alarm_btn_understand">Saya Mengerti</string>
+
+    <!-- Feeding TimePicker Dialog -->
+    <string name="alarm_time_picker_title">Pilih Waktu Pemberian ASI</string>
+
+    <!-- Home Module -->
+    <string name="home_toast_profile_phase">Pengaturan Profil Bayi tersedia di fase berikutnya.</string>
+    <string name="home_hello">Halo,</string>
+    <string name="home_cd_notifications">Notifikasi</string>
+    <string name="home_card_pmk_title">Perawatan Metode\nKanguru (PMK)</string>
+    <string name="home_card_pmk_subtitle">Video, Timer, Pengingat</string>
+    <string name="home_card_bblr_title">Perawatan\nBayi Berat Lahir Rendah</string>
+    <string name="home_card_bblr_subtitle">Panduan lengkap</string>
+    <string name="home_card_emergency_title">Tanda Kegawatan\npada BBLR</string>
+    <string name="home_card_emergency_subtitle">Kenali tanda bahaya</string>
+    <string name="home_card_asi_title">Alarm Pemberian\nASI</string>
+    <string name="home_card_asi_subtitle">Untuk bayi dengan OGT/NGT</string>
+    <string name="home_card_growth_title">Pertumbuhan Bayi</string>
+    <string name="home_card_growth_subtitle">Grafik Fenton (Berat, Panjang, Lingkar Kepala)</string>
+    <string name="home_section_today_activity">Aktivitas Hari Ini</string>
+    <string name="home_see_all">Lihat semua ›</string>
+    <string name="home_pmk_activity_title">PMK</string>
+    <string name="home_pmk_activity_progress">%1$d dari %2$d sesi</string>
+    <string name="home_emergency_sheet_title">Tanda Kegawatan BBLR</string>
+    <string name="home_emergency_sheet_subtitle">Segera bawa ke RS/Puskesmas jika ada tanda berikut</string>
+    <string name="home_cd_close">Tutup</string>
+    <string name="home_emergency_sheet_alert">⚠️ Perhatian Cepat: Bayi dengan berat lahir rendah sangat rentan terhadap hipotermia dan gangguan napas mendadak.</string>
+    <string name="home_emergency_item_1_title">Gangguan Pernapasan</string>
+    <string name="home_emergency_item_1_sub">Tarikan dada ke dalam</string>
+    <string name="home_emergency_item_2_title">Perubahan Warna Kulit</string>
+    <string name="home_emergency_item_2_sub">Kuning / Kebiruan (Sianosis)</string>
+    <string name="home_emergency_item_3_title">Bayi Sulit Dibangunkan</string>
+    <string name="home_emergency_item_3_sub">Letargis / lemas</string>
+    <string name="home_emergency_item_4_title">Kesulitan Menyusu</string>
+    <string name="home_emergency_item_4_sub">Daya isap sangat lemah</string>
+    <string name="home_emergency_item_5_title">Suhu Tubuh Tidak Normal</string>
+    <string name="home_emergency_item_5_sub">&lt; 36.5°C atau &gt; 37.5°C</string>
+    <string name="home_btn_call_ambulance">Panggil Ambulans / Nakes (119)</string>
+    <string name="home_notif_sheet_title">Pemberitahuan</string>
+    <string name="home_notif_pmk_title">Pengingat PMK Pagi</string>
+    <string name="home_notif_pmk_desc">Saatnya sesi kontak kulit ke kulit minimal 60 menit untuk kehangatan si kecil.</string>
+    <string name="home_empty_title">KANGURU SIAGA</string>
+    <string name="home_empty_desc">Belum ada profil bayi aktif untuk menampilkan data pemantauan.</string>
+    <string name="home_btn_setup_profile">Mulai Isi Data Bayi</string>
+
+    <!-- Growth Module -->
+    <!-- About Fenton -->
+    <string name="about_fenton_title">Panduan Grafik Fenton</string>
+    <string name="about_fenton_tag">Onboarding &amp; Panduan Klinis BBLR</string>
+    <string name="about_fenton_img_cd">Panduan Grafik Fenton</string>
+    <string name="about_fenton_section_what">Apa itu Grafik Fenton?</string>
+    <string name="about_fenton_section_how">Cara Membaca Grafik</string>
+    <string name="about_fenton_step_1">Masukkan data pengukuran bayi</string>
+    <string name="about_fenton_step_2">Gunakan Usia Gestasi Pasca-Menstruasi (PMA)</string>
+    <string name="about_fenton_step_3">Lihat posisi titik pada grafik</string>
+    <string name="about_fenton_step_4">Bandingkan dengan garis persentil</string>
+    <string name="about_fenton_btn_understand">Saya Mengerti, Mulai Pantau</string>
+
+    <!-- Growth Hub -->
+    <string name="growth_hub_title">Pertumbuhan Bayi</string>
+    <string name="growth_hub_subtitle">Pantau perkembangan si kecil dengan grafik Fenton untuk bayi prematur.</string>
+    <string name="growth_hub_img_cd">Ilustrasi Pertumbuhan Bayi</string>
+    <string name="growth_hub_weight_title">Berat Badan</string>
+    <string name="growth_hub_weight_sub">Grafik pertumbuhan berat badan per minggu</string>
+    <string name="growth_hub_length_title">Panjang Badan</string>
+    <string name="growth_hub_length_sub">Grafik pertumbuhan panjang badan per minggu</string>
+    <string name="growth_hub_head_title">Lingkar Kepala</string>
+    <string name="growth_hub_head_sub">Grafik pertumbuhan lingkar kepala per minggu</string>
+    <string name="growth_hub_btn_summary">Ringkasan Pertumbuhan</string>
+    <string name="growth_hub_btn_add">+ Tambah Data Pertumbuhan</string>
+    <string name="growth_hub_about_card_title">Tentang Grafik Fenton</string>
+    <string name="growth_hub_about_card_desc">Grafik Fenton digunakan untuk menilai pertumbuhan bayi prematur sesuai usia koreksi.</string>
+
+    <!-- Add Growth Measurement -->
+    <string name="growth_add_title">Tambah Data %1$s</string>
+    <string name="growth_add_label_date">Tanggal Pengukuran</string>
+    <string name="growth_add_label_chronological">Usia Kronologis</string>
+    <string name="growth_add_tag_auto">Otomatis</string>
+    <string name="growth_add_unit_weeks">minggu</string>
+    <string name="growth_add_chronological_desc">Dihitung otomatis dari tanggal lahir ke tanggal pengukuran.</string>
+    <string name="growth_add_label_pma">Usia Gestasi Pasca-Menstruasi (PMA)</string>
+    <string name="growth_add_pma_desc">Dihitung otomatis oleh sistem (Usia Gestasi saat lahir + Usia Kronologis) untuk penempatan kurva Fenton.</string>
+    <string name="growth_add_label_note">Catatan (Opsional)</string>
+    <string name="growth_add_placeholder_note">Contoh: Pagi hari setelah menyusu&#8230;</string>
+    <string name="growth_add_placeholder_weight">Contoh: 3.2 atau 3200</string>
+    <string name="growth_add_placeholder_length">Contoh: 48.5</string>
+    <string name="growth_add_placeholder_head">Contoh: 34.2</string>
+    <string name="growth_add_reminder_title">Pengingat Pengukuran Berikutnya</string>
+    <string name="growth_add_reminder_desc">Dihitung 1 minggu dari tanggal pengukuran (%1$s)</string>
+    <string name="growth_add_tip_weight">Pastikan menggunakan timbangan bayi yang sesuai dan ikuti instruksi tenaga kesehatan.</string>
+    <string name="growth_add_tip_length">Gunakan infantometer atau pita ukur datar. Pastikan bayi dalam posisi telentang lurus dan rileks.</string>
+    <string name="growth_add_tip_head">Ukur pada bagian kepala yang paling menonjol (di atas alis dan bagian belakang kepala).</string>
+    <string name="growth_add_btn_cancel">Batal</string>
+    <string name="growth_add_btn_save">Simpan</string>
+
+    <!-- Select Growth Parameter BottomSheet -->
+    <string name="growth_select_sheet_title">Pilih Jenis Pertumbuhan</string>
+    <string name="growth_select_sheet_subtitle">Pilih parameter grafik Fenton yang ingin dicatat</string>
+    <string name="growth_select_badge_weight">Rutin</string>
+    <string name="growth_select_desc_weight">Grafik pertumbuhan berat badan per minggu (kg/g)</string>
+    <string name="growth_select_badge_length">Fenton PB</string>
+    <string name="growth_select_desc_length">Grafik pertumbuhan panjang badan (cm)</string>
+    <string name="growth_select_badge_head">Fenton LK</string>
+    <string name="growth_select_desc_head">Grafik lingkar kepala per minggu (cm)</string>
+    <string name="growth_select_tip">Disarankan mengukur berat badan seminggu sekali pada jam yang sama (pagi hari sebelum minum ASI) untuk akurasi optimal.</string>
+    <string name="growth_select_btn_proceed">Lanjut ke Formulir</string>
+
+    <!-- Growth Chart -->
+    <string name="growth_chart_delete_title">Hapus Data Pengukuran?</string>
+    <string name="growth_chart_delete_msg">Data pengukuran ini akan dihapus secara permanen.</string>
+
+    <string name="growth_chart_tab_chart">Grafik</string>
+    <string name="growth_chart_tab_data">Data</string>
+    <string name="growth_chart_fenton_curve_title">Kurva Fenton 2013</string>
+    <string name="growth_chart_cd_pma_info">Informasi Usia Koreksi</string>
+    <string name="growth_chart_unit_weight">Berat (kg)</string>
+    <string name="growth_chart_unit_length">Panjang (cm)</string>
+    <string name="growth_chart_unit_head">Lingkar Kepala (cm)</string>
+    <string name="growth_chart_current_label">Saat ini</string>
+    <string name="growth_chart_percentile_label">Persentil</string>
+    <string name="growth_chart_x_axis_label">Usia Gestasi / Koreksi (minggu)</string>
+    <string name="growth_chart_legend_title">Keterangan Grafik:</string>
+    <string name="growth_chart_legend_plot">%1$s %2$s (Tercatat / Plot)</string>
+    <string name="growth_chart_insight_text">%1$s %2$s berada pada persentil %3$s (%4$s) sesuai grafik Fenton.</string>
+    <string name="growth_chart_btn_add_param">+ Tambah Data %1$s</string>
+
+    <string name="growth_chart_empty_title">Belum ada riwayat pengukuran</string>
+    <string name="growth_chart_empty_desc">Mulai tambahkan data pengukuran untuk melihat riwayat pertumbuhan si kecil.</string>
+    <string name="growth_chart_btn_add_data">+ Tambah Data</string>
+
+    <!-- Growth Summary -->
+    <string name="growth_summary_title">Ringkasan Pertumbuhan</string>
+    <string name="growth_summary_status_fenton">Secara umum, pertumbuhan %1$s sesuai dengan grafik Fenton.</string>
+    <string name="growth_summary_progress_title">Perkembangan dari Lahir</string>
+    <string name="growth_summary_status_normal">Normal</string>
+    <string name="growth_summary_status_unmeasured">Belum diukur</string>
+    <string name="growth_summary_percentile_value">Persentil %1$s</string>
+
+    <!-- Onboarding Module -->
+    <string name="onboarding_cd_back_welcome">Kembali ke Selamat Datang</string>
+    <string name="onboarding_btn_next">Lanjut</string>
+    <string name="onboarding_btn_fill_baby_data">Isi Data Bayi</string>
+    <string name="onboarding_welcome_img_cd">Ibu mendekap bayi baru lahir</string>
+    <string name="onboarding_welcome_title">Selamat Datang\ndi KANGURU SIAGA</string>
+    <string name="onboarding_welcome_desc">Teman pendamping perawatan BBLR di rumah, untuk mendukung tumbuh kembang si kecil.</string>
+    <string name="onboarding_profile_intro_img_cd">Registrasi data bayi</string>
+    <string name="onboarding_profile_intro_title">Yuk, Mulai dengan\nData Bayi</string>
+    <string name="onboarding_profile_intro_desc">Informasi ini akan digunakan untuk menyesuaikan panduan, pengingat, dan grafik pertumbuhan.</string>
+
+    <!-- Splash Module -->
+    <string name="splash_mascot_cd">Maskot Kanguru Siaga</string>
+    <string name="splash_subtitle">Pendamping perawatan BBLR di rumah</string>
+    <string name="splash_btn_start">Mulai</string>
+
+    <!-- PMK Module -->
+    <!-- PMK Center -->
+    <string name="pmk_center_header_title">Perawatan Metode Kanguru\n(PMK)</string>
+    <string name="pmk_center_header_subtitle">Metode sederhana dengan sentuhan penuh manfaat untuk bayi berat lahir rendah</string>
+    <string name="pmk_center_img_cd">Perawatan Metode Kanguru</string>
+    <string name="pmk_center_menu_video_title">Video Edukasi PMK</string>
+    <string name="pmk_center_menu_video_sub">Tonton panduan lengkap</string>
+    <string name="pmk_center_menu_start_title">Mulai PMK</string>
+    <string name="pmk_center_menu_start_sub">Catat durasi PMK</string>
+    <string name="pmk_center_menu_reminder_title">Pengingat PMK</string>
+    <string name="pmk_center_menu_reminder_sub">Atur jadwal pengingat</string>
+    <string name="pmk_center_menu_history_title">Riwayat PMK</string>
+    <string name="pmk_center_menu_history_sub">Lihat catatan sesi PMK</string>
+
+    <!-- PMK History -->
+    <string name="pmk_history_title">Riwayat PMK</string>
+    <string name="pmk_history_cd_filter">Filter atau Unduh Laporan</string>
+    <string name="pmk_history_header_desc">Catatan riwayat sesi kontak kulit ke kulit (KMC) untuk memantau rutinitas dan kenyamanan si kecil.</string>
+    <string name="pmk_history_btn_add_manual">+ Catat Sesi Manual</string>
+    <string name="pmk_history_summary_title">STATISTIK RINGKASAN</string>
+    <string name="pmk_history_tab_week">Minggu Ini</string>
+    <string name="pmk_history_tab_month">Bulan Ini</string>
+    <string name="pmk_history_metric_duration">Total Durasi</string>
+    <string name="pmk_history_metric_avg">Rata-rata/Hari</string>
+    <string name="pmk_history_metric_sessions">Total Sesi</string>
+    <string name="pmk_history_target_reached">Target Tercapai %1$d%% - Sangat Baik!</string>
+    <string name="pmk_history_btn_detail">Detail ›</string>
+
+    <!-- PMK Manual Log -->
+    <string name="pmk_manual_title">Catat Sesi PMK Manual</string>
+    <string name="pmk_manual_label_date">Tanggal Sesi</string>
+    <string name="pmk_manual_label_start_time">Waktu Mulai</string>
+    <string name="pmk_manual_label_duration">Durasi PMK (%1$d menit)</string>
+    <string name="pmk_manual_label_temp">Suhu Tubuh Bayi (°C)</string>
+    <string name="pmk_manual_placeholder_temp">Contoh: 36.8</string>
+    <string name="pmk_manual_label_response">Kondisi / Respon Bayi Saat PMK</string>
+    <string name="pmk_manual_placeholder_notes">Catatan khusus selama sesi PMK&#8230;</string>
+    <string name="pmk_manual_btn_save">Simpan Sesi PMK</string>
+
+    <!-- PMK Reminders -->
+    <string name="pmk_reminders_title">Pengingat PMK</string>
+    <string name="pmk_reminders_cd_info">Info</string>
+    <string name="pmk_reminders_subtitle">Atur jadwal dan pengingat kontak kulit ke kulit (KMC) rutin untuk kenyamanan dan tumbuh kembang si kecil.</string>
+    <string name="pmk_reminders_alert">Disarankan melakukan PMK minimal 60 menit/sesi, 2-3 kali sehari secara teratur untuk stabilitas suhu dan kenaikan berat badan BBLR.</string>
+    <string name="pmk_reminders_target_header">TARGET PMK HARI INI</string>
+    <string name="pmk_reminders_completed_count">%1$d dari %2$d Selesai</string>
+    <string name="pmk_reminders_target_minutes">/ %1$d Menit</string>
+    <string name="pmk_reminders_percent_fulfilled">%1$d%% Terpenuhi</string>
+    <string name="pmk_reminders_list_title">Daftar Waktu Pengingat</string>
+    <string name="pmk_reminders_list_total">Total: %1$d Jadwal</string>
+    <string name="pmk_reminders_btn_add">Tambah Jadwal Pengingat</string>
+    <string name="pmk_reminders_info_dialog_title">Petunjuk Pengingat PMK</string>
+    <string name="pmk_reminders_info_dialog_msg">Metode Kanguru terbukti efektif jika dilakukan konsisten setiap hari dengan kontak kulit langsung antara bayi dan dada orang tua selama minimal 60 menit per sesi. Pengingat ini membantu Anda menjaga rutinitas tanpa terlewat.</string>
+
+    <!-- PMK Statistics -->
+    <string name="pmk_stats_title">Detail Statistik PMK</string>
+    <string name="pmk_stats_cd_download">Unduh Laporan</string>
+    <string name="pmk_stats_verified_badge">Data Terverifikasi Bidan</string>
+    <string name="pmk_stats_compliance_title">Tingkat Kepatuhan Target</string>
+    <string name="pmk_stats_total_duration">Total Durasi PMK</string>
+    <string name="pmk_stats_avg_session">Rata-rata / Sesi</string>
+    <string name="pmk_stats_completed_sessions">Sesi Terselesaikan</string>
+    <string name="pmk_stats_longest_session">Sesi Terpanjang</string>
+    <string name="pmk_stats_chart_title">Durasi Harian (Menit)</string>
+    <string name="pmk_stats_chart_sub">Garis putus-putus: Target 60m</string>
+    <string name="pmk_stats_chart_above_target">≥ Target</string>
+    <string name="pmk_stats_chart_standard">Standar</string>
+    <string name="pmk_stats_distribution_title">Distribusi Waktu Sesi</string>
+    <string name="pmk_stats_distribution_most_productive">Paling Produktif: %1$s</string>
+    <string name="pmk_stats_time_morning">Pagi (06:00 - 11:00)</string>
+    <string name="pmk_stats_time_afternoon">Siang (11:00 - 16:00)</string>
+    <string name="pmk_stats_time_evening">Malam (16:00 - 22:00)</string>
+    <string name="pmk_stats_clinical_title">Observasi Klinis Bayi %1$s</string>
+    <string name="pmk_stats_avg_temp">Rata-rata Suhu</string>
+    <string name="pmk_stats_temp_status">Normal &amp; Stabil</string>
+    <string name="pmk_stats_calmness">Ketenangan Bayi</string>
+    <string name="pmk_stats_calmness_status">Tidur Tenang</string>
+    <string name="pmk_stats_btn_add_new">Catat Sesi PMK Baru</string>
+    <string name="pmk_stats_btn_download_pdf">Unduh Laporan Ringkasan (PDF)</string>
+
+    <!-- PMK Timer -->
+    <string name="pmk_timer_title">Mulai PMK</string>
+    <string name="pmk_timer_cd_history">Riwayat PMK</string>
+    <string name="pmk_timer_status_running">Sedang berlangsung&#8230;</string>
+    <string name="pmk_timer_status_paused">Sesi dijeda</string>
+    <string name="pmk_timer_status_completed">Sesi selesai</string>
+    <string name="pmk_timer_status_idle">Siap dimulai</string>
+    <string name="pmk_timer_btn_start">Mulai PMK</string>
+    <string name="pmk_timer_btn_pause">Jeda</string>
+    <string name="pmk_timer_btn_finish">Selesai</string>
+    <string name="pmk_timer_btn_resume">Lanjut</string>
+    <string name="pmk_timer_btn_new_session">Mulai Sesi Baru</string>
+    <string name="pmk_timer_target_label">Durasi Target</string>
+    <string name="pmk_timer_target_sub">Rekomendasi dokter</string>
+    <string name="pmk_timer_unit_minutes">menit</string>
+    <string name="pmk_timer_cd_edit_duration">Ubah Durasi</string>
+    <string name="pmk_timer_notes_label">Catatan </string>
+    <string name="pmk_timer_notes_optional">(Opsional)</string>
+    <string name="pmk_timer_notes_max_char">Maks. 200 karakter</string>
+    <string name="pmk_timer_notes_placeholder">Tambahkan catatan sesi PMK (misal: bayi tenang, suhu hangat)&#8230;</string>
+    <string name="pmk_timer_tip_title">Tips: </string>
+    <string name="pmk_timer_tip_desc">Lakukan PMK minimal 60 menit setiap sesi sesuai anjuran tenaga kesehatan.</string>
+    <string name="pmk_timer_badge_guide">Panduan</string>
+    <string name="pmk_timer_target_dialog_title">Pilih Durasi Target PMK</string>
+    <string name="pmk_timer_btn_close">Tutup</string>
+    <string name="pmk_timer_obs_dialog_title">Konfirmasi Selesai Sesi</string>
+    <string name="pmk_timer_obs_dialog_desc">Bantu lengkapi data observasi bayi Anda untuk catatan pemantauan harian.</string>
+    <string name="pmk_timer_obs_temp_label">Suhu Tubuh Bayi (°C)</string>
+    <string name="pmk_timer_obs_response_label">Respon / Kondisi Bayi:</string>
+    <string name="pmk_timer_btn_save_session">Simpan Sesi</string>
+
+    <!-- PMK Video Module -->
+    <string name="pmk_video_list_title">Video Edukasi PMK</string>
+    <string name="pmk_video_cd_open">Buka Video</string>
+    <string name="pmk_video_cd_back_module">Kembali ke Modul Video</string>
+    <string name="pmk_video_cd_bookmark">Simpan Materi Video</string>
+    <string name="pmk_video_btn_timer">Mulai Timer PMK Sekarang</string>
+    <string name="pmk_video_btn_next">Lanjut ke Materi Selanjutnya</string>
+    <string name="pmk_video_duration_minutes">%1$s Menit</string>
+    <string name="pmk_video_clinical_points_title">Poin Penting Klinis</string>
+    <string name="pmk_video_clinical_points_sub">Standar Pedoman Klinis IDAI &amp; Kemenkes RI</string>
+    <string name="pmk_video_error_playback">Gagal memutar video edukasi. Ketuk tombol coba lagi.</string>
+    <string name="pmk_video_error_general">Terjadi kesalahan saat memuat video.</string>
+    <string name="pmk_video_btn_retry">Coba Lagi</string>
+    <string name="pmk_video_cd_exit_fullscreen">Keluar Layar Penuh</string>
+    <string name="pmk_video_cd_fullscreen">Layar Penuh</string>
+    <string name="pmk_video_cd_replay">Putar Ulang Video</string>
+    <string name="pmk_video_cd_pause">Jeda Video</string>
+    <string name="pmk_video_cd_play">Putar Video PMK</string>
+    <string name="pmk_video_cd_unmute">Nyalakan Suara</string>
+    <string name="pmk_video_cd_mute">Bisukan Suara</string>
 </resources>

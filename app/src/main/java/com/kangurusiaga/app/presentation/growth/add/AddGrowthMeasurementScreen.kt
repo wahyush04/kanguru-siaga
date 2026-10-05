@@ -40,12 +40,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
@@ -125,7 +127,7 @@ fun AddGrowthMeasurementScreen(
                             .height(48.dp)
                     ) {
                         Text(
-                            text = "Batal",
+                            text = stringResource(R.string.growth_add_btn_cancel),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = BrandPink
@@ -151,7 +153,7 @@ fun AddGrowthMeasurementScreen(
                             )
                         } else {
                             Text(
-                                text = "Simpan",
+                                text = stringResource(R.string.growth_add_btn_save),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = White
@@ -180,14 +182,14 @@ fun AddGrowthMeasurementScreen(
                 ) {
                     Icon(
                         imageVector = GrowthIcons.Back,
-                        contentDescription = "Kembali",
+                        contentDescription = stringResource(R.string.common_back),
                         tint = TextPrimary,
                         modifier = Modifier.size(20.dp)
                     )
                 }
 
                 Text(
-                    text = "Tambah Data ${parameter.displayName}",
+                    text = stringResource(R.string.growth_add_title, parameter.displayName),
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
@@ -202,7 +204,7 @@ fun AddGrowthMeasurementScreen(
 
             // Field 1: Tanggal Pengukuran
             Text(
-                text = "Tanggal Pengukuran",
+                text = stringResource(R.string.growth_add_label_date),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF374151)
@@ -242,7 +244,7 @@ fun AddGrowthMeasurementScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Usia Kronologis",
+                    text = stringResource(R.string.growth_add_label_chronological),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF374151)
@@ -254,7 +256,7 @@ fun AddGrowthMeasurementScreen(
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "Otomatis",
+                        text = stringResource(R.string.growth_add_tag_auto),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = BrandPink
@@ -285,7 +287,7 @@ fun AddGrowthMeasurementScreen(
                         .padding(horizontal = 16.dp, vertical = 13.dp)
                 ) {
                     Text(
-                        text = "minggu",
+                        text = stringResource(R.string.growth_add_unit_weeks),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF6B7280)
@@ -293,7 +295,7 @@ fun AddGrowthMeasurementScreen(
                 }
             }
             Text(
-                text = "Dihitung otomatis dari tanggal lahir ke tanggal pengukuran.",
+                text = stringResource(R.string.growth_add_chronological_desc),
                 fontSize = 11.sp,
                 color = TextTertiary,
                 modifier = Modifier.padding(top = 4.dp, start = 2.dp)
@@ -309,7 +311,7 @@ fun AddGrowthMeasurementScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Usia Gestasi Pasca-Menstruasi (PMA)",
+                        text = stringResource(R.string.growth_add_label_pma),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF374151)
@@ -329,7 +331,7 @@ fun AddGrowthMeasurementScreen(
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "Otomatis",
+                        text = stringResource(R.string.growth_add_tag_auto),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = BrandPink
@@ -360,7 +362,7 @@ fun AddGrowthMeasurementScreen(
                         .padding(horizontal = 16.dp, vertical = 13.dp)
                 ) {
                     Text(
-                        text = "minggu",
+                        text = stringResource(R.string.growth_add_unit_weeks),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF6B7280)
@@ -368,7 +370,7 @@ fun AddGrowthMeasurementScreen(
                 }
             }
             Text(
-                text = "Dihitung otomatis oleh sistem (Usia Gestasi saat lahir + Usia Kronologis) untuk penempatan kurva Fenton.",
+                text = stringResource(R.string.growth_add_pma_desc),
                 fontSize = 11.sp,
                 color = TextTertiary,
                 modifier = Modifier.padding(top = 4.dp, start = 2.dp)
@@ -390,9 +392,9 @@ fun AddGrowthMeasurementScreen(
                 placeholder = {
                     Text(
                         text = when (parameter) {
-                            GrowthParameter.WEIGHT -> "Contoh: 3.2 atau 3200"
-                            GrowthParameter.LENGTH -> "Contoh: 48.5"
-                            GrowthParameter.HEAD_CIRCUMFERENCE -> "Contoh: 34.2"
+                            GrowthParameter.WEIGHT -> stringResource(R.string.growth_add_placeholder_weight)
+                            GrowthParameter.LENGTH -> stringResource(R.string.growth_add_placeholder_length)
+                            GrowthParameter.HEAD_CIRCUMFERENCE -> stringResource(R.string.growth_add_placeholder_head)
                         },
                         fontSize = 13.sp,
                         color = TextTertiary
@@ -437,7 +439,7 @@ fun AddGrowthMeasurementScreen(
 
             // Field 5: Catatan (Opsional)
             Text(
-                text = "Catatan (Opsional)",
+                text = stringResource(R.string.growth_add_label_note),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF374151)
@@ -448,7 +450,7 @@ fun AddGrowthMeasurementScreen(
                 onValueChange = { viewModel.updateNote(it) },
                 placeholder = {
                     Text(
-                        text = "Contoh: Pagi hari setelah menyusu...",
+                        text = stringResource(R.string.growth_add_placeholder_note),
                         fontSize = 13.sp,
                         color = TextTertiary
                     )
@@ -500,14 +502,14 @@ fun AddGrowthMeasurementScreen(
 
                     Column {
                         Text(
-                            text = "Pengingat Pengukuran Berikutnya",
+                            text = stringResource(R.string.growth_add_reminder_title),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = TextPrimary
                         )
                         val nextDateFormatted = dateFormatter.format(uiState.nextReminderDateEpochMillis)
                         Text(
-                            text = "Dihitung 1 minggu dari tanggal pengukuran ($nextDateFormatted)",
+                            text = stringResource(R.string.growth_add_reminder_desc, nextDateFormatted),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Normal,
                             color = TextTertiary,
@@ -553,9 +555,9 @@ fun AddGrowthMeasurementScreen(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 val tipText = when (parameter) {
-                    GrowthParameter.WEIGHT -> "Pastikan menggunakan timbangan bayi yang sesuai dan ikuti instruksi tenaga kesehatan."
-                    GrowthParameter.LENGTH -> "Gunakan infantometer atau pita ukur datar. Pastikan bayi dalam posisi telentang lurus dan rileks."
-                    GrowthParameter.HEAD_CIRCUMFERENCE -> "Ukur pada bagian kepala yang paling menonjol (di atas alis dan bagian belakang kepala)."
+                    GrowthParameter.WEIGHT -> stringResource(R.string.growth_add_tip_weight)
+                    GrowthParameter.LENGTH -> stringResource(R.string.growth_add_tip_length)
+                    GrowthParameter.HEAD_CIRCUMFERENCE -> stringResource(R.string.growth_add_tip_head)
                 }
                 Text(
                     text = tipText,

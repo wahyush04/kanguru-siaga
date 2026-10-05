@@ -51,11 +51,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
@@ -141,7 +143,7 @@ fun EditFeedingScheduleBottomSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Edit Jadwal ASI",
+                        text = stringResource(R.string.alarm_edit_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
@@ -173,7 +175,7 @@ fun EditFeedingScheduleBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Tutup",
+                        contentDescription = stringResource(R.string.alarm_cd_close),
                         tint = Color(0xFF64748B),
                         modifier = Modifier.size(18.dp)
                     )
@@ -181,7 +183,7 @@ fun EditFeedingScheduleBottomSheet(
             }
 
             Text(
-                text = "Perbarui waktu & takaran atau hapus jadwal rutin si kecil.",
+                text = stringResource(R.string.alarm_edit_subtitle),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFF64748B),
                 modifier = Modifier.padding(top = 4.dp, bottom = 18.dp)
@@ -189,7 +191,7 @@ fun EditFeedingScheduleBottomSheet(
 
             // Field: Waktu Pemberian
             Text(
-                text = "WAKTU PEMBERIAN *",
+                text = stringResource(R.string.alarm_label_time_required),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF475569),
@@ -226,7 +228,7 @@ fun EditFeedingScheduleBottomSheet(
 
             // Field: Jumlah ASI
             Text(
-                text = "JUMLAH ASI *",
+                text = stringResource(R.string.alarm_label_volume_required),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF475569),
@@ -247,7 +249,7 @@ fun EditFeedingScheduleBottomSheet(
                 shape = RoundedCornerShape(14.dp),
                 trailingIcon = {
                     Text(
-                        text = "ml",
+                        text = stringResource(R.string.alarm_unit_ml),
                         color = Color(0xFF94A3B8),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
@@ -273,7 +275,7 @@ fun EditFeedingScheduleBottomSheet(
                 )
             } else {
                 Text(
-                    text = "\uD83D\uDCA1 Jadwal & takaran disesuaikan dengan instruksi tenaga medis / DPJP.",
+                    text = stringResource(R.string.alarm_tip_doctor_notice),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color(0xFF64748B),
                     fontSize = 11.5.sp,
@@ -285,7 +287,7 @@ fun EditFeedingScheduleBottomSheet(
 
             // Field: Metode Pemberian
             Text(
-                text = "METODE PEMBERIAN",
+                text = stringResource(R.string.alarm_label_method),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF475569),
@@ -327,7 +329,7 @@ fun EditFeedingScheduleBottomSheet(
 
             // Field: Catatan Tambahan (Opsional)
             Text(
-                text = "CATATAN TAMBAHAN (OPSIONAL)",
+                text = stringResource(R.string.alarm_label_note_optional),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF475569),
@@ -341,7 +343,7 @@ fun EditFeedingScheduleBottomSheet(
                 shape = RoundedCornerShape(14.dp),
                 placeholder = {
                     Text(
-                        text = "Contoh: Berikan perlahan via gravitasi OGT",
+                        text = stringResource(R.string.alarm_placeholder_note_edit),
                         color = Color(0xFF94A3B8),
                         fontSize = 13.sp
                     )
@@ -374,13 +376,13 @@ fun EditFeedingScheduleBottomSheet(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Aktifkan Pengingat",
+                            text = stringResource(R.string.alarm_toggle_reminder_title),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF1E293B)
                         )
                         Text(
-                            text = "Berdering 10 menit sebelum waktu minum",
+                            text = stringResource(R.string.alarm_toggle_reminder_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF64748B),
                             fontSize = 11.sp
@@ -412,7 +414,7 @@ fun EditFeedingScheduleBottomSheet(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Ulangi Jadwal",
+                        text = stringResource(R.string.alarm_label_repeat_schedule),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1E293B)
@@ -465,12 +467,13 @@ fun EditFeedingScheduleBottomSheet(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            val errorMsg = stringResource(R.string.alarm_error_volume)
             // Action: Simpan Perubahan Button
             Button(
                 onClick = {
                     val volume = volumeText.toIntOrNull()
                     if (volume == null || volume <= 0) {
-                        volumeError = "Jumlah ASI harus lebih dari 0 ml"
+                        volumeError = errorMsg
                         return@Button
                     }
                     onSave(
@@ -501,7 +504,7 @@ fun EditFeedingScheduleBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Simpan Perubahan",
+                    text = stringResource(R.string.alarm_btn_save_changes),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
@@ -531,7 +534,7 @@ fun EditFeedingScheduleBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Hapus Jadwal Ini",
+                    text = stringResource(R.string.alarm_btn_delete_this),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFFE11D48),
@@ -547,7 +550,7 @@ fun EditFeedingScheduleBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Batal",
+                    text = stringResource(R.string.alarm_btn_cancel),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF94A3B8),

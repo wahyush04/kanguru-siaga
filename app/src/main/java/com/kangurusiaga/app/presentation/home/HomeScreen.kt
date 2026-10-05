@@ -71,6 +71,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -158,6 +159,7 @@ fun HomeScreen(
         containerColor = BrandBackground,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
+            val profileMsg = stringResource(R.string.home_toast_profile_phase)
             HomeBottomBar(
                 currentTab = HomeTab.BERANDA,
                 onTabSelected = { tab ->
@@ -166,7 +168,7 @@ fun HomeScreen(
                         HomeTab.PMK -> onNavigateToPmk()
                         HomeTab.EDUKASI -> onNavigateToEducation()
                         HomeTab.ALARM -> onNavigateToAlarm()
-                        HomeTab.PROFIL -> onShowInfo("Pengaturan Profil Bayi tersedia di fase berikutnya.")
+                        HomeTab.PROFIL -> onShowInfo(profileMsg)
                     }
                 }
             )
@@ -306,7 +308,7 @@ private fun HomeContent(
 
                 Column {
                     Text(
-                        text = "Halo,",
+                        text = stringResource(R.string.home_hello),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         fontWeight = FontWeight.Medium
@@ -337,7 +339,7 @@ private fun HomeContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifikasi",
+                    contentDescription = stringResource(R.string.home_cd_notifications),
                     tint = Color(0xFF475569),
                     modifier = Modifier.size(24.dp)
                 )
@@ -371,8 +373,8 @@ private fun HomeContent(
         ) {
             // Card 1: PMK
             ActionGridCard(
-                title = "Perawatan Metode\nKanguru (PMK)",
-                subtitle = "Video, Timer, Pengingat",
+                title = stringResource(R.string.home_card_pmk_title),
+                subtitle = stringResource(R.string.home_card_pmk_subtitle),
                 iconRes = R.drawable.ic_pmk_mascot,
                 containerColor = BrandLightPink,
                 borderColor = Color(0xFFFFDDE4),
@@ -382,8 +384,8 @@ private fun HomeContent(
 
             // Card 2: Bayi BBLR
             ActionGridCard(
-                title = "Perawatan\nBayi Berat Lahir Rendah",
-                subtitle = "Panduan lengkap",
+                title = stringResource(R.string.home_card_bblr_title),
+                subtitle = stringResource(R.string.home_card_bblr_subtitle),
                 iconRes = R.drawable.ic_card_bblr,
                 containerColor = Color(0xFFEBF8F1),
                 borderColor = Color(0xFFD3F3E1),
@@ -400,8 +402,8 @@ private fun HomeContent(
         ) {
             // Card 3: Tanda Kegawatan
             ActionGridCard(
-                title = "Tanda Kegawatan\npada BBLR",
-                subtitle = "Kenali tanda bahaya",
+                title = stringResource(R.string.home_card_emergency_title),
+                subtitle = stringResource(R.string.home_card_emergency_subtitle),
                 iconRes = R.drawable.ic_card_emergency,
                 containerColor = Color(0xFFFFF6E9),
                 borderColor = Color(0xFFFFE7C6),
@@ -411,8 +413,8 @@ private fun HomeContent(
 
             // Card 4: Alarm ASI
             ActionGridCard(
-                title = "Alarm Pemberian\nASI",
-                subtitle = "Untuk bayi dengan OGT/NGT",
+                title = stringResource(R.string.home_card_asi_title),
+                subtitle = stringResource(R.string.home_card_asi_subtitle),
                 iconRes = R.drawable.ic_card_asi,
                 containerColor = Color(0xFFEBF6FF),
                 borderColor = Color(0xFFD2E9FF),
@@ -449,13 +451,13 @@ private fun HomeContent(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Pertumbuhan Bayi",
+                        text = stringResource(R.string.home_card_growth_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Grafik Fenton (Berat, Panjang, Lingkar Kepala)",
+                        text = stringResource(R.string.home_card_growth_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         fontSize = 11.sp
@@ -482,14 +484,14 @@ private fun HomeContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Aktivitas Hari Ini",
+                text = stringResource(R.string.home_section_today_activity),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
 
             Text(
-                text = "Lihat semua ›",
+                text = stringResource(R.string.home_see_all),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = BrandPink,
@@ -539,13 +541,13 @@ private fun HomeContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "PMK",
+                            text = stringResource(R.string.home_pmk_activity_title),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
-                            text = "$todaySessionsCount dari $todayTargetSessions sesi",
+                            text = stringResource(R.string.home_pmk_activity_progress, todaySessionsCount, todayTargetSessions),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
                             color = TextSecondary,
@@ -667,13 +669,13 @@ private fun EmergencyBottomSheet(
             ) {
                 Column {
                     Text(
-                        text = "Tanda Kegawatan BBLR",
+                        text = stringResource(R.string.home_emergency_sheet_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Segera bawa ke RS/Puskesmas jika ada tanda berikut",
+                        text = stringResource(R.string.home_emergency_sheet_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         fontSize = 11.sp
@@ -683,7 +685,7 @@ private fun EmergencyBottomSheet(
                 IconButton(onClick = onDismiss) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Tutup",
+                        contentDescription = stringResource(R.string.home_cd_close),
                         tint = TextSecondary
                     )
                 }
@@ -698,7 +700,7 @@ private fun EmergencyBottomSheet(
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFD6DD))
             ) {
                 Text(
-                    text = "⚠️ Perhatian Cepat: Bayi dengan berat lahir rendah sangat rentan terhadap hipotermia dan gangguan napas mendadak.",
+                    text = stringResource(R.string.home_emergency_sheet_alert),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color(0xFFBE123C),
                     fontWeight = FontWeight.Medium,
@@ -718,32 +720,32 @@ private fun EmergencyBottomSheet(
             ) {
                 DangerItemRow(
                     icon = "🚨",
-                    title = "Gangguan Pernapasan",
-                    subtitle = "Tarikan dada ke dalam"
+                    title = stringResource(R.string.home_emergency_item_1_title),
+                    subtitle = stringResource(R.string.home_emergency_item_1_sub)
                 )
                 HorizontalDivider(color = Color(0xFFF1F5F9))
                 DangerItemRow(
                     icon = "🚨",
-                    title = "Perubahan Warna Kulit",
-                    subtitle = "Kuning / Kebiruan (Sianosis)"
+                    title = stringResource(R.string.home_emergency_item_2_title),
+                    subtitle = stringResource(R.string.home_emergency_item_2_sub)
                 )
                 HorizontalDivider(color = Color(0xFFF1F5F9))
                 DangerItemRow(
                     icon = "🚨",
-                    title = "Bayi Sulit Dibangunkan",
-                    subtitle = "Letargis / lemas"
+                    title = stringResource(R.string.home_emergency_item_3_title),
+                    subtitle = stringResource(R.string.home_emergency_item_3_sub)
                 )
                 HorizontalDivider(color = Color(0xFFF1F5F9))
                 DangerItemRow(
                     icon = "🚨",
-                    title = "Kesulitan Menyusu",
-                    subtitle = "Daya isap sangat lemah"
+                    title = stringResource(R.string.home_emergency_item_4_title),
+                    subtitle = stringResource(R.string.home_emergency_item_4_sub)
                 )
                 HorizontalDivider(color = Color(0xFFF1F5F9))
                 DangerItemRow(
                     icon = "🚨",
-                    title = "Suhu Tubuh Tidak Normal",
-                    subtitle = "< 36.5°C atau > 37.5°C"
+                    title = stringResource(R.string.home_emergency_item_5_title),
+                    subtitle = stringResource(R.string.home_emergency_item_5_sub)
                 )
             }
 
@@ -765,7 +767,7 @@ private fun EmergencyBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Panggil Ambulans / Nakes (119)",
+                    text = stringResource(R.string.home_btn_call_ambulance),
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
@@ -835,13 +837,13 @@ private fun NotificationBottomSheet(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Pemberitahuan",
+                    text = stringResource(R.string.home_notif_sheet_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
                 )
                 IconButton(onClick = onDismiss) {
-                    Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                    Icon(imageVector = Icons.Default.Close, contentDescription = stringResource(R.string.home_cd_close))
                 }
             }
 
@@ -873,13 +875,13 @@ private fun NotificationBottomSheet(
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Pengingat PMK Pagi",
+                            text = stringResource(R.string.home_notif_pmk_title),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
-                            text = "Saatnya sesi kontak kulit ke kulit minimal 60 menit untuk kehangatan si kecil.",
+                            text = stringResource(R.string.home_notif_pmk_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary,
                             fontSize = 11.sp
@@ -983,14 +985,14 @@ private fun EmptyHomeContent(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "KANGURU SIAGA",
+            text = stringResource(R.string.home_empty_title),
             style = MaterialTheme.typography.headlineSmall,
             color = BrandPink,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Belum ada profil bayi aktif untuk menampilkan data pemantauan.",
+            text = stringResource(R.string.home_empty_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -1007,7 +1009,7 @@ private fun EmptyHomeContent(
             Icon(imageVector = Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Mulai Isi Data Bayi",
+                text = stringResource(R.string.home_btn_setup_profile),
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
             )

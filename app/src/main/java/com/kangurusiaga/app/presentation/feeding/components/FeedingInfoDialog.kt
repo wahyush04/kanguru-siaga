@@ -21,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
@@ -47,7 +49,7 @@ fun FeedingInfoDialog(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Informasi & Panduan Medis",
+                    text = stringResource(R.string.alarm_info_dialog_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
@@ -57,21 +59,21 @@ fun FeedingInfoDialog(
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "• Jadwal dan volume pemberian ASI/nutrisi si kecil WAJIB disesuaikan dengan instruksi tenaga kesehatan atau dokter spesialis anak (DPJP).",
+                    text = stringResource(R.string.alarm_info_dialog_point1),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextPrimary,
                     lineHeight = 20.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "• Nilai takaran (seperti 30 ml) adalah target acuan yang diatur oleh pengguna atau tenaga medis, bukan rekomendasi dosis otomatis dari sistem.",
+                    text = stringResource(R.string.alarm_info_dialog_point2),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextPrimary,
                     lineHeight = 20.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "• Aplikasi Kanguru Siaga berfungsi sebagai sarana pengingat dan pencatatan, dan tidak menggantikan pemeriksaan serta keputusan klinis tenaga medis.",
+                    text = stringResource(R.string.alarm_info_dialog_point3),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary,
                     lineHeight = 18.sp
@@ -87,7 +89,7 @@ fun FeedingInfoDialog(
                     contentColor = White
                 )
             ) {
-                Text("Saya Mengerti", fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.alarm_btn_understand), fontWeight = FontWeight.SemiBold)
             }
         }
     )

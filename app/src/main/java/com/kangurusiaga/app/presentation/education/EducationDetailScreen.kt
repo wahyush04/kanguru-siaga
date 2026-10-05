@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -124,14 +125,14 @@ fun EducationDetailScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
+                            contentDescription = stringResource(R.string.common_back),
                             tint = TextPrimary,
                             modifier = Modifier.size(18.dp)
                         )
                     }
 
                     Text(
-                        text = uiState.module?.title ?: "Materi Edukasi",
+                        text = uiState.module?.title ?: stringResource(R.string.edu_detail_default_title),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
@@ -156,7 +157,7 @@ fun EducationDetailScreen(
                             } else {
                                 Icons.Default.BookmarkBorder
                             },
-                            contentDescription = "Simpan Favorit",
+                            contentDescription = stringResource(R.string.edu_detail_bookmark_save),
                             tint = BrandPink,
                             modifier = Modifier.size(20.dp)
                         )
@@ -206,7 +207,7 @@ fun EducationDetailScreen(
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 Text(
-                                    text = "Modul ${module.order} dari 9",
+                                    text = stringResource(R.string.edu_detail_module_progress, module.order),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = palette.primary
@@ -217,7 +218,7 @@ fun EducationDetailScreen(
                                     color = Color(0xFFCBD5E1)
                                 )
                                 Text(
-                                    text = "Waktu baca: ${module.readingTimeMinutes} mnt",
+                                    text = stringResource(R.string.edu_detail_read_time, module.readingTimeMinutes),
                                     fontSize = 11.sp,
                                     color = Color(0xFF64748B),
                                     fontWeight = FontWeight.Medium
@@ -325,7 +326,7 @@ fun EducationDetailScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (module.isCompleted) "Sudah Selesai Dibaca" else "Tandai Selesai Dibaca",
+                                text = if (module.isCompleted) stringResource(R.string.edu_detail_btn_completed) else stringResource(R.string.edu_detail_btn_mark_completed),
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = White
@@ -346,7 +347,7 @@ fun EducationDetailScreen(
                                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1))
                             ) {
                                 Text(
-                                    text = "Lanjut: ${uiState.nextModuleOrder}. ${uiState.nextModuleTitle}",
+                                    text = stringResource(R.string.edu_detail_btn_next, uiState.nextModuleOrder ?: 0, uiState.nextModuleTitle.orEmpty()),
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
@@ -369,7 +370,7 @@ fun EducationDetailScreen(
                                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1))
                             ) {
                                 Text(
-                                    text = "Kembali ke Daftar Materi",
+                                    text = stringResource(R.string.edu_detail_btn_back_to_list),
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary

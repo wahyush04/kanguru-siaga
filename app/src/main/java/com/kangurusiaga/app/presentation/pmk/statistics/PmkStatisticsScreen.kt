@@ -64,8 +64,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
@@ -141,13 +143,13 @@ fun PmkStatisticsScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
+                            contentDescription = stringResource(R.string.common_back),
                             tint = Color(0xFF1E293B)
                         )
                     }
 
                     Text(
-                        text = "Detail Statistik PMK",
+                        text = stringResource(R.string.pmk_stats_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1E293B)
@@ -156,7 +158,7 @@ fun PmkStatisticsScreen(
                     IconButton(onClick = { /* Unduh laporan ringkasan */ }) {
                         Icon(
                             imageVector = Icons.Default.Download,
-                            contentDescription = "Unduh Laporan",
+                            contentDescription = stringResource(R.string.pmk_stats_cd_download),
                             tint = Color(0xFF475569)
                         )
                     }
@@ -257,7 +259,7 @@ fun PmkStatisticsScreen(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = "Data Terverifikasi Bidan",
+                            text = stringResource(R.string.pmk_stats_verified_badge),
                             color = Color(0xFF059669),
                             fontSize = 10.5.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -287,7 +289,7 @@ fun PmkStatisticsScreen(
                         ) {
                             Column {
                                 Text(
-                                    text = "Tingkat Kepatuhan Target",
+                                    text = stringResource(R.string.pmk_stats_compliance_title),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color(0xFF64748B),
                                     fontWeight = FontWeight.Medium
@@ -402,7 +404,7 @@ fun PmkStatisticsScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     MetricCard(
-                        title = "Total Durasi PMK",
+                        title = stringResource(R.string.pmk_stats_total_duration),
                         value = "${stats.totalDurationMinutes / 60}j ${stats.totalDurationMinutes % 60}m",
                         badge = "Optimal",
                         badgeBg = Color(0xFFECFDF5),
@@ -411,7 +413,7 @@ fun PmkStatisticsScreen(
                     )
 
                     MetricCard(
-                        title = "Rata-rata / Sesi",
+                        title = stringResource(R.string.pmk_stats_avg_session),
                         value = "${stats.averageMinutesPerSession} Menit",
                         badge = "Min 60m",
                         badgeBg = Color(0xFFFFF7ED),
@@ -425,7 +427,7 @@ fun PmkStatisticsScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     MetricCard(
-                        title = "Sesi Terselesaikan",
+                        title = stringResource(R.string.pmk_stats_completed_sessions),
                         value = "${stats.totalSessions} Sesi",
                         badge = "Tuntas",
                         badgeBg = Color(0xFFF3E8FF),
@@ -434,7 +436,7 @@ fun PmkStatisticsScreen(
                     )
 
                     MetricCard(
-                        title = "Sesi Terpanjang",
+                        title = stringResource(R.string.pmk_stats_longest_session),
                         value = "${stats.longestSessionMinutes} Menit",
                         badge = "Terbaik",
                         badgeBg = Color(0xFFFEF3C7),
@@ -466,14 +468,14 @@ fun PmkStatisticsScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Distribusi Waktu Sesi",
+                                text = stringResource(R.string.pmk_stats_distribution_title),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF1E293B)
                             )
 
                             Text(
-                                text = "Paling Produktif: ${stats.timeDistribution.mostProductiveTime}",
+                                text = stringResource(R.string.pmk_stats_distribution_most_productive, stats.timeDistribution.mostProductiveTime),
                                 fontSize = 11.5.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = BrandPink
@@ -484,7 +486,7 @@ fun PmkStatisticsScreen(
 
                         // Pagi
                         TimeDistributionItem(
-                            label = "Pagi (06:00 - 11:00)",
+                            label = stringResource(R.string.pmk_stats_time_morning),
                             count = stats.timeDistribution.morningCount,
                             percent = stats.timeDistribution.morningPercent,
                             fillColor = Color(0xFFFBBF24)
@@ -494,7 +496,7 @@ fun PmkStatisticsScreen(
 
                         // Siang
                         TimeDistributionItem(
-                            label = "Siang (11:00 - 16:00)",
+                            label = stringResource(R.string.pmk_stats_time_afternoon),
                             count = stats.timeDistribution.afternoonCount,
                             percent = stats.timeDistribution.afternoonPercent,
                             fillColor = BrandPink
@@ -504,7 +506,7 @@ fun PmkStatisticsScreen(
 
                         // Malam
                         TimeDistributionItem(
-                            label = "Malam (16:00 - 22:00)",
+                            label = stringResource(R.string.pmk_stats_time_evening),
                             count = stats.timeDistribution.eveningCount,
                             percent = stats.timeDistribution.eveningPercent,
                             fillColor = Color(0xFF818CF8)
@@ -538,7 +540,7 @@ fun PmkStatisticsScreen(
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "Observasi Klinis Bayi $babyName",
+                                text = stringResource(R.string.pmk_stats_clinical_title, babyName),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF1E293B)
@@ -559,7 +561,7 @@ fun PmkStatisticsScreen(
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
-                                        text = "Rata-rata Suhu",
+                                        text = stringResource(R.string.pmk_stats_avg_temp),
                                         fontSize = 11.sp,
                                         color = Color(0xFF64748B)
                                     )
@@ -575,7 +577,7 @@ fun PmkStatisticsScreen(
                                         shape = RoundedCornerShape(6.dp)
                                     ) {
                                         Text(
-                                            text = "Normal & Stabil",
+                                            text = stringResource(R.string.pmk_stats_temp_status),
                                             fontSize = 9.5.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color(0xFF059669),
@@ -593,7 +595,7 @@ fun PmkStatisticsScreen(
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
-                                        text = "Ketenangan Bayi",
+                                        text = stringResource(R.string.pmk_stats_calmness),
                                         fontSize = 11.sp,
                                         color = Color(0xFF64748B)
                                     )
@@ -609,7 +611,7 @@ fun PmkStatisticsScreen(
                                         shape = RoundedCornerShape(6.dp)
                                     ) {
                                         Text(
-                                            text = "Tidur Tenang",
+                                            text = stringResource(R.string.pmk_stats_calmness_status),
                                             fontSize = 9.5.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = BrandPink,
@@ -654,7 +656,7 @@ fun PmkStatisticsScreen(
                 ) {
                     Icon(imageVector = Icons.Default.AddCircle, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Catat Sesi PMK Baru", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(text = stringResource(R.string.pmk_stats_btn_add_new), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
 
                 OutlinedButton(
@@ -674,7 +676,7 @@ fun PmkStatisticsScreen(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Unduh Laporan Ringkasan (PDF)", fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                    Text(text = stringResource(R.string.pmk_stats_btn_download_pdf), fontSize = 13.sp, fontWeight = FontWeight.Medium)
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))

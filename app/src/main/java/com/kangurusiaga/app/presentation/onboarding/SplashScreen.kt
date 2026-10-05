@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
@@ -588,7 +589,7 @@ fun SplashScreen(
                     // Kangaroo mascot image with gentle breathing animation
                     Image(
                         painter = painterResource(id = R.drawable.ic_kangaroo_mascot),
-                        contentDescription = "Maskot Kanguru Siaga",
+                        contentDescription = stringResource(R.string.splash_mascot_cd),
                         modifier = Modifier
                             .size(225.dp)
                             .graphicsLayer {
@@ -605,7 +606,7 @@ fun SplashScreen(
 
                 // Subtitle
                 Text(
-                    text = "Pendamping perawatan BBLR di rumah",
+                    text = stringResource(R.string.splash_subtitle),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF64748B),
@@ -681,7 +682,7 @@ fun SplashScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "Mulai",
+                                text = stringResource(R.string.splash_btn_start),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
@@ -690,7 +691,7 @@ fun SplashScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = "Mulai",
+                                contentDescription = stringResource(R.string.splash_btn_start),
                                 tint = Color.White,
                                 modifier = Modifier
                                     .size(18.dp)

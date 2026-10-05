@@ -70,7 +70,9 @@ import com.kangurusiaga.app.presentation.home.HomeTab
 
 import android.content.pm.PackageManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
+import com.kangurusiaga.app.R
 
 @Composable
 fun AlarmRoute(
@@ -254,13 +256,13 @@ fun AlarmScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Jadwal Pemberian ASI (Setiap 2 jam)",
+                                    text = stringResource(R.string.alarm_section_header_schedule),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF94A3B8)
                                 )
                                 Text(
-                                    text = "Volume & Status",
+                                    text = stringResource(R.string.alarm_section_header_status),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF94A3B8)
@@ -307,7 +309,7 @@ fun AlarmScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Tambah Jadwal",
+                                text = stringResource(R.string.alarm_btn_add),
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -371,14 +373,14 @@ private fun AlarmTopAppBar(
         IconButton(onClick = onNavigateBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Kembali",
+                contentDescription = stringResource(R.string.common_back),
                 tint = Color(0xFF1E293B)
             )
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Alarm Pemberian ASI",
+                text = stringResource(R.string.alarm_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1E293B),
@@ -386,7 +388,7 @@ private fun AlarmTopAppBar(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "(OGT/NGT)",
+                text = stringResource(R.string.alarm_subtitle_ogt),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1E293B),
@@ -398,7 +400,7 @@ private fun AlarmTopAppBar(
         IconButton(onClick = onInfoClick) {
             Icon(
                 imageVector = Icons.Default.Info,
-                contentDescription = "Informasi Medis",
+                contentDescription = stringResource(R.string.alarm_info_cd),
                 tint = Color(0xFF64748B),
                 modifier = Modifier.size(22.dp)
             )
@@ -425,7 +427,7 @@ private fun AlarmAdvisoryCard() {
         )
 
         Text(
-            text = "Jadwal pemberian ASI disesuaikan dengan instruksi tenaga kesehatan.",
+            text = stringResource(R.string.alarm_advisory),
             color = Color(0xFFE11D48),
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
@@ -494,7 +496,7 @@ private fun AlarmScheduleItem(
                         letterSpacing = (-0.3).sp
                     )
                     Text(
-                        text = "${schedule.volumeMl} ml",
+                        text = stringResource(R.string.alarm_volume_unit, schedule.volumeMl),
                         fontSize = 13.5.sp,
                         fontWeight = FontWeight.Normal,
                         color = Color(0xFF94A3B8)

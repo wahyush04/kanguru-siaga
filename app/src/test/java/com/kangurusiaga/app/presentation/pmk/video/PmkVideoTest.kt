@@ -20,7 +20,7 @@ class PmkVideoTest {
 
         // Verify module 2
         assertEquals(2, videos[1].id)
-        assertEquals("2. Manfaat PMK untuk bayi berat lahir rendah", videos[1].title)
+        assertEquals("2. Manfaat PMK untuk Bayi Berat Lahir Rendah", videos[1].title)
         assertEquals("03:20", videos[1].duration)
 
         // Verify module 3

@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.kangurusiaga.app.R
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -113,7 +115,7 @@ fun FentonChart(
                         .background(BrandPink)
                 )
                 Text(
-                    text = "Kurva Fenton 2013",
+                    text = stringResource(R.string.growth_chart_fenton_curve_title),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF374151)
@@ -125,7 +127,7 @@ fun FentonChart(
             val genderBorder = if (isBoy) Color(0xFFDBEAFE) else Color(0xFFFFE2E6)
             val genderColor = if (isBoy) Color(0xFF2563EB) else BrandPink
             val genderSymbol = if (isBoy) "♂" else "♀"
-            val genderLabel = if (isBoy) "Laki-laki" else "Perempuan"
+            val genderLabel = if (isBoy) stringResource(R.string.baby_profile_gender_male) else stringResource(R.string.baby_profile_gender_female)
 
             Row(
                 modifier = Modifier
@@ -158,9 +160,9 @@ fun FentonChart(
         // 2. Y-axis unit label
         Text(
             text = when (parameter) {
-                GrowthParameter.WEIGHT -> "Berat (kg)"
-                GrowthParameter.LENGTH -> "Panjang (cm)"
-                GrowthParameter.HEAD_CIRCUMFERENCE -> "Lingkar Kepala (cm)"
+                GrowthParameter.WEIGHT -> stringResource(R.string.growth_chart_unit_weight)
+                GrowthParameter.LENGTH -> stringResource(R.string.growth_chart_unit_length)
+                GrowthParameter.HEAD_CIRCUMFERENCE -> stringResource(R.string.growth_chart_unit_head)
             },
             fontSize = 10.5.sp,
             fontWeight = FontWeight.Medium,
@@ -359,7 +361,7 @@ fun FentonChart(
 
         // 4. X-axis label
         Text(
-            text = "Usia Gestasi / Koreksi (minggu)",
+            text = stringResource(R.string.growth_chart_x_axis_label),
             fontSize = 9.5.sp,
             fontWeight = FontWeight.Medium,
             color = Color(0xFF9CA3AF),
@@ -378,7 +380,7 @@ fun FentonChart(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Keterangan Grafik:",
+                text = stringResource(R.string.growth_chart_legend_title),
                 fontSize = 10.5.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF374151)
@@ -431,7 +433,7 @@ fun FentonChart(
             }
 
             Text(
-                text = "${parameter.displayName} $babyName (Tercatat / Plot)",
+                text = stringResource(R.string.growth_chart_legend_plot, parameter.displayName, babyName),
                 fontSize = 10.5.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = BrandPink

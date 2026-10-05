@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -68,7 +69,7 @@ fun AboutFentonScreen(
                         .height(50.dp)
                 ) {
                     Text(
-                        text = "Saya Mengerti, Mulai Pantau",
+                        text = stringResource(R.string.about_fenton_btn_understand),
                         fontSize = 14.5.sp,
                         fontWeight = FontWeight.Bold,
                         color = White
@@ -102,7 +103,7 @@ fun AboutFentonScreen(
                 ) {
                     Icon(
                         imageVector = GrowthIcons.Back,
-                        contentDescription = "Kembali",
+                        contentDescription = stringResource(R.string.common_back),
                         tint = TextPrimary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -114,7 +115,7 @@ fun AboutFentonScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Panduan Grafik Fenton",
+                    text = stringResource(R.string.about_fenton_title),
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
@@ -128,7 +129,7 @@ fun AboutFentonScreen(
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "Onboarding & Panduan Klinis BBLR",
+                        text = stringResource(R.string.about_fenton_tag),
                         fontSize = 10.5.sp,
                         fontWeight = FontWeight.Medium,
                         color = BrandPink
@@ -150,7 +151,7 @@ fun AboutFentonScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.il_panduan_fenton),
-                    contentDescription = "Panduan Grafik Fenton",
+                    contentDescription = stringResource(R.string.about_fenton_img_cd),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -168,7 +169,7 @@ fun AboutFentonScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Apa itu Grafik Fenton?",
+                    text = stringResource(R.string.about_fenton_section_what),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
@@ -206,7 +207,7 @@ fun AboutFentonScreen(
 
             // Section: Cara Membaca Grafik
             Text(
-                text = "Cara Membaca Grafik",
+                text = stringResource(R.string.about_fenton_section_how),
                 fontSize = 15.5.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -216,10 +217,10 @@ fun AboutFentonScreen(
 
             // Steps
             val steps = listOf(
-                "Masukkan data pengukuran bayi",
-                "Gunakan Usia Gestasi Pasca-Menstruasi (PMA)",
-                "Lihat posisi titik pada grafik",
-                "Bandingkan dengan garis persentil"
+                stringResource(R.string.about_fenton_step_1),
+                stringResource(R.string.about_fenton_step_2),
+                stringResource(R.string.about_fenton_step_3),
+                stringResource(R.string.about_fenton_step_4)
             )
 
             steps.forEachIndexed { index, step ->

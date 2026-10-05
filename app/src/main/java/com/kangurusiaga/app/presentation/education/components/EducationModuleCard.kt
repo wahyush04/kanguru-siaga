@@ -39,9 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
@@ -131,7 +133,7 @@ fun EducationModuleCard(
                             }
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Selesai dibaca",
+                                text = stringResource(R.string.edu_card_completed),
                                 fontSize = 11.sp,
                                 color = Color(0xFF059669),
                                 fontWeight = FontWeight.Medium
@@ -139,7 +141,7 @@ fun EducationModuleCard(
                         }
                     } else {
                         Text(
-                            text = "${module.category} • ${module.readingTimeMinutes} mnt",
+                            text = stringResource(R.string.edu_card_meta, module.category, module.readingTimeMinutes),
                             fontSize = 11.sp,
                             color = TextSecondary,
                             modifier = Modifier.padding(top = 2.dp)
@@ -156,7 +158,7 @@ fun EducationModuleCard(
                 ) {
                     Icon(
                         imageVector = if (module.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                        contentDescription = "Simpan Favorit",
+                        contentDescription = stringResource(R.string.edu_detail_bookmark_save),
                         tint = if (module.isBookmarked) BrandPink else Color(0xFFCBD5E1),
                         modifier = Modifier.size(20.dp)
                     )

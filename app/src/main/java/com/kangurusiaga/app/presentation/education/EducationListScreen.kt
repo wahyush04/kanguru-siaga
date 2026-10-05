@@ -35,12 +35,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
@@ -121,14 +124,14 @@ fun EducationListScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali",
+                                contentDescription = stringResource(R.string.common_back),
                                 tint = TextPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
 
                         Text(
-                            text = "Perawatan Bayi Berat Lahir Rendah",
+                            text = stringResource(R.string.edu_list_title),
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
@@ -147,13 +150,13 @@ fun EducationListScreen(
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         TabButton(
-                            title = "Daftar Materi",
+                            title = stringResource(R.string.edu_list_tab_all),
                             selected = uiState.selectedTab == EducationTab.DAFTAR_MATERI,
                             onClick = { onSelectTab(EducationTab.DAFTAR_MATERI) }
                         )
 
                         TabButton(
-                            title = "Materi Favorit",
+                            title = stringResource(R.string.edu_list_tab_favorites),
                             selected = uiState.selectedTab == EducationTab.MATERI_FAVORIT,
                             onClick = { onSelectTab(EducationTab.MATERI_FAVORIT) }
                         )
@@ -277,7 +280,7 @@ private fun EmptyEducationContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = if (isFavoriteTab) "Belum Ada Materi Favorit" else "Materi Tidak Ditemukan",
+            text = if (isFavoriteTab) stringResource(R.string.edu_list_empty_fav_title) else stringResource(R.string.edu_list_empty_all_title),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
@@ -288,9 +291,9 @@ private fun EmptyEducationContent(
 
         Text(
             text = if (isFavoriteTab) {
-                "Tandai materi edukasi favorit dengan ikon bintang di kartu materi agar tersimpan rapi di sini."
+                stringResource(R.string.edu_list_empty_fav_desc)
             } else {
-                "Modul materi edukasi belum tersedia."
+                stringResource(R.string.edu_list_empty_all_desc)
             },
             fontSize = 13.sp,
             color = TextSecondary,
@@ -307,7 +310,7 @@ private fun EmptyEducationContent(
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFDCE2))
             ) {
                 Text(
-                    text = "Lihat Semua Materi",
+                    text = stringResource(R.string.edu_list_btn_see_all),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = BrandPink,

@@ -45,10 +45,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -140,7 +142,7 @@ fun AddFeedingScheduleForm(
     ) {
         // Title
         Text(
-            text = "Tambah Jadwal ASI",
+            text = stringResource(R.string.alarm_add_title),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
@@ -150,7 +152,7 @@ fun AddFeedingScheduleForm(
 
         // Field: Waktu
         Text(
-            text = "Waktu",
+            text = stringResource(R.string.alarm_label_time),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF334155)
@@ -176,7 +178,7 @@ fun AddFeedingScheduleForm(
             )
             Icon(
                 imageVector = Icons.Default.AccessTime,
-                contentDescription = "Pilih Waktu",
+                contentDescription = stringResource(R.string.alarm_cd_select_time),
                 tint = Color(0xFF94A3B8),
                 modifier = Modifier.size(20.dp)
             )
@@ -186,7 +188,7 @@ fun AddFeedingScheduleForm(
 
         // Field: Jumlah ASI
         Text(
-            text = "Jumlah ASI",
+            text = stringResource(R.string.alarm_label_volume),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF334155)
@@ -206,7 +208,7 @@ fun AddFeedingScheduleForm(
             shape = RoundedCornerShape(14.dp),
             trailingIcon = {
                 Text(
-                    text = "ml",
+                    text = stringResource(R.string.alarm_unit_ml),
                     color = Color(0xFF94A3B8),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
@@ -236,7 +238,7 @@ fun AddFeedingScheduleForm(
 
         // Field: Catatan (Opsional)
         Text(
-            text = "Catatan (Opsional)",
+            text = stringResource(R.string.alarm_label_note),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF334155)
@@ -249,7 +251,7 @@ fun AddFeedingScheduleForm(
             shape = RoundedCornerShape(14.dp),
             placeholder = {
                 Text(
-                    text = "Contoh: melalui OGT",
+                    text = stringResource(R.string.alarm_placeholder_note),
                     color = Color(0xFF94A3B8),
                     fontSize = 14.sp
                 )
@@ -272,7 +274,7 @@ fun AddFeedingScheduleForm(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Aktifkan\nPengingat",
+                text = stringResource(R.string.alarm_label_toggle_reminder),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF334155),
@@ -300,7 +302,7 @@ fun AddFeedingScheduleForm(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Ulangi",
+                text = stringResource(R.string.alarm_label_repeat),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF334155)
@@ -365,18 +367,19 @@ fun AddFeedingScheduleForm(
                 )
             ) {
                 Text(
-                    text = "Batal",
+                    text = stringResource(R.string.alarm_btn_cancel),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = BrandPink
                 )
             }
 
+            val errorMsg = stringResource(R.string.alarm_error_volume)
             Button(
                 onClick = {
                     val volume = volumeText.toIntOrNull()
                     if (volume == null || volume <= 0) {
-                        volumeError = "Jumlah ASI harus lebih dari 0 ml"
+                        volumeError = errorMsg
                         return@Button
                     }
                     onSave(
@@ -400,7 +403,7 @@ fun AddFeedingScheduleForm(
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
             ) {
                 Text(
-                    text = "Simpan",
+                    text = stringResource(R.string.alarm_btn_save),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold
                 )

@@ -75,6 +75,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -139,7 +140,7 @@ fun EducationCenterScreen(
                         HomeTab.EDUKASI -> { /* Already here */ }
                         HomeTab.ALARM -> onNavigateToAlarm()
                         HomeTab.PROFIL -> {
-                            Toast.makeText(context, "Pengaturan Profil Bayi tersedia di fase berikutnya.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.edu_center_profile_toast), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -171,7 +172,7 @@ fun EducationCenterScreen(
                             .padding(horizontal = 10.dp, vertical = 3.dp)
                     ) {
                         Text(
-                            text = "Pusat Edukasi",
+                            text = stringResource(R.string.edu_center_pill_tag),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = brandCoral
@@ -181,7 +182,7 @@ fun EducationCenterScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Edukasi & Panduan",
+                        text = stringResource(R.string.edu_center_header_title),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = slate900,
@@ -191,7 +192,7 @@ fun EducationCenterScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Panduan lengkap perawatan BBLR & Metode Kanguru di rumah",
+                        text = stringResource(R.string.edu_center_header_subtitle),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         color = slate500,
@@ -216,7 +217,7 @@ fun EducationCenterScreen(
                 ) {
                     Icon(
                         imageVector = if (isSearchActive) Icons.Default.Close else Icons.Default.Search,
-                        contentDescription = if (isSearchActive) "Tutup Pencarian" else "Cari Edukasi",
+                        contentDescription = if (isSearchActive) stringResource(R.string.edu_center_search_close_cd) else stringResource(R.string.edu_center_search_cd),
                         tint = if (isSearchActive) brandCoral else slate600,
                         modifier = Modifier.size(20.dp)
                     )
@@ -234,7 +235,7 @@ fun EducationCenterScreen(
                     onValueChange = { searchQuery = it },
                     placeholder = {
                         Text(
-                            text = "Cari topik (PMK, ASI, Suhu, Tanda Bahaya)...",
+                            text = stringResource(R.string.edu_center_search_placeholder),
                             fontSize = 12.5.sp,
                             color = slate400
                         )
@@ -272,14 +273,14 @@ fun EducationCenterScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "PILIH TOPIK PEMBELAJARAN",
+                    text = stringResource(R.string.edu_center_topic_section),
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = slate400,
                     letterSpacing = 0.8.sp
                 )
                 Text(
-                    text = "3 Modul Tersedia",
+                    text = stringResource(R.string.edu_center_modules_available),
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = brandCoral
@@ -297,11 +298,11 @@ fun EducationCenterScreen(
                 // Menu Item 1: Perawatan Metode Kanguru (PMK)
                 if (showPmk) {
                     EducationTopicCard(
-                        title = "Perawatan Metode Kanguru (PMK)",
-                        description = "Video tutorial, timer panduan, dan kontak kulit (skin-to-skin)",
-                        tagText = "6 Modul Video",
+                        title = stringResource(R.string.edu_center_pmk_title),
+                        description = stringResource(R.string.edu_center_pmk_desc),
+                        tagText = stringResource(R.string.edu_center_pmk_tag),
                         tagIcon = Icons.Default.SmartDisplay,
-                        bulletText = "• Durasi ~15 mnt",
+                        bulletText = stringResource(R.string.edu_center_pmk_bullet),
                         iconVector = Icons.Default.VolunteerActivism,
                         iconGradientColors = listOf(Color(0xFFFFE8EC), Color(0xFFFFD8DF)),
                         iconTint = brandCoral,
@@ -316,11 +317,11 @@ fun EducationCenterScreen(
                 // Menu Item 2: Perawatan Bayi BBLR
                 if (showBblr) {
                     EducationTopicCard(
-                        title = "Perawatan Bayi BBLR",
-                        description = "9 materi lengkap: kehangatan, ASI, tali pusat, dan kebersihan",
-                        tagText = "9 Materi Teks",
+                        title = stringResource(R.string.edu_center_bblr_title),
+                        description = stringResource(R.string.edu_center_bblr_desc),
+                        tagText = stringResource(R.string.edu_center_bblr_tag),
                         tagIcon = Icons.AutoMirrored.Filled.MenuBook,
-                        bulletText = "• Panduan Harian",
+                        bulletText = stringResource(R.string.edu_center_bblr_bullet),
                         iconVector = Icons.AutoMirrored.Filled.MenuBook,
                         iconGradientColors = listOf(Color(0xFFE2F7F2), Color(0xFFCBF1E8)),
                         iconTint = Color(0xFF0D9488),
@@ -335,11 +336,11 @@ fun EducationCenterScreen(
                 // Menu Item 3: Tanda Kegawatan pada BBLR
                 if (showEmergency) {
                     EducationTopicCard(
-                        title = "Tanda Kegawatan pada BBLR",
-                        description = "Kenali 7 tanda bahaya, panduan triase, dan rujukan cepat",
-                        tagText = "Penting & Darurat",
+                        title = stringResource(R.string.edu_center_emergency_title),
+                        description = stringResource(R.string.edu_center_emergency_desc),
+                        tagText = stringResource(R.string.edu_center_emergency_tag),
                         tagIcon = Icons.Default.Warning,
-                        bulletText = "• Siaga 24 Jam",
+                        bulletText = stringResource(R.string.edu_center_emergency_bullet),
                         iconVector = Icons.Default.Warning,
                         iconGradientColors = listOf(Color(0xFFFEF4DC), Color(0xFFFDE8B5)),
                         iconTint = Color(0xFFD97706),
@@ -359,7 +360,7 @@ fun EducationCenterScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Tidak ada materi yang sesuai dengan \"$searchQuery\"",
+                            text = stringResource(R.string.edu_center_no_results, searchQuery),
                             fontSize = 13.sp,
                             color = slate500,
                             fontWeight = FontWeight.Medium
@@ -435,7 +436,7 @@ private fun HeroIllustrationBanner(
                     ) {
                         PulsingEmeraldDot()
                         Text(
-                            text = "Standar IDAI & Kemenkes",
+                            text = stringResource(R.string.edu_center_idai_tag),
                             fontSize = 10.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF334155)
@@ -445,14 +446,14 @@ private fun HeroIllustrationBanner(
                     // Main Headline
                     Column {
                         Text(
-                            text = "Belajar Merawat",
+                            text = stringResource(R.string.edu_center_hero_title_1),
                             fontSize = 16.5.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = slate900,
                             letterSpacing = (-0.3).sp
                         )
                         Text(
-                            text = "Si Kecil Tercinta",
+                            text = stringResource(R.string.edu_center_hero_title_2),
                             fontSize = 16.5.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = brandCoral,
@@ -462,7 +463,7 @@ private fun HeroIllustrationBanner(
 
                     // Subtext description
                     Text(
-                        text = "Pahami panduan praktis dan kenali tanda vital untuk tumbuh kembang optimal si kecil.",
+                        text = stringResource(R.string.edu_center_hero_desc),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
                         color = slate600,
@@ -489,7 +490,7 @@ private fun HeroIllustrationBanner(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.il_welcome_mother_baby),
-                            contentDescription = "Ibu mendekap bayi dengan hangat dan penuh kasih",
+                            contentDescription = stringResource(R.string.edu_center_hero_img_cd),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
@@ -699,13 +700,13 @@ private fun EmergencyHotlineBanner(
 
                 Column {
                     Text(
-                        text = "Butuh Bantuan Bidan/Nakes?",
+                        text = stringResource(R.string.edu_center_hotline_title),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1E293B)
                     )
                     Text(
-                        text = "Hubungi faskes terdaftar jika suhu <36.5°C",
+                        text = stringResource(R.string.edu_center_hotline_desc),
                         fontSize = 10.5.sp,
                         fontWeight = FontWeight.Normal,
                         color = Color(0xFF64748B)
@@ -726,7 +727,7 @@ private fun EmergencyHotlineBanner(
                 modifier = Modifier.height(34.dp)
             ) {
                 Text(
-                    text = "Kontak",
+                    text = stringResource(R.string.edu_center_hotline_btn),
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -769,6 +770,6 @@ private fun dialEmergency(context: Context) {
         }
         context.startActivity(intent)
     } catch (_: Exception) {
-        Toast.makeText(context, "Layanan darurat faskes: 119", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, context.getString(R.string.edu_center_hotline_toast), Toast.LENGTH_LONG).show()
     }
 }

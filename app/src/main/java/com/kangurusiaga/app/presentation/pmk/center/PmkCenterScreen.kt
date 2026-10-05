@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -94,13 +95,13 @@ fun PmkCenterScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali",
+                                contentDescription = stringResource(R.string.common_back),
                                 tint = Color(0xFF1E293B)
                             )
                         }
 
                         Text(
-                            text = "Perawatan Metode Kanguru\n(PMK)",
+                            text = stringResource(R.string.pmk_center_header_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF0F172A),
@@ -115,7 +116,7 @@ fun PmkCenterScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Metode sederhana dengan sentuhan penuh manfaat untuk bayi berat lahir rendah",
+                        text = stringResource(R.string.pmk_center_header_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF64748B),
                         textAlign = TextAlign.Center,
@@ -161,7 +162,7 @@ fun PmkCenterScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.il_pmk_onboarding),
-                    contentDescription = "Perawatan Metode Kanguru",
+                    contentDescription = stringResource(R.string.pmk_center_img_cd),
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(16f / 9f)
@@ -179,8 +180,8 @@ fun PmkCenterScreen(
             ) {
                 // Menu Item 1: Video Edukasi PMK
                 PmkMenuItem(
-                    title = "Video Edukasi PMK",
-                    subtitle = "Tonton panduan lengkap",
+                    title = stringResource(R.string.pmk_center_menu_video_title),
+                    subtitle = stringResource(R.string.pmk_center_menu_video_sub),
                     iconVector = Icons.Default.PlayArrow,
                     iconBgColor = Color(0xFFFFF1F2),
                     iconTintColor = Color(0xFFF4727F),
@@ -189,8 +190,8 @@ fun PmkCenterScreen(
 
                 // Menu Item 2: Mulai PMK
                 PmkMenuItem(
-                    title = "Mulai PMK",
-                    subtitle = "Catat durasi PMK",
+                    title = stringResource(R.string.pmk_center_menu_start_title),
+                    subtitle = stringResource(R.string.pmk_center_menu_start_sub),
                     iconVector = Icons.Default.AccessTime,
                     iconBgColor = Color(0xFFFFF7ED),
                     iconTintColor = Color(0xFFF97316),
@@ -199,8 +200,8 @@ fun PmkCenterScreen(
 
                 // Menu Item 3: Pengingat PMK
                 PmkMenuItem(
-                    title = "Pengingat PMK",
-                    subtitle = "Atur jadwal pengingat",
+                    title = stringResource(R.string.pmk_center_menu_reminder_title),
+                    subtitle = stringResource(R.string.pmk_center_menu_reminder_sub),
                     iconVector = Icons.Default.Notifications,
                     iconBgColor = Color(0xFFECFDF5),
                     iconTintColor = Color(0xFF10B981),
@@ -209,8 +210,8 @@ fun PmkCenterScreen(
 
                 // Menu Item 4: Riwayat PMK
                 PmkMenuItem(
-                    title = "Riwayat PMK",
-                    subtitle = "Lihat catatan sesi PMK",
+                    title = stringResource(R.string.pmk_center_menu_history_title),
+                    subtitle = stringResource(R.string.pmk_center_menu_history_sub),
                     iconVector = Icons.Default.Description,
                     iconBgColor = Color(0xFFF0F9FF),
                     iconTintColor = Color(0xFF0284C7),

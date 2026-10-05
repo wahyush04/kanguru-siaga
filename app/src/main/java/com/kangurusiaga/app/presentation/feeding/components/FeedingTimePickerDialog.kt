@@ -20,8 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -53,7 +55,7 @@ fun FeedingTimePickerDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Pilih Waktu Pemberian ASI",
+                    text = stringResource(R.string.alarm_time_picker_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = TextPrimary,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -79,7 +81,7 @@ fun FeedingTimePickerDialog(
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(onClick = onDismiss) {
-                        Text("Batal", color = Color(0xFF64748B))
+                        Text(stringResource(R.string.alarm_btn_cancel), color = Color(0xFF64748B))
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(
@@ -87,7 +89,7 @@ fun FeedingTimePickerDialog(
                             onTimeSelected(state.hour, state.minute)
                         }
                     ) {
-                        Text("Pilih", color = BrandPink)
+                        Text(stringResource(R.string.baby_profile_date_picker_select), color = BrandPink)
                     }
                 }
             }

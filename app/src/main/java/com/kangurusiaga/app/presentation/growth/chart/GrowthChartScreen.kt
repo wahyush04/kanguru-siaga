@@ -45,11 +45,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
@@ -85,8 +87,8 @@ fun GrowthChartScreen(
     if (measurementToDelete != null) {
         AlertDialog(
             onDismissRequest = { measurementToDelete = null },
-            title = { Text("Hapus Data Pengukuran?", fontWeight = FontWeight.Bold) },
-            text = { Text("Data pengukuran ini akan dihapus secara permanen.") },
+            title = { Text(stringResource(R.string.growth_chart_delete_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.growth_chart_delete_msg)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -95,12 +97,12 @@ fun GrowthChartScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDC2626))
                 ) {
-                    Text("Hapus", color = White)
+                    Text(stringResource(R.string.alarm_btn_delete), color = White)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { measurementToDelete = null }) {
-                    Text("Batal")
+                    Text(stringResource(R.string.alarm_btn_cancel))
                 }
             }
         )
@@ -128,7 +130,7 @@ fun GrowthChartScreen(
                 ) {
                     Icon(
                         imageVector = GrowthIcons.Back,
-                        contentDescription = "Kembali",
+                        contentDescription = stringResource(R.string.common_back),
                         tint = TextPrimary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -167,7 +169,7 @@ fun GrowthChartScreen(
                     onClick = { viewModel.selectTab(0) },
                     text = {
                         Text(
-                            text = "Grafik",
+                            text = stringResource(R.string.growth_chart_tab_chart),
                             fontSize = 14.sp,
                             fontWeight = if (uiState.selectedTab == 0) FontWeight.Bold else FontWeight.Medium,
                             color = if (uiState.selectedTab == 0) BrandPink else TextTertiary
@@ -179,7 +181,7 @@ fun GrowthChartScreen(
                     onClick = { viewModel.selectTab(1) },
                     text = {
                         Text(
-                            text = "Data",
+                            text = stringResource(R.string.growth_chart_tab_data),
                             fontSize = 14.sp,
                             fontWeight = if (uiState.selectedTab == 1) FontWeight.Bold else FontWeight.Medium,
                             color = if (uiState.selectedTab == 1) BrandPink else TextTertiary
@@ -232,7 +234,7 @@ fun GrowthChartScreen(
                         ) {
                             Icon(
                                 imageVector = GrowthIcons.Help,
-                                contentDescription = "Informasi Usia Koreksi",
+                                contentDescription = stringResource(R.string.growth_chart_cd_pma_info),
                                 tint = TextTertiary,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -270,7 +272,7 @@ fun GrowthChartScreen(
                                 color = TextSecondary
                             )
                             Text(
-                                text = "Saat ini",
+                                text = stringResource(R.string.growth_chart_current_label),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Normal,
                                 color = TextTertiary
@@ -349,7 +351,7 @@ fun GrowthChartScreen(
                             horizontalAlignment = Alignment.End
                         ) {
                             Text(
-                                text = "Persentil",
+                                text = stringResource(R.string.growth_chart_percentile_label),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = TextTertiary
@@ -423,7 +425,7 @@ fun GrowthChartScreen(
                         Spacer(modifier = Modifier.width(10.dp))
 
                         Text(
-                            text = "${parameter.displayName} $babyName berada pada persentil $pName ($pCat) sesuai grafik Fenton.",
+                            text = stringResource(R.string.growth_chart_insight_text, parameter.displayName, babyName, pName, pCat),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color(0xFF4A3B24),
@@ -447,7 +449,7 @@ fun GrowthChartScreen(
                             .height(48.dp)
                     ) {
                         Text(
-                            text = "+ Tambah Data ${parameter.displayName}",
+                            text = stringResource(R.string.growth_chart_btn_add_param, parameter.displayName),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = BrandPink
@@ -469,14 +471,14 @@ fun GrowthChartScreen(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "Belum ada riwayat pengukuran",
+                                text = stringResource(R.string.growth_chart_empty_title),
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
-                                text = "Mulai tambahkan data pengukuran untuk melihat riwayat pertumbuhan si kecil.",
+                                text = stringResource(R.string.growth_chart_empty_desc),
                                 fontSize = 12.5.sp,
                                 fontWeight = FontWeight.Normal,
                                 color = TextSecondary,
@@ -488,7 +490,7 @@ fun GrowthChartScreen(
                                 colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                                 shape = RoundedCornerShape(16.dp)
                             ) {
-                                Text("+ Tambah Data", color = White)
+                                Text(stringResource(R.string.growth_chart_btn_add_data), color = White)
                             }
                         }
                     }
@@ -578,7 +580,7 @@ fun GrowthChartScreen(
                                     .fillMaxWidth()
                                     .height(48.dp)
                             ) {
-                                Text("+ Tambah Data ${parameter.displayName}", fontWeight = FontWeight.Bold, color = White)
+                                Text(stringResource(R.string.growth_chart_btn_add_param, parameter.displayName), fontWeight = FontWeight.Bold, color = White)
                             }
                             Spacer(modifier = Modifier.height(24.dp))
                         }

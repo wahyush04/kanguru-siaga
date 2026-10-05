@@ -63,8 +63,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
@@ -146,13 +148,13 @@ fun PmkManualLogScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
+                            contentDescription = stringResource(R.string.common_back),
                             tint = Color(0xFF1E293B)
                         )
                     }
 
                     Text(
-                        text = "Catat Sesi PMK Manual",
+                        text = stringResource(R.string.pmk_manual_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1E293B),
@@ -189,7 +191,7 @@ fun PmkManualLogScreen(
                     // 1. Tanggal Sesi
                     Column {
                         Text(
-                            text = "Tanggal Sesi",
+                            text = stringResource(R.string.pmk_manual_label_date),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -229,7 +231,7 @@ fun PmkManualLogScreen(
                     // 2. Waktu Mulai
                     Column {
                         Text(
-                            text = "Waktu Mulai",
+                            text = stringResource(R.string.pmk_manual_label_start_time),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -269,7 +271,7 @@ fun PmkManualLogScreen(
                     // 3. Durasi PMK (Menit)
                     Column {
                         Text(
-                            text = "Durasi PMK (${uiState.durationMinutes} menit)",
+                            text = stringResource(R.string.pmk_manual_label_duration, uiState.durationMinutes),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -300,7 +302,7 @@ fun PmkManualLogScreen(
                     // 4. Suhu Tubuh Bayi
                     Column {
                         Text(
-                            text = "Suhu Tubuh Bayi (°C)",
+                            text = stringResource(R.string.pmk_manual_label_temp),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -309,7 +311,7 @@ fun PmkManualLogScreen(
                         OutlinedTextField(
                             value = uiState.babyTemperature,
                             onValueChange = onTemperatureChanged,
-                            placeholder = { Text("Contoh: 36.8") },
+                            placeholder = { Text(stringResource(R.string.pmk_manual_placeholder_temp)) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(14.dp),
@@ -323,7 +325,7 @@ fun PmkManualLogScreen(
                     // 5. Respon Bayi
                     Column {
                         Text(
-                            text = "Kondisi / Respon Bayi Saat PMK",
+                            text = stringResource(R.string.pmk_manual_label_response),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -369,7 +371,7 @@ fun PmkManualLogScreen(
                     // 6. Catatan Sesi
                     Column {
                         Text(
-                            text = "Catatan (Opsional)",
+                            text = stringResource(R.string.alarm_label_note),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -378,7 +380,7 @@ fun PmkManualLogScreen(
                         OutlinedTextField(
                             value = uiState.notes,
                             onValueChange = onNotesChanged,
-                            placeholder = { Text("Catatan khusus selama sesi PMK...") },
+                            placeholder = { Text(stringResource(R.string.pmk_manual_placeholder_notes)) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(14.dp),
                             maxLines = 3,
@@ -409,7 +411,7 @@ fun PmkManualLogScreen(
                     Icon(imageVector = Icons.Default.Check, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Simpan Sesi PMK",
+                        text = stringResource(R.string.pmk_manual_btn_save),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -432,12 +434,12 @@ fun PmkManualLogScreen(
                         showDatePicker = false
                     }
                 ) {
-                    Text("Pilih", color = BrandPink, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.baby_profile_date_picker_select), color = BrandPink, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Batal", color = TextSecondary)
+                    Text(stringResource(R.string.alarm_btn_cancel), color = TextSecondary)
                 }
             }
         ) {
@@ -461,12 +463,12 @@ fun PmkManualLogScreen(
                         showTimePicker = false
                     }
                 ) {
-                    Text("Pilih", color = BrandPink, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.baby_profile_date_picker_select), color = BrandPink, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showTimePicker = false }) {
-                    Text("Batal", color = TextSecondary)
+                    Text(stringResource(R.string.alarm_btn_cancel), color = TextSecondary)
                 }
             },
             text = {

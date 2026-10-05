@@ -110,6 +110,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.compose.ui.res.stringResource
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.White
 import kotlinx.coroutines.delay
@@ -236,7 +238,7 @@ class VideoPlayerState(
                 isPlaying = false
                 isPrepared = false
                 hasError = true
-                errorMessage = "Gagal memutar video edukasi. Ketuk tombol coba lagi."
+                errorMessage = context.getString(R.string.pmk_video_error_playback)
                 true
             }
             mp.prepareAsync()
@@ -244,7 +246,7 @@ class VideoPlayerState(
         } catch (e: Exception) {
             Log.e("PmkVideo", "Error initializing MediaPlayer", e)
             hasError = true
-            errorMessage = "Terjadi kesalahan saat memuat video."
+            errorMessage = context.getString(R.string.pmk_video_error_general)
         }
     }
 
@@ -578,7 +580,7 @@ fun PmkVideoScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali ke Modul Video",
+                                contentDescription = stringResource(R.string.pmk_video_cd_back_module),
                                 tint = brandDark,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -615,7 +617,7 @@ fun PmkVideoScreen(
                         ) {
                             Icon(
                                 imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                                contentDescription = "Simpan Materi Video",
+                                contentDescription = stringResource(R.string.pmk_video_cd_bookmark),
                                 tint = if (isBookmarked) brandRose else brandDark,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -661,7 +663,7 @@ fun PmkVideoScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Mulai Timer PMK Sekarang",
+                                text = stringResource(R.string.pmk_video_btn_timer),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -685,7 +687,7 @@ fun PmkVideoScreen(
                                 )
                             ) {
                                 Text(
-                                    text = "Lanjut ke Materi Selanjutnya",
+                                    text = stringResource(R.string.pmk_video_btn_next),
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = brandDark
@@ -785,7 +787,7 @@ fun PmkVideoScreen(
                                 modifier = Modifier.size(12.dp)
                             )
                             Text(
-                                text = "${video.duration} Menit",
+                                text = stringResource(R.string.pmk_video_duration_minutes, video.duration),
                                 color = brandWarmGray,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.SemiBold
@@ -912,7 +914,7 @@ private fun VideoControlsOverlay(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = playerState.errorMessage ?: "Terjadi kesalahan",
+                    text = playerState.errorMessage ?: stringResource(R.string.pmk_video_error_general),
                     color = White,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
@@ -924,12 +926,12 @@ private fun VideoControlsOverlay(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = "Coba Lagi",
+                        contentDescription = stringResource(R.string.pmk_video_btn_retry),
                         tint = White,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Coba Lagi", color = White, fontSize = 12.sp)
+                    Text(text = stringResource(R.string.pmk_video_btn_retry), color = White, fontSize = 12.sp)
                 }
             }
         }
@@ -972,7 +974,7 @@ private fun VideoControlsOverlay(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Keluar Layar Penuh",
+                                contentDescription = stringResource(R.string.pmk_video_cd_exit_fullscreen),
                                 tint = White,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -1018,9 +1020,9 @@ private fun VideoControlsOverlay(
                                 else -> Icons.Default.PlayArrow
                             },
                             contentDescription = when {
-                                isEnded -> "Putar Ulang Video"
-                                playerState.isPlaying -> "Jeda Video"
-                                else -> "Putar Video PMK"
+                                isEnded -> stringResource(R.string.pmk_video_cd_replay)
+                                playerState.isPlaying -> stringResource(R.string.pmk_video_cd_pause)
+                                else -> stringResource(R.string.pmk_video_cd_play)
                             },
                             tint = White,
                             modifier = Modifier.size(28.dp)
@@ -1137,7 +1139,7 @@ private fun VideoControlsOverlay(
                             ) {
                                 Icon(
                                     imageVector = if (playerState.isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
-                                    contentDescription = if (playerState.isMuted) "Nyalakan Suara" else "Bisukan Suara",
+                                    contentDescription = if (playerState.isMuted) stringResource(R.string.pmk_video_cd_unmute) else stringResource(R.string.pmk_video_cd_mute),
                                     tint = White.copy(alpha = 0.9f),
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -1150,7 +1152,7 @@ private fun VideoControlsOverlay(
                             ) {
                                 Icon(
                                     imageVector = if (isFullscreen) Icons.Default.FullscreenExit else Icons.Default.Fullscreen,
-                                    contentDescription = if (isFullscreen) "Keluar Layar Penuh" else "Layar Penuh",
+                                    contentDescription = if (isFullscreen) stringResource(R.string.pmk_video_cd_exit_fullscreen) else stringResource(R.string.pmk_video_cd_fullscreen),
                                     tint = White.copy(alpha = 0.9f),
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -1358,13 +1360,13 @@ private fun ClinicalKeyPointsCard(
 
                 Column {
                     Text(
-                        text = "Poin Penting Klinis",
+                        text = stringResource(R.string.pmk_video_clinical_points_title),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = brandDark
                     )
                     Text(
-                        text = "Standar Pedoman Klinis IDAI & Kemenkes RI",
+                        text = stringResource(R.string.pmk_video_clinical_points_sub),
                         fontSize = 10.5.sp,
                         color = brandWarmGray
                     )

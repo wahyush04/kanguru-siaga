@@ -66,8 +66,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
@@ -145,13 +147,13 @@ fun PmkRemindersScreen(
                         IconButton(onClick = onNavigateBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali",
+                                contentDescription = stringResource(R.string.common_back),
                                 tint = Color(0xFF1E293B)
                             )
                         }
 
                         Text(
-                            text = "Pengingat PMK",
+                            text = stringResource(R.string.pmk_reminders_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF0F172A)
@@ -160,7 +162,7 @@ fun PmkRemindersScreen(
                         IconButton(onClick = onOpenInfoDialog) {
                             Icon(
                                 imageVector = Icons.Default.Info,
-                                contentDescription = "Info",
+                                contentDescription = stringResource(R.string.pmk_reminders_cd_info),
                                 tint = Color(0xFF475569)
                             )
                         }
@@ -169,7 +171,7 @@ fun PmkRemindersScreen(
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = "Atur jadwal dan pengingat kontak kulit ke kulit (KMC) rutin untuk kenyamanan dan tumbuh kembang si kecil.",
+                        text = stringResource(R.string.pmk_reminders_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF64748B),
                         textAlign = TextAlign.Center,
@@ -240,7 +242,7 @@ fun PmkRemindersScreen(
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Text(
-                            text = "Disarankan melakukan PMK minimal 60 menit/sesi, 2-3 kali sehari secara teratur untuk stabilitas suhu dan kenaikan berat badan BBLR.",
+                            text = stringResource(R.string.pmk_reminders_alert),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFFBE123C),
                             fontSize = 12.sp,
@@ -286,7 +288,7 @@ fun PmkRemindersScreen(
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "TARGET PMK HARI INI",
+                                    text = stringResource(R.string.pmk_reminders_target_header),
                                     fontSize = 11.5.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFF334155),
@@ -300,7 +302,7 @@ fun PmkRemindersScreen(
                                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFD1FAE5))
                             ) {
                                 Text(
-                                    text = "${uiState.todayCompletedSessions} dari ${uiState.todayTargetSessions} Selesai",
+                                    text = stringResource(R.string.pmk_reminders_completed_count, uiState.todayCompletedSessions, uiState.todayTargetSessions),
                                     color = Color(0xFF059669),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
@@ -325,7 +327,7 @@ fun PmkRemindersScreen(
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "/ ${uiState.todayTargetMinutes} Menit",
+                                    text = stringResource(R.string.pmk_reminders_target_minutes, uiState.todayTargetMinutes),
                                     fontSize = 12.sp,
                                     color = Color(0xFF64748B),
                                     fontWeight = FontWeight.Medium
@@ -333,7 +335,7 @@ fun PmkRemindersScreen(
                             }
 
                             Text(
-                                text = "${uiState.progressPercent}% Terpenuhi",
+                                text = stringResource(R.string.pmk_reminders_percent_fulfilled, uiState.progressPercent),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = BrandPink
@@ -364,13 +366,13 @@ fun PmkRemindersScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Daftar Waktu Pengingat",
+                        text = stringResource(R.string.pmk_reminders_list_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1E293B)
                     )
                     Text(
-                        text = "Total: ${uiState.reminders.size} Jadwal",
+                        text = stringResource(R.string.pmk_reminders_list_total, uiState.reminders.size),
                         fontSize = 12.sp,
                         color = Color(0xFF94A3B8),
                         fontWeight = FontWeight.Medium
@@ -402,7 +404,7 @@ fun PmkRemindersScreen(
                     Icon(imageVector = Icons.Default.Add, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Tambah Jadwal Pengingat",
+                        text = stringResource(R.string.pmk_reminders_btn_add),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -427,14 +429,14 @@ fun PmkRemindersScreen(
             onDismissRequest = onCloseInfoDialog,
             title = {
                 Text(
-                    text = "Petunjuk Pengingat PMK",
+                    text = stringResource(R.string.pmk_reminders_info_dialog_title),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium
                 )
             },
             text = {
                 Text(
-                    text = "Metode Kanguru terbukti efektif jika dilakukan konsisten setiap hari dengan kontak kulit langsung antara bayi dan dada orang tua selama minimal 60 menit per sesi. Pengingat ini membantu Anda menjaga rutinitas tanpa terlewat.",
+                    text = stringResource(R.string.pmk_reminders_info_dialog_msg),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                     lineHeight = 20.sp
@@ -442,7 +444,7 @@ fun PmkRemindersScreen(
             },
             confirmButton = {
                 TextButton(onClick = onCloseInfoDialog) {
-                    Text(text = "Mengerti", color = BrandPink, fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.alarm_btn_understand), color = BrandPink, fontWeight = FontWeight.Bold)
                 }
             },
             containerColor = White,
@@ -559,7 +561,7 @@ private fun AddReminderDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Tambah Jadwal Pengingat",
+                text = stringResource(R.string.pmk_reminders_btn_add),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
@@ -636,12 +638,12 @@ private fun AddReminderDialog(
                 colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = "Simpan", fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.alarm_btn_save), fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Batal", color = TextSecondary)
+                Text(text = stringResource(R.string.alarm_btn_cancel), color = TextSecondary)
             }
         },
         containerColor = White,

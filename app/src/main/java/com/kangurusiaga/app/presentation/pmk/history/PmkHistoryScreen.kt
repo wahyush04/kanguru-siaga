@@ -52,8 +52,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.PmkSession
@@ -143,14 +145,14 @@ fun PmkHistoryScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
+                            contentDescription = stringResource(R.string.common_back),
                             tint = darkText,
                             modifier = Modifier.size(22.dp)
                         )
                     }
 
                     Text(
-                        text = "Riwayat PMK",
+                        text = stringResource(R.string.pmk_history_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = darkText,
@@ -164,7 +166,7 @@ fun PmkHistoryScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.CalendarToday,
-                            contentDescription = "Filter atau Unduh Laporan",
+                            contentDescription = stringResource(R.string.pmk_history_cd_filter),
                             tint = Color(0xFF475569),
                             modifier = Modifier.size(20.dp)
                         )
@@ -196,7 +198,7 @@ fun PmkHistoryScreen(
             // Header Description
             item {
                 Text(
-                    text = "Catatan riwayat sesi kontak kulit ke kulit (KMC) untuk memantau rutinitas dan kenyamanan si kecil.",
+                    text = stringResource(R.string.pmk_history_header_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = mutedText,
                     fontSize = 12.sp,
@@ -245,7 +247,7 @@ fun PmkHistoryScreen(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "+ Catat Sesi Manual",
+                            text = stringResource(R.string.pmk_history_btn_add_manual),
                             color = BrandPink,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
@@ -365,7 +367,7 @@ private fun WeeklySummaryCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "STATISTIK RINGKASAN",
+                    text = stringResource(R.string.pmk_history_summary_title),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF64748B),
@@ -387,7 +389,7 @@ private fun WeeklySummaryCard(
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text(
-                                text = "Minggu Ini",
+                                text = stringResource(R.string.pmk_history_tab_week),
                                 fontSize = 11.sp,
                                 fontWeight = if (isWeek) FontWeight.Bold else FontWeight.Medium,
                                 color = if (isWeek) White else Color(0xFF64748B)
@@ -402,7 +404,7 @@ private fun WeeklySummaryCard(
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text(
-                                text = "Bulan Ini",
+                                text = stringResource(R.string.pmk_history_tab_month),
                                 fontSize = 11.sp,
                                 fontWeight = if (!isWeek) FontWeight.Bold else FontWeight.Medium,
                                 color = if (!isWeek) White else Color(0xFF64748B)
@@ -421,7 +423,7 @@ private fun WeeklySummaryCard(
             ) {
                 // Metric 1: Total Durasi
                 MetricBox(
-                    label = "Total Durasi",
+                    label = stringResource(R.string.pmk_history_metric_duration),
                     value = totalDurationStr,
                     bgColor = Color(0xFFFFF5F6),
                     borderColor = Color(0xFFFFE4E8),
@@ -430,7 +432,7 @@ private fun WeeklySummaryCard(
 
                 // Metric 2: Rata-rata/Hari
                 MetricBox(
-                    label = "Rata-rata/Hari",
+                    label = stringResource(R.string.pmk_history_metric_avg),
                     value = avgMinutesStr,
                     bgColor = Color(0xFFFFF8F0),
                     borderColor = Color(0xFFFEF3C7),
@@ -439,7 +441,7 @@ private fun WeeklySummaryCard(
 
                 // Metric 3: Total Sesi
                 MetricBox(
-                    label = "Total Sesi",
+                    label = stringResource(R.string.pmk_history_metric_sessions),
                     value = totalSessionsStr,
                     bgColor = Color(0xFFF0FAF7),
                     borderColor = Color(0xFFD1FAE5),
@@ -487,7 +489,7 @@ private fun WeeklySummaryCard(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
-                            text = "Target Tercapai $compliancePct% - Sangat Baik!",
+                            text = stringResource(R.string.pmk_history_target_reached, compliancePct),
                             fontSize = 11.5.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF334155),
@@ -498,7 +500,7 @@ private fun WeeklySummaryCard(
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Detail ›",
+                            text = stringResource(R.string.pmk_history_btn_detail),
                             fontSize = 11.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = BrandPink

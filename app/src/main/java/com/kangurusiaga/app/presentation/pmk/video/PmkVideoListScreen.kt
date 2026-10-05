@@ -44,6 +44,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.presentation.home.HomeBottomBar
 import com.kangurusiaga.app.presentation.home.HomeTab
@@ -90,14 +92,14 @@ fun PmkVideoListScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
+                            contentDescription = stringResource(R.string.common_back),
                             tint = darkText,
                             modifier = Modifier.size(20.dp)
                         )
                     }
 
                     Text(
-                        text = "Video Edukasi PMK",
+                        text = stringResource(R.string.pmk_video_list_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = darkText,
@@ -224,7 +226,7 @@ private fun PmkVideoModuleCard(
             // Chevron Right
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Buka Video",
+                contentDescription = stringResource(R.string.pmk_video_cd_open),
                 tint = Color(0xFF94A3B8),
                 modifier = Modifier.size(20.dp)
             )

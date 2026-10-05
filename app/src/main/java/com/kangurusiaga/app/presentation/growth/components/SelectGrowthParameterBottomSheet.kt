@@ -32,9 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.GrowthCardBlue
@@ -86,13 +88,13 @@ fun SelectGrowthParameterBottomSheet(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Pilih Jenis Pertumbuhan",
+                        text = stringResource(R.string.growth_select_sheet_title),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Pilih parameter grafik Fenton yang ingin dicatat",
+                        text = stringResource(R.string.growth_select_sheet_subtitle),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
                         color = TextSecondary,
@@ -108,7 +110,7 @@ fun SelectGrowthParameterBottomSheet(
                 ) {
                     Icon(
                         imageVector = GrowthIcons.Close,
-                        contentDescription = "Tutup",
+                        contentDescription = stringResource(R.string.home_cd_close),
                         tint = TextSecondary,
                         modifier = Modifier.size(18.dp)
                     )
@@ -121,18 +123,18 @@ fun SelectGrowthParameterBottomSheet(
             val options = listOf(
                 Triple(
                     GrowthParameter.WEIGHT,
-                    "Rutin",
-                    "Grafik pertumbuhan berat badan per minggu (kg/g)"
+                    stringResource(R.string.growth_select_badge_weight),
+                    stringResource(R.string.growth_select_desc_weight)
                 ),
                 Triple(
                     GrowthParameter.LENGTH,
-                    "Fenton PB",
-                    "Grafik pertumbuhan panjang badan (cm)"
+                    stringResource(R.string.growth_select_badge_length),
+                    stringResource(R.string.growth_select_desc_length)
                 ),
                 Triple(
                     GrowthParameter.HEAD_CIRCUMFERENCE,
-                    "Fenton LK",
-                    "Grafik lingkar kepala per minggu (cm)"
+                    stringResource(R.string.growth_select_badge_head),
+                    stringResource(R.string.growth_select_desc_head)
                 )
             )
 
@@ -268,7 +270,7 @@ fun SelectGrowthParameterBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Disarankan mengukur berat badan seminggu sekali pada jam yang sama (pagi hari sebelum minum ASI) untuk akurasi optimal.",
+                    text = stringResource(R.string.growth_select_tip),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Normal,
                     color = GrowthTipText,
@@ -288,7 +290,7 @@ fun SelectGrowthParameterBottomSheet(
                     .height(48.dp)
             ) {
                 Text(
-                    text = "Lanjut ke Formulir",
+                    text = stringResource(R.string.growth_select_btn_proceed),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = White
@@ -309,7 +311,7 @@ fun SelectGrowthParameterBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Batal",
+                    text = stringResource(R.string.alarm_btn_cancel),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextSecondary

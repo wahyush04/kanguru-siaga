@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -120,7 +121,7 @@ fun OnboardingPagerScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali ke Selamat Datang",
+                            contentDescription = stringResource(R.string.onboarding_cd_back_welcome),
                             tint = Color(0xFF1E293B)
                         )
                     }
@@ -201,7 +202,7 @@ fun OnboardingPagerScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = if (pagerState.currentPage == 0) "Lanjut" else "Isi Data Bayi",
+                            text = if (pagerState.currentPage == 0) stringResource(R.string.onboarding_btn_next) else stringResource(R.string.onboarding_btn_fill_baby_data),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -253,7 +254,7 @@ private fun WelcomePageContent() {
             )
             Image(
                 painter = painterResource(id = R.drawable.il_welcome_mother_baby),
-                contentDescription = "Ibu mendekap bayi baru lahir",
+                contentDescription = stringResource(R.string.onboarding_welcome_img_cd),
                 modifier = Modifier.size(240.dp),
                 contentScale = ContentScale.Fit
             )
@@ -263,7 +264,7 @@ private fun WelcomePageContent() {
 
         // Heading
         Text(
-            text = "Selamat Datang\ndi KANGURU SIAGA",
+            text = stringResource(R.string.onboarding_welcome_title),
             fontSize = 26.sp,
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF1E293B),
@@ -276,7 +277,7 @@ private fun WelcomePageContent() {
 
         // Subtitle
         Text(
-            text = "Teman pendamping perawatan BBLR di rumah, untuk mendukung tumbuh kembang si kecil.",
+            text = stringResource(R.string.onboarding_welcome_desc),
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             color = Color(0xFF64748B),
@@ -318,7 +319,7 @@ private fun ProfileIntroPageContent() {
             )
             Image(
                 painter = painterResource(id = R.drawable.il_clipboard_baby),
-                contentDescription = "Registrasi data bayi",
+                contentDescription = stringResource(R.string.onboarding_profile_intro_img_cd),
                 modifier = Modifier.size(210.dp),
                 contentScale = ContentScale.Fit
             )
@@ -327,7 +328,7 @@ private fun ProfileIntroPageContent() {
         Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-            text = "Yuk, Mulai dengan\nData Bayi",
+            text = stringResource(R.string.onboarding_profile_intro_title),
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1A2530),
@@ -338,7 +339,7 @@ private fun ProfileIntroPageContent() {
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Informasi ini akan digunakan untuk menyesuaikan panduan, pengingat, dan grafik pertumbuhan.",
+            text = stringResource(R.string.onboarding_profile_intro_desc),
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             color = Color(0xFF687787),

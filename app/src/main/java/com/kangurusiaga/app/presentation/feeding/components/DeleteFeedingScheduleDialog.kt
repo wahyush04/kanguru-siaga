@@ -9,8 +9,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.ErrorRed
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
@@ -27,7 +29,7 @@ fun DeleteFeedingScheduleDialog(
         containerColor = White,
         title = {
             Text(
-                text = "Hapus Jadwal?",
+                text = stringResource(R.string.alarm_delete_dialog_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -35,7 +37,7 @@ fun DeleteFeedingScheduleDialog(
         },
         text = {
             Text(
-                text = "Jadwal pemberian ASI ini akan dihapus.",
+                text = stringResource(R.string.alarm_delete_dialog_msg),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary
             )
@@ -49,7 +51,7 @@ fun DeleteFeedingScheduleDialog(
                     contentColor = White
                 )
             ) {
-                Text("Hapus", fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.alarm_btn_delete), fontWeight = FontWeight.SemiBold)
             }
         },
         dismissButton = {
@@ -59,7 +61,7 @@ fun DeleteFeedingScheduleDialog(
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0)),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF64748B))
             ) {
-                Text("Batal")
+                Text(stringResource(R.string.alarm_btn_cancel))
             }
         }
     )

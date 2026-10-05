@@ -83,6 +83,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
@@ -226,14 +227,14 @@ fun PmkTimerScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali",
+                                contentDescription = stringResource(R.string.common_back),
                                 tint = onPrimaryColor
                             )
                         }
 
                         // Screen Title
                         Text(
-                            text = "Mulai PMK",
+                            text = stringResource(R.string.pmk_timer_title),
                             fontSize = 17.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = onPrimaryColor,
@@ -251,7 +252,7 @@ fun PmkTimerScreen(
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.AccessTime,
-                                    contentDescription = "Riwayat PMK",
+                                    contentDescription = stringResource(R.string.pmk_timer_cd_history),
                                     tint = onPrimaryColor,
                                     modifier = Modifier.size(17.dp)
                                 )
@@ -372,7 +373,7 @@ fun PmkTimerScreen(
                                 TimerStatus.RUNNING -> {
                                     PulsingCoralDot()
                                     Text(
-                                        text = "Sedang berlangsung...",
+                                        text = stringResource(R.string.pmk_timer_status_running),
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.Medium,
                                         color = onSurfaceVariant
@@ -386,7 +387,7 @@ fun PmkTimerScreen(
                                             .background(BrandTextAmber)
                                     )
                                     Text(
-                                        text = "Sesi dijeda",
+                                        text = stringResource(R.string.pmk_timer_status_paused),
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.Medium,
                                         color = BrandTextAmber
@@ -400,7 +401,7 @@ fun PmkTimerScreen(
                                             .background(BrandTextGreen)
                                     )
                                     Text(
-                                        text = "Sesi selesai",
+                                        text = stringResource(R.string.pmk_timer_status_completed),
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.Medium,
                                         color = BrandTextGreen
@@ -414,7 +415,7 @@ fun PmkTimerScreen(
                                             .background(TextTertiary)
                                     )
                                     Text(
-                                        text = "Siap dimulai",
+                                        text = stringResource(R.string.pmk_timer_status_idle),
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.Medium,
                                         color = onSurfaceVariant
@@ -447,7 +448,7 @@ fun PmkTimerScreen(
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Mulai PMK",
+                                        text = stringResource(R.string.pmk_timer_btn_start),
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -479,7 +480,7 @@ fun PmkTimerScreen(
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
-                                            text = "Jeda",
+                                            text = stringResource(R.string.pmk_timer_btn_pause),
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = primaryColor
@@ -506,7 +507,7 @@ fun PmkTimerScreen(
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
-                                            text = "Selesai",
+                                            text = stringResource(R.string.pmk_timer_btn_finish),
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -539,7 +540,7 @@ fun PmkTimerScreen(
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
-                                            text = "Lanjut",
+                                            text = stringResource(R.string.pmk_timer_btn_resume),
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = primaryColor
@@ -566,7 +567,7 @@ fun PmkTimerScreen(
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
-                                            text = "Selesai",
+                                            text = stringResource(R.string.pmk_timer_btn_finish),
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -593,7 +594,7 @@ fun PmkTimerScreen(
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Mulai Sesi Baru",
+                                        text = stringResource(R.string.pmk_timer_btn_new_session),
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -638,13 +639,13 @@ fun PmkTimerScreen(
                                     }
                                     Column {
                                         Text(
-                                            text = "Durasi Target",
+                                            text = stringResource(R.string.pmk_timer_target_label),
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = onSurfaceVariant
                                         )
                                         Text(
-                                            text = "Rekomendasi dokter",
+                                            text = stringResource(R.string.pmk_timer_target_sub),
                                             fontSize = 11.sp,
                                             color = TextTertiary
                                         )
@@ -670,14 +671,14 @@ fun PmkTimerScreen(
                                             color = onSurfaceColor
                                         )
                                         Text(
-                                            text = "menit",
+                                            text = stringResource(R.string.pmk_timer_unit_minutes),
                                             fontSize = 11.5.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = primaryColor
                                         )
                                         Icon(
                                             imageVector = Icons.Default.Edit,
-                                            contentDescription = "Ubah Durasi",
+                                            contentDescription = stringResource(R.string.pmk_timer_cd_edit_duration),
                                             tint = primaryColor,
                                             modifier = Modifier.size(13.dp)
                                         )
@@ -700,20 +701,20 @@ fun PmkTimerScreen(
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
-                                        text = "Catatan ",
+                                        text = stringResource(R.string.pmk_timer_notes_label),
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = onSurfaceColor
                                     )
                                     Text(
-                                        text = "(Opsional)",
+                                        text = stringResource(R.string.pmk_timer_notes_optional),
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Normal,
                                         color = TextTertiary
                                     )
                                 }
                                 Text(
-                                    text = "Maks. 200 karakter",
+                                    text = stringResource(R.string.pmk_timer_notes_max_char),
                                     fontSize = 11.sp,
                                     color = TextTertiary
                                 )
@@ -724,7 +725,7 @@ fun PmkTimerScreen(
                                 onValueChange = { if (it.length <= 200) onNotesChanged(it) },
                                 placeholder = {
                                     Text(
-                                        text = "Tambahkan catatan sesi PMK (misal: bayi tenang, suhu hangat)...",
+                                        text = stringResource(R.string.pmk_timer_notes_placeholder),
                                         fontSize = 12.sp,
                                         color = TextTertiary,
                                         lineHeight = 17.sp
@@ -788,7 +789,7 @@ fun PmkTimerScreen(
                                                 color = BrandTextAmber
                                             )
                                         ) {
-                                            append("Tips: ")
+                                            append(stringResource(R.string.pmk_timer_tip_title))
                                         }
                                         withStyle(
                                             SpanStyle(
@@ -796,7 +797,7 @@ fun PmkTimerScreen(
                                                 color = onSurfaceColor
                                             )
                                         ) {
-                                            append("Lakukan PMK minimal 60 menit setiap sesi sesuai anjuran tenaga kesehatan.")
+                                            append(stringResource(R.string.pmk_timer_tip_desc))
                                         }
                                     },
                                     fontSize = 11.5.sp,
@@ -831,7 +832,7 @@ fun PmkTimerScreen(
                                 modifier = Modifier.size(13.5.dp)
                             )
                             Text(
-                                text = "Panduan",
+                                text = stringResource(R.string.pmk_timer_badge_guide),
                                 fontSize = 11.5.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = primaryColor
@@ -908,7 +909,7 @@ private fun TargetDurationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Pilih Durasi Target PMK",
+                text = stringResource(R.string.pmk_timer_target_dialog_title),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
                 color = onSurfaceColor
@@ -956,7 +957,7 @@ private fun TargetDurationDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Tutup", color = primaryColor, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.pmk_timer_btn_close), color = primaryColor, fontWeight = FontWeight.Bold)
             }
         },
         containerColor = surfaceColor,
@@ -986,7 +987,7 @@ private fun ObservationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Konfirmasi Selesai Sesi",
+                text = stringResource(R.string.pmk_timer_obs_dialog_title),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
                 color = onSurfaceColor
@@ -995,7 +996,7 @@ private fun ObservationDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 Text(
-                    text = "Bantu lengkapi data observasi bayi Anda untuk catatan pemantauan harian.",
+                    text = stringResource(R.string.pmk_timer_obs_dialog_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = onSurfaceVariant
                 )
@@ -1004,7 +1005,7 @@ private fun ObservationDialog(
                 OutlinedTextField(
                     value = temperature,
                     onValueChange = { onUpdate(it, response) },
-                    label = { Text("Suhu Tubuh Bayi (°C)") },
+                    label = { Text(stringResource(R.string.pmk_timer_obs_temp_label)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -1018,7 +1019,7 @@ private fun ObservationDialog(
                 // Respon Bayi
                 Column {
                     Text(
-                        text = "Respon / Kondisi Bayi:",
+                        text = stringResource(R.string.pmk_timer_obs_response_label),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = onSurfaceColor
@@ -1070,12 +1071,12 @@ private fun ObservationDialog(
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Simpan Sesi", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.pmk_timer_btn_save_session), fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Batal", color = onSurfaceVariant)
+                Text(stringResource(R.string.alarm_btn_cancel), color = onSurfaceVariant)
             }
         },
         containerColor = surfaceColor,

@@ -71,6 +71,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -80,6 +81,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.domain.model.Gender
 import java.text.SimpleDateFormat
@@ -235,12 +237,12 @@ fun BabyProfileFormScreen(
                         showDatePicker = false
                     }
                 ) {
-                    Text("Pilih", color = BrandPink, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.baby_profile_date_picker_select), color = BrandPink, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Batal", color = Color(0xFF64748B))
+                    Text(stringResource(R.string.baby_profile_date_picker_cancel), color = Color(0xFF64748B))
                 }
             }
         ) {
@@ -269,12 +271,12 @@ fun BabyProfileFormScreen(
                 IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Kembali",
+                        contentDescription = stringResource(R.string.common_back),
                         tint = Color(0xFF1E293B)
                     )
                 }
                 Text(
-                    text = "IDENTITAS BAYI",
+                    text = stringResource(R.string.baby_profile_header_tag),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFA1A1AA),
@@ -299,7 +301,7 @@ fun BabyProfileFormScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Data Bayi",
+                        text = stringResource(R.string.baby_profile_form_title),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = Color(0xFF18181B),
@@ -307,7 +309,7 @@ fun BabyProfileFormScreen(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Lengkapi data si kecil untuk menyesuaikan panduan, pengingat, dan grafik pertumbuhan.",
+                        text = stringResource(R.string.baby_profile_form_guidance),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF71717A),
@@ -346,7 +348,7 @@ fun BabyProfileFormScreen(
                                     .data(uiState.photoUri)
                                     .crossfade(true)
                                     .build(),
-                                contentDescription = "Foto Bayi",
+                                contentDescription = stringResource(R.string.baby_profile_photo_desc),
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
@@ -363,7 +365,7 @@ fun BabyProfileFormScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Pilih Foto",
+                                    text = stringResource(R.string.baby_profile_photo_select),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color(0xFFA1A1AA)
@@ -397,7 +399,7 @@ fun BabyProfileFormScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Ambil Foto",
+                                text = stringResource(R.string.baby_profile_photo_take),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -422,7 +424,7 @@ fun BabyProfileFormScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Pilih Galeri",
+                                text = stringResource(R.string.baby_profile_photo_gallery),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -442,7 +444,7 @@ fun BabyProfileFormScreen(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Hapus Foto",
+                                text = stringResource(R.string.baby_profile_photo_delete),
                                 fontSize = 11.sp,
                                 color = Color(0xFFEF4444),
                                 fontWeight = FontWeight.Medium
@@ -467,7 +469,7 @@ fun BabyProfileFormScreen(
                     ) {
                         Column {
                             Text(
-                                text = "NAMA BAYI",
+                                text = stringResource(R.string.baby_profile_label_name),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF3F3F46),
@@ -479,7 +481,7 @@ fun BabyProfileFormScreen(
                                 onValueChange = onNameChange,
                                 placeholder = {
                                     Text(
-                                        "Contoh: Nirmala Endang Elis",
+                                        stringResource(R.string.baby_profile_placeholder_name),
                                         color = Color(0xFFA1A1AA),
                                         fontSize = 14.sp
                                     )
@@ -508,7 +510,7 @@ fun BabyProfileFormScreen(
                     ) {
                         Column {
                             Text(
-                                text = "TANGGAL LAHIR",
+                                text = stringResource(R.string.baby_profile_label_birth_date),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF3F3F46),
@@ -532,7 +534,7 @@ fun BabyProfileFormScreen(
                                 )
                                 Icon(
                                     imageVector = Icons.Default.CalendarMonth,
-                                    contentDescription = "Pilih Tanggal",
+                                    contentDescription = stringResource(R.string.baby_profile_cd_select_date),
                                     tint = BrandPink,
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -550,7 +552,7 @@ fun BabyProfileFormScreen(
                     ) {
                         Column {
                             Text(
-                                text = "USIA GESTASI (USIA KEHAMILAN)",
+                                text = stringResource(R.string.baby_profile_label_gestational_age),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF3F3F46),
@@ -561,11 +563,11 @@ fun BabyProfileFormScreen(
                                 value = uiState.gestationalAgeWeeks,
                                 onValueChange = onGestationalAgeChange,
                                 placeholder = {
-                                    Text("Contoh: 32", color = Color(0xFFA1A1AA), fontSize = 14.sp)
+                                    Text(stringResource(R.string.baby_profile_placeholder_gestational_age), color = Color(0xFFA1A1AA), fontSize = 14.sp)
                                 },
                                 trailingIcon = {
                                     Text(
-                                        "minggu",
+                                        stringResource(R.string.baby_profile_unit_weeks),
                                         color = Color(0xFFA1A1AA),
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
@@ -602,7 +604,7 @@ fun BabyProfileFormScreen(
                                 // Berat Lahir
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "BERAT LAHIR",
+                                        text = stringResource(R.string.baby_profile_label_birth_weight),
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color(0xFF3F3F46),
@@ -612,10 +614,10 @@ fun BabyProfileFormScreen(
                                     OutlinedTextField(
                                         value = uiState.birthWeightInput,
                                         onValueChange = onBirthWeightChange,
-                                        placeholder = { Text("Contoh: 1800", fontSize = 13.sp) },
+                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_birth), fontSize = 13.sp) },
                                         trailingIcon = {
                                             Text(
-                                                "gram",
+                                                stringResource(R.string.baby_profile_unit_grams),
                                                 color = Color(0xFFA1A1AA),
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.Bold,
@@ -638,7 +640,7 @@ fun BabyProfileFormScreen(
                                 // Berat Sekarang
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "BERAT SEKARANG",
+                                        text = stringResource(R.string.baby_profile_label_current_weight),
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color(0xFF3F3F46),
@@ -648,10 +650,10 @@ fun BabyProfileFormScreen(
                                     OutlinedTextField(
                                         value = uiState.currentWeightInput,
                                         onValueChange = onCurrentWeightChange,
-                                        placeholder = { Text("Contoh: 3200", fontSize = 13.sp) },
+                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_current), fontSize = 13.sp) },
                                         trailingIcon = {
                                             Text(
-                                                "gram",
+                                                stringResource(R.string.baby_profile_unit_grams),
                                                 color = Color(0xFFA1A1AA),
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.Bold,
@@ -691,7 +693,7 @@ fun BabyProfileFormScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Bayi dengan berat lahir kurang dari 2.500 gram dikategorikan sebagai BBLR (Bayi Berat Lahir Rendah).",
+                                    text = stringResource(R.string.baby_profile_bblr_notice),
                                     fontSize = 11.sp,
                                     lineHeight = 16.sp,
                                     fontWeight = FontWeight.Medium,
@@ -711,7 +713,7 @@ fun BabyProfileFormScreen(
                     ) {
                         Column {
                             Text(
-                                text = "JENIS KELAMIN",
+                                text = stringResource(R.string.baby_profile_label_gender),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF3F3F46),
@@ -776,7 +778,7 @@ fun BabyProfileFormScreen(
                                         }
                                         Spacer(modifier = Modifier.height(6.dp))
                                         Text(
-                                            text = "Laki-laki",
+                                            text = stringResource(R.string.baby_profile_gender_male),
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = if (isMale) Color(0xFF1D4ED8) else Color(0xFF52525B)
@@ -838,7 +840,7 @@ fun BabyProfileFormScreen(
                                         }
                                         Spacer(modifier = Modifier.height(6.dp))
                                         Text(
-                                            text = "Perempuan",
+                                            text = stringResource(R.string.baby_profile_gender_female),
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = if (isFemale) Color(0xFFE11D48) else Color(0xFF52525B)
@@ -888,7 +890,7 @@ fun BabyProfileFormScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Simpan Data",
+                        text = stringResource(R.string.baby_profile_btn_save),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -896,7 +898,7 @@ fun BabyProfileFormScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "Lanjut",
+                        contentDescription = stringResource(R.string.baby_profile_cd_next),
                         tint = Color.White,
                         modifier = Modifier.size(18.dp)
                     )
@@ -943,7 +945,7 @@ fun BabyProfileConfirmationScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
+                            contentDescription = stringResource(R.string.common_back),
                             tint = Color(0xFF1E293B)
                         )
                     }
@@ -957,7 +959,7 @@ fun BabyProfileConfirmationScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Konfirmasi Data Bayi",
+                        text = stringResource(R.string.baby_profile_confirm_title),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1E293B),
@@ -965,7 +967,7 @@ fun BabyProfileConfirmationScreen(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Pastikan data yang Anda masukkan sudah benar.",
+                        text = stringResource(R.string.baby_profile_confirm_subtitle),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
                         color = Color(0xFF64748B),
@@ -1007,7 +1009,7 @@ fun BabyProfileConfirmationScreen(
                                             .data(uiState.photoUri)
                                             .crossfade(true)
                                             .build(),
-                                        contentDescription = "Foto Bayi",
+                                        contentDescription = stringResource(R.string.baby_profile_photo_desc),
                                         modifier = Modifier.fillMaxSize(),
                                         contentScale = ContentScale.Crop
                                     )
@@ -1023,7 +1025,7 @@ fun BabyProfileConfirmationScreen(
 
                             Column {
                                 Text(
-                                    text = "FOTO BAYI",
+                                    text = stringResource(R.string.baby_profile_photo_label),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFF94A3B8),
@@ -1031,7 +1033,7 @@ fun BabyProfileConfirmationScreen(
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = if (uiState.photoUri != null) "Tersimpan" else "Belum ada foto",
+                                    text = if (uiState.photoUri != null) stringResource(R.string.baby_profile_photo_saved) else stringResource(R.string.baby_profile_photo_none),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color(0xFF334155)
@@ -1059,7 +1061,7 @@ fun BabyProfileConfirmationScreen(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Ubah Foto",
+                                text = stringResource(R.string.baby_profile_photo_edit),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -1085,7 +1087,7 @@ fun BabyProfileConfirmationScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         ConfirmationDataRow(
-                            label = "Nama Bayi",
+                            label = stringResource(R.string.baby_profile_confirm_label_name),
                             value = uiState.name
                         )
                         HorizontalDivider(
@@ -1094,7 +1096,7 @@ fun BabyProfileConfirmationScreen(
                         )
 
                         ConfirmationDataRow(
-                            label = "Tanggal Lahir",
+                            label = stringResource(R.string.baby_profile_confirm_label_birth_date),
                             value = formatEpochToIndonesianDate(uiState.birthDateEpochMillis)
                         )
                         HorizontalDivider(
@@ -1103,8 +1105,8 @@ fun BabyProfileConfirmationScreen(
                         )
 
                         ConfirmationDataRow(
-                            label = "Usia Gestasi",
-                            value = "${uiState.gestationalAgeWeeks} minggu"
+                            label = stringResource(R.string.baby_profile_confirm_label_gestational_age),
+                            value = stringResource(R.string.baby_profile_value_weeks, uiState.gestationalAgeWeeks)
                         )
                         HorizontalDivider(
                             thickness = 0.8.dp,
@@ -1112,8 +1114,8 @@ fun BabyProfileConfirmationScreen(
                         )
 
                         ConfirmationDataRow(
-                            label = "Berat Lahir",
-                            value = "${formatWeightString(uiState.birthWeightInput)} gram"
+                            label = stringResource(R.string.baby_profile_confirm_label_birth_weight),
+                            value = stringResource(R.string.baby_profile_value_grams, formatWeightString(uiState.birthWeightInput))
                         )
                         HorizontalDivider(
                             thickness = 0.8.dp,
@@ -1121,8 +1123,8 @@ fun BabyProfileConfirmationScreen(
                         )
 
                         ConfirmationDataRow(
-                            label = "Berat Sekarang",
-                            value = "${formatWeightString(uiState.currentWeightInput)} gram"
+                            label = stringResource(R.string.baby_profile_confirm_label_current_weight),
+                            value = stringResource(R.string.baby_profile_value_grams, formatWeightString(uiState.currentWeightInput))
                         )
                         HorizontalDivider(
                             thickness = 0.8.dp,
@@ -1130,8 +1132,8 @@ fun BabyProfileConfirmationScreen(
                         )
 
                         ConfirmationDataRow(
-                            label = "Jenis Kelamin",
-                            value = if (uiState.gender == Gender.MALE) "Laki-laki" else "Perempuan"
+                            label = stringResource(R.string.baby_profile_confirm_label_gender),
+                            value = if (uiState.gender == Gender.MALE) stringResource(R.string.baby_profile_gender_male) else if (uiState.gender == Gender.FEMALE) stringResource(R.string.baby_profile_gender_female) else "-"
                         )
                     }
                 }
@@ -1155,7 +1157,7 @@ fun BabyProfileConfirmationScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Status: BBLR (${formatWeightString(uiState.birthWeightInput)} gram) — Panduan Perawatan BBLR & PMK diaktifkan.",
+                            text = stringResource(R.string.baby_profile_confirm_bblr_status, formatWeightString(uiState.birthWeightInput)),
                             fontSize = 11.sp,
                             color = Color(0xFFE11D48),
                             fontWeight = FontWeight.Medium
@@ -1193,7 +1195,7 @@ fun BabyProfileConfirmationScreen(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Kembali",
+                            text = stringResource(R.string.baby_profile_btn_back),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -1222,7 +1224,7 @@ fun BabyProfileConfirmationScreen(
                             )
                         } else {
                             Text(
-                                text = "Simpan Data",
+                                text = stringResource(R.string.baby_profile_btn_save),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White

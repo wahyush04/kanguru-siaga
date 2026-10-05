@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -82,14 +83,14 @@ fun GrowthSummaryScreen(
                 ) {
                     Icon(
                         imageVector = GrowthIcons.Back,
-                        contentDescription = "Kembali",
+                        contentDescription = stringResource(R.string.common_back),
                         tint = TextPrimary,
                         modifier = Modifier.size(20.dp)
                     )
                 }
 
                 Text(
-                    text = "Ringkasan Pertumbuhan",
+                    text = stringResource(R.string.growth_summary_title),
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
@@ -161,11 +162,11 @@ fun GrowthSummaryScreen(
                 val weightVal = uiState.latestWeight?.value?.let {
                     String.format(Locale("id", "ID"), "%.1f", it)
                 } ?: "--"
-                val weightP = uiState.latestWeight?.percentileBadge?.let { "Persentil $it" } ?: "-"
-                val weightStatus = if (uiState.latestWeight != null) "Normal" else "Belum diukur"
+                val weightP = uiState.latestWeight?.percentileBadge?.let { stringResource(R.string.growth_summary_percentile_value, it) } ?: "-"
+                val weightStatus = if (uiState.latestWeight != null) stringResource(R.string.growth_summary_status_normal) else stringResource(R.string.growth_summary_status_unmeasured)
                 MetricSummaryCard(
                     modifier = Modifier.weight(1f),
-                    title = "Berat Badan",
+                    title = stringResource(R.string.growth_hub_weight_title),
                     value = weightVal,
                     unit = "kg",
                     percentile = weightP,
@@ -180,11 +181,11 @@ fun GrowthSummaryScreen(
                 val lengthVal = uiState.latestLength?.value?.let {
                     String.format(Locale("id", "ID"), "%.1f", it)
                 } ?: "--"
-                val lengthP = uiState.latestLength?.percentileBadge?.let { "Persentil $it" } ?: "-"
-                val lengthStatus = if (uiState.latestLength != null) "Normal" else "Belum diukur"
+                val lengthP = uiState.latestLength?.percentileBadge?.let { stringResource(R.string.growth_summary_percentile_value, it) } ?: "-"
+                val lengthStatus = if (uiState.latestLength != null) stringResource(R.string.growth_summary_status_normal) else stringResource(R.string.growth_summary_status_unmeasured)
                 MetricSummaryCard(
                     modifier = Modifier.weight(1f),
-                    title = "Panjang Badan",
+                    title = stringResource(R.string.growth_hub_length_title),
                     value = lengthVal,
                     unit = "cm",
                     percentile = lengthP,
@@ -199,11 +200,11 @@ fun GrowthSummaryScreen(
                 val headVal = uiState.latestHead?.value?.let {
                     String.format(Locale("id", "ID"), "%.1f", it)
                 } ?: "--"
-                val headP = uiState.latestHead?.percentileBadge?.let { "Persentil $it" } ?: "-"
-                val headStatus = if (uiState.latestHead != null) "Normal" else "Belum diukur"
+                val headP = uiState.latestHead?.percentileBadge?.let { stringResource(R.string.growth_summary_percentile_value, it) } ?: "-"
+                val headStatus = if (uiState.latestHead != null) stringResource(R.string.growth_summary_status_normal) else stringResource(R.string.growth_summary_status_unmeasured)
                 MetricSummaryCard(
                     modifier = Modifier.weight(1f),
-                    title = "Lingkar Kepala",
+                    title = stringResource(R.string.growth_hub_head_title),
                     value = headVal,
                     unit = "cm",
                     percentile = headP,
@@ -236,7 +237,7 @@ fun GrowthSummaryScreen(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Secara umum, pertumbuhan $babyName sesuai dengan grafik Fenton.",
+                    text = stringResource(R.string.growth_summary_status_fenton, babyName),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF78350F),
@@ -248,7 +249,7 @@ fun GrowthSummaryScreen(
 
             // Progress from Birth Section
             Text(
-                text = "Perkembangan dari Lahir",
+                text = stringResource(R.string.growth_summary_progress_title),
                 fontSize = 14.5.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -271,7 +272,7 @@ fun GrowthSummaryScreen(
             }
 
             ProgressFromBirthRow(
-                title = "Berat Badan",
+                title = stringResource(R.string.growth_hub_weight_title),
                 gainText = weightGainStr,
                 fromToText = weightFromToStr,
                 icon = GrowthIcons.Weight,
@@ -295,11 +296,11 @@ fun GrowthSummaryScreen(
                 }
                 gain to fromTo
             } else {
-                "-" to if (birthLen > 0f) "${String.format(Locale("id", "ID"), "%.1f", birthLen)} cm → -" else "Belum diukur"
+                "-" to if (birthLen > 0f) "${String.format(Locale("id", "ID"), "%.1f", birthLen)} cm → -" else stringResource(R.string.growth_summary_status_unmeasured)
             }
 
             ProgressFromBirthRow(
-                title = "Panjang Badan",
+                title = stringResource(R.string.growth_hub_length_title),
                 gainText = lenGainStr,
                 fromToText = lenFromToStr,
                 icon = GrowthIcons.Length,
@@ -323,11 +324,11 @@ fun GrowthSummaryScreen(
                 }
                 gain to fromTo
             } else {
-                "-" to if (birthHead > 0f) "${String.format(Locale("id", "ID"), "%.1f", birthHead)} cm → -" else "Belum diukur"
+                "-" to if (birthHead > 0f) "${String.format(Locale("id", "ID"), "%.1f", birthHead)} cm → -" else stringResource(R.string.growth_summary_status_unmeasured)
             }
 
             ProgressFromBirthRow(
-                title = "Lingkar Kepala",
+                title = stringResource(R.string.growth_hub_head_title),
                 gainText = headGainStr,
                 fromToText = headFromToStr,
                 icon = GrowthIcons.Head,
