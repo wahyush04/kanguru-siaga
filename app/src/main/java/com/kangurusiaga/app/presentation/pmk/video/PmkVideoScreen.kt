@@ -42,6 +42,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -654,7 +655,7 @@ fun PmkVideoScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
+                                .heightIn(min = 48.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = brandRose,
@@ -683,9 +684,9 @@ fun PmkVideoScreen(
                                     onNavigateToNextVideo(video.nextLessonId)
                                 },
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(40.dp)
-                                    .border(1.dp, brandBorder, RoundedCornerShape(12.dp)),
+                                .fillMaxWidth()
+                                .heightIn(min = 40.dp)
+                                .border(1.dp, brandBorder, RoundedCornerShape(12.dp)),
                                 shape = RoundedCornerShape(12.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = KanguruTheme.colors.surface,

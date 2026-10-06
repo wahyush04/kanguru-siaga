@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -161,7 +162,7 @@ fun AddFeedingScheduleForm(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp)
+                .heightIn(min = 52.dp)
                 .clip(RoundedCornerShape(14.dp))
                 .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(14.dp))
                 .background(MaterialTheme.colorScheme.surface)
@@ -203,8 +204,7 @@ fun AddFeedingScheduleForm(
                 }
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
+                .fillMaxWidth(),
             shape = RoundedCornerShape(14.dp),
             trailingIcon = {
                 Text(
@@ -359,7 +359,7 @@ fun AddFeedingScheduleForm(
                 onClick = onDismiss,
                 modifier = Modifier
                     .weight(1f)
-                    .height(48.dp),
+                    .heightIn(min = 48.dp),
                 shape = RoundedCornerShape(14.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFD1D8)),
                 colors = ButtonDefaults.outlinedButtonColors(
@@ -394,7 +394,7 @@ fun AddFeedingScheduleForm(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .height(48.dp),
+                    .heightIn(min = 48.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = BrandPink,

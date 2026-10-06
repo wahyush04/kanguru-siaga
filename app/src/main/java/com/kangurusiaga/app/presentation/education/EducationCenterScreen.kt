@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -756,7 +757,7 @@ private fun EmergencyHotlineBanner(
                     contentColor = White
                 ),
                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                modifier = Modifier.height(34.dp)
+                modifier = Modifier.heightIn(min = 34.dp)
             ) {
                 Text(
                     text = stringResource(R.string.edu_center_hotline_btn),

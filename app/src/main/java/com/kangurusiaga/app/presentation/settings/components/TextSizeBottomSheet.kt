@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -405,27 +406,37 @@ fun TextSizeBottomSheet(
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        Surface(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            color = MaterialTheme.colorScheme.surface,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                        val currentDensity = androidx.compose.ui.platform.LocalDensity.current
+                        val previewDensity = androidx.compose.ui.unit.Density(
+                            density = currentDensity.density,
+                            fontScale = (currentDensity.fontScale / KanguruTheme.textScaleFactor) * selectedScale.scaleFactor
+                        )
+
+                        androidx.compose.runtime.CompositionLocalProvider(
+                            androidx.compose.ui.platform.LocalDensity provides previewDensity
                         ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Text(
-                                    text = "Suhu normal bayi BBLR: 36,5°C - 37,5°C",
-                                    fontSize = (13 * selectedScale.scaleFactor).sp,
-                                    lineHeight = (18 * selectedScale.scaleFactor).sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextPrimary
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Jaga kontak kulit-ke-kulit (Kangaroo Mother Care) secara teratur untuk menjaga kestabilan suhu tubuh si kecil.",
-                                    fontSize = (11 * selectedScale.scaleFactor).sp,
-                                    lineHeight = (16 * selectedScale.scaleFactor).sp,
-                                    color = TextSecondary
-                                )
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.surface,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text(
+                                        text = "Suhu normal bayi BBLR: 36,5°C - 37,5°C",
+                                        fontSize = 13.sp,
+                                        lineHeight = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = TextPrimary
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Jaga kontak kulit-ke-kulit (Kangaroo Mother Care) secara teratur untuk menjaga kestabilan suhu tubuh si kecil.",
+                                        fontSize = 11.sp,
+                                        lineHeight = 16.sp,
+                                        color = TextSecondary
+                                    )
+                                }
                             }
                         }
                     }
@@ -445,7 +456,7 @@ fun TextSizeBottomSheet(
                     onClick = onDismiss,
                     modifier = Modifier
                         .weight(1f)
-                        .height(48.dp),
+                        .heightIn(min = 48.dp),
                     shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
@@ -460,7 +471,7 @@ fun TextSizeBottomSheet(
                     onClick = onApplyScale,
                     modifier = Modifier
                         .weight(1.5f)
-                        .height(48.dp),
+                        .heightIn(min = 48.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = BrandPink)
                 ) {

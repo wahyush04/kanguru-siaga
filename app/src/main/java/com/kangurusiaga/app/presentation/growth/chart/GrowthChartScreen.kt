@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -446,7 +447,7 @@ fun GrowthChartScreen(
                         border = androidx.compose.foundation.BorderStroke(1.2.dp, BrandPink),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp)
+                            .heightIn(min = 48.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.growth_chart_btn_add_param, parameter.displayName),
@@ -578,7 +579,7 @@ fun GrowthChartScreen(
                                 shape = RoundedCornerShape(16.dp),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(48.dp)
+                                    .heightIn(min = 48.dp)
                             ) {
                                 Text(stringResource(R.string.growth_chart_btn_add_param, parameter.displayName), fontWeight = FontWeight.Bold, color = White)
                             }

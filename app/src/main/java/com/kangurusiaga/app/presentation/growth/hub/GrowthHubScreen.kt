@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -205,7 +206,7 @@ fun GrowthHubScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .heightIn(min = 48.dp)
             ) {
                 Icon(
                     imageVector = GrowthIcons.Trending,
@@ -231,7 +232,7 @@ fun GrowthHubScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .heightIn(min = 52.dp)
                     .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp), spotColor = BrandPink.copy(alpha = 0.4f))
             ) {
                 Text(

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -397,7 +398,7 @@ fun BabyProfileFormScreen(
                             onClick = onCameraClick,
                             modifier = Modifier
                                 .weight(1f)
-                                .height(42.dp),
+                                .heightIn(min = 42.dp),
                             shape = RoundedCornerShape(14.dp),
                             border = BorderStroke(1.dp, CardBorder),
                             colors = ButtonDefaults.outlinedButtonColors(
@@ -421,7 +422,7 @@ fun BabyProfileFormScreen(
                             onClick = onGalleryClick,
                             modifier = Modifier
                                 .weight(1f)
-                                .height(42.dp),
+                                .heightIn(min = 42.dp),
                             shape = RoundedCornerShape(14.dp),
                             border = BorderStroke(1.dp, BrandPink),
                             colors = ButtonDefaults.outlinedButtonColors(
@@ -904,7 +905,7 @@ fun BabyProfileFormScreen(
                 onClick = onProceedToConfirmation,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .heightIn(min = 52.dp)
                     .shadow(
                         elevation = 6.dp,
                         shape = RoundedCornerShape(16.dp),
@@ -1224,7 +1225,7 @@ fun BabyProfileConfirmationScreen(
                         onClick = onBackClick,
                         modifier = Modifier
                             .weight(1f)
-                            .height(50.dp),
+                            .heightIn(min = 50.dp),
                         shape = RoundedCornerShape(14.dp),
                         border = BorderStroke(1.dp, CardBorder),
                         colors = ButtonDefaults.outlinedButtonColors(
@@ -1249,7 +1250,7 @@ fun BabyProfileConfirmationScreen(
                         onClick = onSaveClick,
                         modifier = Modifier
                             .weight(1f)
-                            .height(50.dp)
+                            .heightIn(min = 50.dp)
                             .shadow(
                                 elevation = 4.dp,
                                 shape = RoundedCornerShape(14.dp),

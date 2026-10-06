@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -201,7 +202,7 @@ fun EditFeedingScheduleBottomSheet(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .heightIn(min = 52.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(14.dp))
                     .background(MaterialTheme.colorScheme.surface)
@@ -244,8 +245,7 @@ fun EditFeedingScheduleBottomSheet(
                     }
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
                 trailingIcon = {
                     Text(
@@ -303,7 +303,7 @@ fun EditFeedingScheduleBottomSheet(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(44.dp)
+                            .heightIn(min = 44.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .border(
                                 width = if (isSelected) 1.5.dp else 1.dp,
@@ -489,7 +489,7 @@ fun EditFeedingScheduleBottomSheet(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
+                    .heightIn(min = 50.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = BrandPink,
@@ -518,7 +518,7 @@ fun EditFeedingScheduleBottomSheet(
                 onClick = { onRequestDelete(schedule) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(44.dp),
+                    .heightIn(min = 44.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFFFF1F2),

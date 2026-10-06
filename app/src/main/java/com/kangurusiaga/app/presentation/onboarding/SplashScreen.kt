@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -640,7 +641,7 @@ fun SplashScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp)
+                        .heightIn(min = 52.dp)
                         .graphicsLayer {
                             scaleX = buttonPulseScale
                             scaleY = buttonPulseScale
@@ -656,7 +657,8 @@ fun SplashScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
+                            .heightIn(min = 52.dp)
                             .background(
                                 Brush.horizontalGradient(
                                     listOf(
@@ -664,14 +666,15 @@ fun SplashScreen(
                                         Color(0xFFF43F5E)
                                     )
                                 )
-                            ),
+                            )
+                            .padding(horizontal = 24.dp, vertical = 12.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         // Button Shimmer Sweep Highlight
                         val btnShimmerX = shimmerOffsetFraction * 300f
                         Box(
                             modifier = Modifier
-                                .fillMaxSize()
+                                .matchParentSize()
                                 .background(
                                     Brush.horizontalGradient(
                                         colors = listOf(

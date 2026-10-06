@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -655,7 +656,7 @@ fun PmkStatisticsScreen(
                     onClick = onNavigateToManualLog,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp),
+                        .heightIn(min = 52.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                     shape = RoundedCornerShape(18.dp)
                 ) {
@@ -670,7 +671,7 @@ fun PmkStatisticsScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .heightIn(min = 48.dp),
                     shape = RoundedCornerShape(18.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary)

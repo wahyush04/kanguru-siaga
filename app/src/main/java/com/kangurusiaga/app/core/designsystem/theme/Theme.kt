@@ -12,7 +12,9 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowCompat
 import com.kangurusiaga.app.domain.model.settings.AppTextScale
 import com.kangurusiaga.app.domain.model.settings.AppThemeMode
@@ -324,6 +326,11 @@ object KanguruTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalKanguruColors.current.isDark
+
+    val textScaleFactor: Float
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalTextScaleFactor.current
 }
 
 @Composable
@@ -340,7 +347,12 @@ fun KanguruSiagaTheme(
     val kanguruColors = if (darkTheme) DarkKanguruColors else LightKanguruColors
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val dimensions = Dimensions()
-    val scaledTypography = getScaledTypography(textScale.scaleFactor)
+
+    val baseDensity = LocalDensity.current
+    val scaledDensity = Density(
+        density = baseDensity.density,
+        fontScale = baseDensity.fontScale * textScale.scaleFactor
+    )
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -355,13 +367,14 @@ fun KanguruSiagaTheme(
     }
 
     CompositionLocalProvider(
+        LocalDensity provides scaledDensity,
         LocalDimensions provides dimensions,
         LocalTextScaleFactor provides textScale.scaleFactor,
         LocalKanguruColors provides kanguruColors
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = scaledTypography,
+            typography = Typography,
             shapes = KanguruShapes,
             content = content
         )

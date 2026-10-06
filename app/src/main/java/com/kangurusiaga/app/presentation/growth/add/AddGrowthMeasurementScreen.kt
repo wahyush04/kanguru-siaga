@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -124,7 +125,7 @@ fun AddGrowthMeasurementScreen(
                         ),
                         modifier = Modifier
                             .weight(1f)
-                            .height(48.dp)
+                            .heightIn(min = 48.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.growth_add_btn_cancel),
@@ -143,7 +144,7 @@ fun AddGrowthMeasurementScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                         modifier = Modifier
                             .weight(1f)
-                            .height(48.dp)
+                            .heightIn(min = 48.dp)
                     ) {
                         if (uiState.isSaving) {
                             CircularProgressIndicator(

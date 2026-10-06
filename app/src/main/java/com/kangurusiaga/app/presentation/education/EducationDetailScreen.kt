@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -316,7 +317,7 @@ fun EducationDetailScreen(
                             onClick = onMarkCompleted,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
+                                .heightIn(min = 48.dp),
                             shape = RoundedCornerShape(50),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (module.isCompleted) KanguruTheme.colors.success else BrandPink
@@ -343,7 +344,7 @@ fun EducationDetailScreen(
                                 onClick = { onNavigateToNextModule(uiState.nextModuleId) },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(48.dp),
+                                    .heightIn(min = 48.dp),
                                 shape = RoundedCornerShape(50),
                                 colors = ButtonDefaults.outlinedButtonColors(
                                     contentColor = TextPrimary
@@ -369,7 +370,7 @@ fun EducationDetailScreen(
                                 onClick = onNavigateBack,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(48.dp),
+                                    .heightIn(min = 48.dp),
                                 shape = RoundedCornerShape(50),
                                 border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
                                 colors = ButtonDefaults.outlinedButtonColors(

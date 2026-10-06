@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -434,7 +435,7 @@ fun PmkTimerScreen(
                                     onClick = onStart,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(54.dp),
+                                        .heightIn(min = 54.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = primaryColor,
                                         contentColor = onPrimaryColor
@@ -465,7 +466,7 @@ fun PmkTimerScreen(
                                         onClick = onPause,
                                         modifier = Modifier
                                             .weight(1f)
-                                            .height(54.dp),
+                                            .heightIn(min = 54.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = primaryContainer,
                                             contentColor = primaryColor
@@ -493,7 +494,7 @@ fun PmkTimerScreen(
                                         onClick = onRequestFinish,
                                         modifier = Modifier
                                             .weight(1f)
-                                            .height(54.dp),
+                                            .heightIn(min = 54.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = primaryColor,
                                             contentColor = onPrimaryColor
@@ -525,7 +526,7 @@ fun PmkTimerScreen(
                                         onClick = onResume,
                                         modifier = Modifier
                                             .weight(1f)
-                                            .height(54.dp),
+                                            .heightIn(min = 54.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = primaryContainer,
                                             contentColor = primaryColor
@@ -553,7 +554,7 @@ fun PmkTimerScreen(
                                         onClick = onRequestFinish,
                                         modifier = Modifier
                                             .weight(1f)
-                                            .height(54.dp),
+                                            .heightIn(min = 54.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = primaryColor,
                                             contentColor = onPrimaryColor
@@ -580,7 +581,7 @@ fun PmkTimerScreen(
                                     onClick = onStart,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(54.dp),
+                                        .heightIn(min = 54.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = primaryColor,
                                         contentColor = onPrimaryColor

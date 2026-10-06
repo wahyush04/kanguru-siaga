@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -599,7 +600,7 @@ private fun ActionGridCard(
 ) {
     Card(
         modifier = modifier
-            .height(164.dp)
+            .heightIn(min = 164.dp)
             .border(1.dp, borderColor, RoundedCornerShape(24.dp))
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = containerColor),
@@ -639,7 +640,8 @@ private fun ActionGridCard(
                 color = TextSecondary,
                 textAlign = TextAlign.Center,
                 fontSize = 10.5.sp,
-                maxLines = 1
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
         }
     }
@@ -759,7 +761,7 @@ private fun EmergencyBottomSheet(
                 onClick = onCallEmergency,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
+                    .heightIn(min = 52.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE11D48)),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -944,9 +946,10 @@ fun HomeBottomBar(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
+                            .weight(1f)
                             .clip(RoundedCornerShape(8.dp))
                             .clickable { onTabSelected(tab) }
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                            .padding(vertical = 4.dp)
                     ) {
                         Icon(
                             imageVector = icon,
@@ -962,7 +965,9 @@ fun HomeBottomBar(
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = contentColor,
-                            fontSize = 10.5.sp
+                            fontSize = 10.5.sp,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -1007,7 +1012,7 @@ private fun EmptyHomeContent(
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth(0.85f)
-                .height(50.dp)
+                .heightIn(min = 50.dp)
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
