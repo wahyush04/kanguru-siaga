@@ -4,9 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kangurusiaga.app.core.common.PmkTimerManager
 import com.kangurusiaga.app.domain.model.Baby
+import com.kangurusiaga.app.domain.model.PmkCaregiver
+import com.kangurusiaga.app.domain.model.PmkPauseReason
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.model.PmkTimerState
+import com.kangurusiaga.app.domain.usecase.DailyTimeline
 import com.kangurusiaga.app.domain.usecase.GetBabyProfileUseCase
+import com.kangurusiaga.app.domain.usecase.GetDailyPmkTimelineUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,20 +18,31 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.Calendar
 import javax.inject.Inject
 
 data class PmkTimerUiState(
     val timerState: PmkTimerState = PmkTimerState(),
     val baby: Baby? = null,
-    val showTargetDialog: Boolean = false,
-    val showObservationDialog: Boolean = false,
-    val inputTemperature: String = "36.8",
-    val inputResponse: String = "Tidur Tenang"
+    val timeline: DailyTimeline? = null,
+    val showCaregiverHandoverSheet: Boolean = false,
+    val showPauseSheet: Boolean = false,
+    val showFinishConfirmDialog: Boolean = false,
+    val isNightModeDim: Boolean = false,
+    val handoverCaregiver: PmkCaregiver = PmkCaregiver.AYAH,
+    val handoverTemperature: String = "36.8",
+    val handoverResponse: String = "Tenang & Rileks",
+    val handoverNotes: String = "",
+    val pauseReason: PmkPauseReason = PmkPauseReason.NURSING,
+    val pauseTemperature: String = "36.8",
+    val pauseBehavior: String = "Tenang & Rileks",
+    val pauseNotes: String = ""
 )
 
 sealed interface PmkTimerUiEvent {
@@ -35,108 +50,202 @@ sealed interface PmkTimerUiEvent {
     data class Message(val text: String) : PmkTimerUiEvent
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class PmkTimerViewModel @Inject constructor(
     private val timerManager: PmkTimerManager,
+    private val getDailyTimelineUseCase: GetDailyPmkTimelineUseCase,
     getBabyProfileUseCase: GetBabyProfileUseCase
 ) : ViewModel() {
 
-    private val _uiDialogState = MutableStateFlow(
-        DialogState(
-            showTargetDialog = false,
-            showObservationDialog = false,
-            inputTemperature = "36.8",
-            inputResponse = "Tidur Tenang"
-        )
+    init {
+        timerManager.ensureTickerRunning()
+    }
+
+    private data class SheetState(
+        val showCaregiverHandoverSheet: Boolean = false,
+        val showPauseSheet: Boolean = false,
+        val showFinishConfirmDialog: Boolean = false,
+        val isNightModeDim: Boolean = false,
+        val handoverCaregiver: PmkCaregiver = PmkCaregiver.AYAH,
+        val handoverTemperature: String = "36.8",
+        val handoverResponse: String = "Tenang & Rileks",
+        val handoverNotes: String = "",
+        val pauseReason: PmkPauseReason = PmkPauseReason.NURSING,
+        val pauseTemperature: String = "36.8",
+        val pauseBehavior: String = "Tenang & Rileks",
+        val pauseNotes: String = ""
     )
 
+    private val _sheetState = MutableStateFlow(SheetState())
     private val _events = MutableSharedFlow<PmkTimerUiEvent>()
     val events: SharedFlow<PmkTimerUiEvent> = _events.asSharedFlow()
 
-    private data class DialogState(
-        val showTargetDialog: Boolean,
-        val showObservationDialog: Boolean,
-        val inputTemperature: String,
-        val inputResponse: String
-    )
-
-    val uiState: StateFlow<PmkTimerUiState> = combine(
-        timerManager.timerState,
-        getBabyProfileUseCase(),
-        _uiDialogState
-    ) { timer, baby, dialog ->
-        PmkTimerUiState(
-            timerState = timer,
-            baby = baby,
-            showTargetDialog = dialog.showTargetDialog,
-            showObservationDialog = dialog.showObservationDialog,
-            inputTemperature = dialog.inputTemperature,
-            inputResponse = dialog.inputResponse
-        )
+    val uiState: StateFlow<PmkTimerUiState> = getBabyProfileUseCase().flatMapLatest { baby ->
+        val babyId = baby?.id ?: 1L
+        combine(
+            timerManager.timerState,
+            getDailyTimelineUseCase(babyId, Calendar.getInstance()),
+            _sheetState
+        ) { timer, timeline, sheets ->
+            PmkTimerUiState(
+                timerState = timer,
+                baby = baby,
+                timeline = timeline,
+                showCaregiverHandoverSheet = sheets.showCaregiverHandoverSheet,
+                showPauseSheet = sheets.showPauseSheet,
+                showFinishConfirmDialog = sheets.showFinishConfirmDialog,
+                isNightModeDim = sheets.isNightModeDim,
+                handoverCaregiver = sheets.handoverCaregiver,
+                handoverTemperature = sheets.handoverTemperature,
+                handoverResponse = sheets.handoverResponse,
+                handoverNotes = sheets.handoverNotes,
+                pauseReason = sheets.pauseReason,
+                pauseTemperature = sheets.pauseTemperature,
+                pauseBehavior = sheets.pauseBehavior,
+                pauseNotes = sheets.pauseNotes
+            )
+        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = PmkTimerUiState()
     )
 
-    fun startTimer() {
+    fun startContinuousTimer(caregiver: PmkCaregiver = PmkCaregiver.IBU) {
         val babyId = uiState.value.baby?.id ?: 1L
-        val target = uiState.value.timerState.targetDurationMinutes
-        timerManager.start(babyId, target)
+        timerManager.start(babyId, caregiver)
     }
 
-    fun pauseTimer() {
-        timerManager.pause()
+    // Caregiver Handover Modal actions
+    fun openCaregiverHandoverSheet(defaultCaregiver: PmkCaregiver? = null) {
+        val currentCaregiver = uiState.value.timerState.currentCaregiver
+        val target = defaultCaregiver ?: when (currentCaregiver) {
+            PmkCaregiver.IBU -> PmkCaregiver.AYAH
+            PmkCaregiver.AYAH -> PmkCaregiver.PENDAMPING
+            PmkCaregiver.PENDAMPING -> PmkCaregiver.IBU
+        }
+        _sheetState.update {
+            it.copy(
+                showCaregiverHandoverSheet = true,
+                handoverCaregiver = target,
+                handoverTemperature = "36.8",
+                handoverResponse = "Tenang & Rileks",
+                handoverNotes = ""
+            )
+        }
+    }
+
+    fun closeCaregiverHandoverSheet() {
+        _sheetState.update { it.copy(showCaregiverHandoverSheet = false) }
+    }
+
+    fun selectHandoverCaregiver(caregiver: PmkCaregiver) {
+        _sheetState.update { it.copy(handoverCaregiver = caregiver) }
+    }
+
+    fun updateHandoverDetails(temperature: String, response: String, notes: String) {
+        _sheetState.update {
+            it.copy(
+                handoverTemperature = temperature,
+                handoverResponse = response,
+                handoverNotes = notes
+            )
+        }
+    }
+
+    fun confirmCaregiverHandover() {
+        val state = _sheetState.value
+        val temp = state.handoverTemperature.toDoubleOrNull()
+        timerManager.switchCaregiver(
+            newCaregiver = state.handoverCaregiver,
+            temperature = temp,
+            response = state.handoverResponse,
+            notes = state.handoverNotes.ifBlank { null }
+        )
+        closeCaregiverHandoverSheet()
+        viewModelScope.launch {
+            _events.emit(PmkTimerUiEvent.Message("Estafet pengasuh berhasil dialihkan ke ${state.handoverCaregiver.title}"))
+        }
+    }
+
+    // Pause Modal actions
+    fun openPauseSheet() {
+        _sheetState.update {
+            it.copy(
+                showPauseSheet = true,
+                pauseReason = PmkPauseReason.NURSING,
+                pauseTemperature = "36.8",
+                pauseBehavior = "Tenang & Rileks",
+                pauseNotes = ""
+            )
+        }
+    }
+
+    fun closePauseSheet() {
+        _sheetState.update { it.copy(showPauseSheet = false) }
+    }
+
+    fun selectPauseReason(reason: PmkPauseReason) {
+        _sheetState.update { it.copy(pauseReason = reason) }
+    }
+
+    fun updatePauseDetails(temperature: String, behavior: String, notes: String) {
+        _sheetState.update {
+            it.copy(
+                pauseTemperature = temperature,
+                pauseBehavior = behavior,
+                pauseNotes = notes
+            )
+        }
+    }
+
+    fun updatePauseNotes(notes: String) {
+        _sheetState.update { it.copy(pauseNotes = notes) }
+    }
+
+    fun confirmPause() {
+        val state = _sheetState.value
+        val temp = state.pauseTemperature.toDoubleOrNull()
+        timerManager.pause(
+            reason = state.pauseReason,
+            note = state.pauseNotes.ifBlank { null },
+            temperature = temp,
+            response = state.pauseBehavior
+        )
+        closePauseSheet()
+        viewModelScope.launch {
+            _events.emit(PmkTimerUiEvent.Message("PMK dijeda untuk ${state.pauseReason.title}"))
+        }
     }
 
     fun resumeTimer() {
         timerManager.resume()
-    }
-
-    fun setNotes(notes: String) {
-        timerManager.setNotes(notes)
-    }
-
-    fun openTargetDialog() {
-        _uiDialogState.update { it.copy(showTargetDialog = true) }
-    }
-
-    fun closeTargetDialog() {
-        _uiDialogState.update { it.copy(showTargetDialog = false) }
-    }
-
-    fun updateTargetMinutes(minutes: Int) {
-        timerManager.setTargetMinutes(minutes)
-        closeTargetDialog()
-    }
-
-    fun requestFinishSession() {
-        // Open observation dialog to collect temp and response
-        _uiDialogState.update { it.copy(showObservationDialog = true) }
-    }
-
-    fun closeObservationDialog() {
-        _uiDialogState.update { it.copy(showObservationDialog = false) }
-    }
-
-    fun updateObservationInput(temp: String, response: String) {
-        _uiDialogState.update {
-            it.copy(inputTemperature = temp, inputResponse = response)
+        viewModelScope.launch {
+            _events.emit(PmkTimerUiEvent.Message("Kontak kulit dilanjutkan kembali"))
         }
     }
 
+    // Finish session actions
+    fun requestFinishSession() {
+        _sheetState.update { it.copy(showFinishConfirmDialog = true) }
+    }
+
+    fun closeFinishConfirmDialog() {
+        _sheetState.update { it.copy(showFinishConfirmDialog = false) }
+    }
+
     fun confirmFinishSession() {
-        val tempVal = _uiDialogState.value.inputTemperature.toDoubleOrNull()
-        val responseVal = _uiDialogState.value.inputResponse
-
-        timerManager.setBabyObservation(tempVal, responseVal)
-        closeObservationDialog()
-
+        closeFinishConfirmDialog()
         viewModelScope.launch {
             val session = timerManager.finishSession()
             if (session != null) {
                 _events.emit(PmkTimerUiEvent.SessionCompleted(session))
             }
         }
+    }
+
+    fun toggleNightModeDim() {
+        _sheetState.update { it.copy(isNightModeDim = !it.isNightModeDim) }
     }
 }

@@ -88,8 +88,11 @@ class HomeViewModel @Inject constructor(
         val weightText = "BBLR $formattedWeight gram"
 
         val count = sessions.size
-        val target = 3
-        val progress = (count.toFloat() / target.toFloat()).coerceIn(0f, 1f)
+        val totalMinutes = sessions.sumOf { it.activeDurationMinutes }
+        val hours = totalMinutes / 60
+        val targetHours = 20
+        val progress = (hours.toFloat() / targetHours.toFloat()).coerceIn(0f, 1f)
+        val progressText = if (hours > 0) "${hours}j dari ${targetHours}j target" else "${totalMinutes} mnt dari ${targetHours}j target"
 
         return HomeUiState(
             isLoading = false,
@@ -98,7 +101,10 @@ class HomeViewModel @Inject constructor(
             babyWeightFormatted = weightText,
             todayPmkSessions = sessions,
             todaySessionsCount = count,
-            todayTargetSessions = target,
+            todayTargetSessions = targetHours,
+            todayPmkMinutesTotal = totalMinutes,
+            todayTargetHours = targetHours,
+            formattedTodayPmkProgress = progressText,
             todayProgressFraction = progress,
             unreadNotificationsCount = 1,
             showEmergencyDialog = dialogs.showEmergency,

@@ -150,3 +150,45 @@ val GrowthTipText: Color
     @Composable
     @ReadOnlyComposable
     get() = KanguruTheme.colors.tipText
+
+val InputBackground: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.inputBackground
+
+val InputBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.inputBorder
+
+val DragHandleColor: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.dragHandle
+
+val CaregiverIbuColor: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.caregiverIbu
+
+val CaregiverAyahColor: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.caregiverAyah
+
+val CaregiverPendampingColor: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.caregiverPendamping
+
+val CaregiverPauseColor: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.caregiverPause
+
+val TimelineTrackColor: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.timelineTrack
+
+

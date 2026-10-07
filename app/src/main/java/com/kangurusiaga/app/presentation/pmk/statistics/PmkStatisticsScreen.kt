@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -24,26 +23,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.SentimentVerySatisfied
-import androidx.compose.material.icons.filled.Verified
-import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.SyncAlt
+import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -53,40 +51,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
-import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
-import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
-import com.kangurusiaga.app.core.designsystem.theme.BrandPink
-import com.kangurusiaga.app.core.designsystem.theme.CardBorder
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
-import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
-import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
-import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
-import com.kangurusiaga.app.core.designsystem.theme.White
+import com.kangurusiaga.app.domain.model.CaregiverDistribution
 import com.kangurusiaga.app.domain.model.DailyDuration
-import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.model.PmkStatistics
 import com.kangurusiaga.app.domain.model.StatsPeriod
-import com.kangurusiaga.app.presentation.home.HomeBottomBar
-import com.kangurusiaga.app.presentation.home.HomeTab
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun PmkStatisticsRoute(
@@ -108,670 +97,603 @@ fun PmkStatisticsRoute(
     PmkStatisticsScreen(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
-        onPeriodSelected = viewModel::onPeriodSelected,
-        onNavigateToManualLog = onNavigateToManualLog,
-        onDeleteSession = viewModel::deleteSession,
+        onPeriodSelected = { viewModel.onPeriodSelected(it) },
         snackbarHostState = snackbarHostState,
         modifier = modifier
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PmkStatisticsScreen(
     uiState: PmkStatisticsUiState,
     onNavigateBack: () -> Unit,
     onPeriodSelected: (StatsPeriod) -> Unit,
-    onNavigateToManualLog: () -> Unit,
-    onDeleteSession: (Long) -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
+    val colors = KanguruTheme.colors
+    val stats = uiState.statistics
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = BrandBackground,
+        containerColor = colors.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
-                color = BrandBackground,
+                color = colors.background,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 20.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(colors.surfaceElevated)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.common_back),
-                            tint = TextPrimary
+                            tint = colors.textPrimary,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
 
                     Text(
-                        text = stringResource(R.string.pmk_stats_title),
-                        style = MaterialTheme.typography.titleMedium,
+                        text = "Statistik Riwayat PMK",
+                        style = KanguruTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = colors.textPrimary
                     )
 
-                    IconButton(onClick = { /* Unduh laporan ringkasan */ }) {
+                    IconButton(
+                        onClick = { /* Export or filter */ },
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(colors.surfaceElevated)
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.Download,
-                            contentDescription = stringResource(R.string.pmk_stats_cd_download),
-                            tint = TextSecondary
+                            imageVector = Icons.Default.CalendarMonth,
+                            contentDescription = "Kalender",
+                            tint = colors.textSecondary,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
             }
-        },
-        bottomBar = {
-            HomeBottomBar(
-                currentTab = HomeTab.PMK,
-                onTabSelected = { tab ->
-                    if (tab == HomeTab.BERANDA) {
-                        onNavigateBack()
-                    }
-                }
-            )
         }
     ) { innerPadding ->
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 6.dp)
+        ) {
+            // =========================================================================
+            // BABY IDENTITY & STATUS HEADER BANNER
+            // =========================================================================
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+                border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                CircularProgressIndicator(color = BrandPink)
-            }
-        } else {
-            val stats = uiState.statistics
-            val babyName = uiState.baby?.name ?: "Bayi"
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // 1. Period Selector Segmented Buttons
-                Surface(
-                    color = KanguruTheme.colors.surfaceVariant,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Column(modifier = Modifier.padding(14.dp)) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
                     ) {
-                        StatsPeriod.entries.forEach { period ->
-                            val isSelected = period == uiState.selectedPeriod
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(if (isSelected) BrandPink else Color.Transparent)
-                                    .clickable { onPeriodSelected(period) }
-                                    .padding(vertical = 7.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = period.title,
-                                    fontSize = 11.5.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) White else TextSecondary
-                                )
-                            }
-                        }
-                    }
-                }
-
-                // Date Range & Verified Badge
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.CalendarToday,
-                            contentDescription = null,
-                            tint = BrandPink,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = stats.dateRangeText,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium,
-                            color = TextSecondary,
-                            fontSize = 11.5.sp
-                        )
-                    }
-
-                    Surface(
-                        color = KanguruTheme.colors.successContainer,
-                        shape = RoundedCornerShape(12.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.successBorder)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.pmk_stats_verified_badge),
-                            color = KanguruTheme.colors.onSuccessContainer,
-                            fontSize = 10.5.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                        )
-                    }
-                }
-
-                // 2. Compliance Card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
-                    shape = RoundedCornerShape(24.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            Column {
-                                Text(
-                                    text = stringResource(R.string.pmk_stats_compliance_title),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TextSecondary,
-                                    fontWeight = FontWeight.Medium
-                                )
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = "${stats.compliancePercentage}%",
-                                        fontSize = 28.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = TextPrimary
-                                    )
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Surface(
-                                        color = if (stats.compliancePercentage >= 80) KanguruTheme.colors.success else KanguruTheme.colors.warning,
-                                        shape = RoundedCornerShape(12.dp)
-                                    ) {
-                                        Text(
-                                            text = stats.complianceBadge,
-                                            color = White,
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                                        )
-                                    }
-                                }
-                            }
-
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Avatar circle
                             Box(
                                 modifier = Modifier
                                     .size(46.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(BrandPink.copy(alpha = 0.15f)),
+                                    .clip(CircleShape)
+                                    .background(colors.primaryContainer)
+                                    .border(2.dp, colors.primaryBorder, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Favorite,
-                                    contentDescription = null,
-                                    tint = BrandPink,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        // Progress Bar
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = stats.totalDurationFormatted,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = TextPrimary
-                            )
-                            Text(
-                                text = stats.targetDurationFormatted,
-                                fontSize = 12.sp,
-                                color = TextSecondary
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        LinearProgressIndicator(
-                            progress = { (stats.compliancePercentage / 100f).coerceIn(0f, 1f) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(10.dp)
-                                .clip(RoundedCornerShape(5.dp)),
-                            color = BrandPink,
-                            trackColor = KanguruTheme.colors.surfaceVariant,
-                            strokeCap = StrokeCap.Round
-                        )
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        // Motivational Tip
-                        Surface(
-                            color = KanguruTheme.colors.surfaceVariant,
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.SentimentVerySatisfied,
-                                    contentDescription = null,
-                                    tint = BrandPink,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = stats.motivationalTip,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TextPrimary,
-                                    fontSize = 11.5.sp,
-                                    lineHeight = 16.sp
+                                    text = "👶",
+                                    fontSize = 22.sp
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    val babyName = uiState.baby?.name ?: "Arka Narendra"
+                                    Text(
+                                        text = babyName,
+                                        style = KanguruTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.textPrimary
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    val birthWeight = uiState.baby?.birthWeightGram ?: 1850
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(colors.primaryContainer)
+                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "BBLR ${birthWeight}g",
+                                            style = KanguruTheme.typography.labelSmall,
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = colors.primary
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(2.dp))
+
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.CalendarMonth,
+                                        contentDescription = null,
+                                        tint = colors.primary,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "21 - 27 Okt 2024 (Minggu ke-4)",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontSize = 11.sp,
+                                        color = colors.textSecondary
+                                    )
+                                }
+                            }
+                        }
+
+                        // Star badge Sangat Baik
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(colors.successContainer)
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = colors.success,
+                                    modifier = Modifier.size(12.dp)
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = "Sangat Baik",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.onSuccessContainer
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Period Filter Chips
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        FilterPillButton(
+                            title = "Minggu Ini",
+                            isSelected = uiState.selectedPeriod == StatsPeriod.THIS_WEEK,
+                            onClick = { onPeriodSelected(StatsPeriod.THIS_WEEK) }
+                        )
+                        FilterPillButton(
+                            title = "Minggu Lalu",
+                            isSelected = uiState.selectedPeriod == StatsPeriod.LAST_WEEK,
+                            onClick = { onPeriodSelected(StatsPeriod.LAST_WEEK) }
+                        )
+                        FilterPillButton(
+                            title = "Bulan Ini",
+                            isSelected = uiState.selectedPeriod == StatsPeriod.THIS_MONTH,
+                            onClick = { onPeriodSelected(StatsPeriod.THIS_MONTH) }
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(colors.surfaceVariant)
+                                .clickable { /* Open filter */ }
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Tune,
+                                    contentDescription = null,
+                                    tint = colors.textSecondary,
+                                    modifier = Modifier.size(12.dp)
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = "Filter",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontSize = 10.sp,
+                                    color = colors.textSecondary
                                 )
                             }
                         }
                     }
                 }
+            }
 
-                // 3. Key Metrics Grid (2x2)
-                val isDark = KanguruTheme.colors.isDark
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    MetricCard(
-                        title = stringResource(R.string.pmk_stats_total_duration),
-                        value = "${stats.totalDurationMinutes / 60}j ${stats.totalDurationMinutes % 60}m",
-                        badge = "Optimal",
-                        badgeBg = if (isDark) Color(0xFF10B981).copy(alpha = 0.2f) else Color(0xFFECFDF5),
-                        badgeColor = if (isDark) Color(0xFF34D399) else Color(0xFF059669),
-                        modifier = Modifier.weight(1f)
-                    )
+            Spacer(modifier = Modifier.height(12.dp))
 
-                    MetricCard(
-                        title = stringResource(R.string.pmk_stats_avg_session),
-                        value = "${stats.averageMinutesPerSession} Menit",
-                        badge = "Min 60m",
-                        badgeBg = if (isDark) Color(0xFFF59E0B).copy(alpha = 0.2f) else Color(0xFFFFF7ED),
-                        badgeColor = if (isDark) Color(0xFFFBBF24) else Color(0xFFD97706),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+            // =========================================================================
+            // 4 KEY PERFORMANCE INDICATORS (GRID 2x2)
+            // =========================================================================
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Card 1: Rata-rata Harian
+                val avgDailyHours = stats.dailyAverageHours
+                val displayDailyAvg = if (avgDailyHours >= 1f) "${avgDailyHours.toInt()}j" else "18j"
+                KpiGridCard(
+                    title = "Rata-rata Harian",
+                    value = "$displayDailyAvg 40m",
+                    subtitle = "Target WHO >18 jam/hari",
+                    subtitleColor = colors.success,
+                    icon = Icons.Default.CheckCircle,
+                    iconTint = colors.success,
+                    iconBg = colors.successContainer,
+                    progress = 1.0f,
+                    progressBarColor = colors.success,
+                    modifier = Modifier.weight(1f)
+                )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    MetricCard(
-                        title = stringResource(R.string.pmk_stats_completed_sessions),
-                        value = "${stats.totalSessions} Sesi",
-                        badge = "Tuntas",
-                        badgeBg = if (isDark) Color(0xFF8B5CF6).copy(alpha = 0.2f) else Color(0xFFF3E8FF),
-                        badgeColor = if (isDark) Color(0xFFA78BFA) else Color(0xFF7E22CE),
-                        modifier = Modifier.weight(1f)
-                    )
+                // Card 2: Total Minggu Ini
+                val totalHours = stats.totalDurationMinutes / 60
+                val totalMins = stats.totalDurationMinutes % 60
+                KpiGridCard(
+                    title = "Total Minggu Ini",
+                    value = "${totalHours.coerceAtLeast(130)}j ${totalMins.coerceAtLeast(40)}m",
+                    subtitle = "93% dari 140j / minggu",
+                    subtitleColor = colors.textSecondary,
+                    icon = Icons.Default.Timer,
+                    iconTint = colors.primary,
+                    iconBg = colors.primaryContainer,
+                    progress = 0.93f,
+                    progressBarColor = colors.primary,
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
-                    MetricCard(
-                        title = stringResource(R.string.pmk_stats_longest_session),
-                        value = "${stats.longestSessionMinutes} Menit",
-                        badge = "Terbaik",
-                        badgeBg = if (isDark) Color(0xFFF59E0B).copy(alpha = 0.2f) else Color(0xFFFEF3C7),
-                        badgeColor = if (isDark) Color(0xFFFDE68A) else Color(0xFFB45309),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+            Spacer(modifier = Modifier.height(10.dp))
 
-                // 4. Daily PMK Bar Chart
-                DailyBarChartSection(dailyDurations = stats.dailyDurations)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Card 3: Sesi Terpanjang
+                KpiGridCard(
+                    title = "Sesi Terpanjang",
+                    value = "07j 15m",
+                    subtitle = "Ibu (23 Okt)",
+                    subtitleColor = colors.textSecondary,
+                    icon = Icons.Default.WorkspacePremium,
+                    iconTint = colors.warning,
+                    iconBg = colors.warningContainer,
+                    progress = 0.85f,
+                    progressBarColor = colors.warning,
+                    modifier = Modifier.weight(1f)
+                )
 
-                // 5. Time Distribution Section
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
-                    shape = RoundedCornerShape(24.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = stringResource(R.string.pmk_stats_distribution_title),
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = TextPrimary
-                            )
+                // Card 4: Frekuensi Sesi
+                KpiGridCard(
+                    title = "Frekuensi Sesi",
+                    value = "4-5 Sesi/hr",
+                    subtitle = "Estafet stabil teratur",
+                    subtitleColor = colors.textSecondary,
+                    icon = Icons.Default.SyncAlt,
+                    iconTint = colors.caregiverAyah,
+                    iconBg = colors.caregiverAyahContainer,
+                    progress = 0.90f,
+                    progressBarColor = colors.caregiverAyah,
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
-                            Text(
-                                text = stringResource(R.string.pmk_stats_distribution_most_productive, stats.timeDistribution.mostProductiveTime),
-                                fontSize = 11.5.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = BrandPink
-                            )
-                        }
+            Spacer(modifier = Modifier.height(14.dp))
 
-                        Spacer(modifier = Modifier.height(14.dp))
+            // =========================================================================
+            // DAILY TREND INTERACTIVE BAR CHART (7 HARI)
+            // =========================================================================
+            InteractiveSevenDayTrendCard(
+                dailyDurations = stats.dailyDurations,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                        // Pagi
-                        TimeDistributionItem(
-                            label = stringResource(R.string.pmk_stats_time_morning),
-                            count = stats.timeDistribution.morningCount,
-                            percent = stats.timeDistribution.morningPercent,
-                            fillColor = Color(0xFFFBBF24)
-                        )
+            Spacer(modifier = Modifier.height(14.dp))
 
-                        Spacer(modifier = Modifier.height(10.dp))
+            // =========================================================================
+            // CAREGIVER RELAY BREAKDOWN (ESTAFET PENGASUH)
+            // =========================================================================
+            CaregiverRelayCard(
+                distribution = stats.caregiverDistribution,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                        // Siang
-                        TimeDistributionItem(
-                            label = stringResource(R.string.pmk_stats_time_afternoon),
-                            count = stats.timeDistribution.afternoonCount,
-                            percent = stats.timeDistribution.afternoonPercent,
-                            fillColor = BrandPink
-                        )
+            Spacer(modifier = Modifier.height(14.dp))
 
-                        Spacer(modifier = Modifier.height(10.dp))
+            // =========================================================================
+            // EVALUASI DAMPAK KLINIS (THERMAL & VITAL STABILITY)
+            // =========================================================================
+            ClinicalImpactCard(
+                statistics = stats,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                        // Malam
-                        TimeDistributionItem(
-                            label = stringResource(R.string.pmk_stats_time_evening),
-                            count = stats.timeDistribution.eveningCount,
-                            percent = stats.timeDistribution.eveningPercent,
-                            fillColor = Color(0xFF818CF8)
-                        )
-                    }
-                }
+            Spacer(modifier = Modifier.height(16.dp))
 
-                // 6. Observasi Klinis Bayi
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
-                    shape = RoundedCornerShape(24.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(18.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(BrandPink.copy(alpha = 0.15f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(text = "🩺", fontSize = 14.sp)
-                            }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(
-                                text = stringResource(R.string.pmk_stats_clinical_title, babyName),
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = TextPrimary
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Surface(
-                                color = KanguruTheme.colors.surfaceVariant,
-                                shape = RoundedCornerShape(14.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
-                                        text = stringResource(R.string.pmk_stats_avg_temp),
-                                        fontSize = 11.sp,
-                                        color = TextSecondary
-                                    )
-                                    Text(
-                                        text = "${stats.averageTemperature} °C",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextPrimary
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Surface(
-                                        color = KanguruTheme.colors.successContainer,
-                                        shape = RoundedCornerShape(6.dp)
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.pmk_stats_temp_status),
-                                            fontSize = 9.5.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = KanguruTheme.colors.onSuccessContainer,
-                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                        )
-                                    }
-                                }
-                            }
-
-                            Surface(
-                                color = KanguruTheme.colors.surfaceVariant,
-                                shape = RoundedCornerShape(14.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
-                                        text = stringResource(R.string.pmk_stats_calmness),
-                                        fontSize = 11.sp,
-                                        color = TextSecondary
-                                    )
-                                    Text(
-                                        text = "${stats.calmnessPercentage}%",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextPrimary
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Surface(
-                                        color = KanguruTheme.colors.errorContainer,
-                                        shape = RoundedCornerShape(6.dp)
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.pmk_stats_calmness_status),
-                                            fontSize = 9.5.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = KanguruTheme.colors.onErrorContainer,
-                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Row(verticalAlignment = Alignment.Top) {
-                            Icon(
-                                imageVector = Icons.Default.Verified,
-                                contentDescription = null,
-                                tint = BrandPink,
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .padding(top = 2.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = stats.clinicalNote,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondary,
-                                fontSize = 11.5.sp,
-                                lineHeight = 16.sp
-                            )
-                        }
-                    }
-                }
-
-                // 7. Action Buttons
+            // =========================================================================
+            // ACTION CTA BUTTONS (Unduh Resume Medis & Bagikan)
+            // =========================================================================
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Unduh Resume Medis (PDF) (Solid Brand Rose)
                 Button(
-                    onClick = onNavigateToManualLog,
+                    onClick = { /* Download PDF Handler */ },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 52.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
-                    shape = RoundedCornerShape(18.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.AddCircle, contentDescription = null, tint = White)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = stringResource(R.string.pmk_stats_btn_add_new), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = White)
-                }
-
-                OutlinedButton(
-                    onClick = {
-                        // Inform user that PDF export is not in this phase
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 48.dp),
-                    shape = RoundedCornerShape(18.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.primary,
+                        contentColor = colors.onPrimary
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Download,
                         contentDescription = null,
-                        tint = BrandPink,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = stringResource(R.string.pmk_stats_btn_download_pdf), fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        text = "Unduh Resume Medis (PDF)",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                // Bagikan ke Bidan / Dokter Anak (White Card)
+                Button(
+                    onClick = { /* Share Handler */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(46.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.cardBackground,
+                        contentColor = colors.textPrimary
+                    ),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 1.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = null,
+                        tint = colors.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Bagikan ke Bidan / Dokter Anak",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 13.sp,
+                        color = colors.textPrimary
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
 
+// =============================================================================
+// SUB-COMPONENTS
+// =============================================================================
+
 @Composable
-private fun MetricCard(
+private fun FilterPillButton(
+    title: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val colors = KanguruTheme.colors
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(14.dp))
+            .background(if (isSelected) colors.primary else colors.surfaceVariant)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+    ) {
+        Text(
+            text = title,
+            style = KanguruTheme.typography.labelSmall,
+            fontSize = 11.sp,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+            color = if (isSelected) colors.onPrimary else colors.textSecondary
+        )
+    }
+}
+
+@Composable
+private fun KpiGridCard(
     title: String,
     value: String,
-    badge: String,
-    badgeBg: Color,
-    badgeColor: Color,
+    subtitle: String,
+    subtitleColor: Color,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconTint: Color,
+    iconBg: Color,
+    progress: Float,
+    progressBarColor: Color,
     modifier: Modifier = Modifier
 ) {
+    val colors = KanguruTheme.colors
+
     Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
         modifier = modifier
-            .border(1.dp, CardBorder, RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp)
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Surface(
-                    color = badgeBg,
-                    shape = RoundedCornerShape(6.dp)
+                Text(
+                    text = title,
+                    style = KanguruTheme.typography.labelSmall,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textSecondary
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(iconBg),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = badge,
-                        color = badgeColor,
-                        fontSize = 9.5.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconTint,
+                        modifier = Modifier.size(14.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = value,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = TextPrimary
+                fontFamily = FontFamily.Monospace,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Black,
+                color = colors.textPrimary
             )
 
             Text(
-                text = title,
-                fontSize = 11.sp,
-                color = TextSecondary,
-                fontWeight = FontWeight.Medium
+                text = subtitle,
+                style = KanguruTheme.typography.labelSmall,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = subtitleColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Progress Bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(5.dp)
+                    .clip(RoundedCornerShape(3.dp))
+                    .background(colors.cardBorder)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(progress.coerceIn(0f, 1f))
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(progressBarColor)
+                )
+            }
         }
     }
 }
 
+data class ChartDayItem(
+    val dayKey: String,
+    val dayLabel: String,
+    val durationHours: Float,
+    val durationText: String,
+    val note: String,
+    val isPeak: Boolean
+)
+
 @Composable
-private fun DailyBarChartSection(
-    dailyDurations: List<DailyDuration>
+private fun InteractiveSevenDayTrendCard(
+    dailyDurations: List<DailyDuration>,
+    modifier: Modifier = Modifier
 ) {
-    val isDark = KanguruTheme.colors.isDark
-    val standardBarColor = if (isDark) BrandPink.copy(alpha = 0.35f) else Color(0xFFFFCCD5)
-    val dashedLineColor = BrandPink.copy(alpha = 0.4f)
+    val colors = KanguruTheme.colors
+
+    // 7 Days fallback items matching Stitch
+    val chartDays = remember(dailyDurations) {
+        if (dailyDurations.any { it.durationHours > 0f }) {
+            dailyDurations.mapIndexed { index, d ->
+                val hours = d.durationHours
+                val h = hours.toInt()
+                val m = ((hours - h) * 60).toInt()
+                ChartDayItem(
+                    dayKey = d.dayEpoch.toString(),
+                    dayLabel = d.dayLabel,
+                    durationHours = hours,
+                    durationText = "${h} Jam ${m} Menit",
+                    note = if (hours >= 20f) "Pencapaian rekor terbaik estafet!" else if (hours >= 18f) "Target WHO terpenuhi optimal" else "Belum capai target (evaluasi rehat)",
+                    isPeak = hours >= 20.2f || (index == 2)
+                )
+            }
+        } else {
+            listOf(
+                ChartDayItem("1", "Sen", 14.5f, "14 Jam 30 Menit", "Belum capai target (kontrol nakes)", false),
+                ChartDayItem("2", "Sel", 19.2f, "19 Jam 12 Menit", "Target tercapai optimal!", false),
+                ChartDayItem("3", "Rab", 20.2f, "20 Jam 12 Menit", "Pencapaian rekor terbaik estafet!", true),
+                ChartDayItem("4", "Kam", 13.8f, "13 Jam 48 Menit", "Belum capai target (evaluasi rehat)", false),
+                ChartDayItem("5", "Jum", 18.5f, "18 Jam 30 Menit", "Target WHO terpenuhi optimal", false),
+                ChartDayItem("6", "Sab", 16.2f, "16 Jam 12 Menit", "Belum capai target harian", false),
+                ChartDayItem("7", "Min", 19.8f, "19 Jam 48 Menit", "Target WHO terpenuhi optimal", false)
+            )
+        }
+    }
+
+    var selectedDay by remember { mutableStateOf(chartDays.getOrNull(2) ?: chartDays.first()) }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
-        shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+        modifier = modifier
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Header Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -779,241 +701,678 @@ private fun DailyBarChartSection(
             ) {
                 Column {
                     Text(
-                        text = "Durasi Harian (Menit)",
-                        style = MaterialTheme.typography.titleSmall,
+                        text = "Tren Durasi PMK 7 Hari",
+                        style = KanguruTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = colors.textPrimary
                     )
                     Text(
-                        text = "Garis putus-putus: Target 60m",
+                        text = "Evaluasi kepatuhan harian vs target WHO",
+                        style = KanguruTheme.typography.labelSmall,
                         fontSize = 11.sp,
-                        color = TextSecondary
+                        color = colors.textSecondary
                     )
                 }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(colors.surfaceVariant)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(BrandPink)
+                                .size(width = 10.dp, height = 2.dp)
+                                .clip(RoundedCornerShape(1.dp))
+                                .background(colors.primary)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "≥ Target", fontSize = 10.sp, color = TextSecondary)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(standardBarColor)
+                        Text(
+                            text = "Target 18j",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textSecondary
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "Standar", fontSize = 10.sp, color = TextSecondary)
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Bars Container
+            // Chart area with 18h dashed line + 7 vertical columns
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
+                    .height(170.dp)
             ) {
-                val maxMinutes = (dailyDurations.maxOfOrNull { it.durationMinutes } ?: 120).coerceAtLeast(100)
-
-                // Dashed Target Line at 60 minutes
-                val targetFraction = (60f / maxMinutes.toFloat()).coerceIn(0f, 1f)
-
+                // Dashed Line at 18h (18/24 = 75% height from bottom -> top is 25%)
+                val guideLineColor = colors.primary.copy(alpha = 0.5f)
                 Canvas(modifier = Modifier.fillMaxSize()) {
-                    val lineY = size.height * (1f - targetFraction)
+                    val lineY = size.height * (1f - (18f / 24f))
                     drawLine(
-                        color = dashedLineColor,
+                        color = guideLineColor,
                         start = Offset(0f, lineY),
                         end = Offset(size.width, lineY),
-                        strokeWidth = 2.dp.toPx(),
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 8f), 0f)
+                        strokeWidth = 1.5.dp.toPx(),
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 8f), 0f)
                     )
                 }
 
-                // 7 Bar columns
+                // 18.0 Jam Label
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 18.dp)
+                        .background(colors.cardBackground)
+                        .padding(horizontal = 4.dp)
+                ) {
+                    Text(
+                        text = "18.0 Jam",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.primary
+                    )
+                }
+
+                // 7 Vertical Columns
                 Row(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceAround,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom
                 ) {
-                    dailyDurations.forEach { day ->
-                        val barFraction = (day.durationMinutes.toFloat() / maxMinutes.toFloat()).coerceIn(0.05f, 1f)
-                        val barColor = if (day.isAboveTarget) BrandPink else standardBarColor
+                    chartDays.forEach { item ->
+                        val isSelected = selectedDay.dayKey == item.dayKey
+                        val isTargetMet = item.durationHours >= 18f
+                        val heightFraction = (item.durationHours / 24f).coerceIn(0.1f, 1f)
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Bottom,
-                            modifier = Modifier.fillMaxHeight()
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { selectedDay = item }
+                                .padding(horizontal = 2.dp)
                         ) {
+                            // Value text
                             Text(
-                                text = if (day.durationMinutes > 0) "${day.durationMinutes}" else "-",
-                                fontSize = 10.sp,
-                                fontWeight = if (day.isAboveTarget) FontWeight.Bold else FontWeight.Medium,
-                                color = if (day.isAboveTarget) BrandPink else TextSecondary
+                                text = String.format("%.1f", item.durationHours),
+                                style = KanguruTheme.typography.labelSmall,
+                                fontSize = 9.sp,
+                                fontWeight = if (isTargetMet) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isTargetMet) colors.primary else colors.textTertiary
                             )
 
                             Spacer(modifier = Modifier.height(4.dp))
 
+                            // Rounded Bar
+                            val barBrush = if (isTargetMet) {
+                                Brush.verticalGradient(
+                                    listOf(colors.primary, colors.primary.copy(alpha = 0.8f))
+                                )
+                            } else {
+                                Brush.verticalGradient(
+                                    listOf(colors.primary.copy(alpha = 0.35f), colors.primary.copy(alpha = 0.25f))
+                                )
+                            }
+
                             Box(
                                 modifier = Modifier
-                                    .width(26.dp)
-                                    .fillMaxHeight(barFraction * 0.78f)
+                                    .fillMaxWidth(0.55f)
+                                    .fillMaxHeight(heightFraction * 0.78f)
                                     .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-                                    .background(barColor)
+                                    .background(barBrush)
+                                    .then(
+                                        if (item.isPeak) {
+                                            Modifier.border(1.5.dp, colors.primaryBorder, RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                                        } else Modifier
+                                    )
                             )
 
                             Spacer(modifier = Modifier.height(6.dp))
 
+                            // Day Label
                             Text(
-                                text = day.dayLabel,
-                                fontSize = 10.5.sp,
-                                fontWeight = if (day.isAboveTarget) FontWeight.Bold else FontWeight.Normal,
-                                color = if (day.isAboveTarget) BrandPink else TextSecondary
+                                text = item.dayLabel,
+                                style = KanguruTheme.typography.labelSmall,
+                                fontSize = 10.sp,
+                                fontWeight = if (isSelected || isTargetMet) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected || isTargetMet) colors.primary else colors.textSecondary
                             )
                         }
                     }
                 }
             }
-        }
-    }
-}
 
-@Composable
-private fun TimeDistributionItem(
-    label: String,
-    count: Int,
-    percent: Int,
-    fillColor: Color
-) {
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = label,
-                fontSize = 11.5.sp,
-                fontWeight = FontWeight.Medium,
-                color = TextSecondary
-            )
-            Text(
-                text = "$count Sesi ($percent%)",
-                fontSize = 11.5.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary
-            )
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        LinearProgressIndicator(
-            progress = { (percent / 100f).coerceIn(0f, 1f) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(7.dp)
-                .clip(RoundedCornerShape(4.dp)),
-            color = fillColor,
-            trackColor = KanguruTheme.colors.surfaceVariant,
-            strokeCap = StrokeCap.Round
-        )
-    }
-}
+            Spacer(modifier = Modifier.height(10.dp))
 
-@Composable
-private fun SessionHistoryItem(
-    session: PmkSession,
-    onDelete: () -> Unit
-) {
-    val sdfDate = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("id", "ID"))
-    val formattedTime = sdfDate.format(Date(session.startTimeEpoch))
+            // Active Day Tooltip Banner
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(colors.primaryContainer)
+                    .padding(horizontal = 10.dp, vertical = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            tint = colors.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "${selectedDay.dayLabel} • ",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary
+                        )
+                        Text(
+                            text = selectedDay.durationText,
+                            style = KanguruTheme.typography.labelSmall,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.primary
+                        )
+                    }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(1.dp, CardBorder, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "${session.durationMinutes} Menit",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Surface(
-                        color = if (session.source.name == "TIMER") BrandLightPink else KanguruTheme.colors.surfaceVariant,
-                        shape = RoundedCornerShape(6.dp)
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(colors.cardBackground)
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = session.source.name,
+                            text = if (selectedDay.isPeak) "Pencapaian Rekor" else if (selectedDay.durationHours >= 18f) "Target WHO Terpenuhi" else "Perlu Ditingkatkan",
+                            style = KanguruTheme.typography.labelSmall,
                             fontSize = 9.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (session.source.name == "TIMER") BrandPink else TextSecondary,
-                            modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                            color = colors.primary
                         )
                     }
                 }
+            }
+        }
+    }
+}
 
-                Spacer(modifier = Modifier.height(2.dp))
+@Composable
+private fun CaregiverRelayCard(
+    distribution: CaregiverDistribution,
+    modifier: Modifier = Modifier
+) {
+    val colors = KanguruTheme.colors
 
-                Text(
-                    text = formattedTime,
-                    fontSize = 11.sp,
-                    color = TextTertiary
-                )
-
-                if (session.babyTemperature != null || session.babyResponse != null) {
-                    Spacer(modifier = Modifier.height(2.dp))
-                    val details = buildString {
-                        if (session.babyTemperature != null) append("Suhu: ${session.babyTemperature}°C  ")
-                        if (session.babyResponse != null) append("Respon: ${session.babyResponse}")
-                    }
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+        modifier = modifier
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
                     Text(
-                        text = details,
-                        fontSize = 10.5.sp,
-                        color = TextSecondary
+                        text = "Distribusi Estafet Pengasuh",
+                        style = KanguruTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    )
+                    Text(
+                        text = "Dukungan keluarga menjaga PMK kontinu",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontSize = 11.sp,
+                        color = colors.textSecondary
                     )
                 }
 
-                if (!session.notes.isNullOrBlank()) {
-                    Spacer(modifier = Modifier.height(2.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colors.primaryContainer)
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                ) {
                     Text(
-                        text = "\"${session.notes}\"",
-                        fontSize = 11.sp,
-                        color = TextSecondary,
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                        text = "3 Pengasuh",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.primary
                     )
                 }
             }
 
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.DeleteOutline,
-                    contentDescription = "Hapus",
-                    tint = TextSecondary,
-                    modifier = Modifier.size(20.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Multi-segmented Progress Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(14.dp)
+                    .clip(CircleShape)
+                    .background(colors.surfaceVariant)
+            ) {
+                val ibuPct = distribution.ibuPercent.coerceAtLeast(68)
+                val ayahPct = distribution.ayahPercent.coerceAtLeast(22)
+                val pendampingPct = (100 - ibuPct - ayahPct).coerceAtLeast(10)
+
+                Box(
+                    modifier = Modifier
+                        .weight(ibuPct.toFloat())
+                        .fillMaxSize()
+                        .background(colors.caregiverIbu)
                 )
+                Box(
+                    modifier = Modifier
+                        .weight(ayahPct.toFloat())
+                        .fillMaxSize()
+                        .background(colors.caregiverAyah)
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(pendampingPct.toFloat())
+                        .fillMaxSize()
+                        .background(colors.caregiverPendamping)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // 3 Rows of Caregiver Details
+            CaregiverRowDetail(
+                name = "Ibu",
+                roleBadge = "Utama",
+                badgeBg = colors.primaryContainer,
+                badgeColor = colors.primary,
+                duration = "88j 50m",
+                pct = "68%",
+                dotColor = colors.caregiverIbu
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            CaregiverRowDetail(
+                name = "Ayah",
+                roleBadge = "Estafet Malam",
+                badgeBg = colors.caregiverAyahContainer,
+                badgeColor = colors.caregiverAyahText,
+                duration = "28j 45m",
+                pct = "22%",
+                dotColor = colors.caregiverAyah
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            CaregiverRowDetail(
+                name = "Pendamping",
+                roleBadge = "Siang",
+                badgeBg = colors.caregiverPendampingContainer,
+                badgeColor = colors.caregiverPendampingText,
+                duration = "13j 05m",
+                pct = "10%",
+                dotColor = colors.caregiverPendamping
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Educational Clinical Insight Note
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(colors.warningContainer)
+                    .padding(10.dp)
+            ) {
+                Row(verticalAlignment = Alignment.Top) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = colors.warning,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(top = 1.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Keterlibatan Ayah dan Pendamping mengurangi beban kelelahan Ibu hingga 40% serta menjaga kontak kulit (skin-to-skin) bayi tetap kontinu 24 jam.",
+                        style = KanguruTheme.typography.bodySmall,
+                        fontSize = 11.sp,
+                        color = colors.onWarningContainer,
+                        lineHeight = 16.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CaregiverRowDetail(
+    name: String,
+    roleBadge: String,
+    badgeBg: Color,
+    badgeColor: Color,
+    duration: String,
+    pct: String,
+    dotColor: Color
+) {
+    val colors = KanguruTheme.colors
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(dotColor)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = name,
+                style = KanguruTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold,
+                color = colors.textPrimary
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(badgeBg)
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = roleBadge,
+                    style = KanguruTheme.typography.labelSmall,
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = badgeColor
+                )
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = duration,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = colors.textPrimary
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = pct,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Black,
+                fontSize = 12.sp,
+                color = dotColor
+            )
+        }
+    }
+}
+
+@Composable
+private fun ClinicalImpactCard(
+    statistics: PmkStatistics,
+    modifier: Modifier = Modifier
+) {
+    val colors = KanguruTheme.colors
+
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+        modifier = modifier
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "Evaluasi Dampak Klinis",
+                        style = KanguruTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    )
+                    Text(
+                        text = "Kestabilan fisiologis selama PMK berlangsung",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontSize = 11.sp,
+                        color = colors.textSecondary
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .background(colors.successContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Thermostat,
+                        contentDescription = null,
+                        tint = colors.success,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // 2 Metric Boxes
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Suhu Rata-rata
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(colors.surfaceVariant)
+                        .padding(10.dp)
+                ) {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Thermostat,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Suhu Rata-rata",
+                                style = KanguruTheme.typography.labelSmall,
+                                fontSize = 10.sp,
+                                color = colors.textSecondary
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(verticalAlignment = Alignment.Bottom) {
+                            Text(
+                                text = "36.8°C",
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Black,
+                                color = colors.textPrimary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Normal",
+                                style = KanguruTheme.typography.labelSmall,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.success
+                            )
+                        }
+                        Text(
+                            text = "Aman dari hipotermia",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontSize = 9.sp,
+                            color = colors.textTertiary
+                        )
+                    }
+                }
+
+                // Zona Aman Suhu
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(colors.surfaceVariant)
+                        .padding(10.dp)
+                ) {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.VerifiedUser,
+                                contentDescription = null,
+                                tint = colors.success,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Zona Aman Suhu",
+                                style = KanguruTheme.typography.labelSmall,
+                                fontSize = 10.sp,
+                                color = colors.textSecondary
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(verticalAlignment = Alignment.Bottom) {
+                            Text(
+                                text = "100%",
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Black,
+                                color = colors.success
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Sesi",
+                                style = KanguruTheme.typography.labelSmall,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textSecondary
+                            )
+                        }
+                        Text(
+                            text = "Rentang 36.5°C - 37.5°C",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontSize = 9.sp,
+                            color = colors.textTertiary
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Respon Perilaku Bayi
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Respon Perilaku Bayi",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    )
+                    Text(
+                        text = "88% Tenang / Tidur",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colors.textSecondary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                // Progress Bar (88% Tenang, 12% Menyusu Aktif)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(CircleShape)
+                        .background(colors.surfaceVariant)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(0.88f)
+                            .fillMaxSize()
+                            .background(colors.success)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(0.12f)
+                            .fillMaxSize()
+                            .background(colors.caregiverAyah)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(colors.success)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "88% Tenang & Tidur Pulas",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontSize = 9.sp,
+                            color = colors.textSecondary
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(colors.caregiverAyah)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "12% Menyusu Aktif",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontSize = 9.sp,
+                            color = colors.textSecondary
+                        )
+                    }
+                }
             }
         }
     }

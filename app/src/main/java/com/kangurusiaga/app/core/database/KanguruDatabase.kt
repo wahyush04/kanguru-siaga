@@ -19,12 +19,13 @@ import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
     entities = [
         BabyEntity::class,
         PmkSessionEntity::class,
+        com.kangurusiaga.app.data.local.entity.PmkSegmentEntity::class,
         PmkReminderEntity::class,
         EducationProgressEntity::class,
         FeedingScheduleEntity::class,
         GrowthMeasurementEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class KanguruDatabase : RoomDatabase() {

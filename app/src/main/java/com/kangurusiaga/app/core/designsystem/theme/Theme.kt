@@ -96,7 +96,60 @@ data class KanguruColors(
     val growthCardBlue: Color,
     val tipBackground: Color,
     val tipBorder: Color,
-    val tipText: Color
+    val tipText: Color,
+
+    // Form Inputs & Modals (Stitch aligned)
+    val inputBackground: Color,
+    val inputFocusedBackground: Color,
+    val inputBorder: Color,
+    val dragHandle: Color,
+    val closeButtonBackground: Color,
+    val closeButtonTint: Color,
+    val buttonSecondaryBorder: Color,
+    val buttonSecondaryText: Color,
+
+    // Action Pills (Photo/Gallery & Quick Actions)
+    val actionPillPrimaryBackground: Color,
+    val actionPillPrimaryText: Color,
+    val actionPillSecondaryBackground: Color,
+    val actionPillSecondaryText: Color,
+
+    // Gender Selection Tokens
+    val genderMaleActiveBackground: Color,
+    val genderMaleActiveBorder: Color,
+    val genderMaleActiveText: Color,
+    val genderMaleActiveIconContainer: Color,
+    val genderMaleInactiveIconContainer: Color,
+    val genderMaleIcon: Color,
+    val genderMaleInactiveIcon: Color,
+
+    val genderFemaleActiveBackground: Color,
+    val genderFemaleActiveBorder: Color,
+    val genderFemaleActiveText: Color,
+    val genderFemaleActiveIconContainer: Color,
+    val genderFemaleInactiveIconContainer: Color,
+    val genderFemaleIcon: Color,
+    val genderFemaleInactiveIcon: Color,
+
+    // Avatar Frame
+    val avatarRingStart: Color,
+    val avatarRingEnd: Color,
+    val avatarInnerBackground: Color,
+
+    // Continuous PMK Caregiver & Timeline Tokens
+    val caregiverIbu: Color,
+    val caregiverIbuContainer: Color,
+    val caregiverIbuText: Color,
+    val caregiverAyah: Color,
+    val caregiverAyahContainer: Color,
+    val caregiverAyahText: Color,
+    val caregiverPendamping: Color,
+    val caregiverPendampingContainer: Color,
+    val caregiverPendampingText: Color,
+    val caregiverPause: Color,
+    val caregiverPauseContainer: Color,
+    val caregiverPauseText: Color,
+    val timelineTrack: Color
 ) {
     val primaryBorder: Color
         get() = if (isDark) Color(0xFF5E2734) else Color(0xFFFFD1DC)
@@ -120,7 +173,7 @@ val LightKanguruColors = KanguruColors(
     background = Color(0xFFFAF7F2),
     surface = Color(0xFFFFFFFF),
     surfaceElevated = Color(0xFFFFFFFF),
-    surfaceVariant = Color(0xFFF5EFE9),
+    surfaceVariant = Color(0xFFf8fafc),
     cardBackground = Color(0xFFFFFFFF),
     cardBorder = Color(0xFFF1ECE6),
     divider = Color(0xFFF1ECE6),
@@ -178,7 +231,55 @@ val LightKanguruColors = KanguruColors(
     growthCardBlue = Color(0xFFEBF4FE),
     tipBackground = Color(0xFFFFF9EA),
     tipBorder = Color(0xFFFEEAB8),
-    tipText = Color(0xFF92400E)
+    tipText = Color(0xFF92400E),
+
+    inputBackground = Color(0xFFFAF8F6),
+    inputFocusedBackground = Color(0xFFFFFFFF),
+    inputBorder = Color(0xFFE2E8F0),
+    dragHandle = Color(0xFFCBD5E1),
+    closeButtonBackground = Color(0xFFF1F5F9),
+    closeButtonTint = Color(0xFF64748B),
+    buttonSecondaryBorder = Color(0xFFCBD5E1),
+    buttonSecondaryText = Color(0xFF334155),
+
+    actionPillPrimaryBackground = Color(0xFFFFF1F2),
+    actionPillPrimaryText = Color(0xFFE11D48),
+    actionPillSecondaryBackground = Color(0xFFF1F5F9),
+    actionPillSecondaryText = Color(0xFF334155),
+
+    genderMaleActiveBackground = Color(0xFFEFF6FF),
+    genderMaleActiveBorder = Color(0xFF3B82F6),
+    genderMaleActiveText = Color(0xFF2563EB),
+    genderMaleActiveIconContainer = Color(0xFFDBEAFE),
+    genderMaleInactiveIconContainer = Color(0xFFEFF6FF),
+    genderMaleIcon = Color(0xFF2563EB),
+    genderMaleInactiveIcon = Color(0xFF3B82F6),
+
+    genderFemaleActiveBackground = Color(0xFFFFF1F2),
+    genderFemaleActiveBorder = Color(0xFFFF5C77),
+    genderFemaleActiveText = Color(0xFFE11D48),
+    genderFemaleActiveIconContainer = Color(0xFFFFE4E6),
+    genderFemaleInactiveIconContainer = Color(0xFFFFF1F2),
+    genderFemaleIcon = Color(0xFFFF5C77),
+    genderFemaleInactiveIcon = Color(0xFFFF5C77),
+
+    avatarRingStart = Color(0xFFFF5C77),
+    avatarRingEnd = Color(0xFFFDA4AF),
+    avatarInnerBackground = Color(0xFFFFF1F2),
+
+    caregiverIbu = Color(0xFFFF5C77),
+    caregiverIbuContainer = Color(0xFFFFF0F3),
+    caregiverIbuText = Color(0xFFE11D48),
+    caregiverAyah = Color(0xFF3B82F6),
+    caregiverAyahContainer = Color(0xFFEFF6FF),
+    caregiverAyahText = Color(0xFF1D4ED8),
+    caregiverPendamping = Color(0xFFF59E0B),
+    caregiverPendampingContainer = Color(0xFFFFFBEB),
+    caregiverPendampingText = Color(0xFFB45309),
+    caregiverPause = Color(0xFF94A3B8),
+    caregiverPauseContainer = Color(0xFFF1F5F9),
+    caregiverPauseText = Color(0xFF475569),
+    timelineTrack = Color(0xFFF1ECE6)
 )
 
 // 2. REDUP RUANG MENYUSUI (Dim Nursing Room - Dark)
@@ -246,7 +347,55 @@ val DarkKanguruColors = KanguruColors(
     growthCardBlue = Color(0xFF152538),
     tipBackground = Color(0xFF2D2314),
     tipBorder = Color(0xFF4E3D20),
-    tipText = Color(0xFFFDE68A)
+    tipText = Color(0xFFFDE68A),
+
+    inputBackground = Color(0xFF2B2824),
+    inputFocusedBackground = Color(0xFF1E1D1A),
+    inputBorder = Color(0xFF3E3A34),
+    dragHandle = Color(0xFF524E48),
+    closeButtonBackground = Color(0xFF2B2824),
+    closeButtonTint = Color(0xFFA8A399),
+    buttonSecondaryBorder = Color(0xFF3E3A34),
+    buttonSecondaryText = Color(0xFFF5F3EF),
+
+    actionPillPrimaryBackground = Color(0xFF3E1A22),
+    actionPillPrimaryText = Color(0xFFFFB3C1),
+    actionPillSecondaryBackground = Color(0xFF2B2824),
+    actionPillSecondaryText = Color(0xFFF5F3EF),
+
+    genderMaleActiveBackground = Color(0xFF152538),
+    genderMaleActiveBorder = Color(0xFF60A5FA),
+    genderMaleActiveText = Color(0xFF93C5FD),
+    genderMaleActiveIconContainer = Color(0xFF1E3A5F),
+    genderMaleInactiveIconContainer = Color(0xFF1B2838),
+    genderMaleIcon = Color(0xFF60A5FA),
+    genderMaleInactiveIcon = Color(0xFF60A5FA),
+
+    genderFemaleActiveBackground = Color(0xFF3E1A22),
+    genderFemaleActiveBorder = Color(0xFFFF5C7A),
+    genderFemaleActiveText = Color(0xFFFF8DA3),
+    genderFemaleActiveIconContainer = Color(0xFF5A202D),
+    genderFemaleInactiveIconContainer = Color(0xFF3A1820),
+    genderFemaleIcon = Color(0xFFFF8DA3),
+    genderFemaleInactiveIcon = Color(0xFFFF5C7A),
+
+    avatarRingStart = Color(0xFFFF5C77),
+    avatarRingEnd = Color(0xFFFDA4AF),
+    avatarInnerBackground = Color(0xFF3E1A22),
+
+    caregiverIbu = Color(0xFFFF5C7A),
+    caregiverIbuContainer = Color(0xFF3E1A22),
+    caregiverIbuText = Color(0xFFFFB3C1),
+    caregiverAyah = Color(0xFF60A5FA),
+    caregiverAyahContainer = Color(0xFF152538),
+    caregiverAyahText = Color(0xFFBFDBFE),
+    caregiverPendamping = Color(0xFFFBBF24),
+    caregiverPendampingContainer = Color(0xFF33240F),
+    caregiverPendampingText = Color(0xFFFDE68A),
+    caregiverPause = Color(0xFF64748B),
+    caregiverPauseContainer = Color(0xFF242220),
+    caregiverPauseText = Color(0xFFCBD5E1),
+    timelineTrack = Color(0xFF2B2824)
 )
 
 val LocalKanguruColors = staticCompositionLocalOf { LightKanguruColors }
@@ -268,7 +417,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF1E1E1E),
     surface = Color(0xFFFFFFFF),
     onSurface = Color(0xFF1E1E1E),
-    surfaceVariant = Color(0xFFF5EFE9),
+    surfaceVariant = Color(0xFFf8fafc),
     onSurfaceVariant = Color(0xFF6B7280),
     surfaceContainer = Color(0xFFFFFFFF),
     surfaceContainerHigh = Color(0xFFFDFCFA),
@@ -321,6 +470,11 @@ object KanguruTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalKanguruColors.current
+
+    val typography: androidx.compose.material3.Typography
+        @Composable
+        @ReadOnlyComposable
+        get() = androidx.compose.material3.MaterialTheme.typography
 
     val isDark: Boolean
         @Composable

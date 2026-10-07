@@ -91,7 +91,7 @@ fun KanguruNavGraph(
         composable(route = Screen.Home.route) {
             HomeRoute(
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route) {
+                    navController.navigate(Screen.PmkTimer.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -171,47 +171,17 @@ fun KanguruNavGraph(
             )
         }
 
-        // PMK Legacy Alias
+        // PMK Legacy Alias -> routes directly to Continuous PMK Timer
         composable(route = Screen.Pmk.route) {
-            PmkCenterScreen(
+            PmkTimerRoute(
                 onNavigateBack = {
                     navController.popBackStack()
-                },
-                onNavigateToVideo = {
-                    navController.navigate(Screen.PmkVideoList.route)
-                },
-                onNavigateToTimer = {
-                    navController.navigate(Screen.PmkTimer.route)
-                },
-                onNavigateToReminders = {
-                    navController.navigate(Screen.PmkReminders.route)
                 },
                 onNavigateToHistory = {
                     navController.navigate(Screen.PmkHistory.route)
                 },
-                onNavigateToHome = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateToEducation = {
-                    navController.navigate(Screen.EducationCenter.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateToAlarm = {
-                    navController.navigate(Screen.Feeding.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateToProfile = {
-                    navController.navigate(Screen.BabyProfile.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
+                onNavigateToGuide = {
+                    navController.navigate(Screen.PmkGuide.route)
                 }
             )
         }
@@ -226,7 +196,21 @@ fun KanguruNavGraph(
                     navController.navigate(Screen.PmkHistory.route)
                 },
                 onNavigateToGuide = {
-                    navController.navigate(Screen.PmkVideoList.route)
+                    navController.navigate(Screen.PmkGuide.route)
+                }
+            )
+        }
+
+        // Screen 5: Panduan PMK Kontinu
+        composable(route = Screen.PmkGuide.route) {
+            com.kangurusiaga.app.presentation.pmk.guide.PmkGuideScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToTimer = {
+                    navController.navigate(Screen.PmkTimer.route) {
+                        popUpTo(Screen.PmkGuide.route) { inclusive = true }
+                    }
                 }
             )
         }
@@ -479,7 +463,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route) {
+                    navController.navigate(Screen.PmkTimer.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -593,7 +577,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route) {
+                    navController.navigate(Screen.PmkTimer.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -626,7 +610,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route) {
+                    navController.navigate(Screen.PmkTimer.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -758,7 +742,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route) {
+                    navController.navigate(Screen.PmkTimer.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }

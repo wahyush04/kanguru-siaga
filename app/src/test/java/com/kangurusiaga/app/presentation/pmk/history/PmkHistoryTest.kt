@@ -1,5 +1,6 @@
 package com.kangurusiaga.app.presentation.pmk.history
 
+import com.kangurusiaga.app.domain.model.PmkCaregiver
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.presentation.navigation.Screen
 import org.junit.Assert.assertEquals
@@ -14,6 +15,7 @@ class PmkHistoryTest {
         assertEquals("pmk_history", Screen.PmkHistory.route)
         assertEquals("pmk_statistics_detail", Screen.PmkStatisticsDetail.route)
         assertEquals("pmk_statistics", Screen.PmkStatistics.route)
+        assertEquals("pmk_guide", Screen.PmkGuide.route)
     }
 
     @Test
@@ -26,6 +28,7 @@ class PmkHistoryTest {
             endTimeEpoch = now,
             durationMinutes = 60,
             targetDurationMinutes = 60,
+            currentCaregiver = PmkCaregiver.IBU,
             babyTemperature = 36.8,
             babyResponse = "Tidur Tenang",
             notes = "Suhu stabil 36.8°C"
@@ -35,5 +38,6 @@ class PmkHistoryTest {
         assertEquals(60, session.durationMinutes)
         assertEquals(36.8, session.babyTemperature ?: 0.0, 0.01)
         assertTrue(session.durationMinutes >= session.targetDurationMinutes)
+        assertEquals(PmkCaregiver.IBU, session.currentCaregiver)
     }
 }

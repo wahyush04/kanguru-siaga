@@ -197,6 +197,7 @@ fun HomeScreen(
                         todaySessionsCount = uiState.todaySessionsCount,
                         todayTargetSessions = uiState.todayTargetSessions,
                         todayProgress = uiState.todayProgressFraction,
+                        pmkProgressFormatted = uiState.formattedTodayPmkProgress,
                         unreadNotificationsCount = uiState.unreadNotificationsCount,
                         onNavigateToPmk = onNavigateToPmk,
                         onNavigateToEducation = onNavigateToEducation,
@@ -257,6 +258,7 @@ private fun HomeContent(
     todaySessionsCount: Int,
     todayTargetSessions: Int,
     todayProgress: Float,
+    pmkProgressFormatted: String,
     unreadNotificationsCount: Int,
     onNavigateToPmk: () -> Unit,
     onNavigateToEducation: () -> Unit = {},
@@ -545,13 +547,13 @@ private fun HomeContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = stringResource(R.string.home_pmk_activity_title),
+                            text = "PMK Kontinu Mandiri",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
-                            text = stringResource(R.string.home_pmk_activity_progress, todaySessionsCount, todayTargetSessions),
+                            text = pmkProgressFormatted,
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
                             color = TextSecondary,

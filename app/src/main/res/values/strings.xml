@@ -460,4 +460,71 @@
     <string name="pmk_video_cd_play">Putar Video PMK</string>
     <string name="pmk_video_cd_unmute">Nyalakan Suara</string>
     <string name="pmk_video_cd_mute">Bisukan Suara</string>
+
+    <!-- User Guide (Panduan Penggunaan) -->
+    <string name="user_guide_title">Panduan Penggunaan</string>
+    <string name="user_guide_hero_badge">Panduan Lengkap Aplikasi</string>
+    <string name="user_guide_hero_title">Cara Mengoptimalkan %1$s</string>
+    <string name="user_guide_hero_desc">Panduan praktis langkah demi langkah untuk membantu Ayah dan Bunda memanfaatkan seluruh fitur pemantauan BBLR dengan mudah, aman, dan tepat.</string>
+    <string name="user_guide_features_title">Petunjuk Fitur Utama</string>
+    <string name="user_guide_features_badge">5 Fitur Inti</string>
+    <string name="user_guide_faq_title">Tanya Jawab (FAQ)</string>
+    <string name="user_guide_support_title">Butuh Bantuan Lebih Lanjut?</string>
+    <string name="user_guide_support_desc">Tim pendamping perawat Kanguru Siaga siap mendengarkan saran dan pertanyaan Anda.</string>
+    <string name="user_guide_support_btn_contact">Hubungi Pendamping</string>
+    <string name="user_guide_support_btn_feedback">Kirim Masukan</string>
+    <string name="user_guide_info_dialog_title">Tentang Panduan</string>
+    <string name="user_guide_info_dialog_desc">Panduan ini disusun berdasarkan standar klinis Buku Saku PMK Kemenkes RI dan IDAI untuk mendampingi keluarga dalam perawatan BBLR di rumah.</string>
+
+    <!-- Clinical Guidelines (Sumber Informasi & Panduan Klinis) -->
+    <string name="clinical_guidelines_title">Sumber Informasi &amp; Klinis</string>
+    <string name="clinical_guidelines_section_title">Pedoman &amp; Landasan Teori Rujukan</string>
+    <string name="clinical_guidelines_medical_review_title">Ditelaah Oleh Tenaga Medis</string>
+    <string name="clinical_guidelines_medical_review_subtitle">Tim Riset &amp; Inovasi Perinatologi Indonesia</string>
+    <string name="clinical_guidelines_footer_notice">Dokumen rujukan diperbarui secara berkala mengikuti konsensus klinis terbaru IDAI dan Kementerian Kesehatan RI.</string>
+    <string name="clinical_guidelines_footer_version">KANGURU SIAGA • Versi 1.2.0 (Build 2026)</string>
+
+    <!-- About App (Tentang KANGURU SIAGA) -->
+    <string name="about_app_title">Tentang KANGURU SIAGA</string>
+    <string name="about_app_subtitle">Pendamping Perawatan BBLR di Rumah</string>
+    <string name="about_app_version">Versi 1.2.0 (Build 2026)</string>
+    <string name="about_app_vision_title">Visi &amp; Komitmen Kami</string>
+    <string name="about_app_vision_desc">Mewujudkan setiap bayi prematur dan BBLR tumbuh optimal, hangat, dan sehat melalui pemberdayaan keluarga dengan panduan praktis berbasis bukti ilmiah klinis.</string>
+    <string name="about_app_pillars_title">4 Pilar Layanan Unggulan</string>
+    <string name="about_app_references_title">Rujukan &amp; Standar Medis</string>
+    <string name="about_app_dev_team_note">Dikembangkan dengan dedikasi untuk para pejuang kecil</string>
+    <string name="about_app_dev_team_name">Tim Riset &amp; Inovasi Perinatologi Indonesia</string>
+    <string name="about_app_copyright">© 2026 KANGURU SIAGA • Hak Cipta Dilindungi</string>
+
+    <!-- Medical Disclaimer (Disclaimer Medis) -->
+    <string name="disclaimer_title">Disclaimer Medis</string>
+    <string name="disclaimer_badge">Pemberitahuan Penting &amp; Batasan</string>
+    <string name="disclaimer_hero_title">Bukan Pengganti Konsultasi Medis Langsung</string>
+    <string name="disclaimer_emergency_title">Situasi Kegawatan &amp; Darurat Medis</string>
+    <string name="disclaimer_emergency_btn">Kontak Darurat Neonatus / SPGDT: 119 / 112</string>
+    <string name="disclaimer_features_title">Batasan Penggunaan Fitur Aplikasi</string>
+    <string name="disclaimer_accuracy_title">Akurasi &amp; Pemutakhiran Informasi</string>
+    <string name="disclaimer_consent_title">Pernyataan &amp; Persetujuan Pengguna</string>
+    <string name="disclaimer_footer_note">Dokumen disclaimer ditinjau berkala mengikuti standar perinatologi IDAI</string>
+    <string name="disclaimer_footer_version">KANGURU SIAGA • Versi 1.2.0 (Build 2026)</string>
+    <string name="disclaimer_footer_copyright">© 2026 Tim Riset &amp; Inovasi Perinatologi Indonesia</string>
+
+    <!-- Edit Baby Profile Bottom Sheet -->
+    <string name="edit_baby_title">Edit Data Bayi</string>
+    <string name="edit_baby_badge">Profil Pasien</string>
+    <string name="edit_baby_subtitle">Perbarui identitas dan data klinis kelahiran si kecil</string>
+    <string name="edit_baby_label_name">Nama Lengkap Bayi</string>
+    <string name="edit_baby_placeholder_name">Masukkan nama bayi...</string>
+    <string name="edit_baby_label_birth_date">Tanggal Lahir</string>
+    <string name="edit_baby_age_helper">Usia saat ini: %1$s minggu (%2$s bulan)</string>
+    <string name="edit_baby_label_gender">Jenis Kelamin</string>
+    <string name="edit_baby_gender_male">Laki-laki</string>
+    <string name="edit_baby_gender_female">Perempuan</string>
+    <string name="edit_baby_label_birth_weight">Berat Lahir Bayi</string>
+    <string name="edit_baby_status_bblr">Status: BBLR</string>
+    <string name="edit_baby_status_normal">Status: Normal</string>
+    <string name="edit_baby_unit_gram">gram</string>
+    <string name="edit_baby_bblr_warning">Kategori BBLR (&lt; 2.500 gram) — Bayi memerlukan kontak kulit ke kulit (Metode Kanguru) rutin dan monitoring kenaikan berat badan intensif.</string>
+    <string name="edit_baby_btn_cancel">Batal</string>
+    <string name="edit_baby_btn_save">Simpan Perubahan</string>
 </resources>

@@ -17,9 +17,17 @@ data class PmkSessionEntity(
     @ColumnInfo(name = "duration_minutes")
     val durationMinutes: Int,
     @ColumnInfo(name = "target_duration_minutes")
-    val targetDurationMinutes: Int = 60,
+    val targetDurationMinutes: Int = 1200, // 20 hours default continuous KMC target
     @ColumnInfo(name = "source")
     val source: String, // "TIMER" or "MANUAL"
+    @ColumnInfo(name = "current_caregiver")
+    val currentCaregiver: String = "IBU",
+    @ColumnInfo(name = "status")
+    val status: String = "COMPLETED", // "RUNNING", "PAUSED", "COMPLETED"
+    @ColumnInfo(name = "active_duration_minutes")
+    val activeDurationMinutes: Int = durationMinutes,
+    @ColumnInfo(name = "pause_duration_minutes")
+    val pauseDurationMinutes: Int = 0,
     @ColumnInfo(name = "baby_temperature")
     val babyTemperature: Double? = null,
     @ColumnInfo(name = "baby_response")

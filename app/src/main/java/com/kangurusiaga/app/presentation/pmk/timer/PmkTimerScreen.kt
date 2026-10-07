@@ -1,55 +1,55 @@
 package com.kangurusiaga.app.presentation.pmk.timer
 
-import androidx.compose.animation.core.FastOutSlowInEasing
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.MenuBook
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -58,67 +58,44 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.zIndex
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
-import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
-import com.kangurusiaga.app.core.designsystem.theme.BrandDarkPink
-import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
-import com.kangurusiaga.app.core.designsystem.theme.BrandPink
-import com.kangurusiaga.app.core.designsystem.theme.BrandPinkAccent
-import com.kangurusiaga.app.core.designsystem.theme.BrandPinkBorder
-import com.kangurusiaga.app.core.designsystem.theme.BrandPinkGradientEnd
-import com.kangurusiaga.app.core.designsystem.theme.BrandPinkGradientMid
-import com.kangurusiaga.app.core.designsystem.theme.BrandPinkGradientStart
-import com.kangurusiaga.app.core.designsystem.theme.BrandPinkTrack
-import com.kangurusiaga.app.core.designsystem.theme.BrandSoftAmber
-import com.kangurusiaga.app.core.designsystem.theme.BrandSoftGreen
-import com.kangurusiaga.app.core.designsystem.theme.BrandTextAmber
-import com.kangurusiaga.app.core.designsystem.theme.BrandTextGreen
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
-import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
-import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
-import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
-import com.kangurusiaga.app.core.designsystem.theme.White
+import com.kangurusiaga.app.domain.model.PmkCaregiver
+import com.kangurusiaga.app.domain.model.PmkPauseReason
 import com.kangurusiaga.app.domain.model.TimerStatus
+import com.kangurusiaga.app.presentation.pmk.components.PmkCaregiverHandoverSheet
+import com.kangurusiaga.app.presentation.pmk.components.PmkPauseSheet
+import com.kangurusiaga.app.presentation.pmk.components.PmkTimeline24HourBar
 
-/**
- * Screen: Kanguru Siaga - Mulai PMK New (Timer Varian Kasidig)
- * Source of Truth: Google Stitch Design
- * Screen ID: projects/10808370107038581899/screens/e460c98189414387a9b28dfd2e534523
- */
 @Composable
 fun PmkTimerRoute(
     onNavigateBack: () -> Unit,
-    onNavigateToHistory: () -> Unit = {},
-    onNavigateToGuide: () -> Unit = {},
+    onNavigateToHistory: () -> Unit,
+    onNavigateToGuide: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PmkTimerViewModel = hiltViewModel()
 ) {
@@ -129,7 +106,7 @@ fun PmkTimerRoute(
         viewModel.events.collect { event ->
             when (event) {
                 is PmkTimerUiEvent.SessionCompleted -> {
-                    snackbarHostState.showSnackbar("Sesi PMK (${event.session.durationMinutes} menit) berhasil disimpan!")
+                    onNavigateToHistory()
                 }
                 is PmkTimerUiEvent.Message -> {
                     snackbarHostState.showSnackbar(event.text)
@@ -143,945 +120,1117 @@ fun PmkTimerRoute(
         onNavigateBack = onNavigateBack,
         onNavigateToHistory = onNavigateToHistory,
         onNavigateToGuide = onNavigateToGuide,
-        onStart = viewModel::startTimer,
-        onPause = viewModel::pauseTimer,
-        onResume = viewModel::resumeTimer,
-        onRequestFinish = viewModel::requestFinishSession,
-        onOpenTargetDialog = viewModel::openTargetDialog,
-        onCloseTargetDialog = viewModel::closeTargetDialog,
-        onUpdateTargetMinutes = viewModel::updateTargetMinutes,
-        onCloseObservationDialog = viewModel::closeObservationDialog,
-        onUpdateObservationInput = viewModel::updateObservationInput,
-        onConfirmFinish = viewModel::confirmFinishSession,
-        onNotesChanged = viewModel::setNotes,
+        onStart = { viewModel.startContinuousTimer() },
+        onOpenPauseSheet = { viewModel.openPauseSheet() },
+        onClosePauseSheet = { viewModel.closePauseSheet() },
+        onSelectPauseReason = { viewModel.selectPauseReason(it) },
+        onPauseDetailsChange = { temp, behav, notes -> viewModel.updatePauseDetails(temp, behav, notes) },
+        onConfirmPause = { viewModel.confirmPause() },
+        onResume = { viewModel.resumeTimer() },
+        onOpenHandoverSheet = { viewModel.openCaregiverHandoverSheet(it) },
+        onCloseHandoverSheet = { viewModel.closeCaregiverHandoverSheet() },
+        onSelectHandoverCaregiver = { viewModel.selectHandoverCaregiver(it) },
+        onHandoverDetailsChange = { temp, resp, notes -> viewModel.updateHandoverDetails(temp, resp, notes) },
+        onConfirmHandover = { viewModel.confirmCaregiverHandover() },
+        onRequestFinish = { viewModel.requestFinishSession() },
+        onCloseFinishDialog = { viewModel.closeFinishConfirmDialog() },
+        onConfirmFinish = { viewModel.confirmFinishSession() },
+        onToggleNightMode = { viewModel.toggleNightModeDim() },
         snackbarHostState = snackbarHostState,
         modifier = modifier
     )
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PmkTimerScreen(
     uiState: PmkTimerUiState,
     onNavigateBack: () -> Unit,
     onNavigateToHistory: () -> Unit = {},
-    onNavigateToGuide: () -> Unit = {},
+    onNavigateToGuide: () -> Unit,
     onStart: () -> Unit,
-    onPause: () -> Unit,
+    onOpenPauseSheet: () -> Unit,
+    onClosePauseSheet: () -> Unit,
+    onSelectPauseReason: (PmkPauseReason) -> Unit,
+    onPauseDetailsChange: (String, String, String) -> Unit,
+    onConfirmPause: () -> Unit,
     onResume: () -> Unit,
+    onOpenHandoverSheet: (PmkCaregiver?) -> Unit,
+    onCloseHandoverSheet: () -> Unit,
+    onSelectHandoverCaregiver: (PmkCaregiver) -> Unit,
+    onHandoverDetailsChange: (String, String, String) -> Unit,
+    onConfirmHandover: () -> Unit,
     onRequestFinish: () -> Unit,
-    onOpenTargetDialog: () -> Unit,
-    onCloseTargetDialog: () -> Unit,
-    onUpdateTargetMinutes: (Int) -> Unit,
-    onCloseObservationDialog: () -> Unit,
-    onUpdateObservationInput: (String, String) -> Unit,
+    onCloseFinishDialog: () -> Unit,
     onConfirmFinish: () -> Unit,
-    onNotesChanged: (String) -> Unit,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    onToggleNightMode: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
+    val colors = KanguruTheme.colors
     val timerState = uiState.timerState
+    val handoverSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val pauseSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    // Theme Color Tokens
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val surfaceColor = MaterialTheme.colorScheme.surface
-    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
-    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
-    val outlineColor = MaterialTheme.colorScheme.outline
-
-    val headerGradientColors = listOf(
-        BrandPinkGradientStart,
-        BrandPinkGradientMid,
-        BrandPinkGradientEnd
+    val gradientBrush = Brush.verticalGradient(
+        colors = listOf(
+            colors.pinkGradientStart,
+            colors.pinkGradientMid,
+            colors.pinkGradientEnd
+        )
     )
 
-    Box(
+    val dimModifier = if (uiState.isNightModeDim) {
+        Modifier.alpha(0.85f)
+    } else Modifier
+
+    Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = headerGradientColors
-                )
-            )
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = Color.Transparent,
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
+            .then(dimModifier),
+        containerColor = colors.background,
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(gradientBrush)
+                .padding(bottom = innerPadding.calculateBottomPadding().coerceAtLeast(0.dp))
+                .verticalScroll(rememberScrollState())
+        ) {
+            // =========================================================================
+            // TOP HEADER (Brand Pink Gradient Hero)
+            // =========================================================================
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(bottom = 6.dp)
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
                 ) {
-                    // Top Navigation Bar
+                    // Navigation Bar (1:1 with Stitch reference)
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Back Button
+                        // Left: Back button
                         IconButton(
                             onClick = onNavigateBack,
-                            modifier = Modifier.size(38.dp)
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.2f))
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.common_back),
-                                tint = onPrimaryColor
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
 
-                        // Screen Title
+                        // Center: Single-line Title
                         Text(
-                            text = stringResource(R.string.pmk_timer_title),
-                            fontSize = 17.5.sp,
+                            text = "PMK Kontinu Mandiri",
+                            style = KanguruTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = onPrimaryColor,
+                            color = Color.White,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 8.dp),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
 
-                        // Riwayat PMK Action Button
+                        // Right: Panduan cKMC Button
                         Surface(
-                            onClick = onNavigateToHistory,
-                            shape = CircleShape,
-                            color = onPrimaryColor.copy(alpha = 0.22f),
-                            modifier = Modifier.size(34.dp)
+                            shape = RoundedCornerShape(20.dp),
+                            color = Color.White.copy(alpha = 0.2f),
+                            onClick = onNavigateToGuide
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
                                 Icon(
-                                    imageVector = Icons.Default.AccessTime,
-                                    contentDescription = stringResource(R.string.pmk_timer_cd_history),
-                                    tint = onPrimaryColor,
-                                    modifier = Modifier.size(17.dp)
+                                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                                    contentDescription = "Panduan",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(
+                                    text = "Panduan",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White
                                 )
                             }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Baby Identity Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(44.dp)
+                                    .clip(CircleShape)
+                                    .border(2.dp, Color.White, CircleShape)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_pmk_mascot),
+                                    contentDescription = "Bayi",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                                if (timerState.isRunning) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(12.dp)
+                                            .align(Alignment.BottomEnd)
+                                            .clip(CircleShape)
+                                            .background(colors.success)
+                                            .border(1.5.dp, Color.White, CircleShape)
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = uiState.baby?.name ?: "Nirmala",
+                                        style = KanguruTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(Color.White.copy(alpha = 0.25f))
+                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = if (timerState.isPaused) "JEDA" else "PMK KONTINU AKTIF",
+                                            style = KanguruTheme.typography.labelSmall,
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Favorite,
+                                        contentDescription = null,
+                                        tint = Color.White.copy(alpha = 0.85f),
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "Kontak Kulit: Menempel di Dada",
+                                        style = KanguruTheme.typography.bodySmall,
+                                        fontSize = 11.sp,
+                                        color = Color.White.copy(alpha = 0.9f)
+                                    )
+                                }
+                            }
+                        }
+
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                text = "Target Ideal",
+                                style = KanguruTheme.typography.labelSmall,
+                                fontSize = 10.sp,
+                                color = Color.White.copy(alpha = 0.8f)
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(Color.Black.copy(alpha = 0.15f))
+                                    .padding(horizontal = 8.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "20 Jam",
+                                        style = KanguruTheme.typography.bodySmall,
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
                         }
                     }
                 }
             }
-        ) { innerPadding ->
-            // Main White Card Surface
+
+            // =========================================================================
+            // WHITE SURFACE CARD BODY (Continuous PMK Dashboard)
+            // =========================================================================
             Surface(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp),
-                color = surfaceColor,
-                shadowElevation = 10.dp
+                color = colors.cardBackground,
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    // Scrollable Main Content
-                    Column(
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 14.dp)
+                ) {
+                    // 1. Continuous Stopwatch Hero Card
+                    val transition = rememberInfiniteTransition(label = "pulse")
+                    val pulseAlpha by transition.animateFloat(
+                        initialValue = 0.35f,
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(1000),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "alpha"
+                    )
+
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(horizontal = 24.dp, vertical = 18.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(18.dp))
-
-                        // Circular Progress Timer Gauge
-                        Box(
-                            modifier = Modifier
-                                .size(240.dp)
-                                .padding(4.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val progress = timerState.progress
-                            val sweepAngle = (progress * 360f).coerceIn(0f, 360f)
-
-                            Canvas(modifier = Modifier.fillMaxSize()) {
-                                val strokeWidth = 17.dp.toPx()
-                                val radius = (size.minDimension - strokeWidth) / 2
-                                val center = Offset(size.width / 2, size.height / 2)
-                                val topLeft = Offset(center.x - radius, center.y - radius)
-                                val arcSize = Size(radius * 2, radius * 2)
-
-                                // Inactive Track Ring
-                                drawArc(
-                                    color = BrandPinkTrack,
-                                    startAngle = 0f,
-                                    sweepAngle = 360f,
-                                    useCenter = false,
-                                    topLeft = topLeft,
-                                    size = arcSize,
-                                    style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-                                )
-
-                                // Active Progress Arc
-                                if (sweepAngle > 0f) {
-                                    drawArc(
-                                        color = primaryColor,
-                                        startAngle = -90f,
-                                        sweepAngle = sweepAngle,
-                                        useCenter = false,
-                                        topLeft = topLeft,
-                                        size = arcSize,
-                                        style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(
+                                        Color(0xFFFFF5F7),
+                                        Color(0xFFFFF9F9),
+                                        Color.White
                                     )
-                                }
-                            }
-
-                            // Floating Accent Diamond Indicator on Track
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopStart)
-                                    .offset(x = 24.dp, y = 56.dp)
-                                    .size(11.dp)
-                                    .rotate(45f)
-                                    .background(BrandPinkAccent.copy(alpha = 0.85f), RoundedCornerShape(2.dp))
-                            )
-
-                            // Central Illustration: Kangaroo Mother Care (PMK)
-                            Box(
-                                modifier = Modifier
-                                    .size(152.dp)
-                                    .clip(CircleShape)
-                                    .background(BrandLightPink.copy(alpha = 0.5f))
-                                    .padding(8.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.il_pmk_timer_center),
-                                    contentDescription = "Ibu dan Bayi PMK",
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier.fillMaxSize()
                                 )
-                            }
-                        }
-
-                        // Timer Display Numbers
-                        Text(
-                            text = timerState.formattedTime,
-                            fontSize = 38.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace,
-                            color = onSurfaceColor,
-                            letterSpacing = (-0.5).sp,
-                            modifier = Modifier.padding(top = 16.dp)
+                            )
+                            .border(1.dp, Color(0xFFFFE2E7), RoundedCornerShape(24.dp))
+                            .padding(horizontal = 14.dp, vertical = 12.dp)
+                    ) {
+                        // Watermark Heart in bottom right corner
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = null,
+                            tint = colors.primary.copy(alpha = 0.07f),
+                            modifier = Modifier
+                                .size(88.dp)
+                                .align(Alignment.BottomEnd)
+                                .offset(x = 12.dp, y = 12.dp)
                         )
 
-                        // Active Status Indicator Row
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            modifier = Modifier.padding(top = 4.dp)
-                        ) {
-                            when (timerState.status) {
-                                TimerStatus.RUNNING -> {
-                                    PulsingCoralDot()
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_status_running),
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = onSurfaceVariant
-                                    )
-                                }
-                                TimerStatus.PAUSED -> {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(8.dp)
-                                            .clip(CircleShape)
-                                            .background(BrandTextAmber)
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_status_paused),
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = BrandTextAmber
-                                    )
-                                }
-                                TimerStatus.COMPLETED -> {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(8.dp)
-                                            .clip(CircleShape)
-                                            .background(BrandTextGreen)
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_status_completed),
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = BrandTextGreen
-                                    )
-                                }
-                                TimerStatus.IDLE -> {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(8.dp)
-                                            .clip(CircleShape)
-                                            .background(TextTertiary)
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_status_idle),
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = onSurfaceVariant
-                                    )
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        // Session Control Buttons
-                        when (timerState.status) {
-                            TimerStatus.IDLE -> {
-                                Button(
-                                    onClick = onStart,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .heightIn(min = 54.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = primaryColor,
-                                        contentColor = onPrimaryColor
-                                    ),
-                                    shape = RoundedCornerShape(16.dp),
-                                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_btn_start),
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
-                            TimerStatus.RUNNING -> {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(14.dp)
-                                ) {
-                                    // Button Jeda
-                                    Button(
-                                        onClick = onPause,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .heightIn(min = 54.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = primaryContainer,
-                                            contentColor = primaryColor
-                                        ),
-                                        border = BorderStroke(1.dp, BrandPinkBorder),
-                                        shape = RoundedCornerShape(16.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Pause,
-                                            contentDescription = null,
-                                            tint = primaryColor,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = stringResource(R.string.pmk_timer_btn_pause),
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = primaryColor
-                                        )
-                                    }
-
-                                    // Button Selesai
-                                    Button(
-                                        onClick = onRequestFinish,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .heightIn(min = 54.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = primaryColor,
-                                            contentColor = onPrimaryColor
-                                        ),
-                                        shape = RoundedCornerShape(16.dp),
-                                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(13.dp)
-                                                .background(onPrimaryColor, RoundedCornerShape(3.dp))
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = stringResource(R.string.pmk_timer_btn_finish),
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
-                            }
-                            TimerStatus.PAUSED -> {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(14.dp)
-                                ) {
-                                    // Button Lanjut
-                                    Button(
-                                        onClick = onResume,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .heightIn(min = 54.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = primaryContainer,
-                                            contentColor = primaryColor
-                                        ),
-                                        border = BorderStroke(1.dp, BrandPinkBorder),
-                                        shape = RoundedCornerShape(16.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.PlayArrow,
-                                            contentDescription = null,
-                                            tint = primaryColor,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = stringResource(R.string.pmk_timer_btn_resume),
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = primaryColor
-                                        )
-                                    }
-
-                                    // Button Selesai
-                                    Button(
-                                        onClick = onRequestFinish,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .heightIn(min = 54.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = primaryColor,
-                                            contentColor = onPrimaryColor
-                                        ),
-                                        shape = RoundedCornerShape(16.dp),
-                                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(13.dp)
-                                                .background(onPrimaryColor, RoundedCornerShape(3.dp))
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = stringResource(R.string.pmk_timer_btn_finish),
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
-                            }
-                            TimerStatus.COMPLETED -> {
-                                Button(
-                                    onClick = onStart,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .heightIn(min = 54.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = primaryColor,
-                                        contentColor = onPrimaryColor
-                                    ),
-                                    shape = RoundedCornerShape(16.dp),
-                                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_btn_new_session),
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        // Target Duration Card
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = surfaceColor),
-                            border = BorderStroke(1.dp, BrandPinkBorder.copy(alpha = 0.7f)),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(32.dp)
-                                            .clip(CircleShape)
-                                            .background(primaryContainer),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.AccessTime,
-                                            contentDescription = null,
-                                            tint = primaryColor,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
-                                    Column {
-                                        Text(
-                                            text = stringResource(R.string.pmk_timer_target_label),
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = onSurfaceVariant
-                                        )
-                                        Text(
-                                            text = stringResource(R.string.pmk_timer_target_sub),
-                                            fontSize = 11.sp,
-                                            color = TextTertiary
-                                        )
-                                    }
-                                }
-
-                                Surface(
-                                    onClick = onOpenTargetDialog,
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = primaryContainer,
-                                    border = BorderStroke(1.dp, BrandPinkBorder)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                    ) {
-                                        Text(
-                                            text = "${timerState.targetDurationMinutes}",
-                                            fontFamily = FontFamily.Monospace,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 14.sp,
-                                            color = onSurfaceColor
-                                        )
-                                        Text(
-                                            text = stringResource(R.string.pmk_timer_unit_minutes),
-                                            fontSize = 11.5.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = primaryColor
-                                        )
-                                        Icon(
-                                            imageVector = Icons.Default.Edit,
-                                            contentDescription = stringResource(R.string.pmk_timer_cd_edit_duration),
-                                            tint = primaryColor,
-                                            modifier = Modifier.size(13.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        // Session Notes Input
                         Column(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            // Live Indicator Pulsing Badge
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_notes_label),
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = onSurfaceColor
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_notes_optional),
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Normal,
-                                        color = TextTertiary
-                                    )
-                                }
-                                Text(
-                                    text = stringResource(R.string.pmk_timer_notes_max_char),
-                                    fontSize = 11.sp,
-                                    color = TextTertiary
-                                )
-                            }
-
-                            OutlinedTextField(
-                                value = timerState.notes,
-                                onValueChange = { if (it.length <= 200) onNotesChanged(it) },
-                                placeholder = {
-                                    Text(
-                                        text = stringResource(R.string.pmk_timer_notes_placeholder),
-                                        fontSize = 12.sp,
-                                        color = TextTertiary,
-                                        lineHeight = 17.sp
-                                    )
-                                },
-                                textStyle = androidx.compose.ui.text.TextStyle(
-                                    fontSize = 12.5.sp,
-                                    color = onSurfaceColor,
-                                    lineHeight = 18.sp
-                                ),
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(16.dp),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = primaryColor,
-                                    unfocusedBorderColor = BrandPinkBorder.copy(alpha = 0.7f),
-                                    focusedContainerColor = surfaceColor,
-                                    unfocusedContainerColor = surfaceColor
-                                ),
-                                minLines = 2,
-                                maxLines = 3
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(18.dp))
-
-                        // Medical Guideline Tips Card
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.warningContainer),
-                            border = BorderStroke(1.dp, KanguruTheme.colors.warningBorder),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                        ) {
-                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(14.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                verticalAlignment = Alignment.Top
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .background(Color(0xFFECFDF5))
+                                    .border(1.dp, Color(0xFFA7F3D0).copy(alpha = 0.8f), RoundedCornerShape(20.dp))
+                                    .padding(horizontal = 12.dp, vertical = 3.dp)
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(26.dp)
+                                        .size(7.dp)
                                         .clip(CircleShape)
-                                        .background(KanguruTheme.colors.warning.copy(alpha = 0.15f)),
-                                    contentAlignment = Alignment.Center
+                                        .alpha(if (timerState.isRunning) pulseAlpha else 1f)
+                                        .background(Color(0xFF10B981))
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = if (timerState.isPaused) "Jeda Sementara (${timerState.pauseReason ?: "Perawatan"})" else "Pemantauan Kontinu Berjalan",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF047857)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            // Large Digital Stopwatch Display (HH : mm : ss)
+                            Text(
+                                text = if (timerState.isPaused) timerState.formattedPauseTime else timerState.formattedTime,
+                                fontSize = 36.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.ExtraBold,
+                                maxLines = 1,
+                                softWrap = false,
+                                color = if (timerState.isPaused) colors.warning else Color(0xFF0F172A),
+                                letterSpacing = 0.5.sp
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = if (timerState.isPaused) "DURASI JEDA PERAWATAN" else "TOTAL KONTAK KULIT HARI INI",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    letterSpacing = 0.5.sp,
+                                    color = colors.textTertiary
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(Color(0xFFFFE8EC))
+                                        .padding(horizontal = 8.dp, vertical = 2.dp)
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Lightbulb,
-                                        contentDescription = null,
-                                        tint = KanguruTheme.colors.warning,
-                                        modifier = Modifier.size(15.dp)
+                                    Text(
+                                        text = "${timerState.todayPercentage}% Menuju Ideal",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.primary
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            // Progress Bar Section directly inside Hero (max-w-[280px])
+                            Column(
+                                modifier = Modifier
+                                    .widthIn(max = 280.dp)
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                BoxWithConstraints(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(10.dp)
+                                        .clip(RoundedCornerShape(5.dp))
+                                        .background(Color(0xFFF1F5F9))
+                                        .border(1.dp, Color(0xFFFFE2E7), RoundedCornerShape(5.dp))
+                                        .padding(1.dp)
+                                ) {
+                                    val totalW = maxWidth
+                                    val fillFraction = timerState.todayProgress.coerceIn(0f, 1f)
+
+                                    // Filled Bar
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth(fraction = fillFraction)
+                                            .fillMaxHeight()
+                                            .clip(RoundedCornerShape(5.dp))
+                                            .background(
+                                                Brush.horizontalGradient(
+                                                    listOf(Color(0xFFFF758F), Color(0xFFFF5C77))
+                                                )
+                                            )
+                                    )
+
+                                    // Min 8 Jam Marker (33.3%)
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .width(1.5.dp)
+                                            .offset(x = totalW * 0.333f)
+                                            .background(Color(0xFFFBBF24))
+                                    )
+
+                                    // Target Ideal 20 Jam Marker (83.3%)
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .width(1.5.dp)
+                                            .offset(x = totalW * 0.833f)
+                                            .background(colors.primary)
                                     )
                                 }
 
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 2.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = timerState.formattedTodayTotal,
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFF1E293B)
+                                        )
+                                        Text(
+                                            text = " / 24j",
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color(0xFF64748B)
+                                        )
+                                    }
+                                    Text(
+                                        text = "Target: 20 Jam (83%)",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = colors.primary
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(6.dp))
+                                HorizontalDivider(
+                                    color = Color(0xFFF1F5F9),
+                                    thickness = 1.dp
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = "★",
+                                            fontSize = 10.sp,
+                                            color = colors.primary
+                                        )
+                                        Spacer(modifier = Modifier.width(3.dp))
+                                        Text(
+                                            text = "Target Rekomendasi: ",
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            color = colors.primary
+                                        )
+                                        Text(
+                                            text = "≥20 Jam / Hari",
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = colors.primary
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFFF8FAFC))
+                                            .border(0.5.dp, Color(0xFFF1F5F9), RoundedCornerShape(4.dp))
+                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "Kemenkes / WHO",
+                                            fontSize = 8.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color(0xFF94A3B8)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 2. Timeline Ritme 24 Jam Component (Positioned directly below Hero)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable(onClick = onNavigateToHistory)
+                    ) {
+                        PmkTimeline24HourBar(timeline = uiState.timeline)
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 3. Ergonomic Action Controls
+                    when (timerState.status) {
+                        TimerStatus.RUNNING -> {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Surface(
+                                    shape = RoundedCornerShape(16.dp),
+                                    shadowElevation = 3.dp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .clickable(onClick = onOpenPauseSheet)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                Brush.horizontalGradient(
+                                                    listOf(colors.pinkGradientStart, colors.pinkGradientMid)
+                                                )
+                                            )
+                                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(32.dp)
+                                                    .clip(CircleShape)
+                                                    .background(Color.White.copy(alpha = 0.25f)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Pause,
+                                                    contentDescription = null,
+                                                    tint = Color.White,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
+                                            Column {
+                                                Text(
+                                                    text = "Jeda Sementara PMK",
+                                                    style = KanguruTheme.typography.titleSmall,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.White
+                                                )
+                                                Text(
+                                                    text = "Mandi, Menyusu, atau Kebutuhan Perawatan Singkat",
+                                                    style = KanguruTheme.typography.bodySmall,
+                                                    fontSize = 10.sp,
+                                                    color = Color.White.copy(alpha = 0.9f)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                // Continuity pill
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(colors.primaryContainer)
+                                        .border(1.dp, colors.primary.copy(alpha = 0.2f), RoundedCornerShape(20.dp))
+                                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(6.dp)
+                                            .clip(CircleShape)
+                                            .background(colors.primary)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Mode PMK Kontinu 24 Jam: Estafet Bergantian • Hanya Jeda Singkat Medis/Perawatan",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontSize = 9.sp,
+                                        color = colors.textPrimary,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+
+                        TimerStatus.PAUSED -> {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Surface(
+                                    shape = RoundedCornerShape(16.dp),
+                                    shadowElevation = 3.dp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .clickable(onClick = onResume)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                Brush.horizontalGradient(
+                                                    listOf(colors.pinkGradientStart, colors.pinkGradientMid)
+                                                )
+                                            )
+                                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(32.dp)
+                                                    .clip(CircleShape)
+                                                    .background(Color.White.copy(alpha = 0.25f)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.PlayArrow,
+                                                    contentDescription = null,
+                                                    tint = Color.White,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
+                                            Column {
+                                                Text(
+                                                    text = "Lanjutkan PMK Kontinu",
+                                                    style = KanguruTheme.typography.titleSmall,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.White
+                                                )
+                                                Text(
+                                                    text = "Kembali ke posisi kontak kulit dada-ke-dada",
+                                                    style = KanguruTheme.typography.bodySmall,
+                                                    fontSize = 10.sp,
+                                                    color = Color.White.copy(alpha = 0.9f)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                // Continuity pill
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(Color(0xFFFFF5F7))
+                                        .border(1.dp, Color(0xFFFFE2E7), RoundedCornerShape(20.dp))
+                                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(6.dp)
+                                            .clip(CircleShape)
+                                            .background(colors.primary)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Mode PMK Kontinu 24 Jam: Estafet Bergantian • Hanya Jeda Singkat Medis/Perawatan",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontSize = 9.sp,
+                                        color = colors.textPrimary,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+
+                        TimerStatus.IDLE -> {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Surface(
+                                    shape = RoundedCornerShape(16.dp),
+                                    shadowElevation = 3.dp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .clickable(onClick = onStart)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                Brush.horizontalGradient(
+                                                    listOf(colors.pinkGradientStart, colors.pinkGradientMid)
+                                                )
+                                            )
+                                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(32.dp)
+                                                    .clip(CircleShape)
+                                                    .background(Color.White.copy(alpha = 0.25f)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Pause,
+                                                    contentDescription = null,
+                                                    tint = Color.White,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
+                                            Column {
+                                                Text(
+                                                    text = "Jeda Sementara PMK",
+                                                    style = KanguruTheme.typography.titleSmall,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.White
+                                                )
+                                                Text(
+                                                    text = "Mandi, Menyusu, atau Kebutuhan Perawatan Singkat",
+                                                    style = KanguruTheme.typography.bodySmall,
+                                                    fontSize = 10.sp,
+                                                    color = Color.White.copy(alpha = 0.9f)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                // Continuity pill
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(Color(0xFFFFF5F7))
+                                        .border(1.dp, Color(0xFFFFE2E7), RoundedCornerShape(20.dp))
+                                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(6.dp)
+                                            .clip(CircleShape)
+                                            .background(colors.primary)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Mode PMK Kontinu 24 Jam: Estafet Bergantian • Hanya Jeda Singkat Medis/Perawatan",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontSize = 9.sp,
+                                        color = colors.textPrimary,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+
+                        TimerStatus.COMPLETED -> Unit
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Yang Melakukan PMK (Caregiver selection box)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFFFF9F2))
+                            .border(1.dp, Color(0xFFFED7AA), RoundedCornerShape(16.dp))
+                            .padding(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 2.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
                                 Text(
-                                    text = buildAnnotatedString {
-                                        withStyle(
-                                            SpanStyle(
-                                                fontWeight = FontWeight.Bold,
-                                                color = KanguruTheme.colors.warning
-                                            )
-                                        ) {
-                                            append(stringResource(R.string.pmk_timer_tip_title))
-                                        }
-                                        withStyle(
-                                            SpanStyle(
-                                                fontWeight = FontWeight.Normal,
-                                                color = onSurfaceColor
-                                            )
-                                        ) {
-                                            append(stringResource(R.string.pmk_timer_tip_desc))
-                                        }
-                                    },
-                                    fontSize = 11.5.sp,
-                                    lineHeight = 17.sp
+                                    text = "Yang Melakukan PMK",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF78350F)
+                                )
+                                Text(
+                                    text = "Bergantian kontak kulit tanpa putus",
+                                    fontSize = 9.sp,
+                                    color = Color(0xFF9A3412)
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color(0xFFFEEAD8))
+                                    .padding(horizontal = 8.dp, vertical = 2.dp)
+                            ) {
+                                Text(
+                                    text = "Kontinu",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF92400E)
                                 )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            PmkCaregiver.entries.forEach { caregiver ->
+                                val isSelected = timerState.currentCaregiver == caregiver
+                                Box(modifier = Modifier.weight(1f)) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(if (isSelected) Color(0xFFFFF5F7) else Color.White)
+                                            .border(
+                                                width = if (isSelected) 2.dp else 1.dp,
+                                                color = if (isSelected) Color(0xFFFF5C77) else Color(0xFFE2E8F0),
+                                                shape = RoundedCornerShape(12.dp)
+                                            )
+                                            .clickable {
+                                                if (timerState.isActive) {
+                                                    if (!isSelected) {
+                                                        onOpenHandoverSheet(caregiver)
+                                                    }
+                                                } else {
+                                                    onSelectHandoverCaregiver(caregiver)
+                                                }
+                                            }
+                                            .padding(vertical = 8.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(28.dp)
+                                                    .clip(CircleShape)
+                                                    .background(if (isSelected) Color(0xFFFFE8EC) else Color(0xFFF1F5F9)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(text = caregiver.iconEmoji, fontSize = 14.sp)
+                                            }
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = caregiver.shortName,
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (isSelected) Color(0xFFFF5C77) else Color(0xFF334155)
+                                            )
+                                            Text(
+                                                text = if (isSelected) "Aktif" else "Siaga",
+                                                fontSize = 9.sp,
+                                                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+                                                color = if (isSelected) Color(0xFFFF5C77).copy(alpha = 0.8f) else Color(0xFF94A3B8)
+                                            )
+                                        }
+                                    }
+                                    if (isSelected) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .align(Alignment.TopEnd)
+                                                .offset(x = 4.dp, y = (-4).dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xFFFF5C77)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "✓",
+                                                color = Color.White,
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    // Panduan Badge Button (Top Right of Card, layered above scrollable content)
-                    Surface(
-                        onClick = onNavigateToGuide,
-                        shape = CircleShape,
-                        color = primaryContainer,
-                        border = BorderStroke(1.dp, BrandPinkBorder),
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(top = 16.dp, end = 20.dp)
-                            .zIndex(10f)
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 5. Evaluasi & Catatan Kenyamanan (Stitch: session-notes-input)
+                    var sessionNotes by remember { mutableStateOf("") }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                                contentDescription = null,
-                                tint = primaryColor,
-                                modifier = Modifier.size(13.5.dp)
+                            Text(
+                                text = "Evaluasi & Catatan Kenyamanan",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF334155)
                             )
                             Text(
-                                text = stringResource(R.string.pmk_timer_badge_guide),
-                                fontSize = 11.5.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = primaryColor
+                                text = "Maks. 200 karakter",
+                                fontSize = 10.sp,
+                                color = Color(0xFF94A3B8)
                             )
                         }
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color(0xFFF8FAFC))
+                                .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(16.dp))
+                                .padding(horizontal = 12.dp, vertical = 10.dp)
+                        ) {
+                            androidx.compose.foundation.text.BasicTextField(
+                                value = sessionNotes,
+                                onValueChange = { if (it.length <= 200) sessionNotes = it },
+                                modifier = Modifier.fillMaxWidth(),
+                                textStyle = androidx.compose.ui.text.TextStyle(
+                                    fontSize = 11.sp,
+                                    color = Color(0xFF1E293B),
+                                    lineHeight = 16.sp
+                                ),
+                                decorationBox = { innerTextField ->
+                                    if (sessionNotes.isEmpty()) {
+                                        Text(
+                                            text = "Tambahkan catatan sesi PMK (misal: bayi tenang, suhu hangat)...",
+                                            fontSize = 11.sp,
+                                            color = Color(0xFF94A3B8),
+                                            lineHeight = 16.sp
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 6. Continuous Clinical Tips Card (Stitch: continuous-clinical-guideline)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFFFF9F2))
+                            .border(1.dp, Color(0xFFFDE6D2), RoundedCornerShape(16.dp))
+                            .padding(10.dp),
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFFEEAD8)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "💡", fontSize = 12.sp)
+                        }
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Rekomendasi IDAI & WHO: ",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFD9531E)
+                            )
+                            Text(
+                                text = "PMK Kontinu tanpa putus (>20 jam/hari) menurunkan risiko hipotermia hingga 70% dan mempercepat kenaikan berat badan BBLR. Bergantianlah antar anggota keluarga.",
+                                fontSize = 11.sp,
+                                lineHeight = 15.sp,
+                                color = Color(0xFF78350F)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 7. iOS Home Indicator
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(width = 128.dp, height = 4.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFCBD5E1))
+                        )
                     }
                 }
             }
         }
     }
 
-    // Target Duration Picker Dialog
-    if (uiState.showTargetDialog) {
-        TargetDurationDialog(
-            currentTarget = timerState.targetDurationMinutes,
-            onSelect = onUpdateTargetMinutes,
-            onDismiss = onCloseTargetDialog
+    // Modal Bottom Sheets
+    if (uiState.showCaregiverHandoverSheet) {
+        PmkCaregiverHandoverSheet(
+            sheetState = handoverSheetState,
+            selectedCaregiver = uiState.handoverCaregiver,
+            temperatureInput = uiState.handoverTemperature,
+            responseInput = uiState.handoverResponse,
+            notesInput = uiState.handoverNotes,
+            onSelectCaregiver = onSelectHandoverCaregiver,
+            onTemperatureChange = { onHandoverDetailsChange(it, uiState.handoverResponse, uiState.handoverNotes) },
+            onResponseChange = { onHandoverDetailsChange(uiState.handoverTemperature, it, uiState.handoverNotes) },
+            onNotesChange = { onHandoverDetailsChange(uiState.handoverTemperature, uiState.handoverResponse, it) },
+            onConfirm = onConfirmHandover,
+            onDismiss = onCloseHandoverSheet
         )
     }
 
-    // Observation Input Dialog when finishing session
-    if (uiState.showObservationDialog) {
-        ObservationDialog(
-            temperature = uiState.inputTemperature,
-            response = uiState.inputResponse,
-            onUpdate = onUpdateObservationInput,
-            onConfirm = onConfirmFinish,
-            onDismiss = onCloseObservationDialog
+    if (uiState.showPauseSheet) {
+        PmkPauseSheet(
+            sheetState = pauseSheetState,
+            selectedReason = uiState.pauseReason,
+            temperatureInput = uiState.pauseTemperature,
+            behaviorInput = uiState.pauseBehavior,
+            notesInput = uiState.pauseNotes,
+            onSelectReason = onSelectPauseReason,
+            onTemperatureChange = { onPauseDetailsChange(it, uiState.pauseBehavior, uiState.pauseNotes) },
+            onBehaviorChange = { onPauseDetailsChange(uiState.pauseTemperature, it, uiState.pauseNotes) },
+            onNotesChange = { onPauseDetailsChange(uiState.pauseTemperature, uiState.pauseBehavior, it) },
+            onConfirm = onConfirmPause,
+            onDismiss = onClosePauseSheet
         )
     }
-}
 
-/**
- * Pulsing coral red dot for "Sedang berlangsung...".
- */
-@Composable
-private fun PulsingCoralDot() {
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val transition = rememberInfiniteTransition(label = "pulse_coral")
-    val alpha by transition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "alpha"
-    )
-
-    Box(
-        modifier = Modifier
-            .size(8.dp)
-            .clip(CircleShape)
-            .background(primaryColor.copy(alpha = alpha))
-    )
-}
-
-@Composable
-private fun TargetDurationDialog(
-    currentTarget: Int,
-    onSelect: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val surfaceColor = MaterialTheme.colorScheme.surface
-    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
-    val outlineColor = MaterialTheme.colorScheme.outline
-    val backgroundColor = MaterialTheme.colorScheme.background
-
-    val options = listOf(30, 45, 60, 90, 120)
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = stringResource(R.string.pmk_timer_target_dialog_title),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleMedium,
-                color = onSurfaceColor
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                options.forEach { minutes ->
-                    val isSelected = minutes == currentTarget
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelect(minutes) },
-                        color = if (isSelected) primaryContainer else backgroundColor,
-                        shape = RoundedCornerShape(14.dp),
-                        border = BorderStroke(
-                            1.dp,
-                            if (isSelected) primaryColor else outlineColor
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "$minutes menit",
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isSelected) primaryColor else onSurfaceColor
-                            )
-                            if (isSelected) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    tint = primaryColor,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.pmk_timer_btn_close), color = primaryColor, fontWeight = FontWeight.Bold)
-            }
-        },
-        containerColor = surfaceColor,
-        shape = RoundedCornerShape(24.dp)
-    )
-}
-
-@Composable
-private fun ObservationDialog(
-    temperature: String,
-    response: String,
-    onUpdate: (String, String) -> Unit,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val surfaceColor = MaterialTheme.colorScheme.surface
-    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
-    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
-    val outlineColor = MaterialTheme.colorScheme.outline
-
-    val responses = listOf("Tidur Tenang", "Tenang", "Gelisah", "Menangis")
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = stringResource(R.string.pmk_timer_obs_dialog_title),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleMedium,
-                color = onSurfaceColor
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    if (uiState.showFinishConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = onCloseFinishDialog,
+            title = {
                 Text(
-                    text = stringResource(R.string.pmk_timer_obs_dialog_desc),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = onSurfaceVariant
+                    text = "Konfirmasi Selesai Sesi PMK",
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
                 )
-
-                // Suhu Bayi
-                OutlinedTextField(
-                    value = temperature,
-                    onValueChange = { onUpdate(it, response) },
-                    label = { Text(stringResource(R.string.pmk_timer_obs_temp_label)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = primaryColor,
-                        focusedLabelColor = primaryColor,
-                        unfocusedBorderColor = outlineColor
-                    )
+            },
+            text = {
+                Text(
+                    text = "Sesi kontak kulit hari ini akan disimpan ke buku riwayat dan statistik medis bayi. Lanjutkan?",
+                    color = colors.textSecondary
                 )
-
-                // Respon Bayi
-                Column {
-                    Text(
-                        text = stringResource(R.string.pmk_timer_obs_response_label),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = onSurfaceColor
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        responses.take(2).forEach { item ->
-                            val isSelected = item == response
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { onUpdate(temperature, item) },
-                                label = { Text(item, fontSize = 11.sp) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = primaryContainer,
-                                    selectedLabelColor = primaryColor
-                                )
-                            )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        responses.drop(2).forEach { item ->
-                            val isSelected = item == response
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { onUpdate(temperature, item) },
-                                label = { Text(item, fontSize = 11.sp) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = primaryContainer,
-                                    selectedLabelColor = primaryColor
-                                )
-                            )
-                        }
-                    }
+            },
+            confirmButton = {
+                Button(
+                    onClick = onConfirmFinish,
+                    colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
+                ) {
+                    Text("Ya, Simpan Sesi")
                 }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = primaryColor,
-                    contentColor = onPrimaryColor
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(stringResource(R.string.pmk_timer_btn_save_session), fontWeight = FontWeight.Bold)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.alarm_btn_cancel), color = onSurfaceVariant)
-            }
-        },
-        containerColor = surfaceColor,
-        shape = RoundedCornerShape(24.dp)
-    )
+            },
+            dismissButton = {
+                TextButton(onClick = onCloseFinishDialog) {
+                    Text("Batal")
+                }
+            },
+            containerColor = colors.surface
+        )
+    }
 }
