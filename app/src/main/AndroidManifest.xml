@@ -35,6 +35,10 @@
             android:exported="false" />
 
         <receiver
+            android:name=".core.notification.PmkPauseAlarmReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name=".core.notification.PmkBootReceiver"
             android:exported="true">
             <intent-filter>

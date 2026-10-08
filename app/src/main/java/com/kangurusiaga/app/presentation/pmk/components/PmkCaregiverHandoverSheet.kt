@@ -39,8 +39,13 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -264,13 +269,23 @@ fun PmkCaregiverHandoverSheet(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Suhu Bayi Saat Ini Container
+            var showTempDialog by remember { mutableStateOf(false) }
+
+            val tempVal = temperatureInput.toDoubleOrNull()
+            val (statusText, statusDotColor, statusBg, statusBorder) = when {
+                tempVal == null -> HandoverTempStatus("Belum Diisi", colors.textTertiary, colors.surfaceVariant, colors.cardBorder)
+                tempVal in 36.5..37.5 -> HandoverTempStatus("36.5° - 37.5° (Normal)", colors.success, colors.successContainer, colors.successBorder)
+                tempVal < 36.5 -> HandoverTempStatus("< 36.5° (Hipotermia)", colors.info, colors.infoContainer, colors.infoBorder)
+                else -> HandoverTempStatus("> 37.5° (Hangat/Demam)", colors.warning, colors.warningContainer, colors.warningBorder)
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
                     .background(colors.tipBackground)
                     .border(1.dp, colors.tipBorder, RoundedCornerShape(16.dp))
-                    .padding(10.dp)
+                    .padding(12.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -278,92 +293,121 @@ fun PmkCaregiverHandoverSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "🌡️ Suhu Tubuh Bayi Saat Oper",
-                        style = KanguruTheme.typography.labelSmall,
+                        text = "Suhu Tubuh Bayi Saat Oper",
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = colors.tipText
                     )
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
-                            .background(colors.successContainer)
-                            .border(1.dp, colors.successBorder, RoundedCornerShape(12.dp))
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
-                    ) {
-                        Text(
-                            text = "36.5°C – 37.5°C (Normal)",
-                            style = KanguruTheme.typography.labelSmall,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = colors.onSuccessContainer
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedTextField(
-                        value = temperatureInput,
-                        onValueChange = onTemperatureChange,
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text("36.8", fontSize = 12.sp) },
-                        trailingIcon = {
-                            Text(
-                                text = "°C",
-                                style = KanguruTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = colors.textSecondary,
-                                modifier = Modifier.padding(end = 8.dp)
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = colors.inputFocusedBackground,
-                            unfocusedContainerColor = colors.inputBackground,
-                            focusedBorderColor = colors.primary,
-                            unfocusedBorderColor = colors.inputBorder
-                        )
-                    )
-
-                    val tempVal = temperatureInput.toDoubleOrNull()
-                    val (statusText, statusDotColor, statusBg, statusBorder) = when {
-                        tempVal == null -> HandoverTempStatus("Input Suhu", colors.textTertiary, colors.surfaceVariant, colors.cardBorder)
-                        tempVal in 36.5..37.5 -> HandoverTempStatus("Suhu Normal", colors.success, colors.successContainer, colors.successBorder)
-                        tempVal < 36.5 -> HandoverTempStatus("Hipotermia", colors.info, colors.infoContainer, colors.infoBorder)
-                        else -> HandoverTempStatus("Hangat/Demam", colors.warning, colors.warningContainer, colors.warningBorder)
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
                             .background(statusBg)
                             .border(1.dp, statusBorder, RoundedCornerShape(12.dp))
-                            .padding(horizontal = 10.dp, vertical = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .clip(CircleShape)
-                                .background(statusDotColor)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = statusText,
-                            style = KanguruTheme.typography.labelSmall,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.textPrimary
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(statusDotColor)
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = statusText,
+                                style = KanguruTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colors.textPrimary
+                            )
+                        }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Interactive Selector Card (Membuka Modal Pop-up Suhu Tubuh Bayi)
+                Surface(
+                    onClick = { showTempDialog = true },
+                    shape = RoundedCornerShape(14.dp),
+                    color = colors.surface,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, colors.outlineVariant),
+                    shadowElevation = 1.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(colors.primaryContainer),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Thermostat,
+                                    contentDescription = "Suhu",
+                                    tint = colors.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Row(verticalAlignment = Alignment.Bottom) {
+                                    Text(
+                                        text = temperatureInput.ifEmpty { "36.8" },
+                                        style = KanguruTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = colors.textPrimary
+                                    )
+                                    Text(
+                                        text = " °C",
+                                        style = KanguruTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.textTertiary,
+                                        modifier = Modifier.padding(bottom = 1.dp)
+                                    )
+                                }
+                                Text(
+                                    text = "Ketuk untuk atur suhu visual",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    color = colors.textTertiary
+                                )
+                            }
+                        }
+
+                        // Pill Tombol "Atur Suhu"
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(colors.primaryContainer)
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = "Atur Suhu",
+                                style = KanguruTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.primary
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (showTempDialog) {
+                PmkTemperatureInputDialog(
+                    initialTemperature = temperatureInput.ifEmpty { "36.8" },
+                    onConfirm = { newTemp ->
+                        onTemperatureChange(newTemp)
+                        showTempDialog = false
+                    },
+                    onDismiss = { showTempDialog = false }
+                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))

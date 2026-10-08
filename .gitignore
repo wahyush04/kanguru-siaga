@@ -12,3 +12,6 @@ app/build
 .kotlin/
 google-services.json
 app/google-services.json
+
+# Agent instructions & rules
+AGENTS.md

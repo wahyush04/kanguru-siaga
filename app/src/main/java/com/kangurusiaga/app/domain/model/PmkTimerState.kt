@@ -44,7 +44,7 @@ data class PmkTimerState(
             val hours = elapsedSeconds / 3600
             val minutes = (elapsedSeconds % 3600) / 60
             val seconds = elapsedSeconds % 60
-            return String.format(java.util.Locale.US, "%02d : %02d : %02d", hours, minutes, seconds)
+            return String.format(java.util.Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
         }
 
     val formattedPauseTime: String
@@ -52,7 +52,7 @@ data class PmkTimerState(
             val hours = pauseElapsedSeconds / 3600
             val minutes = (pauseElapsedSeconds % 3600) / 60
             val seconds = pauseElapsedSeconds % 60
-            return String.format(java.util.Locale.US, "%02d : %02d : %02d", hours, minutes, seconds)
+            return String.format(java.util.Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
         }
 
     val formattedTodayTotal: String

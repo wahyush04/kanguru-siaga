@@ -172,7 +172,7 @@ fun BabyProfileSetupRoute(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
         containerColor = Color(0xFFFDFBF9)
     ) { innerPadding ->
         when (uiState.currentStep) {

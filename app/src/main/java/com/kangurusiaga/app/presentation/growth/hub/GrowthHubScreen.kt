@@ -70,10 +70,20 @@ fun GrowthHubScreen(
     onNavigateToAdd: (GrowthParameter) -> Unit,
     onNavigateToSummary: () -> Unit,
     onNavigateToAboutFenton: () -> Unit,
+    successMessage: String? = null,
+    onMessageShown: () -> Unit = {},
     viewModel: GrowthHubViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showSelectSheet by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { androidx.compose.material3.SnackbarHostState() }
+
+    androidx.compose.runtime.LaunchedEffect(successMessage) {
+        if (!successMessage.isNullOrBlank()) {
+            snackbarHostState.showSnackbar(successMessage)
+            onMessageShown()
+        }
+    }
 
     if (showSelectSheet) {
         SelectGrowthParameterBottomSheet(
@@ -86,7 +96,8 @@ fun GrowthHubScreen(
     }
 
     Scaffold(
-        containerColor = BrandBackground
+        containerColor = BrandBackground,
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

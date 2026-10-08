@@ -3,7 +3,6 @@ package com.kangurusiaga.app.presentation.education
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -63,6 +62,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -136,11 +136,15 @@ fun EducationCenterScreen(
     val slate200 = CardBorder
     val slate100 = CardBorder
 
+    val snackbarHostState = remember { androidx.compose.material3.SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
             .background(bgCream),
         containerColor = bgCream,
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
         bottomBar = {
             HomeBottomBar(
                 currentTab = HomeTab.EDUKASI,
@@ -796,13 +800,13 @@ private fun PulsingEmeraldDot() {
 /**
  * Helper to launch dialer with emergency hotline.
  */
-private fun dialEmergency(context: Context) {
+private fun dialEmergency(context: Context, onFallback: ((String) -> Unit)? = null) {
     try {
         val intent = Intent(Intent.ACTION_DIAL).apply {
             data = Uri.parse("tel:119")
         }
         context.startActivity(intent)
     } catch (_: Exception) {
-        Toast.makeText(context, context.getString(R.string.edu_center_hotline_toast), Toast.LENGTH_LONG).show()
+        onFallback?.invoke(context.getString(R.string.edu_center_hotline_toast))
     }
 }

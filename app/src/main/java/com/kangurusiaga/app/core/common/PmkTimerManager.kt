@@ -1,7 +1,13 @@
 package com.kangurusiaga.app.core.common
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
+import com.kangurusiaga.app.core.notification.KanguruNotificationManager
+import com.kangurusiaga.app.core.notification.PmkPauseAlarmReceiver
 import com.kangurusiaga.app.domain.model.PmkCaregiver
 import com.kangurusiaga.app.domain.model.PmkPauseReason
 import com.kangurusiaga.app.domain.model.PmkSegment
@@ -36,10 +42,22 @@ class PmkTimerManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val pmkRepository: PmkRepository,
     private val getDailyTimelineUseCase: GetDailyPmkTimelineUseCase,
-    @Dispatcher(AppDispatchers.DEFAULT) private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+    @Dispatcher(AppDispatchers.DEFAULT) private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val notificationManager: KanguruNotificationManager? = null
 ) {
     private val scope = CoroutineScope(SupervisorJob() + defaultDispatcher)
     private val prefs: SharedPreferences = context.getSharedPreferences("pmk_continuous_timer_prefs", Context.MODE_PRIVATE)
+
+    private val actualNotificationManager: KanguruNotificationManager by lazy {
+        notificationManager ?: KanguruNotificationManager(context)
+    }
+    private val alarmManager: AlarmManager?
+        get() = try {
+            context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+        } catch (_: Throwable) {
+            null
+        }
+    private var hasAlertedPauseLimit: Boolean = false
 
     private val _timerState = MutableStateFlow(PmkTimerState())
     val timerState: StateFlow<PmkTimerState> = _timerState.asStateFlow()
@@ -53,6 +71,8 @@ class PmkTimerManager @Inject constructor(
     }
 
     companion object {
+        const val PAUSE_LIMIT_SECONDS = 900L // 15 Menit batas maksimal jeda
+        private const val REQUEST_CODE_PAUSE_ALARM = 9090
         private const val KEY_STATUS = "timer_status"
         private const val KEY_ACTIVE_SESSION_ID = "timer_active_session_id"
         private const val KEY_ACTIVE_SEGMENT_ID = "timer_active_segment_id"
@@ -67,6 +87,68 @@ class PmkTimerManager @Inject constructor(
         private const val KEY_NOTES = "timer_notes"
         private const val KEY_BABY_TEMP = "timer_baby_temp"
         private const val KEY_BABY_RESPONSE = "timer_baby_response"
+    }
+
+    private fun schedulePauseLimitAlarm(triggerAtMillis: Long) {
+        val am = alarmManager ?: return
+        try {
+            val intent = Intent(context, PmkPauseAlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                REQUEST_CODE_PAUSE_ALARM,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (am.canScheduleExactAlarms()) {
+                    am.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerAtMillis,
+                        pendingIntent
+                    )
+                } else {
+                    am.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerAtMillis,
+                        pendingIntent
+                    )
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    pendingIntent
+                )
+            } else {
+                am.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    pendingIntent
+                )
+            }
+        } catch (_: Throwable) {
+            // Handled when alarm permission is not granted or unit test environment
+        }
+    }
+
+    private fun cancelPauseLimitAlarm() {
+        val am = alarmManager ?: return
+        try {
+            val intent = Intent(context, PmkPauseAlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                REQUEST_CODE_PAUSE_ALARM,
+                intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )
+            if (pendingIntent != null) {
+                am.cancel(pendingIntent)
+                pendingIntent.cancel()
+            }
+        } catch (_: Throwable) {
+            // Handled safely
+        }
     }
 
     init {
@@ -326,12 +408,18 @@ class PmkTimerManager @Inject constructor(
                 )
             }
 
+            hasAlertedPauseLimit = false
+            schedulePauseLimitAlarm(nowEpoch + PAUSE_LIMIT_SECONDS * 1000L)
             refreshTodayTotal()
         }
     }
 
     fun resume() {
         if (_timerState.value.status != TimerStatus.PAUSED) return
+
+        cancelPauseLimitAlarm()
+        actualNotificationManager.cancelPmkPauseLimitExceededNotification()
+        hasAlertedPauseLimit = false
 
         val nowEpoch = System.currentTimeMillis()
         val pauseSegId = prefs.getLong(KEY_ACTIVE_SEGMENT_ID, 0L)
@@ -603,6 +691,10 @@ class PmkTimerManager @Inject constructor(
 
     fun reset() {
         tickerJob?.cancel()
+        cancelPauseLimitAlarm()
+        actualNotificationManager.cancelPmkPauseLimitExceededNotification()
+        hasAlertedPauseLimit = false
+
         val lastCaregiver = prefs.getString(KEY_CURRENT_CAREGIVER, PmkCaregiver.IBU.name)
         prefs.edit().clear().apply()
         _timerState.update {
@@ -660,9 +752,15 @@ class PmkTimerManager @Inject constructor(
                 } else if (status == TimerStatus.PAUSED) {
                     val pauseStart = prefs.getLong(KEY_PAUSE_START_EPOCH, nowEpoch)
                     val pauseMs = max(0L, nowEpoch - pauseStart)
+                    val pauseSec = pauseMs / 1000L
+
+                    if (pauseSec >= PAUSE_LIMIT_SECONDS && !hasAlertedPauseLimit) {
+                        hasAlertedPauseLimit = true
+                        actualNotificationManager.showPmkPauseLimitExceededNotification()
+                    }
 
                     _timerState.update {
-                        it.copy(pauseElapsedSeconds = pauseMs / 1000L)
+                        it.copy(pauseElapsedSeconds = pauseSec)
                     }
                 }
 

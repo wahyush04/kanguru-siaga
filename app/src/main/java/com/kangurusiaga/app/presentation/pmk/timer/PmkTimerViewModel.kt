@@ -34,6 +34,7 @@ data class PmkTimerUiState(
     val showCaregiverHandoverSheet: Boolean = false,
     val showPauseSheet: Boolean = false,
     val showFinishConfirmDialog: Boolean = false,
+    val showFinishSessionSheet: Boolean = false,
     val isNightModeDim: Boolean = false,
     val handoverCaregiver: PmkCaregiver = PmkCaregiver.AYAH,
     val handoverTemperature: String = "36.8",
@@ -42,7 +43,10 @@ data class PmkTimerUiState(
     val pauseReason: PmkPauseReason = PmkPauseReason.NURSING,
     val pauseTemperature: String = "36.8",
     val pauseBehavior: String = "Tenang & Rileks",
-    val pauseNotes: String = ""
+    val pauseNotes: String = "",
+    val finishTemperature: String = "36.8",
+    val finishResponse: String = "Tidur Tenang",
+    val finishNotes: String = ""
 )
 
 sealed interface PmkTimerUiEvent {
@@ -66,6 +70,7 @@ class PmkTimerViewModel @Inject constructor(
         val showCaregiverHandoverSheet: Boolean = false,
         val showPauseSheet: Boolean = false,
         val showFinishConfirmDialog: Boolean = false,
+        val showFinishSessionSheet: Boolean = false,
         val isNightModeDim: Boolean = false,
         val handoverCaregiver: PmkCaregiver = PmkCaregiver.AYAH,
         val handoverTemperature: String = "36.8",
@@ -74,7 +79,10 @@ class PmkTimerViewModel @Inject constructor(
         val pauseReason: PmkPauseReason = PmkPauseReason.NURSING,
         val pauseTemperature: String = "36.8",
         val pauseBehavior: String = "Tenang & Rileks",
-        val pauseNotes: String = ""
+        val pauseNotes: String = "",
+        val finishTemperature: String = "36.8",
+        val finishResponse: String = "Tidur Tenang",
+        val finishNotes: String = ""
     )
 
     private val _sheetState = MutableStateFlow(SheetState())
@@ -95,6 +103,7 @@ class PmkTimerViewModel @Inject constructor(
                 showCaregiverHandoverSheet = sheets.showCaregiverHandoverSheet,
                 showPauseSheet = sheets.showPauseSheet,
                 showFinishConfirmDialog = sheets.showFinishConfirmDialog,
+                showFinishSessionSheet = sheets.showFinishSessionSheet,
                 isNightModeDim = sheets.isNightModeDim,
                 handoverCaregiver = sheets.handoverCaregiver,
                 handoverTemperature = sheets.handoverTemperature,
@@ -103,7 +112,10 @@ class PmkTimerViewModel @Inject constructor(
                 pauseReason = sheets.pauseReason,
                 pauseTemperature = sheets.pauseTemperature,
                 pauseBehavior = sheets.pauseBehavior,
-                pauseNotes = sheets.pauseNotes
+                pauseNotes = sheets.pauseNotes,
+                finishTemperature = sheets.finishTemperature,
+                finishResponse = sheets.finishResponse,
+                finishNotes = sheets.finishNotes
             )
         }
     }.stateIn(
@@ -227,18 +239,55 @@ class PmkTimerViewModel @Inject constructor(
     }
 
     // Finish session actions
+    fun openFinishSessionSheet() {
+        _sheetState.update {
+            it.copy(
+                showFinishSessionSheet = true,
+                showFinishConfirmDialog = true,
+                finishTemperature = "36.8",
+                finishResponse = "Tidur Tenang",
+                finishNotes = ""
+            )
+        }
+    }
+
+    fun closeFinishSessionSheet() {
+        _sheetState.update {
+            it.copy(
+                showFinishSessionSheet = false,
+                showFinishConfirmDialog = false
+            )
+        }
+    }
+
+    fun updateFinishDetails(temperature: String, response: String, notes: String) {
+        _sheetState.update {
+            it.copy(
+                finishTemperature = temperature,
+                finishResponse = response,
+                finishNotes = notes
+            )
+        }
+    }
+
     fun requestFinishSession() {
-        _sheetState.update { it.copy(showFinishConfirmDialog = true) }
+        openFinishSessionSheet()
     }
 
     fun closeFinishConfirmDialog() {
-        _sheetState.update { it.copy(showFinishConfirmDialog = false) }
+        closeFinishSessionSheet()
     }
 
     fun confirmFinishSession() {
-        closeFinishConfirmDialog()
+        val state = _sheetState.value
+        val temp = state.finishTemperature.toDoubleOrNull()
+        closeFinishSessionSheet()
         viewModelScope.launch {
-            val session = timerManager.finishSession()
+            val session = timerManager.finishSession(
+                finalTemp = temp,
+                finalResponse = state.finishResponse,
+                finalNotes = state.finishNotes.ifBlank { null }
+            )
             if (session != null) {
                 _events.emit(PmkTimerUiEvent.SessionCompleted(session))
             }

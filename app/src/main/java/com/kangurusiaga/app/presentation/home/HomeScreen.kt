@@ -162,7 +162,7 @@ fun HomeScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = BrandBackground,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
         bottomBar = {
             HomeBottomBar(
                 currentTab = HomeTab.BERANDA,
@@ -630,7 +630,6 @@ private fun ActionGridCard(
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
                 textAlign = TextAlign.Center,
-                fontSize = 12.sp,
                 lineHeight = 15.sp
             )
 

@@ -130,7 +130,7 @@ fun PmkRemindersScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = BrandBackground,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
                 color = BrandBackground,

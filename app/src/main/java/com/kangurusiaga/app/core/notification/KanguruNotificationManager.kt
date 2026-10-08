@@ -26,6 +26,7 @@ class KanguruNotificationManager @Inject constructor(
 
         const val NOTIFICATION_ID_PMK_REMINDER = 1001
         const val NOTIFICATION_ID_PMK_TIMER = 1002
+        const val NOTIFICATION_ID_PMK_PAUSE_ALERT = 1003
         const val NOTIFICATION_ID_FEEDING_BASE = 2000
     }
 
@@ -135,6 +136,47 @@ class KanguruNotificationManager @Inject constructor(
             NotificationManagerCompat.from(context).notify(notificationId, builder.build())
         } catch (_: SecurityException) {
             // Handled when notification permission is not granted
+        }
+    }
+
+    fun showPmkPauseLimitExceededNotification() {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigate_to", "pmk_timer")
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            NOTIFICATION_ID_PMK_PAUSE_ALERT,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val title = "Waktu Jeda PMK Sudah 15 Menit! 🦘"
+        val message = "Yuk Bunda/Ayah, segera lanjutkan kontak kulit PMK agar suhu tubuh dan kenyamanan si kecil tetap terjaga stabil."
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_PMK_ID)
+            .setSmallIcon(R.drawable.ic_kangaroo_mascot)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        try {
+            NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_PMK_PAUSE_ALERT, builder.build())
+        } catch (_: SecurityException) {
+            // Handled when notification permission is not granted
+        }
+    }
+
+    fun cancelPmkPauseLimitExceededNotification() {
+        try {
+            NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID_PMK_PAUSE_ALERT)
+        } catch (_: SecurityException) {
+            // Handled safely
         }
     }
 }

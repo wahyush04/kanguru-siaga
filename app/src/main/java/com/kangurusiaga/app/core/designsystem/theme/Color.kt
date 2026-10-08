@@ -13,6 +13,7 @@ val BrandDarkPink = Color(0xFFE04866)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 val ErrorRed = Color(0xFFDC2626)
+val TypographyDefaultColor = Color(0xFF1E293B)
 
 // PMK Gradient & Timer Palette (consistent warm pink hues across light/dark)
 val BrandPinkGradientStart = Color(0xFFFF5C77)

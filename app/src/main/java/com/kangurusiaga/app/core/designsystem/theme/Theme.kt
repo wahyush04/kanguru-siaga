@@ -149,7 +149,30 @@ data class KanguruColors(
     val caregiverPause: Color,
     val caregiverPauseContainer: Color,
     val caregiverPauseText: Color,
-    val timelineTrack: Color
+    val timelineTrack: Color,
+
+    // Temperature Modal Tokens (Google Stitch aligned)
+    val tempColdTrack: Color,
+    val tempColdText: Color,
+    val tempNormalTrack: Color,
+    val tempNormalText: Color,
+    val tempWarmTrack: Color,
+    val tempWarmText: Color,
+    val tempNormalBadgeBg: Color,
+    val tempSliderTrack: Color,
+    val tempStepperBg: Color,
+    val tempStepperBorder: Color,
+    val tempStepperIcon: Color,
+    val tempCancelBg: Color,
+    val tempCancelText: Color,
+
+    // Toast / Snackbar Tokens (Pill shape, high-contrast)
+    val toastBackground: Color,
+    val toastText: Color,
+    val toastSuccessIconBg: Color,
+    val toastSuccessIconTint: Color,
+    val toastErrorIconBg: Color,
+    val toastErrorIconTint: Color
 ) {
     val primaryBorder: Color
         get() = if (isDark) Color(0xFF5E2734) else Color(0xFFFFD1DC)
@@ -190,7 +213,7 @@ val LightKanguruColors = KanguruColors(
     secondaryContainer = Color(0xFFFFEFEA),
     onSecondaryContainer = Color(0xFF8A3C1B),
 
-    textPrimary = Color(0xFF1E1E1E),
+    textPrimary = TypographyDefaultColor,
     textSecondary = Color(0xFF6B7280),
     textTertiary = Color(0xFF9CA3AF),
     textOnDark = Color(0xFFFFFFFF),
@@ -279,7 +302,28 @@ val LightKanguruColors = KanguruColors(
     caregiverPause = Color(0xFF94A3B8),
     caregiverPauseContainer = Color(0xFFF1F5F9),
     caregiverPauseText = Color(0xFF475569),
-    timelineTrack = Color(0xFFF1ECE6)
+    timelineTrack = Color(0xFFF1ECE6),
+
+    tempColdTrack = Color(0xFF7DD3FC),
+    tempColdText = Color(0xFF0284C7),
+    tempNormalTrack = Color(0xFF34D399),
+    tempNormalText = Color(0xFF047857),
+    tempWarmTrack = Color(0xFFFB7185),
+    tempWarmText = Color(0xFFF43F5E),
+    tempNormalBadgeBg = Color(0xFFD1FAE5),
+    tempSliderTrack = Color(0xFFE2E8F0),
+    tempStepperBg = Color(0xFFFFFFFF),
+    tempStepperBorder = Color(0xFFF1F5F9),
+    tempStepperIcon = Color(0xFF334155),
+    tempCancelBg = Color(0xFFF1F5F9),
+    tempCancelText = Color(0xFF475569),
+
+    toastBackground = Color(0xFF1E293B),
+    toastText = Color(0xFFFFFFFF),
+    toastSuccessIconBg = Color(0xFF10B981),
+    toastSuccessIconTint = Color(0xFFFFFFFF),
+    toastErrorIconBg = Color(0xFFEF4444),
+    toastErrorIconTint = Color(0xFFFFFFFF)
 )
 
 // 2. REDUP RUANG MENYUSUI (Dim Nursing Room - Dark)
@@ -395,7 +439,28 @@ val DarkKanguruColors = KanguruColors(
     caregiverPause = Color(0xFF64748B),
     caregiverPauseContainer = Color(0xFF242220),
     caregiverPauseText = Color(0xFFCBD5E1),
-    timelineTrack = Color(0xFF2B2824)
+    timelineTrack = Color(0xFF2B2824),
+
+    tempColdTrack = Color(0xFF0369A1),
+    tempColdText = Color(0xFF38BDF8),
+    tempNormalTrack = Color(0xFF059669),
+    tempNormalText = Color(0xFF34D399),
+    tempWarmTrack = Color(0xFFE11D48),
+    tempWarmText = Color(0xFFFDA4AF),
+    tempNormalBadgeBg = Color(0xFF064E3B),
+    tempSliderTrack = Color(0xFF334155),
+    tempStepperBg = Color(0xFF262421),
+    tempStepperBorder = Color(0xFF33302B),
+    tempStepperIcon = Color(0xFFF1F5F9),
+    tempCancelBg = Color(0xFF2B2824),
+    tempCancelText = Color(0xFF94A3B8),
+
+    toastBackground = Color(0xFF262421),
+    toastText = Color(0xFFFFFFFF),
+    toastSuccessIconBg = Color(0xFF10B981),
+    toastSuccessIconTint = Color(0xFFFFFFFF),
+    toastErrorIconBg = Color(0xFFEF4444),
+    toastErrorIconTint = Color(0xFFFFFFFF)
 )
 
 val LocalKanguruColors = staticCompositionLocalOf { LightKanguruColors }
@@ -414,14 +479,16 @@ private val LightColorScheme = lightColorScheme(
     tertiaryContainer = Color(0xFFEAF8F1),
     onTertiaryContainer = Color(0xFF2DA467),
     background = Color(0xFFFAF7F2),
-    onBackground = Color(0xFF1E1E1E),
+    onBackground = TypographyDefaultColor,
     surface = Color(0xFFFFFFFF),
-    onSurface = Color(0xFF1E1E1E),
+    onSurface = TypographyDefaultColor,
     surfaceVariant = Color(0xFFf8fafc),
     onSurfaceVariant = Color(0xFF6B7280),
     surfaceContainer = Color(0xFFFFFFFF),
     surfaceContainerHigh = Color(0xFFFDFCFA),
     surfaceContainerHighest = Color(0xFFF1ECE6),
+    inverseSurface = Color(0xFF1E293B),
+    inverseOnSurface = Color(0xFFFFFFFF),
     outline = Color(0xFFE5DFD7),
     outlineVariant = Color(0xFFF1ECE6),
     error = Color(0xFFDC2626),
@@ -452,6 +519,8 @@ private val DarkColorScheme = darkColorScheme(
     surfaceContainer = Color(0xFF1E1D1A),
     surfaceContainerHigh = Color(0xFF262421),
     surfaceContainerHighest = Color(0xFF33302B),
+    inverseSurface = Color(0xFF262421),
+    inverseOnSurface = Color(0xFFFFFFFF),
     outline = Color(0xFF33302B),
     outlineVariant = Color(0xFF2B2824),
     error = Color(0xFFF87171),
@@ -475,6 +544,9 @@ object KanguruTheme {
         @Composable
         @ReadOnlyComposable
         get() = androidx.compose.material3.MaterialTheme.typography
+
+    val timerDisplay: androidx.compose.ui.text.TextStyle
+        get() = TimerDisplay
 
     val isDark: Boolean
         @Composable

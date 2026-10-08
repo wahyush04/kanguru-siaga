@@ -202,7 +202,7 @@ fun AlarmScreen(
 
     Scaffold(
         containerColor = BrandBackground,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
         topBar = {
             AlarmTopAppBar(
                 onNavigateBack = onNavigateBack,

@@ -67,8 +67,7 @@ fun PmkTimeline24HourBar(
                 )
                 Text(
                     text = "Kontak PMK vs Jeda Perawatan Hari Ini",
-                    style = KanguruTheme.typography.bodySmall,
-                    fontSize = 10.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     color = colors.textTertiary
                 )
             }
@@ -78,7 +77,7 @@ fun PmkTimeline24HourBar(
                 Text(
                     text = "${actHours}j ${actMins}m / 24j",
                     style = KanguruTheme.typography.labelMedium,
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                    fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
                     color = colors.primary
                 )
@@ -89,9 +88,9 @@ fun PmkTimeline24HourBar(
 
         // Visual 24-Hour Bar
         val blocks = timeline?.blocks ?: emptyList()
-        val trackColor = Color(0xFFF1F5F9)
-        val activeColor = Color(0xFFFF5C77)
-        val pauseColor = Color(0xFFFCD34D) // amber-300
+        val trackColor = colors.surfaceVariant
+        val activeColor = colors.primary
+        val pauseColor = colors.fentonP10
 
         Box(
             modifier = Modifier
@@ -99,7 +98,7 @@ fun PmkTimeline24HourBar(
                 .height(22.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(trackColor)
-                .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(8.dp))
+                .border(1.dp, colors.cardBorder, RoundedCornerShape(8.dp))
                 .padding(2.dp)
         ) {
             Canvas(modifier = Modifier.matchParentSize()) {
@@ -149,8 +148,8 @@ fun PmkTimeline24HourBar(
                 Text(
                     text = label,
                     fontFamily = FontFamily.Monospace,
-                    fontSize = 9.sp,
-                    color = Color(0xFF94A3B8)
+                    style = KanguruTheme.typography.labelSmall,
+                    color = colors.textTertiary
                 )
             }
         }
@@ -165,7 +164,7 @@ fun PmkTimeline24HourBar(
             val pauseStr = if (pauseH > 0) "${pauseH}j ${pauseM}m" else "${pauseM}m"
 
             Spacer(modifier = Modifier.height(8.dp))
-            HorizontalDivider(color = Color(0xFFF1F5F9), thickness = 1.dp)
+            HorizontalDivider(color = colors.divider, thickness = 1.dp)
             Spacer(modifier = Modifier.height(8.dp))
 
             // Stitch-exact Legend: PMK Aktif, Jeda Singkat, Tersisa
@@ -185,9 +184,9 @@ fun PmkTimeline24HourBar(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "PMK Aktif ($actStr)",
-                        fontSize = 10.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF475569)
+                        color = colors.textSecondary
                     )
                 }
 
@@ -202,9 +201,9 @@ fun PmkTimeline24HourBar(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Jeda Singkat ($pauseStr)",
-                        fontSize = 10.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF475569)
+                        color = colors.textSecondary
                     )
                 }
 
@@ -214,14 +213,15 @@ fun PmkTimeline24HourBar(
                         modifier = Modifier
                             .size(10.dp)
                             .clip(RoundedCornerShape(2.dp))
-                            .background(Color(0xFFE2E8F0))
+                            .background(colors.surfaceElevated)
+                            .border(1.dp, colors.outlineVariant, RoundedCornerShape(2.dp))
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Tersisa",
-                        fontSize = 10.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Normal,
-                        color = Color(0xFF94A3B8)
+                        color = colors.textTertiary
                     )
                 }
             }

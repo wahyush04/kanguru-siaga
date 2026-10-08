@@ -69,12 +69,13 @@ import java.util.Locale
 @Composable
 fun AddGrowthMeasurementScreen(
     onNavigateBack: () -> Unit,
-    onSavedSuccessfully: () -> Unit,
+    onSavedSuccessfully: (String) -> Unit,
     viewModel: AddGrowthMeasurementViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val parameter = uiState.parameter
+    val snackbarHostState = remember { androidx.compose.material3.SnackbarHostState() }
 
     val dateFormatter = remember { SimpleDateFormat("d MMMM yyyy", Locale("id", "ID")) }
 
@@ -100,6 +101,7 @@ fun AddGrowthMeasurementScreen(
 
     Scaffold(
         containerColor = BrandBackground,
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
         bottomBar = {
             // Footer Action Buttons
             Column(
@@ -137,7 +139,7 @@ fun AddGrowthMeasurementScreen(
 
                     Button(
                         onClick = {
-                            viewModel.saveMeasurement(onSuccess = onSavedSuccessfully)
+                            viewModel.saveMeasurement(onSuccess = { onSavedSuccessfully(parameter.title) })
                         },
                         enabled = !uiState.isSaving,
                         shape = RoundedCornerShape(24.dp),

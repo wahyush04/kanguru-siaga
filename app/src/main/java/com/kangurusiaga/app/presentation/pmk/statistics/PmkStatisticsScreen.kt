@@ -117,7 +117,7 @@ fun PmkStatisticsScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = colors.background,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
                 color = colors.background,

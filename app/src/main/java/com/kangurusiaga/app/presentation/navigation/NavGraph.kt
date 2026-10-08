@@ -631,7 +631,9 @@ fun KanguruNavGraph(
         }
 
         // Growth Module Screens
-        composable(route = Screen.GrowthHub.route) {
+        composable(route = Screen.GrowthHub.route) { backStackEntry ->
+            val savedStateHandle = backStackEntry.savedStateHandle
+            val successMessage = savedStateHandle.get<String>("growth_saved_message")
             GrowthHubScreen(
                 onNavigateBack = {
                     navController.popBackStack()
@@ -647,11 +649,17 @@ fun KanguruNavGraph(
                 },
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
+                },
+                successMessage = successMessage,
+                onMessageShown = {
+                    savedStateHandle.remove<String>("growth_saved_message")
                 }
             )
         }
 
-        composable(route = Screen.Growth.route) {
+        composable(route = Screen.Growth.route) { backStackEntry ->
+            val savedStateHandle = backStackEntry.savedStateHandle
+            val successMessage = savedStateHandle.get<String>("growth_saved_message")
             GrowthHubScreen(
                 onNavigateBack = {
                     navController.popBackStack()
@@ -667,6 +675,10 @@ fun KanguruNavGraph(
                 },
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
+                },
+                successMessage = successMessage,
+                onMessageShown = {
+                    savedStateHandle.remove<String>("growth_saved_message")
                 }
             )
         }
@@ -704,7 +716,10 @@ fun KanguruNavGraph(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onSavedSuccessfully = {
+                onSavedSuccessfully = { paramTitle ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("growth_saved_message", "Data ${paramTitle.lowercase()} berhasil disimpan")
                     navController.popBackStack()
                 }
             )

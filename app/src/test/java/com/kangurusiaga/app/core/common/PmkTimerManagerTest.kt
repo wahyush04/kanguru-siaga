@@ -12,6 +12,7 @@ import com.kangurusiaga.app.domain.model.TimerStatus
 import com.kangurusiaga.app.domain.repository.PmkRepository
 import com.kangurusiaga.app.domain.usecase.DailyTimeline
 import com.kangurusiaga.app.domain.usecase.GetDailyPmkTimelineUseCase
+import com.kangurusiaga.app.core.notification.KanguruNotificationManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -30,6 +31,7 @@ class PmkTimerManagerTest {
     private val editor: SharedPreferences.Editor = mockk(relaxed = true)
     private val repository: PmkRepository = mockk(relaxed = true)
     private val getDailyTimelineUseCase: GetDailyPmkTimelineUseCase = mockk(relaxed = true)
+    private val notificationManager: KanguruNotificationManager = mockk(relaxed = true)
 
     private val memoryPrefs = mutableMapOf<String, Any?>()
 
@@ -89,7 +91,13 @@ class PmkTimerManagerTest {
     }
 
     private fun createManager(testDispatcher: kotlinx.coroutines.CoroutineDispatcher): PmkTimerManager {
-        return PmkTimerManager(context, repository, getDailyTimelineUseCase, testDispatcher).apply {
+        return PmkTimerManager(
+            context = context,
+            pmkRepository = repository,
+            getDailyTimelineUseCase = getDailyTimelineUseCase,
+            defaultDispatcher = testDispatcher,
+            notificationManager = notificationManager
+        ).apply {
             isTickerEnabled = false
             stopTicker()
         }
