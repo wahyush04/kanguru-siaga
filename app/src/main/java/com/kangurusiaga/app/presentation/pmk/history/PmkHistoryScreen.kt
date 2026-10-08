@@ -392,7 +392,8 @@ fun PmkHistoryScreen(
                         Text(
                             text = "Catat Sesi Manual",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
+                            fontSize = 12.sp,
+                            color = colors.onPrimary
                         )
                     }
 

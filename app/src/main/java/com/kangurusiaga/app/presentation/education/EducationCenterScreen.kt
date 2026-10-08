@@ -114,6 +114,7 @@ fun EducationCenterScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToAlarm: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToPmkVideo: () -> Unit = onNavigateToPmk,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -323,7 +324,7 @@ fun EducationCenterScreen(
                         tagTextColor = brandCoral,
                         tagBorderColor = if (isDark) brandCoral.copy(alpha = 0.35f) else Color(0xFFFFE4E8),
                         cardBorderColor = slate100,
-                        onClick = onNavigateToPmk
+                        onClick = onNavigateToPmkVideo
                     )
                 }
 

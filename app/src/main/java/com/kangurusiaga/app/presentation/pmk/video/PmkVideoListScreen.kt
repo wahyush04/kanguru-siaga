@@ -66,6 +66,9 @@ fun PmkVideoListScreen(
     onNavigateToDetail: (Int) -> Unit,
     onNavigateToHome: () -> Unit = {},
     onNavigateToEducation: () -> Unit = {},
+    onNavigateToPmk: () -> Unit = onNavigateBack,
+    onNavigateToAlarm: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -120,9 +123,10 @@ fun PmkVideoListScreen(
                 onTabSelected = { tab ->
                     when (tab) {
                         HomeTab.BERANDA -> onNavigateToHome()
-                        HomeTab.PMK -> onNavigateBack()
+                        HomeTab.PMK -> onNavigateToPmk()
                         HomeTab.EDUKASI -> onNavigateToEducation()
-                        else -> { /* No-op for other uninitialized tabs */ }
+                        HomeTab.ALARM -> onNavigateToAlarm()
+                        HomeTab.PROFIL -> onNavigateToProfile()
                     }
                 }
             )

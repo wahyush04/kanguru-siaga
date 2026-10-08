@@ -106,6 +106,7 @@ fun HomeRoute(
     onNavigateToAlarm: () -> Unit = {},
     onNavigateToGrowth: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToTimer: () -> Unit = onNavigateToPmk,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -120,6 +121,7 @@ fun HomeRoute(
         onNavigateToAlarm = onNavigateToAlarm,
         onNavigateToGrowth = onNavigateToGrowth,
         onNavigateToProfile = onNavigateToProfile,
+        onNavigateToTimer = onNavigateToTimer,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
         onOpenNotification = viewModel::openNotificationSheet,
@@ -141,6 +143,7 @@ fun HomeScreen(
     onNavigateToAlarm: () -> Unit = {},
     onNavigateToGrowth: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToTimer: () -> Unit = onNavigateToPmk,
     onOpenEmergency: () -> Unit = {},
     onCloseEmergency: () -> Unit = {},
     onOpenNotification: () -> Unit = {},
@@ -204,6 +207,7 @@ fun HomeScreen(
                         onNavigateToEmergency = onNavigateToEmergency,
                         onNavigateToAlarm = onNavigateToAlarm,
                         onNavigateToGrowth = onNavigateToGrowth,
+                        onNavigateToTimer = onNavigateToTimer,
                         onOpenEmergency = onOpenEmergency,
                         onOpenNotification = onOpenNotification,
                         onShowInfo = onShowInfo,
@@ -265,6 +269,7 @@ private fun HomeContent(
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit,
     onNavigateToGrowth: () -> Unit = {},
+    onNavigateToTimer: () -> Unit = onNavigateToPmk,
     onOpenEmergency: () -> Unit,
     onOpenNotification: () -> Unit,
     onShowInfo: (String) -> Unit,
@@ -512,7 +517,7 @@ private fun HomeContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(20.dp))
-                .clickable { onNavigateToPmk() },
+                .clickable { onNavigateToTimer() },
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)

@@ -1,6 +1,8 @@
 package com.kangurusiaga.app.presentation.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -91,10 +93,13 @@ fun KanguruNavGraph(
         composable(route = Screen.Home.route) {
             HomeRoute(
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkTimer.route) {
+                    navController.navigate(Screen.PmkCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToTimer = {
+                    navController.navigate(Screen.PmkTimer.route)
                 },
                 onNavigateToProfileSetup = {
                     navController.navigate(Screen.ProfileSetup.route)
@@ -171,17 +176,47 @@ fun KanguruNavGraph(
             )
         }
 
-        // PMK Legacy Alias -> routes directly to Continuous PMK Timer
+        // PMK Legacy Alias -> routes to PMK Center
         composable(route = Screen.Pmk.route) {
-            PmkTimerRoute(
+            PmkCenterScreen(
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToVideo = {
+                    navController.navigate(Screen.PmkVideoList.route)
+                },
+                onNavigateToTimer = {
+                    navController.navigate(Screen.PmkTimer.route)
+                },
+                onNavigateToReminders = {
+                    navController.navigate(Screen.PmkReminders.route)
                 },
                 onNavigateToHistory = {
                     navController.navigate(Screen.PmkHistory.route)
                 },
-                onNavigateToGuide = {
-                    navController.navigate(Screen.PmkGuide.route)
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -302,18 +337,10 @@ fun KanguruNavGraph(
         // PMK Video Educational Module List (Stitch: Kanguru Siaga - Video Edukasi PMK)
         composable(
             route = Screen.PmkVideoList.route,
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                    animationSpec = tween(300)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.End,
-                    animationSpec = tween(300)
-                )
-            }
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None }
         ) {
             PmkVideoListScreen(
                 onNavigateBack = {
@@ -330,6 +357,24 @@ fun KanguruNavGraph(
                 },
                 onNavigateToEducation = {
                     navController.navigate(Screen.EducationCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -379,18 +424,10 @@ fun KanguruNavGraph(
         // PMK Video Legacy Alias -> navigates to Video List
         composable(
             route = Screen.PmkVideo.route,
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                    animationSpec = tween(300)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.End,
-                    animationSpec = tween(300)
-                )
-            }
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None }
         ) {
             PmkVideoListScreen(
                 onNavigateBack = {
@@ -410,6 +447,24 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -418,6 +473,12 @@ fun KanguruNavGraph(
         composable(route = Screen.EducationCenter.route) {
             EducationCenterScreen(
                 onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToPmkVideo = {
                     navController.navigate(Screen.PmkVideoList.route)
                 },
                 onNavigateToBblrEducation = {
@@ -463,7 +524,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkTimer.route) {
+                    navController.navigate(Screen.PmkCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -506,6 +567,12 @@ fun KanguruNavGraph(
         composable(route = Screen.Education.route) {
             EducationCenterScreen(
                 onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToPmkVideo = {
                     navController.navigate(Screen.PmkVideoList.route)
                 },
                 onNavigateToBblrEducation = {
@@ -577,7 +644,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkTimer.route) {
+                    navController.navigate(Screen.PmkCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -610,7 +677,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkTimer.route) {
+                    navController.navigate(Screen.PmkCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
@@ -757,7 +824,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToPmk = {
-                    navController.navigate(Screen.PmkTimer.route) {
+                    navController.navigate(Screen.PmkCenter.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }

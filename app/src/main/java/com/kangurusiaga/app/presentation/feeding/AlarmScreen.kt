@@ -320,7 +320,8 @@ fun AlarmScreen(
                             Text(
                                 text = stringResource(R.string.alarm_btn_add),
                                 fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                color = White
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
