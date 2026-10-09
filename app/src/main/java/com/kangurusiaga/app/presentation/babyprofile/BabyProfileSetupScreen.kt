@@ -635,7 +635,7 @@ fun BabyProfileFormScreen(
                                     OutlinedTextField(
                                         value = uiState.birthWeightInput,
                                         onValueChange = onBirthWeightChange,
-                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_birth), fontSize = 13.sp) },
+                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_birth), fontSize = 13.sp, color = TextTertiary) },
                                         trailingIcon = {
                                             Text(
                                                 stringResource(R.string.baby_profile_unit_grams),
@@ -675,7 +675,7 @@ fun BabyProfileFormScreen(
                                     OutlinedTextField(
                                         value = uiState.currentWeightInput,
                                         onValueChange = onCurrentWeightChange,
-                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_current), fontSize = 13.sp) },
+                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_current), fontSize = 13.sp, color = TextTertiary) },
                                         trailingIcon = {
                                             Text(
                                                 stringResource(R.string.baby_profile_unit_grams),

@@ -68,8 +68,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -208,6 +211,7 @@ fun PmkTimerScreen(
             // =========================================================================
             PmkTimerTopHeader(
                 babyName = uiState.baby?.name ?: "Nirmala",
+                babyPhotoUri = uiState.baby?.photoUri,
                 isRunning = timerState.isRunning,
                 isPaused = timerState.isPaused,
                 onNavigateBack = onNavigateBack,
@@ -345,6 +349,7 @@ fun PmkTimerScreen(
 @Composable
 private fun PmkTimerTopHeader(
     babyName: String,
+    babyPhotoUri: String? = null,
     isRunning: Boolean,
     isPaused: Boolean,
     onNavigateBack: () -> Unit,
@@ -441,12 +446,28 @@ private fun PmkTimerTopHeader(
                             .clip(CircleShape)
                             .border(2.dp, Color.White, CircleShape)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_pmk_mascot),
-                            contentDescription = "Bayi",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                        if (!babyPhotoUri.isNullOrBlank()) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(babyPhotoUri)
+                                    .crossfade(true)
+                                    .error(R.drawable.ic_pmk_mascot)
+                                    .placeholder(R.drawable.ic_pmk_mascot)
+                                    .build(),
+                                contentDescription = "Foto $babyName",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_pmk_mascot),
+                                contentDescription = "Bayi",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                         if (isRunning) {
                             Box(
                                 modifier = Modifier
@@ -535,6 +556,7 @@ private fun PmkTimerTopHeader(
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun PmkTimerHeroCard(
     timerState: PmkTimerState,
