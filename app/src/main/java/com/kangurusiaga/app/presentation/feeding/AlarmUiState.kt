@@ -9,6 +9,10 @@ data class AlarmUiState(
     val selectedScheduleForEdit: FeedingSchedule? = null,
     val isAddSheetVisible: Boolean = false,
     val isEditSheetVisible: Boolean = false,
+    val isBatchSheetVisible: Boolean = false,
     val isInfoDialogVisible: Boolean = false,
     val schedulePendingDelete: FeedingSchedule? = null
-)
+) {
+    val activeVolumeMl: Int
+        get() = schedules.firstOrNull()?.volumeMl ?: 30
+}

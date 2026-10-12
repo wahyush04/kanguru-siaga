@@ -1,6 +1,7 @@
 package com.kangurusiaga.app.presentation.feeding
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,7 +38,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -52,32 +51,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.R
+import com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
-import com.kangurusiaga.app.core.designsystem.theme.CardBorder
-import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
-import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
-import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.White
+import com.kangurusiaga.app.domain.model.FeedingMethod
 import com.kangurusiaga.app.domain.model.FeedingSchedule
+import com.kangurusiaga.app.domain.model.RepeatType
 import com.kangurusiaga.app.presentation.feeding.components.AddFeedingScheduleBottomSheet
+import com.kangurusiaga.app.presentation.feeding.components.BatchFeedingVolumeBottomSheet
+import com.kangurusiaga.app.presentation.feeding.components.BatchFeedingVolumeCard
 import com.kangurusiaga.app.presentation.feeding.components.DeleteFeedingScheduleDialog
 import com.kangurusiaga.app.presentation.feeding.components.EditFeedingScheduleBottomSheet
 import com.kangurusiaga.app.presentation.feeding.components.FeedingInfoDialog
 import com.kangurusiaga.app.presentation.home.HomeBottomBar
 import com.kangurusiaga.app.presentation.home.HomeTab
-
-import android.content.pm.PackageManager
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.core.content.ContextCompat
-import com.kangurusiaga.app.R
 
 @Composable
 fun AlarmRoute(
@@ -127,6 +125,9 @@ fun AlarmRoute(
         onCloseAddSchedule = viewModel::onCloseAddSchedule,
         onOpenEditSchedule = viewModel::onOpenEditSchedule,
         onCloseEditSchedule = viewModel::onCloseEditSchedule,
+        onOpenBatchSchedule = viewModel::onOpenBatchSheet,
+        onCloseBatchSchedule = viewModel::onCloseBatchSheet,
+        onApplyBatchVolume = viewModel::onApplyBatchVolume,
         onSaveNewSchedule = { hour, minute, volume, method, note, reminderEnabled, repeatType ->
             if (reminderEnabled) {
                 requestPermissionIfAppropriate()
@@ -162,24 +163,27 @@ fun AlarmScreen(
     onCloseAddSchedule: () -> Unit,
     onOpenEditSchedule: (FeedingSchedule) -> Unit,
     onCloseEditSchedule: () -> Unit,
+    onOpenBatchSchedule: () -> Unit,
+    onCloseBatchSchedule: () -> Unit,
+    onApplyBatchVolume: (Int) -> Unit,
     onSaveNewSchedule: (
         hour: Int,
         minute: Int,
         volumeMl: Int,
-        method: com.kangurusiaga.app.domain.model.FeedingMethod,
+        method: FeedingMethod,
         note: String?,
         reminderEnabled: Boolean,
-        repeatType: com.kangurusiaga.app.domain.model.RepeatType
+        repeatType: RepeatType
     ) -> Unit,
     onUpdateSchedule: (
         scheduleId: Long,
         hour: Int,
         minute: Int,
         volumeMl: Int,
-        method: com.kangurusiaga.app.domain.model.FeedingMethod,
+        method: FeedingMethod,
         note: String?,
         reminderEnabled: Boolean,
-        repeatType: com.kangurusiaga.app.domain.model.RepeatType
+        repeatType: RepeatType
     ) -> Unit,
     onRequestDeleteSchedule: (FeedingSchedule) -> Unit,
     onCancelDeleteSchedule: () -> Unit,
@@ -191,6 +195,7 @@ fun AlarmScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val addSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val editSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val batchSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     LaunchedEffect(uiState.userMessage) {
         val msg = uiState.userMessage
@@ -202,7 +207,7 @@ fun AlarmScreen(
 
     Scaffold(
         containerColor = BrandBackground,
-        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
+        snackbarHost = { KanguruSnackbarHost(snackbarHostState) },
         topBar = {
             AlarmTopAppBar(
                 onNavigateBack = onNavigateBack,
@@ -246,6 +251,14 @@ fun AlarmScreen(
                         AlarmAdvisoryCard()
                     }
 
+                    // Batch Volume Card ("Ubah Dosis Sekaligus" - Google Stitch)
+                    item {
+                        BatchFeedingVolumeCard(
+                            activeVolumeMl = uiState.activeVolumeMl,
+                            onManageClick = onOpenBatchSchedule
+                        )
+                    }
+
                     // Schedules Container Card
                     item {
                         Column(
@@ -253,7 +266,7 @@ fun AlarmScreen(
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(MaterialTheme.colorScheme.surface)
-                                .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(20.dp))
+                                .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(20.dp))
                                 .padding(horizontal = 12.dp, vertical = 6.dp)
                         ) {
                             // Section Header
@@ -266,24 +279,24 @@ fun AlarmScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.alarm_section_header_schedule),
-                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
-                                    color = TextSecondary
+                                    color = KanguruTheme.colors.textSecondary
                                 )
                                 Text(
                                     text = stringResource(R.string.alarm_section_header_status),
-                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
-                                    color = TextSecondary
+                                    color = KanguruTheme.colors.textSecondary
                                 )
                             }
 
-                            // Items
+                            // Schedule Items
                             uiState.schedules.forEachIndexed { index, schedule ->
                                 if (index > 0) {
                                     HorizontalDivider(
                                         thickness = 1.dp,
-                                        color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider
+                                        color = KanguruTheme.colors.divider
                                     )
                                 }
 
@@ -319,7 +332,7 @@ fun AlarmScreen(
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = stringResource(R.string.alarm_btn_add),
-                                fontSize = 15.sp,
+                                style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = White
                             )
@@ -329,6 +342,16 @@ fun AlarmScreen(
                 }
             }
         }
+    }
+
+    // Modal Bottom Sheet: Batch Volume (Atur Volume Semua Jadwal)
+    if (uiState.isBatchSheetVisible) {
+        BatchFeedingVolumeBottomSheet(
+            initialVolumeMl = uiState.activeVolumeMl,
+            sheetState = batchSheetState,
+            onApply = onApplyBatchVolume,
+            onDismiss = onCloseBatchSchedule
+        )
     }
 
     // Modal Bottom Sheet: Add Schedule
@@ -384,7 +407,7 @@ private fun AlarmTopAppBar(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(R.string.common_back),
-                tint = TextPrimary
+                tint = KanguruTheme.colors.textPrimary
             )
         }
 
@@ -393,16 +416,14 @@ private fun AlarmTopAppBar(
                 text = stringResource(R.string.alarm_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-                fontSize = 16.5.sp,
+                color = KanguruTheme.colors.textPrimary,
                 textAlign = TextAlign.Center
             )
             Text(
                 text = stringResource(R.string.alarm_subtitle_ogt),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-                fontSize = 14.5.sp,
+                color = KanguruTheme.colors.textPrimary,
                 textAlign = TextAlign.Center
             )
         }
@@ -411,7 +432,7 @@ private fun AlarmTopAppBar(
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = stringResource(R.string.alarm_info_cd),
-                tint = TextSecondary,
+                tint = KanguruTheme.colors.textSecondary,
                 modifier = Modifier.size(22.dp)
             )
         }
@@ -424,8 +445,8 @@ private fun AlarmAdvisoryCard() {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer)
-            .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningBorder, RoundedCornerShape(16.dp))
+            .background(KanguruTheme.colors.warningContainer)
+            .border(1.dp, KanguruTheme.colors.warningBorder, RoundedCornerShape(16.dp))
             .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -433,16 +454,15 @@ private fun AlarmAdvisoryCard() {
         Icon(
             imageVector = Icons.Default.Warning,
             contentDescription = null,
-            tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
+            tint = KanguruTheme.colors.warningText,
             modifier = Modifier.size(24.dp)
         )
 
         Text(
             text = stringResource(R.string.alarm_advisory),
-            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            lineHeight = 18.sp
+            style = MaterialTheme.typography.bodySmall,
+            color = KanguruTheme.colors.warningText,
+            fontWeight = FontWeight.Medium
         )
     }
 }
@@ -454,13 +474,12 @@ private fun AlarmScheduleItem(
     onItemClick: () -> Unit,
     onToggle: (Boolean) -> Unit
 ) {
-    // Alternating soft accent colors for the clock icon (orange, blue, cyan, rose, amber)
+    // Alternating soft accent colors for the clock icon (orange, blue, cyan, rose)
     val colorPalettes = listOf(
         Color(0xFFF97316), // orange
         Color(0xFF3B82F6), // blue
         Color(0xFF06B6D4), // cyan
-        Color(0xFFF43F5E), // rose
-        Color(0xFFF59E0B)  // amber
+        Color(0xFFF43F5E)  // rose
     )
     val iconColor = colorPalettes[index % colorPalettes.size]
     val bgIconColor = iconColor.copy(alpha = 0.15f)
@@ -502,23 +521,22 @@ private fun AlarmScheduleItem(
                 ) {
                     Text(
                         text = schedule.formattedTime,
-                        fontSize = 17.sp,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                        letterSpacing = (-0.3).sp
+                        color = KanguruTheme.colors.textPrimary
                     )
                     Text(
                         text = stringResource(R.string.alarm_volume_unit, schedule.volumeMl),
-                        fontSize = 13.5.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Normal,
-                        color = TextSecondary
+                        color = KanguruTheme.colors.textSecondary
                     )
                 }
                 Text(
                     text = schedule.method.displayName,
-                    fontSize = 11.sp,
+                    style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Normal,
-                    color = TextSecondary
+                    color = KanguruTheme.colors.textSecondary
                 )
             }
         }
@@ -529,9 +547,9 @@ private fun AlarmScheduleItem(
             onCheckedChange = onToggle,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = White,
-                checkedTrackColor = Color(0xFF10B981),
+                checkedTrackColor = KanguruTheme.colors.success,
                 uncheckedThumbColor = White,
-                uncheckedTrackColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
+                uncheckedTrackColor = KanguruTheme.colors.cardBorder
             )
         )
     }

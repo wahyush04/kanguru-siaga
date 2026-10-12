@@ -7,6 +7,7 @@ import com.kangurusiaga.app.domain.model.FeedingSchedule
 import com.kangurusiaga.app.domain.model.RepeatType
 import com.kangurusiaga.app.domain.repository.FeedingScheduleRepository
 import com.kangurusiaga.app.domain.usecase.feeding.AddFeedingScheduleUseCase
+import com.kangurusiaga.app.domain.usecase.feeding.BatchUpdateFeedingVolumeUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.DeleteFeedingScheduleUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.ObserveFeedingSchedulesUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.ToggleFeedingScheduleUseCase
@@ -28,6 +29,7 @@ class AlarmViewModel @Inject constructor(
     private val updateFeedingScheduleUseCase: UpdateFeedingScheduleUseCase,
     private val deleteFeedingScheduleUseCase: DeleteFeedingScheduleUseCase,
     private val toggleFeedingScheduleUseCase: ToggleFeedingScheduleUseCase,
+    private val batchUpdateFeedingVolumeUseCase: BatchUpdateFeedingVolumeUseCase,
     private val repository: FeedingScheduleRepository,
     private val scheduler: FeedingReminderScheduler
 ) : ViewModel() {
@@ -218,6 +220,32 @@ class AlarmViewModel @Inject constructor(
                         schedulePendingDelete = null,
                         userMessage = error.localizedMessage ?: "Gagal menghapus jadwal"
                     )
+                }
+            }
+        }
+    }
+
+    fun onOpenBatchSheet() {
+        _uiState.update { it.copy(isBatchSheetVisible = true) }
+    }
+
+    fun onCloseBatchSheet() {
+        _uiState.update { it.copy(isBatchSheetVisible = false) }
+    }
+
+    fun onApplyBatchVolume(volumeMl: Int) {
+        viewModelScope.launch {
+            val result = batchUpdateFeedingVolumeUseCase(volumeMl)
+            result.onSuccess {
+                _uiState.update {
+                    it.copy(
+                        isBatchSheetVisible = false,
+                        userMessage = "Berhasil memperbarui semua jadwal menjadi $volumeMl ml!"
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(userMessage = error.localizedMessage ?: "Gagal memperbarui volume semua jadwal")
                 }
             }
         }

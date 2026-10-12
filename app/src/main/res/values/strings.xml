@@ -135,6 +135,18 @@
     <string name="alarm_btn_add">Tambah Jadwal</string>
     <string name="alarm_volume_unit">%1$d ml</string>
 
+    <!-- Batch Dosage Feature (Google Stitch) -->
+    <string name="alarm_batch_title">Ubah Dosis Sekaligus</string>
+    <string name="alarm_batch_badge">Semua Jadwal</string>
+    <string name="alarm_batch_desc">Terapkan volume ml yang sama untuk seluruh jadwal harian</string>
+    <string name="alarm_batch_active_label">Dosis Aktif:</string>
+    <string name="alarm_batch_btn_manage">Atur Dosis</string>
+    <string name="alarm_batch_sheet_title">Atur Volume Semua Jadwal</string>
+    <string name="alarm_batch_sheet_desc">Ubah jumlah ASI sekaligus untuk seluruh jadwal pemberian tanpa perlu mengedit satu per satu.</string>
+    <string name="alarm_batch_sheet_counter_label">VOLUME ASI PER JADWAL</string>
+    <string name="alarm_batch_sheet_warning">Perubahan volume cairan harian harus sesuai dengan instruksi dokter spesialis anak / DPJP.</string>
+    <string name="alarm_batch_btn_apply">Terapkan ke Semua Jadwal</string>
+
     <!-- Add Feeding Schedule BottomSheet -->
     <string name="alarm_add_title">Tambah Jadwal ASI</string>
     <string name="alarm_label_time">Waktu</string>

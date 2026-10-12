@@ -42,6 +42,9 @@ interface FeedingScheduleDao {
     @Query("SELECT COUNT(*) FROM feeding_schedules")
     suspend fun count(): Int
 
+    @Query("UPDATE feeding_schedules SET volume_ml = :volumeMl, updated_at = :updatedAt")
+    suspend fun updateAllVolumes(volumeMl: Int, updatedAt: Long = System.currentTimeMillis())
+
     @Query("UPDATE feeding_schedules SET reminder_offset_minutes = 0 WHERE reminder_offset_minutes != 0")
     suspend fun resetAllOffsetToZero()
 

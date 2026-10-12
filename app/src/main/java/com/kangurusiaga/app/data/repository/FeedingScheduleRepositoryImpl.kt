@@ -40,6 +40,10 @@ class FeedingScheduleRepositoryImpl @Inject constructor(
         dao.update(schedule.toEntity().copy(updatedAt = System.currentTimeMillis()))
     }
 
+    override suspend fun updateAllVolumes(volumeMl: Int) {
+        dao.updateAllVolumes(volumeMl)
+    }
+
     override suspend fun deleteSchedule(schedule: FeedingSchedule) {
         dao.delete(schedule.toEntity())
     }

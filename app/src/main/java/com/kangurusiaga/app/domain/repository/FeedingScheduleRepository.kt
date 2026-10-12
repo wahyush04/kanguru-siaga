@@ -9,6 +9,7 @@ interface FeedingScheduleRepository {
     suspend fun getAllEnabledSchedules(): List<FeedingSchedule>
     suspend fun addSchedule(schedule: FeedingSchedule): Long
     suspend fun updateSchedule(schedule: FeedingSchedule)
+    suspend fun updateAllVolumes(volumeMl: Int)
     suspend fun deleteSchedule(schedule: FeedingSchedule)
     suspend fun deleteScheduleById(id: Long)
     suspend fun setEnabled(id: Long, isEnabled: Boolean)
