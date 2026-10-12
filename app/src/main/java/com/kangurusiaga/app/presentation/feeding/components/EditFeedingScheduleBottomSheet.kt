@@ -507,7 +507,8 @@ fun EditFeedingScheduleBottomSheet(
                     text = stringResource(R.string.alarm_btn_save_changes),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = White
                 )
             }
 

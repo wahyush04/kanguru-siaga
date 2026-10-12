@@ -107,6 +107,7 @@ fun HomeRoute(
     onNavigateToGrowth: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToTimer: () -> Unit = onNavigateToPmk,
+    onNavigateToNotification: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -122,9 +123,10 @@ fun HomeRoute(
         onNavigateToGrowth = onNavigateToGrowth,
         onNavigateToProfile = onNavigateToProfile,
         onNavigateToTimer = onNavigateToTimer,
+        onNavigateToNotification = onNavigateToNotification,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
-        onOpenNotification = viewModel::openNotificationSheet,
+        onOpenNotification = onNavigateToNotification,
         onCloseNotification = viewModel::closeNotificationSheet,
         onShowInfo = viewModel::showInfoMessage,
         onClearInfo = viewModel::clearInfoMessage,
@@ -144,6 +146,7 @@ fun HomeScreen(
     onNavigateToGrowth: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToTimer: () -> Unit = onNavigateToPmk,
+    onNavigateToNotification: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     onCloseEmergency: () -> Unit = {},
     onOpenNotification: () -> Unit = {},
@@ -1025,7 +1028,8 @@ private fun EmptyHomeContent(
             Text(
                 text = stringResource(R.string.home_btn_setup_profile),
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                color = KanguruTheme.colors.onPrimary
             )
         }
     }

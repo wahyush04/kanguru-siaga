@@ -54,6 +54,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.PmkCaregiver
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -548,7 +549,8 @@ fun PmkCaregiverHandoverSheet(
                     Text(
                         text = "Konfirmasi Estafet",
                         style = KanguruTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = White
                     )
                 }
             }

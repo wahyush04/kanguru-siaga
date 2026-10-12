@@ -6,6 +6,8 @@ import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.usecase.GetBabyProfileUseCase
 import com.kangurusiaga.app.domain.usecase.GetTodayPmkSessionsUseCase
+import com.kangurusiaga.app.domain.usecase.notification.GetUnreadNotificationCountUseCase
+import com.kangurusiaga.app.domain.usecase.notification.SyncInAppNotificationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -25,7 +28,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     getBabyProfileUseCase: GetBabyProfileUseCase,
-    private val getTodayPmkSessionsUseCase: GetTodayPmkSessionsUseCase
+    private val getTodayPmkSessionsUseCase: GetTodayPmkSessionsUseCase,
+    private val getUnreadNotificationCountUseCase: GetUnreadNotificationCountUseCase,
+    private val syncInAppNotificationsUseCase: SyncInAppNotificationsUseCase
 ) : ViewModel() {
 
     private val _dialogState = MutableStateFlow(
@@ -45,11 +50,15 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = getBabyProfileUseCase()
         .flatMapLatest { baby ->
             if (baby != null) {
+                viewModelScope.launch {
+                    syncInAppNotificationsUseCase(baby.id)
+                }
                 combine(
                     getTodayPmkSessionsUseCase(baby.id),
+                    getUnreadNotificationCountUseCase(baby.id),
                     _dialogState
-                ) { sessions, dialogs ->
-                    buildHomeState(baby, sessions, dialogs)
+                ) { sessions, unreadCount, dialogs ->
+                    buildHomeState(baby, sessions, unreadCount, dialogs)
                 }
             } else {
                 _dialogState.map { dialogs ->
@@ -72,6 +81,7 @@ class HomeViewModel @Inject constructor(
     private fun buildHomeState(
         baby: Baby,
         sessions: List<PmkSession>,
+        unreadCount: Int,
         dialogs: DialogState
     ): HomeUiState {
         val now = System.currentTimeMillis()
@@ -106,7 +116,7 @@ class HomeViewModel @Inject constructor(
             todayTargetHours = targetHours,
             formattedTodayPmkProgress = progressText,
             todayProgressFraction = progress,
-            unreadNotificationsCount = 1,
+            unreadNotificationsCount = unreadCount,
             showEmergencyDialog = dialogs.showEmergency,
             showNotificationSheet = dialogs.showNotification,
             infoMessage = dialogs.infoMessage

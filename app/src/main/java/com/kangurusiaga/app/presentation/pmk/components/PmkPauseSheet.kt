@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.PmkPauseReason
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -491,7 +492,8 @@ fun PmkPauseSheet(
                     Text(
                         text = "⏸️ Mulai Jeda Sesi",
                         style = KanguruTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = White
                     )
                 }
             }

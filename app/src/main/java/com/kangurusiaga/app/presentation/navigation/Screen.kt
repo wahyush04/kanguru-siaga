@@ -58,4 +58,7 @@ sealed class Screen(override val route: String, override val destination: String
     data object MedicalDisclaimer : Screen(route = "medical_disclaimer", destination = "medical_disclaimer_destination")
     data object AboutApp : Screen(route = "about_app", destination = "about_app_destination")
     data object ClinicalGuidelines : Screen(route = "clinical_guidelines", destination = "clinical_guidelines_destination")
+
+    // Notification Screen
+    data object Notification : Screen(route = "notification", destination = "notification_destination")
 }

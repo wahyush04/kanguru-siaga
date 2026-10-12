@@ -70,4 +70,10 @@ abstract class RepositoryModule {
     abstract fun bindFentonGrowthRepository(
         impl: FentonGrowthRepositoryImpl
     ): FentonGrowthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(
+        impl: NotificationRepositoryImpl
+    ): com.kangurusiaga.app.domain.repository.NotificationRepository
 }

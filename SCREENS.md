@@ -23,6 +23,7 @@ Dokumentasi lengkap mengenai seluruh layar (*screens*) yang ada di dalam aplikas
 | **Onboarding Screen** | `OnboardingScreen`<br>`OnboardingRoute` | `Screen.Onboarding`<br>(`onboarding`) | `app/src/main/java/com/kangurusiaga/app/presentation/onboarding/OnboardingScreen.kt` | Pengenalan fitur-fitur utama aplikasi (edukasi PMK, grafik pertumbuhan Fenton, alarm pemberian ASI/OGT) bagi pengguna baru. |
 | **Baby Profile Setup Screen** | `BabyProfileSetupScreen`<br>`BabyProfileSetupRoute` | `Screen.ProfileSetup`<br>(`profile_setup`) | `app/src/main/java/com/kangurusiaga/app/presentation/babyprofile/BabyProfileSetupScreen.kt` | Form registrasi awal data lahir bayi prematur/BBLR (nama, tanggal lahir, jenis kelamin, usia gestasi minggu/hari, BB, PB, LK). |
 | **Home Dashboard Screen** | `HomeScreen`<br>`HomeRoute` | `Screen.Home`<br>(`home`) | `app/src/main/java/com/kangurusiaga/app/presentation/home/HomeScreen.kt` | Halaman utama (*dashboard*) dengan kartu status bayi (Usia Koreksi), pencatat cepat PMK, jadwal ASI berikutnya, serta navigasi antar modul. |
+| **Notification Screen** | `NotificationScreen`<br>`NotificationRoute` | `Screen.Notification`<br>(`notification`) | `app/src/main/java/com/kangurusiaga/app/presentation/notification/NotificationScreen.kt` | Pusat notifikasi & pengingat (Peringatan Jeda PMK, PMK Kontinu Mandiri, Alarm ASI/OGT, dan Jadwal Timbang/Ukur Pertumbuhan Mingguan) dengan aksi cepat. |
 
 ---
 

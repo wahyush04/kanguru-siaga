@@ -43,6 +43,7 @@ import com.kangurusiaga.app.presentation.settings.SettingsRoute
 import com.kangurusiaga.app.presentation.settings.info.AboutAppScreen
 import com.kangurusiaga.app.presentation.settings.info.ClinicalGuidelinesScreen
 import com.kangurusiaga.app.presentation.settings.info.MedicalDisclaimerScreen
+import com.kangurusiaga.app.presentation.notification.NotificationRoute
 import com.kangurusiaga.app.presentation.settings.info.UserGuideScreen
 
 @Composable
@@ -127,6 +128,9 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                },
+                onNavigateToNotification = {
+                    navController.navigate(Screen.Notification.route)
                 }
             )
         }
@@ -898,6 +902,53 @@ fun KanguruNavGraph(
             ClinicalGuidelinesScreen(
                 onNavigateBack = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.Notification.route) {
+            NotificationRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToPmk = {
+                    navController.navigate(Screen.PmkCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToEducation = {
+                    navController.navigate(Screen.EducationCenter.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToAlarm = {
+                    navController.navigate(Screen.Feeding.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.BabyProfile.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToPmkTimer = {
+                    navController.navigate(Screen.PmkTimer.route)
+                },
+                onNavigateToFeeding = {
+                    navController.navigate(Screen.Feeding.route)
+                },
+                onNavigateToGrowthAdd = { parameter ->
+                    navController.navigate(Screen.GrowthAdd.createRoute(parameter))
                 }
             )
         }

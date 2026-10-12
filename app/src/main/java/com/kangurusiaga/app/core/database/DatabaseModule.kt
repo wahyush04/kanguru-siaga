@@ -90,4 +90,10 @@ object DatabaseModule {
     fun provideBabyProfileDao(database: com.kangurusiaga.app.data.local.AppDatabase): com.kangurusiaga.app.data.local.dao.BabyProfileDao {
         return database.babyProfileDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideInAppNotificationDao(database: KanguruDatabase): com.kangurusiaga.app.data.local.dao.InAppNotificationDao {
+        return database.inAppNotificationDao()
+    }
 }
