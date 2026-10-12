@@ -501,14 +501,14 @@ private fun HomeContent(
                 text = stringResource(R.string.home_section_today_activity),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary
+                color = KanguruTheme.colors.textPrimary
             )
 
             Text(
                 text = stringResource(R.string.home_see_all),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
-                color = BrandPink,
+                color = KanguruTheme.colors.primary,
                 modifier = Modifier.clickable { onNavigateToPmk() }
             )
         }
@@ -558,14 +558,13 @@ private fun HomeContent(
                             text = "PMK Kontinu Mandiri",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = KanguruTheme.colors.textPrimary
                         )
                         Text(
                             text = pmkProgressFormatted,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
-                            color = TextSecondary,
-                            fontSize = 11.sp
+                            color = KanguruTheme.colors.textSecondary
                         )
                     }
 
@@ -588,7 +587,7 @@ private fun HomeContent(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                     contentDescription = null,
-                    tint = BrandPink,
+                    tint = KanguruTheme.colors.primary,
                     modifier = Modifier.size(16.dp)
                 )
             }

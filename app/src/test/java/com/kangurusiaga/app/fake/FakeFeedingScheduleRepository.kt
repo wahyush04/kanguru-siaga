@@ -39,6 +39,18 @@ class FakeFeedingScheduleRepository : FeedingScheduleRepository {
         }
     }
 
+    override suspend fun updateAllVolumes(volumeMl: Int) {
+        val current = schedulesFlow.value
+        val updated = current.mapValues { (_, schedule) -> schedule.copy(volumeMl = volumeMl) }
+        schedulesFlow.value = updated
+    }
+
+    override suspend fun resetAllOffsetToZero() {
+        val current = schedulesFlow.value
+        val updated = current.mapValues { (_, schedule) -> schedule.copy(reminderOffsetMinutes = 0) }
+        schedulesFlow.value = updated
+    }
+
     override suspend fun deleteSchedule(schedule: FeedingSchedule) {
         deleteScheduleById(schedule.id)
     }

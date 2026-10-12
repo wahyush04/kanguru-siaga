@@ -71,6 +71,11 @@ class MainActivity : ComponentActivity() {
                     launchSingleTop = true
                 }
             }
+            "splash_preview" -> {
+                navController.navigate("splash_preview") {
+                    launchSingleTop = true
+                }
+            }
         }
     }
 }

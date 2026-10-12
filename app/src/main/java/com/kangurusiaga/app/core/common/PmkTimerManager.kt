@@ -179,38 +179,29 @@ class PmkTimerManager @Inject constructor(
 
         val nowEpoch = System.currentTimeMillis()
 
-        val isDefaultContinuous = (activeSessionId == 0L && status == TimerStatus.IDLE)
-        val resolvedStatus = if (isDefaultContinuous) TimerStatus.RUNNING else status
-        val resolvedCaregiver = if (isDefaultContinuous) PmkCaregiver.AYAH else caregiver
-        val baseContinuousSeconds = 18 * 3600L + 24 * 60L + 36L // 18:24:36
-
-        val activeElapsedSeconds = when (resolvedStatus) {
+        val activeElapsedSeconds = when (status) {
             TimerStatus.RUNNING -> {
-                if (isDefaultContinuous) {
-                    baseContinuousSeconds
-                } else {
-                    val currentSegmentMs = max(0L, nowEpoch - segStart)
-                    (accumulatedActiveMs + currentSegmentMs) / 1000L
-                }
+                val currentSegmentMs = max(0L, nowEpoch - segStart)
+                (accumulatedActiveMs + currentSegmentMs) / 1000L
             }
             TimerStatus.PAUSED -> accumulatedActiveMs / 1000L
             else -> 0L
         }
 
-        val pauseElapsedSeconds = if (resolvedStatus == TimerStatus.PAUSED && pauseStart > 0L) {
+        val pauseElapsedSeconds = if (status == TimerStatus.PAUSED && pauseStart > 0L) {
             max(0L, nowEpoch - pauseStart) / 1000L
         } else 0L
 
         _timerState.value = PmkTimerState(
-            status = resolvedStatus,
-            activeSessionId = if (isDefaultContinuous) 1L else activeSessionId,
-            currentCaregiver = resolvedCaregiver,
+            status = status,
+            activeSessionId = activeSessionId,
+            currentCaregiver = caregiver,
             elapsedSeconds = activeElapsedSeconds,
-            sessionStartEpoch = if (isDefaultContinuous) (nowEpoch - baseContinuousSeconds * 1000L) else sessionStart,
-            currentSegmentStartEpoch = if (isDefaultContinuous) nowEpoch else segStart,
+            sessionStartEpoch = sessionStart,
+            currentSegmentStartEpoch = segStart,
             pauseElapsedSeconds = pauseElapsedSeconds,
             pauseReason = pauseReason,
-            todayTotalActiveSeconds = if (isDefaultContinuous) (18 * 3600L + 26 * 60L) else 0L,
+            todayTotalActiveSeconds = 0L,
             notes = notes,
             babyTemperature = babyTemp,
             babyResponse = babyResponse
@@ -706,13 +697,28 @@ class PmkTimerManager @Inject constructor(
         }
     }
 
+    private var priorCompletedSecondsToday: Long = 0L
+
     fun refreshTodayTotal() {
         scope.launch {
             val babyId = prefs.getLong(KEY_BABY_ID, 1L)
             val timeline = getDailyTimelineUseCase(babyId, Calendar.getInstance()).firstOrNull()
             if (timeline != null) {
-                _timerState.update {
-                    it.copy(todayTotalActiveSeconds = timeline.totalActiveMinutes * 60L)
+                val currentState = _timerState.value
+                val isSessionActive = currentState.isRunning || currentState.isPaused
+                val calculatedTimelineSeconds = timeline.totalActiveMinutes * 60L
+
+                if (isSessionActive) {
+                    priorCompletedSecondsToday = max(0L, calculatedTimelineSeconds - currentState.elapsedSeconds)
+                    val activeTotal = max(calculatedTimelineSeconds, priorCompletedSecondsToday + currentState.elapsedSeconds)
+                    _timerState.update {
+                        it.copy(todayTotalActiveSeconds = activeTotal)
+                    }
+                } else {
+                    priorCompletedSecondsToday = calculatedTimelineSeconds
+                    _timerState.update {
+                        it.copy(todayTotalActiveSeconds = calculatedTimelineSeconds)
+                    }
                 }
             }
         }
@@ -736,18 +742,19 @@ class PmkTimerManager @Inject constructor(
 
                 if (status == TimerStatus.RUNNING) {
                     val segStart = prefs.getLong(KEY_CURRENT_SEGMENT_START_EPOCH, 0L)
-                    if (segStart == 0L) {
-                        _timerState.update {
-                            it.copy(elapsedSeconds = it.elapsedSeconds + 1L)
-                        }
+                    val currentElapsedSec = if (segStart == 0L) {
+                        _timerState.value.elapsedSeconds + 1L
                     } else {
                         val accumulatedActive = prefs.getLong(KEY_ACCUMULATED_ACTIVE_MS, 0L)
                         val currentSegMs = max(0L, nowEpoch - segStart)
-                        val totalActiveMs = accumulatedActive + currentSegMs
+                        (accumulatedActive + currentSegMs) / 1000L
+                    }
 
-                        _timerState.update {
-                            it.copy(elapsedSeconds = totalActiveMs / 1000L)
-                        }
+                    _timerState.update {
+                        it.copy(
+                            elapsedSeconds = currentElapsedSec,
+                            todayTotalActiveSeconds = priorCompletedSecondsToday + currentElapsedSec
+                        )
                     }
                 } else if (status == TimerStatus.PAUSED) {
                     val pauseStart = prefs.getLong(KEY_PAUSE_START_EPOCH, nowEpoch)

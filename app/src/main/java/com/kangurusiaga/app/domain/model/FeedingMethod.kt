@@ -2,8 +2,8 @@ package com.kangurusiaga.app.domain.model
 
 enum class FeedingMethod(val displayName: String) {
     OGT_NGT("OGT/NGT"),
-    CUP("Cangkir / Cup"),
-    SPOON("Sendok / Pipet");
+    CUP("Pasi / Dot"),
+    SPOON("Menyusu Langsung");
 
     companion object {
         fun fromString(value: String?): FeedingMethod {

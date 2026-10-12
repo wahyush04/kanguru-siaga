@@ -2,8 +2,10 @@ package com.kangurusiaga.app.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kangurusiaga.app.core.common.PmkTimerManager
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PmkSession
+import com.kangurusiaga.app.domain.model.PmkTimerState
 import com.kangurusiaga.app.domain.usecase.GetBabyProfileUseCase
 import com.kangurusiaga.app.domain.usecase.GetTodayPmkSessionsUseCase
 import com.kangurusiaga.app.domain.usecase.notification.GetUnreadNotificationCountUseCase
@@ -29,8 +31,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class HomeViewModel @Inject constructor(
     getBabyProfileUseCase: GetBabyProfileUseCase,
     private val getTodayPmkSessionsUseCase: GetTodayPmkSessionsUseCase,
-    private val getUnreadNotificationCountUseCase: GetUnreadNotificationCountUseCase,
-    private val syncInAppNotificationsUseCase: SyncInAppNotificationsUseCase
+    private val getUnreadNotificationCountUseCase: GetUnreadNotificationCountUseCase? = null,
+    private val syncInAppNotificationsUseCase: SyncInAppNotificationsUseCase? = null,
+    private val pmkTimerManager: PmkTimerManager? = null
 ) : ViewModel() {
 
     private val _dialogState = MutableStateFlow(
@@ -51,14 +54,20 @@ class HomeViewModel @Inject constructor(
         .flatMapLatest { baby ->
             if (baby != null) {
                 viewModelScope.launch {
-                    syncInAppNotificationsUseCase(baby.id)
+                    syncInAppNotificationsUseCase?.invoke(baby.id)
+                    pmkTimerManager?.ensureTickerRunning()
+                    pmkTimerManager?.refreshTodayTotal()
                 }
+                val timerFlow = pmkTimerManager?.timerState ?: flowOf(PmkTimerState())
+                val unreadFlow = getUnreadNotificationCountUseCase?.invoke(baby.id) ?: flowOf(0)
+
                 combine(
                     getTodayPmkSessionsUseCase(baby.id),
-                    getUnreadNotificationCountUseCase(baby.id),
+                    unreadFlow,
+                    timerFlow,
                     _dialogState
-                ) { sessions, unreadCount, dialogs ->
-                    buildHomeState(baby, sessions, unreadCount, dialogs)
+                ) { sessions, unreadCount, timerState, dialogs ->
+                    buildHomeState(baby, sessions, unreadCount, timerState, dialogs)
                 }
             } else {
                 _dialogState.map { dialogs ->
@@ -82,6 +91,7 @@ class HomeViewModel @Inject constructor(
         baby: Baby,
         sessions: List<PmkSession>,
         unreadCount: Int,
+        timerState: PmkTimerState,
         dialogs: DialogState
     ): HomeUiState {
         val now = System.currentTimeMillis()
@@ -98,11 +108,20 @@ class HomeViewModel @Inject constructor(
         val weightText = "BBLR $formattedWeight gram"
 
         val count = sessions.size
-        val totalMinutes = sessions.sumOf { it.activeDurationMinutes }
+        val timerTotalMinutes = (timerState.todayTotalActiveSeconds / 60).toInt()
+        val dbTotalMinutes = sessions.sumOf { it.activeDurationMinutes.coerceAtLeast(it.durationMinutes) }
+        val totalMinutes = maxOf(timerTotalMinutes, dbTotalMinutes)
+
         val hours = totalMinutes / 60
-        val targetHours = 20
-        val progress = (hours.toFloat() / targetHours.toFloat()).coerceIn(0f, 1f)
-        val progressText = if (hours > 0) "${hours}j dari ${targetHours}j target" else "${totalMinutes} mnt dari ${targetHours}j target"
+        val minutesRemainder = totalMinutes % 60
+        val targetHours = timerState.targetDailyHours
+        val progress = (totalMinutes.toFloat() / (targetHours * 60f)).coerceIn(0f, 1f)
+
+        val progressText = when {
+            hours > 0 && minutesRemainder > 0 -> "${hours}j ${minutesRemainder}m dari ${targetHours}j target"
+            hours > 0 -> "${hours}j dari ${targetHours}j target"
+            else -> "${minutesRemainder} mnt dari ${targetHours}j target"
+        }
 
         return HomeUiState(
             isLoading = false,

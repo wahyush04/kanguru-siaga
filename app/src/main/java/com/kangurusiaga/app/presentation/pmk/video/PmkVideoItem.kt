@@ -232,6 +232,45 @@ object PmkVideoDataSource {
             ),
             calloutTip = "Kain jarik tradisional atau selendang katun yang bersih dapat digunakan bila baju kanguru khusus belum tersedia.",
             nextLessonId = 6
+        ),
+        PmkVideoItem(
+            id = 6,
+            title = "6. Hal yang perlu diperhatikan",
+            category = "Perawatan Metode Kanguru",
+            duration = "03:40",
+            durationSeconds = 220,
+            thumbnailRes = R.drawable.thumb_pmk_video_6,
+            videoRes = R.raw.video_tanda_kegawatan_bblr_5,
+            description = "Tanda-tanda bahaya dan hal krusial yang wajib diperhatikan orang tua saat memantau kondisi bayi selama PMK berlangsung.",
+            clinicalPoints = listOf(
+                ClinicalPoint(
+                    number = 1,
+                    title = "Pantau Suhu Tubuh Berkala",
+                    description = "Pastikan suhu tubuh bayi berada dalam rentang normal (36.5°C - 37.5°C). Waspadai bila telapak kaki teraba dingin."
+                ),
+                ClinicalPoint(
+                    number = 2,
+                    title = "Waspadai Perubahan Warna Kulit",
+                    description = "Segera periksa jika bibir, lidah, atau ujung jari bayi tampak pucat atau kebiruan (sianosis)."
+                ),
+                ClinicalPoint(
+                    number = 3,
+                    title = "Tanda Kesulitan Bernapas",
+                    description = "Hentikan sesi bila bayi tampak sesak, ada tarikan dinding dada ke dalam (retraksi), atau terdengar merintih (grunting)."
+                ),
+                ClinicalPoint(
+                    number = 4,
+                    title = "Bayi Sulit Dibangunkan (Letargis)",
+                    description = "Bila bayi lemas tidak bereaksi terhadap rangsangan sentuhan lembut dan menolak minum ASI, segera hubungi tenaga medis."
+                ),
+                ClinicalPoint(
+                    number = 5,
+                    title = "Kondisi Kegawatan Medis",
+                    description = "Segera bawa bayi ke fasilitas kesehatan terdekat jika ditemukan salah satu tanda bahaya di atas."
+                )
+            ),
+            calloutTip = "Bila bayi sedang demam tinggi (>38°C) atau dalam kondisi kejang, tunda sesi PMK dan segera konsultasikan ke dokter.",
+            nextLessonId = null
         )
     )
 

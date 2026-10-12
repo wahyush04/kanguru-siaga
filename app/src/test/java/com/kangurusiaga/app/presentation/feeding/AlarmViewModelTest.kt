@@ -5,6 +5,7 @@ import com.kangurusiaga.app.domain.model.FeedingMethod
 import com.kangurusiaga.app.domain.model.FeedingSchedule
 import com.kangurusiaga.app.domain.model.RepeatType
 import com.kangurusiaga.app.domain.usecase.feeding.AddFeedingScheduleUseCase
+import com.kangurusiaga.app.domain.usecase.feeding.BatchUpdateFeedingVolumeUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.DeleteFeedingScheduleUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.ObserveFeedingSchedulesUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.ToggleFeedingScheduleUseCase
@@ -35,6 +36,7 @@ class AlarmViewModelTest {
     private lateinit var updateUseCase: UpdateFeedingScheduleUseCase
     private lateinit var deleteUseCase: DeleteFeedingScheduleUseCase
     private lateinit var toggleUseCase: ToggleFeedingScheduleUseCase
+    private lateinit var batchUpdateVolumeUseCase: BatchUpdateFeedingVolumeUseCase
 
     private lateinit var viewModel: AlarmViewModel
 
@@ -50,6 +52,7 @@ class AlarmViewModelTest {
         updateUseCase = UpdateFeedingScheduleUseCase(repository, scheduler)
         deleteUseCase = DeleteFeedingScheduleUseCase(repository, scheduler)
         toggleUseCase = ToggleFeedingScheduleUseCase(repository, scheduler)
+        batchUpdateVolumeUseCase = BatchUpdateFeedingVolumeUseCase(repository, scheduler)
     }
 
     @After
@@ -64,7 +67,9 @@ class AlarmViewModelTest {
             updateFeedingScheduleUseCase = updateUseCase,
             deleteFeedingScheduleUseCase = deleteUseCase,
             toggleFeedingScheduleUseCase = toggleUseCase,
-            repository = repository
+            batchUpdateFeedingVolumeUseCase = batchUpdateVolumeUseCase,
+            repository = repository,
+            scheduler = scheduler
         )
     }
 

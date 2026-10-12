@@ -122,32 +122,15 @@ class GetDailyPmkTimelineUseCase @Inject constructor(
             }
 
             if (blocks.isEmpty()) {
-                // Default realistic cKMC 24-hour estafet shifts matching Google Stitch reference
-                // 1. 00:00 - 06:00: PMK Malam (Ibu) - flex 6
-                // 2. 06:00 - 06:30: Jeda Menyusu & Ganti Popok - flex 0.5
-                // 3. 06:30 - 09:30: PMK Pagi (Nenek/Pendamping) - flex 3
-                // 4. 09:30 - 10:00: Jeda Mandi Lap Bayi - flex 0.5
-                // 5. 10:00 - 13:45: PMK Siang (Ibu) - flex 3.75
-                // 6. 13:45 - 14:00: Oper & Menyusu - flex 0.25
-                // 7. 14:00 - 18:24: PMK Sore (Ayah - Berlangsung) - flex 4.5
-                val defaultBlocks = listOf(
-                    TimelineBlock(PmkCaregiver.IBU, isPaused = false, pauseReason = null, startFraction = 0.0f, endFraction = 6.0f / 24f, durationMinutes = 360, timeRangeLabel = "00:00 - 06:00"),
-                    TimelineBlock(PmkCaregiver.IBU, isPaused = true, pauseReason = "Jeda Menyusu & Ganti Popok", startFraction = 6.0f / 24f, endFraction = 6.5f / 24f, durationMinutes = 30, timeRangeLabel = "06:00 - 06:30"),
-                    TimelineBlock(PmkCaregiver.PENDAMPING, isPaused = false, pauseReason = null, startFraction = 6.5f / 24f, endFraction = 9.5f / 24f, durationMinutes = 180, timeRangeLabel = "06:30 - 09:30"),
-                    TimelineBlock(PmkCaregiver.PENDAMPING, isPaused = true, pauseReason = "Jeda Mandi Lap Bayi", startFraction = 9.5f / 24f, endFraction = 10.0f / 24f, durationMinutes = 30, timeRangeLabel = "09:30 - 10:00"),
-                    TimelineBlock(PmkCaregiver.IBU, isPaused = false, pauseReason = null, startFraction = 10.0f / 24f, endFraction = 13.75f / 24f, durationMinutes = 225, timeRangeLabel = "10:00 - 13:45"),
-                    TimelineBlock(PmkCaregiver.IBU, isPaused = true, pauseReason = "Oper & Menyusu", startFraction = 13.75f / 24f, endFraction = 14.0f / 24f, durationMinutes = 15, timeRangeLabel = "13:45 - 14:00"),
-                    TimelineBlock(PmkCaregiver.AYAH, isPaused = false, pauseReason = null, startFraction = 14.0f / 24f, endFraction = 18.4f / 24f, durationMinutes = 264, timeRangeLabel = "14:00 - Sekarang")
-                )
                 return DailyTimeline(
                     dayEpoch = dayStartEpoch,
                     dayDateFormatted = dayFormatted,
-                    blocks = defaultBlocks,
-                    totalActiveMinutes = 1104, // 18j 24m
-                    totalPauseMinutes = 75,   // 1j 15m
-                    ibuMinutes = 585,
-                    ayahMinutes = 264,
-                    pendampingMinutes = 180
+                    blocks = emptyList(),
+                    totalActiveMinutes = 0,
+                    totalPauseMinutes = 0,
+                    ibuMinutes = 0,
+                    ayahMinutes = 0,
+                    pendampingMinutes = 0
                 )
             }
 

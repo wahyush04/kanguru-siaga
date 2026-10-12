@@ -7,6 +7,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -34,17 +35,21 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -56,6 +61,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -295,11 +301,16 @@ fun SplashScreen(
     )
 
     // 4. Button shimmer sweep
-    val shimmerOffsetFraction by infiniteTransition.animateFloat(
-        initialValue = -0.5f,
-        targetValue = 1.5f,
+    val shimmerProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1800, easing = LinearEasing),
+            animation = keyframes {
+                durationMillis = 3200
+                0f at 0 using FastOutSlowInEasing
+                1f at 1350 using FastOutSlowInEasing
+                1f at 3200
+            },
             repeatMode = RepeatMode.Restart
         ),
         label = "button_shimmer"
@@ -617,11 +628,10 @@ fun SplashScreen(
                 // Subtitle
                 Text(
                     text = stringResource(R.string.splash_subtitle),
-                    fontSize = 15.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
-                    color = TextSecondary,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 22.sp
+                    color = KanguruTheme.colors.textSecondary,
+                    textAlign = TextAlign.Center
                 )
             }
 
@@ -641,24 +651,25 @@ fun SplashScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 52.dp)
+                        .height(56.dp)
                         .graphicsLayer {
                             scaleX = buttonPulseScale
                             scaleY = buttonPulseScale
                         }
                         .shadow(
                             elevation = 8.dp,
-                            shape = RoundedCornerShape(26.dp),
+                            shape = RoundedCornerShape(28.dp),
                             spotColor = Color(0xFFFF5C77)
                         ),
-                    shape = RoundedCornerShape(26.dp),
+                    shape = RoundedCornerShape(28.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(min = 52.dp)
+                            .height(56.dp)
+                            .clip(RoundedCornerShape(28.dp))
                             .background(
                                 Brush.horizontalGradient(
                                     listOf(
@@ -666,36 +677,64 @@ fun SplashScreen(
                                         Color(0xFFF43F5E)
                                     )
                                 )
-                            )
-                            .padding(horizontal = 24.dp, vertical = 12.dp),
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Button Shimmer Sweep Highlight
-                        val btnShimmerX = shimmerOffsetFraction * 300f
+                        // Button Shimmer Sweep Highlight - full top-to-bottom and left-to-right slanted beam
                         Box(
                             modifier = Modifier
                                 .matchParentSize()
-                                .background(
-                                    Brush.horizontalGradient(
-                                        colors = listOf(
-                                            Color.Transparent,
-                                            Color.White.copy(alpha = 0.30f),
-                                            Color.Transparent
+                                .clip(RoundedCornerShape(28.dp))
+                                .drawBehind {
+                                    val width = size.width
+                                    val height = size.height
+                                    if (width <= 0f || height <= 0f) return@drawBehind
+
+                                    val cosAngle = 0.9396926f // cos(20 deg)
+                                    val sinAngle = 0.34202014f // sin(20 deg)
+                                    val tanAngle = 0.36397023f // tan(20 deg)
+
+                                    val beamWidth = width * 0.30f
+                                    val halfBeam = beamWidth / 2f
+                                    val tiltShift = (height / 2f) * tanAngle
+
+                                    val minX = -(halfBeam + tiltShift + 40f)
+                                    val maxX = width + (halfBeam + tiltShift + 40f)
+                                    val currentCenterX = minX + shimmerProgress * (maxX - minX)
+                                    val currentCenterY = height / 2f
+
+                                    val dx = halfBeam * cosAngle
+                                    val dy = halfBeam * sinAngle
+
+                                    val startOffset = Offset(currentCenterX - dx, currentCenterY - dy)
+                                    val endOffset = Offset(currentCenterX + dx, currentCenterY + dy)
+
+                                    drawRect(
+                                        brush = Brush.linearGradient(
+                                            0.0f to Color.Transparent,
+                                            0.22f to Color.White.copy(alpha = 0.15f),
+                                            0.40f to Color.White.copy(alpha = 0.55f),
+                                            0.50f to Color.White.copy(alpha = 0.65f),
+                                            0.60f to Color.White.copy(alpha = 0.55f),
+                                            0.78f to Color.White.copy(alpha = 0.15f),
+                                            1.0f to Color.Transparent,
+                                            start = startOffset,
+                                            end = endOffset
                                         ),
-                                        startX = btnShimmerX - 80f,
-                                        endX = btnShimmerX + 80f
+                                        size = size
                                     )
-                                )
+                                }
                         )
 
                         // Button Label and Nudging Arrow
                         Row(
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
                                 text = stringResource(R.string.splash_btn_start),
-                                fontSize = 16.sp,
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
                                 letterSpacing = 0.5.sp

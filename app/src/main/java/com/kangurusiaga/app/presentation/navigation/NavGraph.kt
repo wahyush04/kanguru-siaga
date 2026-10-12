@@ -23,6 +23,7 @@ import com.kangurusiaga.app.presentation.emergency.EmergencyWarningListRoute
 import com.kangurusiaga.app.presentation.feeding.AlarmRoute
 import com.kangurusiaga.app.presentation.home.HomeRoute
 import com.kangurusiaga.app.presentation.onboarding.OnboardingRoute
+import com.kangurusiaga.app.presentation.onboarding.SplashScreen
 import com.kangurusiaga.app.presentation.onboarding.SplashRoute
 import com.kangurusiaga.app.presentation.pmk.center.PmkCenterScreen
 import com.kangurusiaga.app.presentation.pmk.history.PmkHistoryRoute
@@ -67,6 +68,12 @@ fun KanguruNavGraph(
                 onNavigateToOnboarding = {
                     navController.navigate(Screen.Onboarding.route)
                 }
+            )
+        }
+
+        composable(route = "splash_preview") {
+            SplashScreen(
+                onStartClick = { navController.popBackStack() }
             )
         }
 
