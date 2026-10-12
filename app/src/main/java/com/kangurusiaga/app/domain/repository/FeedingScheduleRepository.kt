@@ -13,5 +13,6 @@ interface FeedingScheduleRepository {
     suspend fun deleteScheduleById(id: Long)
     suspend fun setEnabled(id: Long, isEnabled: Boolean)
     suspend fun seedDefaultSchedulesIfEmpty()
+    suspend fun resetAllOffsetToZero()
     suspend fun deleteAll()
 }

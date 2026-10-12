@@ -11,6 +11,7 @@ import com.kangurusiaga.app.domain.usecase.feeding.DeleteFeedingScheduleUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.ObserveFeedingSchedulesUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.ToggleFeedingScheduleUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.UpdateFeedingScheduleUseCase
+import com.kangurusiaga.app.core.notification.FeedingReminderScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +28,8 @@ class AlarmViewModel @Inject constructor(
     private val updateFeedingScheduleUseCase: UpdateFeedingScheduleUseCase,
     private val deleteFeedingScheduleUseCase: DeleteFeedingScheduleUseCase,
     private val toggleFeedingScheduleUseCase: ToggleFeedingScheduleUseCase,
-    private val repository: FeedingScheduleRepository
+    private val repository: FeedingScheduleRepository,
+    private val scheduler: FeedingReminderScheduler
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AlarmUiState(isLoading = true))
@@ -37,6 +39,9 @@ class AlarmViewModel @Inject constructor(
         viewModelScope.launch {
             // Seed 12 default slots on first launch if database is empty
             repository.seedDefaultSchedulesIfEmpty()
+            // Reset offset data lama agar tepat waktu (0 menit)
+            repository.resetAllOffsetToZero()
+            scheduler.rescheduleAllEnabled()
 
             // Observe schedules from local database
             observeFeedingSchedulesUseCase()
@@ -114,7 +119,7 @@ class AlarmViewModel @Inject constructor(
                 note = note?.trim()?.ifEmpty { null },
                 isEnabled = true,
                 reminderEnabled = reminderEnabled,
-                reminderOffsetMinutes = 10,
+                reminderOffsetMinutes = 0,
                 repeatType = repeatType
             )
 
@@ -153,6 +158,7 @@ class AlarmViewModel @Inject constructor(
                 method = method,
                 note = note?.trim()?.ifEmpty { null },
                 reminderEnabled = reminderEnabled,
+                reminderOffsetMinutes = 0,
                 repeatType = repeatType,
                 updatedAt = System.currentTimeMillis()
             ) ?: FeedingSchedule(
@@ -164,7 +170,7 @@ class AlarmViewModel @Inject constructor(
                 note = note?.trim()?.ifEmpty { null },
                 isEnabled = true,
                 reminderEnabled = reminderEnabled,
-                reminderOffsetMinutes = 10,
+                reminderOffsetMinutes = 0,
                 repeatType = repeatType
             )
 

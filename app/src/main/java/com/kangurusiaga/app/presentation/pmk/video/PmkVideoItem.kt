@@ -25,7 +25,7 @@ data class PmkVideoItem(
     val duration: String,
     val durationSeconds: Int,
     @DrawableRes val thumbnailRes: Int,
-    @RawRes val videoRes: Int = R.raw.video_module_pmk_1,
+    @RawRes val videoRes: Int = R.raw.video_pengertian_pmk_1,
     val videoUrl: String? = null,
     val description: String,
     val clinicalPoints: List<ClinicalPoint> = emptyList(),
@@ -45,7 +45,7 @@ object PmkVideoDataSource {
             duration = "02:15",
             durationSeconds = 135,
             thumbnailRes = R.drawable.thumb_pmk_video_2,
-            videoRes = R.raw.video_module_pmk_1,
+            videoRes = R.raw.video_pengertian_pmk_1,
             description = "Penjelasan dasar mengenai apa itu PMK (Kangaroo Mother Care), tujuan kontak kulit-ke-kulit (skin-to-skin contact), dan prinsip utamanya sebagai inkubator alami bagi bayi berat lahir rendah di rumah.",
             clinicalPoints = listOf(
                 ClinicalPoint(
@@ -84,7 +84,7 @@ object PmkVideoDataSource {
             duration = "03:20",
             durationSeconds = 200,
             thumbnailRes = R.drawable.thumb_pmk_video_2,
-            videoRes = R.raw.video_module_pmk_1,
+            videoRes = R.raw.video_manfaat_pmk_2,
             description = "Berbagai manfaat fisiologis dan psikologis PMK untuk bayi prematur dan BBLR selama masa perawatan di fasilitas kesehatan maupun di rumah.",
             clinicalPoints = listOf(
                 ClinicalPoint(
@@ -123,7 +123,7 @@ object PmkVideoDataSource {
             duration = "04:10",
             durationSeconds = 250,
             thumbnailRes = R.drawable.thumb_pmk_video_3,
-            videoRes = R.raw.video_module_pmk_1,
+            videoRes = R.raw.video_persiapan_pmk_3,
             description = "Panduan persiapan orang tua dan bayi sebelum sesi PMK dimulai, termasuk kebersihan tubuh, kesiapan pakaian, dan kondisi lingkungan.",
             clinicalPoints = listOf(
                 ClinicalPoint(
@@ -162,7 +162,7 @@ object PmkVideoDataSource {
             duration = "04:35",
             durationSeconds = 275,
             thumbnailRes = R.drawable.thumb_pmk_video_4,
-            videoRes = R.raw.video_module_pmk_1,
+            videoRes = R.raw.video_perawatan_bblr_4,
             description = "Video ini menjelaskan posisi bayi yang tepat saat melakukan PMK agar bayi merasa nyaman, aman, dan pernapasan tetap stabil.",
             clinicalPoints = listOf(
                 ClinicalPoint(
@@ -201,7 +201,7 @@ object PmkVideoDataSource {
             duration = "05:28",
             durationSeconds = 328,
             thumbnailRes = R.drawable.thumb_pmk_video_5,
-            videoRes = R.raw.video_module_pmk_1,
+            videoRes = R.raw.video_tanda_kegawatan_bblr_5,
             description = "Langkah demi langkah memposisikan bayi ke dalam kain atau gendongan khusus PMK secara aman, mandiri, dan berkesinambungan.",
             clinicalPoints = listOf(
                 ClinicalPoint(
@@ -232,45 +232,6 @@ object PmkVideoDataSource {
             ),
             calloutTip = "Kain jarik tradisional atau selendang katun yang bersih dapat digunakan bila baju kanguru khusus belum tersedia.",
             nextLessonId = 6
-        ),
-        PmkVideoItem(
-            id = 6,
-            title = "6. Hal yang perlu diperhatikan",
-            category = "Perawatan Metode Kanguru",
-            duration = "03:40",
-            durationSeconds = 220,
-            thumbnailRes = R.drawable.thumb_pmk_video_6,
-            videoRes = R.raw.video_module_pmk_1,
-            description = "Tanda-tanda bahaya dan hal krusial yang wajib diperhatikan orang tua saat memantau kondisi bayi selama PMK berlangsung.",
-            clinicalPoints = listOf(
-                ClinicalPoint(
-                    number = 1,
-                    title = "Pantau Suhu Tubuh Berkala",
-                    description = "Pastikan suhu tubuh bayi berada dalam rentang normal (36.5°C - 37.5°C). Waspadai bila telapak kaki teraba dingin."
-                ),
-                ClinicalPoint(
-                    number = 2,
-                    title = "Waspadai Perubahan Warna Kulit",
-                    description = "Segera periksa jika bibir, lidah, atau ujung jari bayi tampak pucat atau kebiruan (sianosis)."
-                ),
-                ClinicalPoint(
-                    number = 3,
-                    title = "Tanda Kesulitan Bernapas",
-                    description = "Hentikan sesi bila bayi tampak sesak, ada tarikan dinding dada ke dalam (retraksi), atau terdengar merintih (grunting)."
-                ),
-                ClinicalPoint(
-                    number = 4,
-                    title = "Bayi Sulit Dibangunkan (Letargis)",
-                    description = "Bila bayi lemas tidak bereaksi terhadap rangsangan sentuhan lembut dan menolak minum ASI, segera hubungi tenaga medis."
-                ),
-                ClinicalPoint(
-                    number = 5,
-                    title = "Kondisi Kegawatan Medis",
-                    description = "Segera bawa bayi ke fasilitas kesehatan terdekat jika ditemukan salah satu tanda bahaya di atas."
-                )
-            ),
-            calloutTip = "Bila bayi sedang demam tinggi (>38°C) atau dalam kondisi kejang, tunda sesi PMK dan segera konsultasikan ke dokter.",
-            nextLessonId = null
         )
     )
 

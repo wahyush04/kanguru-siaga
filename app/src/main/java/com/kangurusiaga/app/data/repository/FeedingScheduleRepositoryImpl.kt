@@ -72,8 +72,7 @@ class FeedingScheduleRepositoryImpl @Inject constructor(
 
         val now = System.currentTimeMillis()
         val entities = defaultSlots.mapIndexed { index, (hour, minute) ->
-            // In Google Stitch design, 18:00 is toggled OFF by default as an example of inactive schedule
-            val isEnabled = !(hour == 18 && minute == 0)
+
             FeedingScheduleEntity(
                 id = 0L,
                 hour = hour,
@@ -81,9 +80,9 @@ class FeedingScheduleRepositoryImpl @Inject constructor(
                 volumeMl = 30,
                 method = FeedingMethod.OGT_NGT.name,
                 note = null,
-                isEnabled = isEnabled,
+                isEnabled = true,
                 reminderEnabled = true,
-                reminderOffsetMinutes = 10,
+                reminderOffsetMinutes = 0,
                 repeatType = RepeatType.DAILY.name,
                 createdAt = now + index,
                 updatedAt = now + index
@@ -91,6 +90,10 @@ class FeedingScheduleRepositoryImpl @Inject constructor(
         }
 
         dao.insertAll(entities)
+    }
+
+    override suspend fun resetAllOffsetToZero() {
+        dao.resetAllOffsetToZero()
     }
 
     override suspend fun deleteAll() {

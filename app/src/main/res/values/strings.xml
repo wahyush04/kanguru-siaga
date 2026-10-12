@@ -160,7 +160,7 @@
     <string name="alarm_label_note_optional">CATATAN TAMBAHAN (OPSIONAL)</string>
     <string name="alarm_placeholder_note_edit">Contoh: Berikan perlahan via gravitasi OGT</string>
     <string name="alarm_toggle_reminder_title">Aktifkan Pengingat</string>
-    <string name="alarm_toggle_reminder_desc">Berdering 10 menit sebelum waktu minum</string>
+    <string name="alarm_toggle_reminder_desc">Berdering tepat pada waktu pemberian ASI</string>
     <string name="alarm_label_repeat_schedule">Ulangi Jadwal</string>
     <string name="alarm_btn_save_changes">Simpan Perubahan</string>
     <string name="alarm_btn_delete_this">Hapus Jadwal Ini</string>

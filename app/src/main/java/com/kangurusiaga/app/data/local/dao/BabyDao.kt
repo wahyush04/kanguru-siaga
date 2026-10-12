@@ -15,6 +15,12 @@ interface BabyDao {
     @Query("SELECT * FROM babies WHERE isActive = 1 LIMIT 1")
     fun getActiveBaby(): Flow<BabyEntity?>
 
+    @Query("SELECT * FROM babies WHERE isActive = 1 LIMIT 1")
+    suspend fun getActiveBabyOnce(): BabyEntity?
+
+    @Query("SELECT * FROM babies LIMIT 1")
+    suspend fun getFirstBaby(): BabyEntity?
+
     @Query("SELECT * FROM babies WHERE id = :id LIMIT 1")
     suspend fun getBabyById(id: Long): BabyEntity?
 

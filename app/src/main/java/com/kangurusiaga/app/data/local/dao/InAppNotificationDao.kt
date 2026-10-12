@@ -28,9 +28,21 @@ interface InAppNotificationDao {
     @Query("UPDATE in_app_notifications SET isRead = 1 WHERE id = :id")
     suspend fun markAsRead(id: Long)
 
+    @Query("DELETE FROM in_app_notifications WHERE id = :id")
+    suspend fun deleteById(id: Long)
+
     @Query("DELETE FROM in_app_notifications WHERE babyId = :babyId AND category = :category")
     suspend fun deleteByCategory(babyId: Long, category: String)
 
     @Query("DELETE FROM in_app_notifications WHERE timestampEpoch < :retentionThresholdEpoch")
     suspend fun deleteOlderThan(retentionThresholdEpoch: Long)
+
+    @Query("DELETE FROM in_app_notifications WHERE referenceId IS NULL")
+    suspend fun deleteMockNotifications()
+
+    @Query("DELETE FROM in_app_notifications WHERE babyId = :babyId")
+    suspend fun deleteByBabyId(babyId: Long)
+
+    @Query("DELETE FROM in_app_notifications")
+    suspend fun deleteAll()
 }

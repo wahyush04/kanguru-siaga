@@ -42,6 +42,9 @@ interface FeedingScheduleDao {
     @Query("SELECT COUNT(*) FROM feeding_schedules")
     suspend fun count(): Int
 
+    @Query("UPDATE feeding_schedules SET reminder_offset_minutes = 0 WHERE reminder_offset_minutes != 0")
+    suspend fun resetAllOffsetToZero()
+
     @Query("DELETE FROM feeding_schedules")
     suspend fun deleteAll()
 }

@@ -11,7 +11,7 @@ data class FeedingSchedule(
     val note: String? = null,
     val isEnabled: Boolean = true,
     val reminderEnabled: Boolean = true,
-    val reminderOffsetMinutes: Int = 10,
+    val reminderOffsetMinutes: Int = 0,
     val repeatType: RepeatType = RepeatType.DAILY,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()

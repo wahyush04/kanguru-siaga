@@ -30,10 +30,12 @@ class FeedingReminderSchedulerImpl @Inject constructor(
             return
         }
 
+        val offsetMinutes = 0
+
         val triggerTime = computeNextTriggerTime(
             hour = schedule.hour,
             minute = schedule.minute,
-            offsetMinutes = schedule.reminderOffsetMinutes,
+            offsetMinutes = offsetMinutes,
             allowToday = true
         )
 
@@ -51,7 +53,7 @@ class FeedingReminderSchedulerImpl @Inject constructor(
             minute = schedule.minute,
             volumeMl = schedule.volumeMl,
             methodDisplayName = schedule.method.displayName,
-            offsetMinutes = schedule.reminderOffsetMinutes,
+            offsetMinutes = offsetMinutes,
             repeatType = schedule.repeatType.name
         )
 
@@ -80,10 +82,11 @@ class FeedingReminderSchedulerImpl @Inject constructor(
 
     override fun rescheduleAllEnabled() {
         CoroutineScope(Dispatchers.IO).launch {
+            repository.resetAllOffsetToZero()
             val enabledSchedules = repository.getAllEnabledSchedules()
             for (schedule in enabledSchedules) {
                 if (schedule.reminderEnabled) {
-                    schedule(schedule)
+                    schedule(schedule.copy(reminderOffsetMinutes = 0))
                 }
             }
         }
@@ -100,7 +103,7 @@ class FeedingReminderSchedulerImpl @Inject constructor(
         val nextTriggerTime = computeNextTriggerTime(
             hour = hour,
             minute = minute,
-            offsetMinutes = offsetMinutes,
+            offsetMinutes = 0,
             allowToday = false
         )
 
@@ -110,7 +113,7 @@ class FeedingReminderSchedulerImpl @Inject constructor(
             minute = minute,
             volumeMl = volumeMl,
             methodDisplayName = methodDisplayName,
-            offsetMinutes = offsetMinutes,
+            offsetMinutes = 0,
             repeatType = RepeatType.DAILY.name
         )
 
@@ -165,7 +168,9 @@ class FeedingReminderSchedulerImpl @Inject constructor(
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            add(Calendar.MINUTE, -offsetMinutes)
+            if (offsetMinutes > 0) {
+                add(Calendar.MINUTE, -offsetMinutes)
+            }
         }
 
         if (!allowToday || target.timeInMillis <= now.timeInMillis) {

@@ -43,6 +43,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.runtime.remember
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -149,6 +150,13 @@ fun NotificationScreen(
     modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
+    val todayDateStr = remember {
+        try {
+            java.text.SimpleDateFormat("EEEE, d MMM", java.util.Locale("id", "ID")).format(java.util.Date())
+        } catch (_: Exception) {
+            "Hari Ini"
+        }
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -209,7 +217,7 @@ fun NotificationScreen(
                             item(key = "section_today_header") {
                                 SectionHeader(
                                     title = "HARI INI",
-                                    subtitle = "Selasa, 24 Sep"
+                                    subtitle = todayDateStr
                                 )
                             }
                             items(
