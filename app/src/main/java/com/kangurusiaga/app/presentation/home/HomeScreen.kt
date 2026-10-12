@@ -336,7 +336,7 @@ private fun HomeContent(
                     )
                     Text(
                         text = "$ageFormatted • $weightFormatted",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = TextSecondary,
                         fontWeight = FontWeight.Normal
                     )

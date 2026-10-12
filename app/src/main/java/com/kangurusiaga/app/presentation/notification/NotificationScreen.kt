@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -281,74 +282,80 @@ private fun NotificationTopAppBar(
 ) {
     val colors = KanguruTheme.colors
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    Surface(
+        color = colors.background,
+        modifier = modifier.fillMaxWidth()
     ) {
-        // Back Button in circular container
-        Surface(
-            onClick = onNavigateBack,
-            shape = CircleShape,
-            color = colors.surface,
-            border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
-            modifier = Modifier.size(40.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.common_back),
-                    tint = colors.textPrimary,
-                    modifier = Modifier.size(20.dp)
+            // Back Button in circular container
+            Surface(
+                onClick = onNavigateBack,
+                shape = CircleShape,
+                color = colors.surface,
+                border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+                modifier = Modifier.size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.common_back),
+                        tint = colors.textPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
+            // Title and Subtitle
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = "Notifikasi",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
+                )
+                val subtext = if (babyName.isNotBlank()) "Kanguru Siaga • $babyName" else "Kanguru Siaga"
+                Text(
+                    text = subtext,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textTertiary
                 )
             }
-        }
 
-        // Title and Subtitle
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = "Notifikasi",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = colors.textPrimary
-            )
-            val subtext = if (babyName.isNotBlank()) "Kanguru Siaga • $babyName" else "Kanguru Siaga"
-            Text(
-                text = subtext,
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium,
-                color = colors.textTertiary
-            )
-        }
-
-        // Mark all as read button
-        TextButton(
-            onClick = onMarkAllAsRead,
-            enabled = unreadCount > 0
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            // Mark all as read button
+            TextButton(
+                onClick = onMarkAllAsRead,
+                enabled = unreadCount > 0
             ) {
-                Icon(
-                    imageVector = Icons.Default.DoneAll,
-                    contentDescription = null,
-                    tint = if (unreadCount > 0) colors.primary else colors.textTertiary,
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = "Dibaca",
-                    style = MaterialTheme.typography.labelMedium.copy(
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DoneAll,
+                        contentDescription = null,
+                        tint = if (unreadCount > 0) colors.primary else colors.textTertiary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = "Dibaca",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            color = if (unreadCount > 0) colors.primary else colors.textTertiary
+                        ),
+                        fontWeight = FontWeight.Bold,
                         color = if (unreadCount > 0) colors.primary else colors.textTertiary
-                    ),
-                    fontWeight = FontWeight.Bold,
-                    color = if (unreadCount > 0) colors.primary else colors.textTertiary
-                )
+                    )
+                }
             }
         }
     }

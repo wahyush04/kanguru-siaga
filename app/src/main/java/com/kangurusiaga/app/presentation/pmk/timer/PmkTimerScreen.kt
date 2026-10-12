@@ -543,7 +543,7 @@ private fun PmkTimerTopHeader(
                             .padding(horizontal = 8.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = "20 Jam",
+                            text = "≥20 Jam",
                             style = KanguruTheme.typography.labelSmall,
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold,
@@ -820,7 +820,7 @@ private fun PmkTimerHeroCard(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Rekomendasi: ≥20 Jam",
+                                text = "Rekomendasi ≥20 Jam",
                                 style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = colors.primary

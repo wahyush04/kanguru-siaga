@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -39,6 +40,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -206,7 +208,7 @@ fun AlarmScreen(
     }
 
     Scaffold(
-        containerColor = BrandBackground,
+        containerColor = KanguruTheme.colors.background,
         snackbarHost = { KanguruSnackbarHost(snackbarHostState) },
         topBar = {
             AlarmTopAppBar(
@@ -393,48 +395,54 @@ fun AlarmScreen(
 @Composable
 private fun AlarmTopAppBar(
     onNavigateBack: () -> Unit,
-    onInfoClick: () -> Unit
+    onInfoClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BrandBackground)
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    Surface(
+        color = KanguruTheme.colors.background,
+        modifier = modifier.fillMaxWidth()
     ) {
-        IconButton(onClick = onNavigateBack) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.common_back),
-                tint = KanguruTheme.colors.textPrimary
-            )
-        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.common_back),
+                    tint = KanguruTheme.colors.textPrimary
+                )
+            }
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = stringResource(R.string.alarm_title),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = KanguruTheme.colors.textPrimary,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = stringResource(R.string.alarm_subtitle_ogt),
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = KanguruTheme.colors.textPrimary,
-                textAlign = TextAlign.Center
-            )
-        }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = stringResource(R.string.alarm_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = KanguruTheme.colors.textPrimary,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = stringResource(R.string.alarm_subtitle_ogt),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = KanguruTheme.colors.textPrimary,
+                    textAlign = TextAlign.Center
+                )
+            }
 
-        IconButton(onClick = onInfoClick) {
-            Icon(
-                imageVector = Icons.Default.Info,
-                contentDescription = stringResource(R.string.alarm_info_cd),
-                tint = KanguruTheme.colors.textSecondary,
-                modifier = Modifier.size(22.dp)
-            )
+            IconButton(onClick = onInfoClick) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = stringResource(R.string.alarm_info_cd),
+                    tint = KanguruTheme.colors.textSecondary,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
         }
     }
 }

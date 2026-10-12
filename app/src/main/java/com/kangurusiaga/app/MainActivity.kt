@@ -76,6 +76,11 @@ class MainActivity : ComponentActivity() {
                     launchSingleTop = true
                 }
             }
+            "notification" -> {
+                navController.navigate(Screen.Notification.route) {
+                    launchSingleTop = true
+                }
+            }
         }
     }
 }
