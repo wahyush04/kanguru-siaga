@@ -31,28 +31,36 @@ data class CaregiverDistribution(
     val ibuMinutes: Int = 0,
     val ayahMinutes: Int = 0,
     val pendampingMinutes: Int = 0,
-    val ibuPercent: Int = 60,
-    val ayahPercent: Int = 25,
-    val pendampingPercent: Int = 15
+    val ibuPercent: Int = 0,
+    val ayahPercent: Int = 0,
+    val pendampingPercent: Int = 0
 ) {
     val totalMinutes: Int get() = ibuMinutes + ayahMinutes + pendampingMinutes
+    val activeCaregiverCount: Int get() {
+        var count = 0
+        if (ibuMinutes > 0) count++
+        if (ayahMinutes > 0) count++
+        if (pendampingMinutes > 0) count++
+        return count
+    }
     val ibuHoursFormatted: String get() = "${ibuMinutes / 60}j ${ibuMinutes % 60}m"
     val ayahHoursFormatted: String get() = "${ayahMinutes / 60}j ${ayahMinutes % 60}m"
     val pendampingHoursFormatted: String get() = "${pendampingMinutes / 60}j ${pendampingMinutes % 60}m"
 }
 
 data class ClinicalEvaluation(
-    val averageTemperature: Double = 36.8,
-    val normalTemperaturePercentage: Int = 98,
-    val calmnessPercentage: Int = 94,
-    val summaryNote: String = "Suhu tubuh bayi sangat stabil dalam rentang normal fisiologis (36.5° - 37.5°C). Pola pernapasan dan saturasi oksigen terpantau optimal selama kontak kulit."
+    val averageTemperature: Double = 0.0,
+    val normalTemperaturePercentage: Int = 0,
+    val calmnessPercentage: Int = 0,
+    val feedingPercentage: Int = 0,
+    val summaryNote: String = ""
 )
 
 data class PmkStatistics(
     val period: StatsPeriod = StatsPeriod.THIS_WEEK,
     val dateRangeText: String = "",
     val compliancePercentage: Int = 0,
-    val complianceBadge: String = "Perlu Ditingkatkan",
+    val complianceBadge: String = "Belum Ada",
     val totalDurationMinutes: Int = 0,
     val targetDurationMinutes: Int = 7560, // 7 days * 18 hours = 126 hours weekly target
     val totalDurationFormatted: String = "0 jam 0 mnt",
@@ -68,7 +76,7 @@ data class PmkStatistics(
     val timeDistribution: TimeDistribution = TimeDistribution(),
     val caregiverDistribution: CaregiverDistribution = CaregiverDistribution(),
     val clinicalEvaluation: ClinicalEvaluation = ClinicalEvaluation(),
-    val averageTemperature: Double = 36.8,
-    val calmnessPercentage: Int = 100,
+    val averageTemperature: Double = 0.0,
+    val calmnessPercentage: Int = 0,
     val clinicalNote: String = "Kontak kulit kontinu terbukti signifikan mempertahankan ritme napas, kestabilan suhu, dan kedekatan emosional."
 )

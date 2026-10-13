@@ -182,25 +182,38 @@ class GetPmkStatisticsUseCase @Inject constructor(
         val temps = sessions.mapNotNull { it.babyTemperature }.filter { it in 30.0..42.0 }
         val avgTemp = if (temps.isNotEmpty()) {
             (temps.average() * 10).roundToInt() / 10.0
-        } else 36.8
+        } else 0.0
 
         val normalTemps = temps.count { it in 36.5..37.5 }
         val normalTempPercent = if (temps.isNotEmpty()) {
             ((normalTemps.toDouble() / temps.size) * 100).roundToInt()
-        } else 98
+        } else 0
 
         val calmSessions = sessions.count {
-            it.babyResponse == null || it.babyResponse == "Tidur Tenang" || it.babyResponse == "Tenang" || it.babyResponse == "Tenang & Rileks" || it.babyResponse == "Tidur Pulas"
+            it.babyResponse == null || it.babyResponse == "Tidur Tenang" || it.babyResponse == "Tenang" ||
+                it.babyResponse == "Tenang & Rileks" || it.babyResponse == "Tidur Pulas" ||
+                it.babyResponse == "Tenang & Hangat" || it.babyResponse == "Dekapan Nyaman"
+        }
+        val feedingSessions = sessions.count {
+            it.babyResponse == "Menyusu Nyaman" || it.babyResponse == "Menyusu Aktif" || it.babyResponse == "Menyusu Teratur"
         }
         val calmnessPercent = if (sessions.isNotEmpty()) {
             ((calmSessions.toDouble() / sessions.size) * 100).roundToInt()
-        } else 94
+        } else 0
+        val feedingPercent = if (sessions.isNotEmpty()) {
+            ((feedingSessions.toDouble() / sessions.size) * 100).roundToInt()
+        } else 0
 
         val clinicalEvaluation = ClinicalEvaluation(
             averageTemperature = avgTemp,
             normalTemperaturePercentage = normalTempPercent,
             calmnessPercentage = calmnessPercent,
-            summaryNote = "Suhu tubuh bayi sangat stabil dalam rentang normal fisiologis (36.5° - 37.5°C). Kontak kulit intensif menjaga ritme napas dan laju detak jantung teratur."
+            feedingPercentage = feedingPercent,
+            summaryNote = if (sessions.isNotEmpty()) {
+                "Suhu tubuh bayi terpantau rata-rata ${if (avgTemp > 0) "${avgTemp}°C" else "-"} dengan kestabilan fisiologis yang terpantau optimal selama kontak kulit."
+            } else {
+                "Belum ada data evaluasi klinis yang tercatat untuk periode ini."
+            }
         )
 
         return PmkStatistics(
@@ -256,9 +269,9 @@ class GetPmkStatisticsUseCase @Inject constructor(
         }
 
         val total = (ibuMin + ayahMin + pendampingMin).toDouble()
-        val ibuPct = if (total > 0) ((ibuMin / total) * 100).roundToInt() else 60
-        val ayahPct = if (total > 0) ((ayahMin / total) * 100).roundToInt() else 25
-        val pendampingPct = if (total > 0) (100 - ibuPct - ayahPct).coerceAtLeast(0) else 15
+        val ibuPct = if (total > 0) ((ibuMin / total) * 100).roundToInt() else 0
+        val ayahPct = if (total > 0) ((ayahMin / total) * 100).roundToInt() else 0
+        val pendampingPct = if (total > 0) (100 - ibuPct - ayahPct).coerceAtLeast(0) else 0
 
         return CaregiverDistribution(
             ibuMinutes = ibuMin,

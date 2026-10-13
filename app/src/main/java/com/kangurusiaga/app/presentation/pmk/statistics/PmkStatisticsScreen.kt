@@ -76,6 +76,9 @@ import com.kangurusiaga.app.domain.model.CaregiverDistribution
 import com.kangurusiaga.app.domain.model.DailyDuration
 import com.kangurusiaga.app.domain.model.PmkStatistics
 import com.kangurusiaga.app.domain.model.StatsPeriod
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun PmkStatisticsRoute(
@@ -212,28 +215,30 @@ fun PmkStatisticsScreen(
                             Spacer(modifier = Modifier.width(12.dp))
 
                             Column {
+                                val babyName = uiState.baby?.name ?: "Bayi"
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    val babyName = uiState.baby?.name ?: "Arka Narendra"
                                     Text(
                                         text = babyName,
                                         style = KanguruTheme.typography.bodyMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = colors.textPrimary
                                     )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    val birthWeight = uiState.baby?.birthWeightGram ?: 1850
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(colors.primaryContainer)
-                                            .padding(horizontal = 6.dp, vertical = 2.dp)
-                                    ) {
-                                        Text(
-                                            text = "BBLR ${birthWeight}g",
-                                            style = KanguruTheme.typography.labelSmall,
-                                            fontWeight = FontWeight.Bold,
-                                            color = colors.primary
-                                        )
+                                    val birthWeight = uiState.baby?.birthWeightGram
+                                    if (birthWeight != null && birthWeight > 0) {
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(colors.primaryContainer)
+                                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                                        ) {
+                                            Text(
+                                                text = if (birthWeight < 2500) "BBLR ${birthWeight}g" else "${birthWeight}g",
+                                                style = KanguruTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = colors.primary
+                                            )
+                                        }
                                     }
                                 }
 
@@ -247,8 +252,9 @@ fun PmkStatisticsScreen(
                                         modifier = Modifier.size(12.dp)
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
+                                    val dateText = stats.dateRangeText.ifBlank { uiState.selectedPeriod.title }
                                     Text(
-                                        text = "21 - 27 Okt 2024 (Minggu ke-4)",
+                                        text = dateText,
                                         style = KanguruTheme.typography.labelSmall,
                                         color = colors.textSecondary
                                     )
@@ -256,26 +262,33 @@ fun PmkStatisticsScreen(
                             }
                         }
 
-                        // Star badge Sangat Baik
+                        // Star badge status
+                        val badgeText = stats.complianceBadge.ifBlank {
+                            if (stats.compliancePercentage >= 80) "Sangat Baik"
+                            else if (stats.compliancePercentage >= 50) "Cukup"
+                            else if (stats.totalDurationMinutes > 0) "Perlu Ditingkatkan"
+                            else "Belum Ada"
+                        }
+                        val isBadgeGood = stats.compliancePercentage >= 80 || stats.complianceBadge == "Sangat Baik"
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(14.dp))
-                                .background(colors.successContainer)
+                                .background(if (isBadgeGood) colors.successContainer else colors.surfaceVariant)
                                 .padding(horizontal = 8.dp, vertical = 4.dp)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     imageVector = Icons.Default.Star,
                                     contentDescription = null,
-                                    tint = colors.success,
+                                    tint = if (isBadgeGood) colors.success else colors.primary,
                                     modifier = Modifier.size(12.dp)
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
                                 Text(
-                                    text = "Sangat Baik",
+                                    text = badgeText,
                                     style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
-                                    color = colors.onSuccessContainer
+                                    color = if (isBadgeGood) colors.onSuccessContainer else colors.textPrimary
                                 )
                             }
                         }
@@ -344,32 +357,50 @@ fun PmkStatisticsScreen(
             ) {
                 // Card 1: Rata-rata Harian
                 val avgDailyHours = stats.dailyAverageHours
-                val displayDailyAvg = if (avgDailyHours >= 1f) "${avgDailyHours.toInt()}j" else "18j"
+                val avgH = avgDailyHours.toInt()
+                val avgM = ((avgDailyHours - avgH) * 60).toInt().coerceAtLeast(0)
+                val displayDailyAvg = if (stats.totalDurationMinutes > 0) "${avgH}j ${avgM}m" else "0j 0m"
+                val isDailyTargetMet = avgDailyHours >= 18f
+                val dailyProgress = (avgDailyHours / 18f).coerceIn(0f, 1f)
                 KpiGridCard(
                     title = "Rata-rata Harian",
-                    value = "$displayDailyAvg 40m",
-                    subtitle = "Target WHO >18 jam/hari",
-                    subtitleColor = colors.success,
+                    value = displayDailyAvg,
+                    subtitle = if (isDailyTargetMet) "Target WHO >18j terpenuhi ✓" else "Target WHO >18 jam/hari",
+                    subtitleColor = if (isDailyTargetMet) colors.success else if (stats.totalDurationMinutes > 0) colors.warning else colors.textSecondary,
                     icon = Icons.Default.CheckCircle,
-                    iconTint = colors.success,
-                    iconBg = colors.successContainer,
-                    progress = 1.0f,
-                    progressBarColor = colors.success,
+                    iconTint = if (isDailyTargetMet) colors.success else colors.textSecondary,
+                    iconBg = if (isDailyTargetMet) colors.successContainer else colors.surfaceVariant,
+                    progress = dailyProgress,
+                    progressBarColor = if (isDailyTargetMet) colors.success else colors.primary,
                     modifier = Modifier.weight(1f)
                 )
 
-                // Card 2: Total Minggu Ini
+                // Card 2: Total Minggu Ini / Periode Terpilih
                 val totalHours = stats.totalDurationMinutes / 60
                 val totalMins = stats.totalDurationMinutes % 60
+                val targetHours = stats.targetDurationMinutes / 60
+                val titlePeriod = when (uiState.selectedPeriod) {
+                    StatsPeriod.THIS_WEEK -> "Total Minggu Ini"
+                    StatsPeriod.LAST_WEEK -> "Total Minggu Lalu"
+                    StatsPeriod.THIS_MONTH -> "Total Bulan Ini"
+                    StatsPeriod.DAYS_30 -> "Total 30 Hari"
+                    StatsPeriod.ALL -> "Total Keseluruhan"
+                }
+                val subtitlePeriod = if (stats.totalDurationMinutes > 0) {
+                    "${stats.compliancePercentage}% dari ${targetHours}j target"
+                } else {
+                    "Target: ${targetHours} jam"
+                }
+                val periodProgress = (stats.compliancePercentage / 100f).coerceIn(0f, 1f)
                 KpiGridCard(
-                    title = "Total Minggu Ini",
-                    value = "${totalHours.coerceAtLeast(130)}j ${totalMins.coerceAtLeast(40)}m",
-                    subtitle = "93% dari 140j / minggu",
+                    title = titlePeriod,
+                    value = "${totalHours}j ${totalMins}m",
+                    subtitle = subtitlePeriod,
                     subtitleColor = colors.textSecondary,
                     icon = Icons.Default.Timer,
                     iconTint = colors.primary,
                     iconBg = colors.primaryContainer,
-                    progress = 0.93f,
+                    progress = periodProgress,
                     progressBarColor = colors.primary,
                     modifier = Modifier.weight(1f)
                 )
@@ -382,29 +413,61 @@ fun PmkStatisticsScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 // Card 3: Sesi Terpanjang
+                val longestH = stats.longestSessionMinutes / 60
+                val longestM = stats.longestSessionMinutes % 60
+                val longestVal = if (stats.longestSessionMinutes > 0) "${longestH}j ${longestM}m" else "0j 0m"
+                val longestSession = uiState.sessions.maxByOrNull {
+                    it.activeDurationMinutes.coerceAtLeast(it.durationMinutes)
+                }
+                val longestDateSdf = SimpleDateFormat("dd MMM", Locale("id", "ID"))
+                val longestSubtitle = if (longestSession != null && stats.longestSessionMinutes > 0) {
+                    val caregiverName = longestSession.currentCaregiver.shortName
+                    val dateStr = longestDateSdf.format(Date(longestSession.startTimeEpoch))
+                    "$caregiverName ($dateStr)"
+                } else {
+                    "Belum ada sesi"
+                }
+                val longestProgress = if (stats.longestSessionMinutes > 0) {
+                    (stats.longestSessionMinutes.toFloat() / (8 * 60f)).coerceIn(0f, 1f)
+                } else 0f
                 KpiGridCard(
                     title = "Sesi Terpanjang",
-                    value = "07j 15m",
-                    subtitle = "Ibu (23 Okt)",
+                    value = longestVal,
+                    subtitle = longestSubtitle,
                     subtitleColor = colors.textSecondary,
                     icon = Icons.Default.WorkspacePremium,
                     iconTint = colors.warning,
                     iconBg = colors.warningContainer,
-                    progress = 0.85f,
+                    progress = longestProgress,
                     progressBarColor = colors.warning,
                     modifier = Modifier.weight(1f)
                 )
 
                 // Card 4: Frekuensi Sesi
+                val daysWithSessions = stats.dailyDurations.count { it.durationMinutes > 0 }.coerceAtLeast(1)
+                val avgSessionsPerDay = if (stats.totalSessions > 0) {
+                    stats.totalSessions.toFloat() / daysWithSessions
+                } else 0f
+                val freqValue = if (stats.totalSessions > 0) {
+                    String.format(Locale("id", "ID"), "%.1f Sesi/hr", avgSessionsPerDay)
+                } else {
+                    "0 Sesi"
+                }
+                val freqSubtitle = if (stats.totalSessions > 0) {
+                    "${stats.totalSessions} Total Sesi Tercatat"
+                } else {
+                    "Belum ada sesi"
+                }
+                val freqProgress = (avgSessionsPerDay / 6f).coerceIn(0f, 1f)
                 KpiGridCard(
                     title = "Frekuensi Sesi",
-                    value = "4-5 Sesi/hr",
-                    subtitle = "Estafet stabil teratur",
+                    value = freqValue,
+                    subtitle = freqSubtitle,
                     subtitleColor = colors.textSecondary,
                     icon = Icons.Default.SyncAlt,
                     iconTint = colors.caregiverAyah,
                     iconBg = colors.caregiverAyahContainer,
-                    progress = 0.90f,
+                    progress = freqProgress,
                     progressBarColor = colors.caregiverAyah,
                     modifier = Modifier.weight(1f)
                 )
@@ -649,36 +712,42 @@ private fun InteractiveSevenDayTrendCard(
 ) {
     val colors = KanguruTheme.colors
 
-    // 7 Days fallback items matching Stitch
+    // 7 Days real items from dailyDurations
     val chartDays = remember(dailyDurations) {
-        if (dailyDurations.any { it.durationHours > 0f }) {
-            dailyDurations.mapIndexed { index, d ->
-                val hours = d.durationHours
-                val h = hours.toInt()
-                val m = ((hours - h) * 60).toInt()
-                ChartDayItem(
-                    dayKey = d.dayEpoch.toString(),
-                    dayLabel = d.dayLabel,
-                    durationHours = hours,
-                    durationText = "${h} Jam ${m} Menit",
-                    note = if (hours >= 20f) "Pencapaian rekor terbaik estafet!" else if (hours >= 18f) "Target WHO terpenuhi optimal" else "Belum capai target (evaluasi rehat)",
-                    isPeak = hours >= 20.2f || (index == 2)
+        val daysList = if (dailyDurations.isNotEmpty()) {
+            dailyDurations
+        } else {
+            listOf("Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min").mapIndexed { index, label ->
+                DailyDuration(
+                    dayLabel = label,
+                    durationMinutes = 0,
+                    isAboveTarget = false,
+                    dayEpoch = index.toLong()
                 )
             }
-        } else {
-            listOf(
-                ChartDayItem("1", "Sen", 14.5f, "14 Jam 30 Menit", "Belum capai target (kontrol nakes)", false),
-                ChartDayItem("2", "Sel", 19.2f, "19 Jam 12 Menit", "Target tercapai optimal!", false),
-                ChartDayItem("3", "Rab", 20.2f, "20 Jam 12 Menit", "Pencapaian rekor terbaik estafet!", true),
-                ChartDayItem("4", "Kam", 13.8f, "13 Jam 48 Menit", "Belum capai target (evaluasi rehat)", false),
-                ChartDayItem("5", "Jum", 18.5f, "18 Jam 30 Menit", "Target WHO terpenuhi optimal", false),
-                ChartDayItem("6", "Sab", 16.2f, "16 Jam 12 Menit", "Belum capai target harian", false),
-                ChartDayItem("7", "Min", 19.8f, "19 Jam 48 Menit", "Target WHO terpenuhi optimal", false)
+        }
+        val maxDuration = daysList.maxOfOrNull { it.durationHours } ?: 0f
+        daysList.map { d ->
+            val hours = d.durationHours
+            val h = hours.toInt()
+            val m = ((hours - h) * 60).toInt()
+            ChartDayItem(
+                dayKey = d.dayEpoch.toString(),
+                dayLabel = d.dayLabel,
+                durationHours = hours,
+                durationText = if (hours > 0f) "${h} Jam ${m} Menit" else "0 Jam 0 Menit",
+                note = if (hours >= 20f) "Pencapaian rekor terbaik estafet!"
+                       else if (hours >= 18f) "Target WHO terpenuhi optimal"
+                       else if (hours > 0f) "Belum capai target (evaluasi rehat)"
+                       else "Belum ada catatan PMK pada hari ini",
+                isPeak = maxDuration > 0f && hours == maxDuration
             )
         }
     }
 
-    var selectedDay by remember { mutableStateOf(chartDays.getOrNull(2) ?: chartDays.first()) }
+    var selectedDay by remember(chartDays) {
+        mutableStateOf(chartDays.maxByOrNull { it.durationHours } ?: chartDays.first())
+    }
 
     Card(
         shape = RoundedCornerShape(20.dp),
@@ -777,7 +846,11 @@ private fun InteractiveSevenDayTrendCard(
                     chartDays.forEach { item ->
                         val isSelected = selectedDay.dayKey == item.dayKey
                         val isTargetMet = item.durationHours >= 18f
-                        val heightFraction = (item.durationHours / 24f).coerceIn(0.1f, 1f)
+                        val heightFraction = if (item.durationHours > 0f) {
+                            (item.durationHours / 24f).coerceIn(0.04f, 1f)
+                        } else {
+                            0.02f
+                        }
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -878,10 +951,13 @@ private fun InteractiveSevenDayTrendCard(
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = if (selectedDay.isPeak) "Pencapaian Rekor" else if (selectedDay.durationHours >= 18f) "Target WHO Terpenuhi" else "Perlu Ditingkatkan",
+                            text = if (selectedDay.durationHours == 0f) "Belum Ada Sesi"
+                                   else if (selectedDay.isPeak) "Pencapaian Tertinggi"
+                                   else if (selectedDay.durationHours >= 18f) "Target WHO Terpenuhi"
+                                   else "Perlu Ditingkatkan",
                             style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = colors.primary
+                            color = if (selectedDay.durationHours >= 18f) colors.primary else colors.textSecondary
                         )
                     }
                 }
@@ -930,7 +1006,7 @@ private fun CaregiverRelayCard(
                         .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Text(
-                        text = "3 Pengasuh",
+                        text = "${distribution.activeCaregiverCount} Pengasuh",
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = colors.primary
@@ -948,28 +1024,32 @@ private fun CaregiverRelayCard(
                     .clip(CircleShape)
                     .background(colors.surfaceVariant)
             ) {
-                val ibuPct = distribution.ibuPercent.coerceAtLeast(68)
-                val ayahPct = distribution.ayahPercent.coerceAtLeast(22)
-                val pendampingPct = (100 - ibuPct - ayahPct).coerceAtLeast(10)
-
-                Box(
-                    modifier = Modifier
-                        .weight(ibuPct.toFloat())
-                        .fillMaxSize()
-                        .background(colors.caregiverIbu)
-                )
-                Box(
-                    modifier = Modifier
-                        .weight(ayahPct.toFloat())
-                        .fillMaxSize()
-                        .background(colors.caregiverAyah)
-                )
-                Box(
-                    modifier = Modifier
-                        .weight(pendampingPct.toFloat())
-                        .fillMaxSize()
-                        .background(colors.caregiverPendamping)
-                )
+                if (distribution.totalMinutes > 0) {
+                    if (distribution.ibuPercent > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(distribution.ibuPercent.toFloat())
+                                .fillMaxSize()
+                                .background(colors.caregiverIbu)
+                        )
+                    }
+                    if (distribution.ayahPercent > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(distribution.ayahPercent.toFloat())
+                                .fillMaxSize()
+                                .background(colors.caregiverAyah)
+                        )
+                    }
+                    if (distribution.pendampingPercent > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(distribution.pendampingPercent.toFloat())
+                                .fillMaxSize()
+                                .background(colors.caregiverPendamping)
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -980,8 +1060,8 @@ private fun CaregiverRelayCard(
                 roleBadge = "Utama",
                 badgeBg = colors.primaryContainer,
                 badgeColor = colors.primary,
-                duration = "88j 50m",
-                pct = "68%",
+                duration = distribution.ibuHoursFormatted,
+                pct = "${distribution.ibuPercent}%",
                 dotColor = colors.caregiverIbu
             )
 
@@ -989,11 +1069,11 @@ private fun CaregiverRelayCard(
 
             CaregiverRowDetail(
                 name = "Ayah",
-                roleBadge = "Estafet Malam",
+                roleBadge = "Estafet",
                 badgeBg = colors.caregiverAyahContainer,
                 badgeColor = colors.caregiverAyahText,
-                duration = "28j 45m",
-                pct = "22%",
+                duration = distribution.ayahHoursFormatted,
+                pct = "${distribution.ayahPercent}%",
                 dotColor = colors.caregiverAyah
             )
 
@@ -1001,11 +1081,11 @@ private fun CaregiverRelayCard(
 
             CaregiverRowDetail(
                 name = "Pendamping",
-                roleBadge = "Siang",
+                roleBadge = "Keluarga",
                 badgeBg = colors.caregiverPendampingContainer,
                 badgeColor = colors.caregiverPendampingText,
-                duration = "13j 05m",
-                pct = "10%",
+                duration = distribution.pendampingHoursFormatted,
+                pct = "${distribution.pendampingPercent}%",
                 dotColor = colors.caregiverPendamping
             )
 
@@ -1114,6 +1194,12 @@ private fun ClinicalImpactCard(
     modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
+    val eval = statistics.clinicalEvaluation
+    val hasTempData = eval.averageTemperature > 0.0
+    val isTempNormal = hasTempData && eval.averageTemperature in 36.5..37.5
+    val hasBehaviorData = eval.calmnessPercentage > 0 || eval.feedingPercentage > 0
+    val calmPct = eval.calmnessPercentage
+    val feedingPct = eval.feedingPercentage
 
     Card(
         shape = RoundedCornerShape(20.dp),
@@ -1190,7 +1276,7 @@ private fun ClinicalImpactCard(
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(verticalAlignment = Alignment.Bottom) {
                             Text(
-                                text = "36.8°C",
+                                text = if (hasTempData) String.format(Locale.US, "%.1f°C", eval.averageTemperature) else "-°C",
                                 style = KanguruTheme.typography.titleMedium,
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Black,
@@ -1198,14 +1284,18 @@ private fun ClinicalImpactCard(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Normal",
+                                text = if (!hasTempData) "-" else if (isTempNormal) "Normal" else if (eval.averageTemperature < 36.5) "Rendah" else "Tinggi",
                                 style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = colors.success
+                                color = if (!hasTempData) colors.textSecondary else if (isTempNormal) colors.success else colors.warning
                             )
                         }
                         Text(
-                            text = "Aman dari hipotermia",
+                            text = if (hasTempData) {
+                                if (isTempNormal) "Aman dari hipotermia" else "Perhatikan suhu bayi"
+                            } else {
+                                "Belum ada data suhu"
+                            },
                             style = KanguruTheme.typography.labelSmall,
                             color = colors.textTertiary
                         )
@@ -1238,11 +1328,11 @@ private fun ClinicalImpactCard(
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(verticalAlignment = Alignment.Bottom) {
                             Text(
-                                text = "100%",
+                                text = if (hasTempData) "${eval.normalTemperaturePercentage}%" else "-",
                                 style = KanguruTheme.typography.titleMedium,
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Black,
-                                color = colors.success
+                                color = if (hasTempData && eval.normalTemperaturePercentage >= 80) colors.success else colors.textPrimary
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
@@ -1253,7 +1343,7 @@ private fun ClinicalImpactCard(
                             )
                         }
                         Text(
-                            text = "Rentang 36.5°C - 37.5°C",
+                            text = if (hasTempData) "Rentang 36.5°C - 37.5°C" else "Belum ada rekaman suhu",
                             style = KanguruTheme.typography.labelSmall,
                             color = colors.textTertiary
                         )
@@ -1277,7 +1367,7 @@ private fun ClinicalImpactCard(
                         color = colors.textPrimary
                     )
                     Text(
-                        text = "88% Tenang / Tidur",
+                        text = if (hasBehaviorData) "${calmPct}% Tenang / Tidur" else "Belum Ada Catatan",
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = colors.textSecondary
@@ -1286,7 +1376,7 @@ private fun ClinicalImpactCard(
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // Progress Bar (88% Tenang, 12% Menyusu Aktif)
+                // Progress Bar
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1294,18 +1384,24 @@ private fun ClinicalImpactCard(
                         .clip(CircleShape)
                         .background(colors.surfaceVariant)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(0.88f)
-                            .fillMaxSize()
-                            .background(colors.success)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(0.12f)
-                            .fillMaxSize()
-                            .background(colors.caregiverAyah)
-                    )
+                    if (hasBehaviorData) {
+                        if (calmPct > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(calmPct.toFloat())
+                                    .fillMaxSize()
+                                    .background(colors.success)
+                            )
+                        }
+                        if (feedingPct > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(feedingPct.toFloat())
+                                    .fillMaxSize()
+                                    .background(colors.caregiverAyah)
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(6.dp))
@@ -1323,7 +1419,7 @@ private fun ClinicalImpactCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "88% Tenang & Tidur Pulas",
+                            text = if (hasBehaviorData) "${calmPct}% Tenang & Tidur Pulas" else "-% Tenang",
                             style = KanguruTheme.typography.labelSmall,
                             color = colors.textSecondary
                         )
@@ -1338,7 +1434,7 @@ private fun ClinicalImpactCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "12% Menyusu Aktif",
+                            text = if (hasBehaviorData) "${feedingPct}% Menyusu Aktif" else "-% Menyusu",
                             style = KanguruTheme.typography.labelSmall,
                             color = colors.textSecondary
                         )
