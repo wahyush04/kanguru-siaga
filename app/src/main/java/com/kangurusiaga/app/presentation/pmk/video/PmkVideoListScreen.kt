@@ -107,7 +107,6 @@ fun PmkVideoListScreen(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
-                        fontSize = 17.sp,
                         textAlign = TextAlign.Center,
                         letterSpacing = (-0.2).sp,
                         modifier = Modifier
@@ -204,8 +203,8 @@ private fun PmkVideoModuleCard(
                 ) {
                     Text(
                         text = video.duration,
+                        style = MaterialTheme.typography.labelSmall,
                         color = White,
-                        fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -219,7 +218,6 @@ private fun PmkVideoModuleCard(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = titleColor,
-                fontSize = 14.sp,
                 lineHeight = 19.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

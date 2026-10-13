@@ -258,7 +258,7 @@ fun ClinicalGuidelinesScreen(
                 // Centered Title
                 Text(
                     text = stringResource(R.string.clinical_guidelines_title),
-                    fontSize = 17.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center,
@@ -287,7 +287,7 @@ fun ClinicalGuidelinesScreen(
                 // Section Title
                 Text(
                     text = stringResource(R.string.clinical_guidelines_section_title).uppercase(),
-                    fontSize = 12.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = TextTertiary,
                     letterSpacing = 0.8.sp,
@@ -329,7 +329,7 @@ fun ClinicalGuidelinesScreen(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = source.title,
-                                        fontSize = 15.sp,
+                                        style = KanguruTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TextPrimary
                                     )
@@ -343,7 +343,7 @@ fun ClinicalGuidelinesScreen(
                                     ) {
                                         Text(
                                             text = source.badgeText,
-                                            fontSize = 11.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Medium,
                                             color = source.badgeColor,
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -373,8 +373,7 @@ fun ClinicalGuidelinesScreen(
                                                 )
                                                 Text(
                                                     text = item,
-                                                    fontSize = 12.5.sp,
-                                                    lineHeight = 18.sp,
+                                                    style = KanguruTheme.typography.bodySmall,
                                                     color = TextSecondary,
                                                     modifier = Modifier.weight(1f)
                                                 )
@@ -386,8 +385,7 @@ fun ClinicalGuidelinesScreen(
                                 is GuidelineContent.Paragraph -> {
                                     Text(
                                         text = content.text,
-                                        fontSize = 12.5.sp,
-                                        lineHeight = 18.sp,
+                                        style = KanguruTheme.typography.bodySmall,
                                         color = TextSecondary,
                                         modifier = Modifier.padding(top = 8.dp)
                                     )
@@ -434,13 +432,13 @@ fun ClinicalGuidelinesScreen(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = stringResource(R.string.clinical_guidelines_medical_review_title),
-                                    fontSize = 14.5.sp,
+                                    style = KanguruTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
                                 )
                                 Text(
                                     text = stringResource(R.string.clinical_guidelines_medical_review_subtitle),
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     color = TextSecondary
                                 )
                             }
@@ -464,8 +462,7 @@ fun ClinicalGuidelinesScreen(
                             }
                             Text(
                                 text = reviewNote,
-                                fontSize = 12.sp,
-                                lineHeight = 18.sp,
+                                style = KanguruTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
                         }
@@ -484,8 +481,7 @@ fun ClinicalGuidelinesScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.clinical_guidelines_footer_notice),
-                        fontSize = 11.5.sp,
-                        lineHeight = 16.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         color = TextTertiary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -494,7 +490,7 @@ fun ClinicalGuidelinesScreen(
                     )
                     Text(
                         text = stringResource(R.string.clinical_guidelines_footer_version),
-                        fontSize = 11.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextTertiary,
                         textAlign = TextAlign.Center

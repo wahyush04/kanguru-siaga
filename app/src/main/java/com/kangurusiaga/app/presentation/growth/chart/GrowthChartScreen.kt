@@ -56,6 +56,7 @@ import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBg
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBorder
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipText
@@ -139,7 +140,7 @@ fun GrowthChartScreen(
 
                 Text(
                     text = parameter.displayName,
-                    fontSize = 17.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center,
@@ -171,7 +172,7 @@ fun GrowthChartScreen(
                     text = {
                         Text(
                             text = stringResource(R.string.growth_chart_tab_chart),
-                            fontSize = 14.sp,
+                            style = KanguruTheme.typography.bodyMedium,
                             fontWeight = if (uiState.selectedTab == 0) FontWeight.Bold else FontWeight.Medium,
                             color = if (uiState.selectedTab == 0) BrandPink else TextTertiary
                         )
@@ -183,7 +184,7 @@ fun GrowthChartScreen(
                     text = {
                         Text(
                             text = stringResource(R.string.growth_chart_tab_data),
-                            fontSize = 14.sp,
+                            style = KanguruTheme.typography.bodyMedium,
                             fontWeight = if (uiState.selectedTab == 1) FontWeight.Bold else FontWeight.Medium,
                             color = if (uiState.selectedTab == 1) BrandPink else TextTertiary
                         )
@@ -217,7 +218,7 @@ fun GrowthChartScreen(
                         ) {
                             Text(
                                 text = "Usia Gestasi Pasca-Menstruasi (PMA)",
-                                fontSize = 11.5.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Medium,
                                 color = TextPrimary
                             )
@@ -268,14 +269,13 @@ fun GrowthChartScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = parameter.displayName,
-                                fontSize = 12.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Medium,
                                 color = TextSecondary
                             )
                             Text(
                                 text = stringResource(R.string.growth_chart_current_label),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Normal,
+                                style = KanguruTheme.typography.labelSmall,
                                 color = TextTertiary
                             )
 
@@ -287,14 +287,14 @@ fun GrowthChartScreen(
                                 } else "--"
                                 Text(
                                     text = valueStr,
-                                    fontSize = 28.sp,
+                                    style = KanguruTheme.typography.headlineLarge,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = TextPrimary
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = parameter.unit,
-                                    fontSize = 15.sp,
+                                    style = KanguruTheme.typography.titleSmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextSecondary,
                                     modifier = Modifier.padding(bottom = 3.dp)
@@ -339,7 +339,7 @@ fun GrowthChartScreen(
                                 ) {
                                     Text(
                                         text = (if (deltaPositive) "↑ " else "") + deltaStr,
-                                        fontSize = 11.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.SemiBold,
                                         color = deltaTextColor
                                     )
@@ -353,21 +353,21 @@ fun GrowthChartScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.growth_chart_percentile_label),
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Medium,
                                 color = TextTertiary
                             )
                             Text(
                                 text = percentileClassification?.percentileBadge ?: latest?.percentileBadge ?: "P50",
-                                fontSize = 24.sp,
+                                style = KanguruTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = BrandPink
                             )
                             Text(
                                 text = percentileClassification?.statusText ?: "Normal",
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Medium,
-                                color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
+                                color = KanguruTheme.colors.successText
                             )
                         }
                     }
@@ -427,8 +427,7 @@ fun GrowthChartScreen(
 
                         Text(
                             text = stringResource(R.string.growth_chart_insight_text, parameter.displayName, babyName, pName, pCat),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
+                            style = KanguruTheme.typography.labelSmall,
                             color = GrowthTipText,
                             lineHeight = 18.sp
                         )
@@ -451,8 +450,7 @@ fun GrowthChartScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.growth_chart_btn_add_param, parameter.displayName),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
+                            style = KanguruTheme.typography.titleSmall,
                             color = BrandPink
                         )
                     }
@@ -473,15 +471,14 @@ fun GrowthChartScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = stringResource(R.string.growth_chart_empty_title),
-                                fontSize = 15.sp,
+                                style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = stringResource(R.string.growth_chart_empty_desc),
-                                fontSize = 12.5.sp,
-                                fontWeight = FontWeight.Normal,
+                                style = KanguruTheme.typography.bodySmall,
                                 color = TextSecondary,
                                 textAlign = TextAlign.Center
                             )
@@ -513,7 +510,7 @@ fun GrowthChartScreen(
                                 // Date
                                 Text(
                                     text = dateFormatter.format(item.measurementDateEpochMillis),
-                                    fontSize = 13.5.sp,
+                                    style = KanguruTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Medium,
                                     color = TextPrimary,
                                     modifier = Modifier.width(100.dp)
@@ -524,8 +521,7 @@ fun GrowthChartScreen(
                                 val ageText = if (weeksInt > 0) "$weeksInt minggu" else "${(item.chronologicalAgeWeeks * 7).toInt()} hari"
                                 Text(
                                     text = ageText,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Normal,
+                                    style = KanguruTheme.typography.bodySmall,
                                     color = TextSecondary,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -534,7 +530,7 @@ fun GrowthChartScreen(
                                 val valText = "${String.format(Locale("id", "ID"), "%.1f", item.value)} ${item.unit}"
                                 Text(
                                     text = valText,
-                                    fontSize = 14.sp,
+                                    style = KanguruTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary,
                                     modifier = Modifier.padding(end = 8.dp)
@@ -553,7 +549,7 @@ fun GrowthChartScreen(
                                 ) {
                                     Text(
                                         text = item.percentileBadge ?: "P50",
-                                        fontSize = 11.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = pillText
                                     )

@@ -256,7 +256,6 @@ fun PmkHistoryScreen(
                         Text(
                             text = "Rekapitulasi Kontak Kulit Harian",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
                             color = colors.textTertiary
                         )
@@ -302,7 +301,6 @@ fun PmkHistoryScreen(
                             Text(
                                 text = "Fase Aktif",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.onSuccessContainer
                             )
@@ -391,8 +389,8 @@ fun PmkHistoryScreen(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "Catat Sesi Manual",
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
                             color = colors.onPrimary
                         )
                     }
@@ -420,8 +418,8 @@ fun PmkHistoryScreen(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "Detail Statistik",
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
                             color = colors.textPrimary
                         )
                     }
@@ -527,7 +525,6 @@ private fun SummaryMiniCard(
             Text(
                 text = title,
                 style = KanguruTheme.typography.labelSmall,
-                fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
                 color = colors.textTertiary,
                 maxLines = 1,
@@ -536,8 +533,8 @@ private fun SummaryMiniCard(
 
             Text(
                 text = value,
+                style = KanguruTheme.typography.titleSmall,
                 fontFamily = FontFamily.Monospace,
-                fontSize = 13.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = colors.textPrimary,
                 maxLines = 1
@@ -548,7 +545,6 @@ private fun SummaryMiniCard(
             Text(
                 text = badgeText,
                 style = KanguruTheme.typography.labelSmall,
-                fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
                 color = badgeColor,
                 maxLines = 1
@@ -605,7 +601,6 @@ private fun DailyRecordCard(
                         Text(
                             text = dayLabel.uppercase(),
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (dailyGroup.isToday) colors.primary else colors.textTertiary
                         )
@@ -628,7 +623,6 @@ private fun DailyRecordCard(
                         Text(
                             text = badgeText,
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = badgeColor
                         )
@@ -666,8 +660,8 @@ private fun DailyRecordCard(
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = "$activeHours",
+                        style = KanguruTheme.typography.titleLarge,
                         fontFamily = FontFamily.Monospace,
-                        fontSize = 20.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = colors.textPrimary
                     )
@@ -682,8 +676,8 @@ private fun DailyRecordCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "$activeMinutes",
+                        style = KanguruTheme.typography.titleLarge,
                         fontFamily = FontFamily.Monospace,
-                        fontSize = 20.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = colors.textPrimary
                     )
@@ -701,14 +695,12 @@ private fun DailyRecordCard(
                     Text(
                         text = "$percentOfTarget% Target",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.primary
                     )
                     Text(
                         text = ">18j Rekomendasi",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 9.sp,
                         fontWeight = FontWeight.Medium,
                         color = colors.textTertiary
                     )
@@ -784,14 +776,12 @@ private fun DistribusiPengasuhBox(timeline: DailyTimeline) {
                         text = "Distribusi Pengasuh",
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary,
-                        fontSize = 11.sp
+                        color = colors.textPrimary
                     )
                     Text(
                         text = "Kontribusi Kontak Estafet",
                         style = KanguruTheme.typography.labelSmall,
-                        color = colors.textTertiary,
-                        fontSize = 9.sp
+                        color = colors.textTertiary
                     )
                 }
 
@@ -799,10 +789,10 @@ private fun DistribusiPengasuhBox(timeline: DailyTimeline) {
                 val totalMins = timeline.totalActiveMinutes % 60
                 Text(
                     text = "${totalHours}j ${totalMins}m (100%)",
+                    style = KanguruTheme.typography.labelSmall,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary,
-                    fontSize = 11.sp
+                    color = colors.textPrimary
                 )
             }
 
@@ -889,15 +879,14 @@ private fun CaregiverColumnItem(
             Text(
                 text = label,
                 style = KanguruTheme.typography.labelSmall,
-                fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
                 color = colors.textPrimary,
                 maxLines = 1
             )
             Text(
                 text = pct,
+                style = KanguruTheme.typography.labelSmall,
                 fontFamily = FontFamily.Monospace,
-                fontSize = 9.sp,
                 color = colors.textTertiary
             )
         }
@@ -916,8 +905,7 @@ private fun RincianSesiSection(
             text = "Rincian Sesi Kontak PMK",
             style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
-            color = colors.textPrimary,
-            fontSize = 11.sp
+            color = colors.textPrimary
         )
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -983,8 +971,7 @@ private fun RincianSesiSection(
                                     text = title,
                                     style = KanguruTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Bold,
-                                    color = colors.textPrimary,
-                                    fontSize = 12.sp
+                                    color = colors.textPrimary
                                 )
 
                                 if (isOngoing) {
@@ -998,7 +985,6 @@ private fun RincianSesiSection(
                                         Text(
                                             text = "Sedang Berjalan",
                                             style = KanguruTheme.typography.labelSmall,
-                                            fontSize = 9.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = colors.onSuccessContainer
                                         )
@@ -1008,10 +994,10 @@ private fun RincianSesiSection(
 
                             Text(
                                 text = durationFormatted,
+                                style = KanguruTheme.typography.bodySmall,
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Bold,
-                                color = colors.textPrimary,
-                                fontSize = 12.sp
+                                color = colors.textPrimary
                             )
                         }
 
@@ -1025,8 +1011,7 @@ private fun RincianSesiSection(
                             Text(
                                 text = "$startStr – $endStr",
                                 style = KanguruTheme.typography.labelSmall,
-                                color = colors.textSecondary,
-                                fontSize = 10.sp
+                                color = colors.textSecondary
                             )
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1035,14 +1020,12 @@ private fun RincianSesiSection(
                                         text = "🌡️ ${segment.babyTemperature}°C (Stabil)",
                                         style = KanguruTheme.typography.labelSmall,
                                         color = colors.success,
-                                        fontSize = 10.sp,
                                         fontWeight = FontWeight.SemiBold
                                     )
                                     Text(
                                         text = " • ",
                                         style = KanguruTheme.typography.labelSmall,
-                                        color = colors.textTertiary,
-                                        fontSize = 10.sp
+                                        color = colors.textTertiary
                                     )
                                 }
                                 val behaviorText = if (!segment.babyResponse.isNullOrBlank()) {
@@ -1051,8 +1034,7 @@ private fun RincianSesiSection(
                                 Text(
                                     text = behaviorText,
                                     style = KanguruTheme.typography.labelSmall,
-                                    color = colors.textSecondary,
-                                    fontSize = 10.sp
+                                    color = colors.textSecondary
                                 )
                             }
                         }

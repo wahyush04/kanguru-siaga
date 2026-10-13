@@ -138,7 +138,7 @@ fun EducationDetailScreen(
 
                     Text(
                         text = uiState.module?.title ?: stringResource(R.string.edu_detail_default_title),
-                        fontSize = 16.sp,
+                        style = KanguruTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
                         textAlign = TextAlign.Center,
@@ -213,18 +213,18 @@ fun EducationDetailScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.edu_detail_module_progress, module.order),
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = palette.primary
                                 )
                                 Text(
                                     text = "•",
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     color = TextTertiary
                                 )
                                 Text(
                                     text = stringResource(R.string.edu_detail_read_time, module.readingTimeMinutes),
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     color = TextSecondary,
                                     fontWeight = FontWeight.Medium
                                 )
@@ -282,7 +282,7 @@ fun EducationDetailScreen(
                                 )
                                 Text(
                                     text = if (module.heroTag.isNotBlank()) module.heroTag else module.category,
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
                                 )
@@ -332,8 +332,7 @@ fun EducationDetailScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = if (module.isCompleted) stringResource(R.string.edu_detail_btn_completed) else stringResource(R.string.edu_detail_btn_mark_completed),
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
+                                style = KanguruTheme.typography.titleSmall,
                                 color = White
                             )
                         }
@@ -353,7 +352,7 @@ fun EducationDetailScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.edu_detail_btn_next, uiState.nextModuleOrder ?: 0, uiState.nextModuleTitle.orEmpty()),
-                                    fontSize = 13.sp,
+                                    style = KanguruTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
                                 )
@@ -379,7 +378,7 @@ fun EducationDetailScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.edu_detail_btn_back_to_list),
-                                    fontSize = 13.sp,
+                                    style = KanguruTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
                                 )

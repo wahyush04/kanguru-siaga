@@ -119,7 +119,7 @@ fun PmkCaregiverHandoverSheet(
                 ) {
                     Text(
                         text = selectedCaregiver.iconEmoji,
-                        fontSize = 26.sp
+                        style = KanguruTheme.typography.headlineLarge
                     )
                     Box(
                         modifier = Modifier
@@ -150,7 +150,6 @@ fun PmkCaregiverHandoverSheet(
                 Text(
                     text = "Estafet Kontak Kulit (Skin-to-Skin) Tanpa Jeda",
                     style = KanguruTheme.typography.bodySmall,
-                    fontSize = 11.sp,
                     color = colors.textSecondary
                 )
             }
@@ -174,13 +173,11 @@ fun PmkCaregiverHandoverSheet(
                     .padding(12.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                Text(text = "🤝", fontSize = 16.sp)
+                Text(text = "🤝", style = KanguruTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Lakukan perpindahan bayi secara langsung dada-ke-dada tanpa jeda waktu agar suhu tubuh bayi tetap stabil dan hangat.",
                     style = KanguruTheme.typography.bodySmall,
-                    fontSize = 11.sp,
-                    lineHeight = 16.sp,
                     color = colors.textPrimary
                 )
             }
@@ -217,7 +214,6 @@ fun PmkCaregiverHandoverSheet(
                     Text(
                         text = "Kontinu Aktif",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 9.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = colors.success
                     )
@@ -254,7 +250,7 @@ fun PmkCaregiverHandoverSheet(
                                 .background(if (isSelected) colors.cardBackground else colors.surfaceVariant),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = caregiver.iconEmoji, fontSize = 16.sp)
+                            Text(text = caregiver.iconEmoji, style = KanguruTheme.typography.bodyLarge)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
@@ -436,7 +432,6 @@ fun PmkCaregiverHandoverSheet(
                     Text(
                         text = "Pilih respon",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 9.sp,
                         color = colors.primary
                     )
                 }
@@ -474,7 +469,7 @@ fun PmkCaregiverHandoverSheet(
                             if (isSelected) {
                                 Text(
                                     text = "✓",
-                                    fontSize = 10.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = colors.primary
                                 )
@@ -483,7 +478,6 @@ fun PmkCaregiverHandoverSheet(
                             Text(
                                 text = responseOption,
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                 color = if (isSelected) colors.primary else colors.textPrimary
                             )
@@ -499,7 +493,7 @@ fun PmkCaregiverHandoverSheet(
                 value = notesInput,
                 onValueChange = onNotesChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Catatan transisi estafet (posisi bayi nyaman, dll.)...", fontSize = 11.sp) },
+                placeholder = { Text("Catatan transisi estafet (posisi bayi nyaman, dll.)...", style = KanguruTheme.typography.bodySmall) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(

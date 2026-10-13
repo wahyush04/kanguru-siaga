@@ -205,7 +205,7 @@ fun UserGuideScreen(
                 // Centered Title
                 Text(
                     text = stringResource(R.string.user_guide_title),
-                    fontSize = 17.5.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center,
@@ -270,7 +270,7 @@ fun UserGuideScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.user_guide_hero_badge),
-                                    fontSize = 10.5.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = BrandPink,
                                     letterSpacing = 0.5.sp,
@@ -286,17 +286,15 @@ fun UserGuideScreen(
                                         append("Kanguru Siaga")
                                     }
                                 },
-                                fontSize = 19.sp,
+                                style = KanguruTheme.typography.titleLarge,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = TextPrimary,
-                                lineHeight = 25.sp
+                                color = TextPrimary
                             )
 
                             // Description
                             Text(
                                 text = stringResource(R.string.user_guide_hero_desc),
-                                fontSize = 12.5.sp,
-                                lineHeight = 18.5.sp,
+                                style = KanguruTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
                         }
@@ -313,7 +311,7 @@ fun UserGuideScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.user_guide_features_title),
-                        fontSize = 15.5.sp,
+                        style = KanguruTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
@@ -325,7 +323,7 @@ fun UserGuideScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.user_guide_features_badge),
-                            fontSize = 11.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = BrandPink,
                             modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp)
@@ -379,7 +377,7 @@ fun UserGuideScreen(
                                     Column {
                                         Text(
                                             text = card.tag,
-                                            fontSize = 10.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
                                             color = card.accentColor,
                                             letterSpacing = 0.5.sp
@@ -387,10 +385,9 @@ fun UserGuideScreen(
                                         Spacer(modifier = Modifier.height(1.dp))
                                         Text(
                                             text = card.title,
-                                            fontSize = 13.5.sp,
+                                            style = KanguruTheme.typography.titleSmall,
                                             fontWeight = FontWeight.Bold,
-                                            color = TextPrimary,
-                                            lineHeight = 18.sp
+                                            color = TextPrimary
                                         )
                                     }
                                 }
@@ -422,7 +419,7 @@ fun UserGuideScreen(
 
                                     Text(
                                         text = card.subheader,
-                                        fontSize = 12.5.sp,
+                                        style = KanguruTheme.typography.bodySmall,
                                         fontWeight = FontWeight.SemiBold,
                                         color = TextPrimary,
                                         modifier = Modifier.padding(bottom = 8.dp)
@@ -468,7 +465,7 @@ fun UserGuideScreen(
                     )
                     Text(
                         text = stringResource(R.string.user_guide_faq_title),
-                        fontSize = 15.5.sp,
+                        style = KanguruTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
@@ -534,7 +531,7 @@ fun UserGuideScreen(
                             // Text Content
                             Text(
                                 text = stringResource(R.string.user_guide_support_title),
-                                fontSize = 14.5.sp,
+                                style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary,
                                 textAlign = TextAlign.Center
@@ -542,8 +539,7 @@ fun UserGuideScreen(
 
                             Text(
                                 text = stringResource(R.string.user_guide_support_desc),
-                                fontSize = 12.sp,
-                                lineHeight = 17.sp,
+                                style = KanguruTheme.typography.bodySmall,
                                 color = TextSecondary,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(horizontal = 8.dp)
@@ -572,7 +568,7 @@ fun UserGuideScreen(
                                 ) {
                                     Text(
                                         text = stringResource(R.string.user_guide_support_btn_contact),
-                                        fontSize = 12.sp,
+                                        style = KanguruTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
@@ -596,7 +592,7 @@ fun UserGuideScreen(
                                 ) {
                                     Text(
                                         text = stringResource(R.string.user_guide_support_btn_feedback),
-                                        fontSize = 12.sp,
+                                        style = KanguruTheme.typography.labelMedium,
                                         fontWeight = FontWeight.SemiBold
                                     )
                                 }
@@ -617,15 +613,14 @@ fun UserGuideScreen(
             title = {
                 Text(
                     text = stringResource(R.string.user_guide_info_dialog_title),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    style = KanguruTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
                     text = stringResource(R.string.user_guide_info_dialog_desc),
-                    fontSize = 13.sp,
-                    lineHeight = 18.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary
                 )
             },
@@ -673,7 +668,7 @@ private fun PmkGuideContent() {
                 ) {
                     Text(
                         text = (index + 1).toString(),
-                        fontSize = 11.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = BrandPink
                     )
@@ -681,8 +676,7 @@ private fun PmkGuideContent() {
 
                 Text(
                     text = text,
-                    fontSize = 12.5.sp,
-                    lineHeight = 18.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary,
                     modifier = Modifier.weight(1f)
                 )
@@ -710,8 +704,7 @@ private fun PmkGuideContent() {
             )
             Text(
                 text = "Pastikan posisi jalan napas bayi selalu tegak & leher tidak tertekuk saat kontak PMK.",
-                fontSize = 11.5.sp,
-                lineHeight = 16.sp,
+                style = KanguruTheme.typography.labelSmall,
                 color = Color(0xFF92400E),
                 modifier = Modifier.weight(1f)
             )
@@ -739,14 +732,13 @@ private fun FentonGuideContent() {
             ) {
                 Text(
                     text = "•",
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF059669)
                 )
                 Text(
                     text = text,
-                    fontSize = 12.5.sp,
-                    lineHeight = 18.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary,
                     modifier = Modifier.weight(1f)
                 )
@@ -775,14 +767,13 @@ private fun FeedingGuideContent() {
             ) {
                 Text(
                     text = "•",
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF0284C7)
                 )
                 Text(
                     text = text,
-                    fontSize = 12.5.sp,
-                    lineHeight = 18.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary,
                     modifier = Modifier.weight(1f)
                 )
@@ -824,7 +815,7 @@ private fun EmergencyGuideContent() {
                 ) {
                     Text(
                         text = symptoms[i],
-                        fontSize = 11.5.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF991B1B)
                     )
@@ -843,7 +834,7 @@ private fun EmergencyGuideContent() {
                     ) {
                         Text(
                             text = symptoms[i + 1],
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = Color(0xFF991B1B)
                         )
@@ -857,9 +848,8 @@ private fun EmergencyGuideContent() {
         // Red urgent notice
         Text(
             text = "⚠️ Jika menemukan salah satu tanda di atas, jangan tunda: segera bawa bayi ke Unit Gawat Darurat (UGD/IGD) rumah sakit terdekat.",
-            fontSize = 11.5.sp,
+            style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
-            lineHeight = 16.sp,
             color = Color(0xFFDC2626)
         )
     }
@@ -885,14 +875,13 @@ private fun ProfileGuideContent() {
             ) {
                 Text(
                     text = "•",
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF9333EA)
                 )
                 Text(
                     text = text,
-                    fontSize = 12.5.sp,
-                    lineHeight = 18.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary,
                     modifier = Modifier.weight(1f)
                 )
@@ -924,15 +913,13 @@ private fun FaqCardItem(
         ) {
             Text(
                 text = question,
-                fontSize = 13.5.sp,
+                style = KanguruTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-                lineHeight = 18.sp
+                color = TextPrimary
             )
             Text(
                 text = answer,
-                fontSize = 12.sp,
-                lineHeight = 17.5.sp,
+                style = KanguruTheme.typography.bodySmall,
                 color = TextSecondary
             )
         }

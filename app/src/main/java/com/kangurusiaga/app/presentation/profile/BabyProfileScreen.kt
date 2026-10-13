@@ -148,7 +148,7 @@ fun BabyProfileScreen(
 
                 Text(
                     text = "Profil Bayi",
-                    fontSize = 18.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
                 )
@@ -225,7 +225,7 @@ fun BabyProfileScreen(
 
                     Text(
                         text = baby.name,
-                        fontSize = 20.sp,
+                        style = KanguruTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
                         textAlign = TextAlign.Center
@@ -235,7 +235,7 @@ fun BabyProfileScreen(
 
                     Text(
                         text = "Lahir: ${uiState.formattedBirthDate}",
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextSecondary
                     )
@@ -262,7 +262,7 @@ fun BabyProfileScreen(
                             val statusTag = if (uiState.isBblr) "BBLR" else "Normal"
                             Text(
                                 text = "Usia: ${uiState.chronologicalAgeWeeks} Minggu (Kronologis) • $statusTag",
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = BrandPink
                             )
@@ -356,7 +356,7 @@ fun BabyProfileScreen(
                                 )
                                 Text(
                                     text = "DATA KELAHIRAN & BIOLOGIS",
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary,
                                     letterSpacing = 0.5.sp
@@ -383,7 +383,7 @@ fun BabyProfileScreen(
                             ) {
                                 Text(
                                     text = "Jenis Kelamin",
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
                                     color = TextSecondary
                                 )
@@ -409,7 +409,7 @@ fun BabyProfileScreen(
                                         )
                                         Text(
                                             text = if (isFemale) "Perempuan" else "Laki-laki",
-                                            fontSize = 12.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = if (isFemale) BrandPink else KanguruTheme.colors.onInfoContainer
                                         )
@@ -430,7 +430,7 @@ fun BabyProfileScreen(
                             ) {
                                 Text(
                                     text = "Berat Lahir",
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
                                     color = TextSecondary
                                 )
@@ -440,7 +440,7 @@ fun BabyProfileScreen(
                                 ) {
                                     Text(
                                         text = "$formattedBirthWeight gram",
-                                        fontSize = 12.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TextPrimary
                                     )
@@ -452,7 +452,7 @@ fun BabyProfileScreen(
                                         ) {
                                             Text(
                                                 text = "BBLR",
-                                                fontSize = 10.sp,
+                                                style = KanguruTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.Bold,
                                                 color = KanguruTheme.colors.onWarningContainer,
                                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -474,7 +474,7 @@ fun BabyProfileScreen(
                             ) {
                                 Text(
                                     text = "Usia Gestasi saat Lahir",
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
                                     color = TextSecondary
                                 )
@@ -484,7 +484,7 @@ fun BabyProfileScreen(
                                 ) {
                                     Text(
                                         text = "${baby.gestationalAgeWeeks} Minggu",
-                                        fontSize = 12.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TextPrimary
                                     )
@@ -498,7 +498,7 @@ fun BabyProfileScreen(
                                     ) {
                                         Text(
                                             text = if (uiState.isPremature) "Prematur" else "Aterm",
-                                            fontSize = 10.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
                                             color = if (uiState.isPremature) BrandPink else KanguruTheme.colors.onSuccessContainer,
                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -519,20 +519,20 @@ fun BabyProfileScreen(
                             ) {
                                 Text(
                                     text = "Status Pertumbuhan",
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
                                     color = TextSecondary
                                 )
                                 Column(horizontalAlignment = Alignment.End) {
                                     Text(
                                         text = uiState.growthStatusSummary,
-                                        fontSize = 12.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = KanguruTheme.colors.success
                                     )
                                     Text(
                                         text = "Kurva Fenton",
-                                        fontSize = 10.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Normal,
                                         color = TextTertiary
                                     )
@@ -562,13 +562,13 @@ private fun InfoDataRow(
     ) {
         Text(
             text = label,
-            fontSize = 12.sp,
+            style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.Medium,
             color = TextSecondary
         )
         Text(
             text = value,
-            fontSize = 12.sp,
+            style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
         )

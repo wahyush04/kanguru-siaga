@@ -107,7 +107,7 @@ fun MedicalDisclaimerScreen(
                 // Centered Title
                 Text(
                     text = stringResource(R.string.disclaimer_title),
-                    fontSize = 17.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center,
@@ -164,7 +164,7 @@ fun MedicalDisclaimerScreen(
                                 )
                                 Text(
                                     text = stringResource(R.string.disclaimer_badge).uppercase(),
-                                    fontSize = 10.5.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = BrandPink,
                                     letterSpacing = 0.5.sp
@@ -176,10 +176,9 @@ fun MedicalDisclaimerScreen(
 
                         Text(
                             text = stringResource(R.string.disclaimer_hero_title),
-                            fontSize = 17.sp,
+                            style = KanguruTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
-                            lineHeight = 23.sp
+                            color = TextPrimary
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -195,8 +194,7 @@ fun MedicalDisclaimerScreen(
                         }
                         Text(
                             text = heroDesc1,
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp,
+                            style = KanguruTheme.typography.bodySmall,
                             color = TextSecondary
                         )
 
@@ -221,8 +219,7 @@ fun MedicalDisclaimerScreen(
                         }
                         Text(
                             text = heroDesc2,
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp,
+                            style = KanguruTheme.typography.bodySmall,
                             color = TextSecondary
                         )
                     }
@@ -260,7 +257,7 @@ fun MedicalDisclaimerScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(R.string.disclaimer_emergency_title),
-                                fontSize = 13.5.sp,
+                                style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF881337)
                             )
@@ -282,8 +279,7 @@ fun MedicalDisclaimerScreen(
                             }
                             Text(
                                 text = emergencyText,
-                                fontSize = 11.5.sp,
-                                lineHeight = 17.sp,
+                                style = KanguruTheme.typography.bodySmall,
                                 color = Color(0xFF4C0519)
                             )
 
@@ -316,7 +312,7 @@ fun MedicalDisclaimerScreen(
                                     )
                                     Text(
                                         text = stringResource(R.string.disclaimer_emergency_btn),
-                                        fontSize = 11.5.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.SemiBold,
                                         color = Color(0xFFBE123C)
                                     )
@@ -357,7 +353,7 @@ fun MedicalDisclaimerScreen(
                             }
                             Text(
                                 text = stringResource(R.string.disclaimer_features_title),
-                                fontSize = 13.5.sp,
+                                style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
@@ -457,7 +453,7 @@ fun MedicalDisclaimerScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(R.string.disclaimer_accuracy_title),
-                                fontSize = 12.5.sp,
+                                style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
@@ -475,8 +471,7 @@ fun MedicalDisclaimerScreen(
                             }
                             Text(
                                 text = accuracyDesc,
-                                fontSize = 12.sp,
-                                lineHeight = 18.sp,
+                                style = KanguruTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
                         }
@@ -516,7 +511,7 @@ fun MedicalDisclaimerScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(R.string.disclaimer_consent_title),
-                                fontSize = 12.5.sp,
+                                style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
@@ -525,8 +520,7 @@ fun MedicalDisclaimerScreen(
 
                             Text(
                                 text = "Dengan melanjutkan penggunaan aplikasi Kanguru Siaga, Anda memahami dan menyetujui bahwa seluruh implementasi panduan di rumah dilakukan atas dasar kehati-hatian mandiri pengasuh, serta menyetujui batasan pertanggungjawaban pengembang dalam aspek klinis individual.",
-                                fontSize = 12.sp,
-                                lineHeight = 18.sp,
+                                style = KanguruTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
                         }
@@ -545,20 +539,20 @@ fun MedicalDisclaimerScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.disclaimer_footer_note),
-                        fontSize = 11.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         color = TextTertiary,
                         textAlign = TextAlign.Center
                     )
                     Text(
                         text = stringResource(R.string.disclaimer_footer_version),
-                        fontSize = 11.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextTertiary,
                         textAlign = TextAlign.Center
                     )
                     Text(
                         text = stringResource(R.string.disclaimer_footer_copyright),
-                        fontSize = 10.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         color = TextTertiary,
                         textAlign = TextAlign.Center
                     )
@@ -586,7 +580,7 @@ private fun DisclaimerFeatureItem(
             )
             Text(
                 text = title,
-                fontSize = 12.5.sp,
+                style = KanguruTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary
             )
@@ -594,8 +588,7 @@ private fun DisclaimerFeatureItem(
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = description,
-            fontSize = 12.sp,
-            lineHeight = 17.5.sp,
+            style = KanguruTheme.typography.bodySmall,
             color = TextSecondary,
             modifier = Modifier.padding(start = 12.dp)
         )

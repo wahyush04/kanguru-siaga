@@ -606,8 +606,8 @@ fun PmkVideoScreen(
                             PulsingDot(color = brandRose)
                             Text(
                                 text = video.badgeText,
+                                style = MaterialTheme.typography.labelSmall,
                                 color = brandRose,
-                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 0.3.sp
                             )
@@ -666,12 +666,12 @@ fun PmkVideoScreen(
                                 imageVector = Icons.Default.Timer,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp),
-                                tint = White
+                                tint = KanguruTheme.colors.onPrimary
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.pmk_video_btn_timer),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -690,14 +690,14 @@ fun PmkVideoScreen(
                                 shape = RoundedCornerShape(12.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = KanguruTheme.colors.surface,
-                                    contentColor = brandDark
+                                    contentColor = KanguruTheme.colors.onPrimary
                                 )
                             ) {
                                 Text(
                                     text = stringResource(R.string.pmk_video_btn_next),
-                                    fontSize = 13.sp,
+                                    style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = brandDark
+                                    color = KanguruTheme.colors.onPrimary
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Icon(
@@ -771,8 +771,8 @@ fun PmkVideoScreen(
                         ) {
                             Text(
                                 text = video.category,
+                                style = MaterialTheme.typography.labelSmall,
                                 color = brandRose,
-                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -795,8 +795,8 @@ fun PmkVideoScreen(
                             )
                             Text(
                                 text = stringResource(R.string.pmk_video_duration_minutes, video.duration),
+                                style = MaterialTheme.typography.labelSmall,
                                 color = brandWarmGray,
-                                fontSize = 11.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -805,7 +805,7 @@ fun PmkVideoScreen(
                     // Title
                     Text(
                         text = video.title,
-                        fontSize = 19.sp,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.ExtraBold,
                         color = brandDark,
                         lineHeight = 24.sp
@@ -814,7 +814,7 @@ fun PmkVideoScreen(
                     // Description
                     Text(
                         text = video.description,
-                        fontSize = 13.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         color = brandWarmGray,
                         lineHeight = 20.sp,
                         fontWeight = FontWeight.Normal
@@ -922,8 +922,8 @@ private fun VideoControlsOverlay(
             ) {
                 Text(
                     text = playerState.errorMessage ?: stringResource(R.string.pmk_video_error_general),
+                    style = MaterialTheme.typography.bodySmall,
                     color = White,
-                    fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -938,7 +938,7 @@ private fun VideoControlsOverlay(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = stringResource(R.string.pmk_video_btn_retry), color = White, fontSize = 12.sp)
+                    Text(text = stringResource(R.string.pmk_video_btn_retry), color = White, style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
@@ -989,8 +989,8 @@ private fun VideoControlsOverlay(
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = video.title,
+                            style = MaterialTheme.typography.titleSmall,
                             color = White,
-                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -1092,20 +1092,20 @@ private fun VideoControlsOverlay(
                         ) {
                             Text(
                                 text = curTimeStr,
+                                style = MaterialTheme.typography.labelSmall,
                                 color = White,
-                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 0.5.sp
                             )
                             Text(
                                 text = "/",
-                                color = White.copy(alpha = 0.6f),
-                                fontSize = 11.sp
+                                style = MaterialTheme.typography.labelSmall,
+                                color = White.copy(alpha = 0.6f)
                             )
                             Text(
                                 text = totTimeStr,
+                                style = MaterialTheme.typography.labelSmall,
                                 color = White.copy(alpha = 0.75f),
-                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium
                             )
                         }
@@ -1133,8 +1133,8 @@ private fun VideoControlsOverlay(
                             ) {
                                 Text(
                                     text = speedText,
+                                    style = MaterialTheme.typography.labelSmall,
                                     color = White,
-                                    fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -1368,13 +1368,13 @@ private fun ClinicalKeyPointsCard(
                 Column {
                     Text(
                         text = stringResource(R.string.pmk_video_clinical_points_title),
-                        fontSize = 14.sp,
+                        style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = brandDark
                     )
                     Text(
                         text = stringResource(R.string.pmk_video_clinical_points_sub),
-                        fontSize = 10.5.sp,
+                        style = MaterialTheme.typography.labelSmall,
                         color = brandWarmGray
                     )
                 }
@@ -1401,7 +1401,7 @@ private fun ClinicalKeyPointsCard(
                         ) {
                             Text(
                                 text = point.number.toString(),
-                                fontSize = 11.sp,
+                                style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = brandRose
                             )
@@ -1411,7 +1411,7 @@ private fun ClinicalKeyPointsCard(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "${point.title}:",
-                                fontSize = 12.5.sp,
+                                style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = brandDark,
                                 lineHeight = 16.sp
@@ -1419,7 +1419,7 @@ private fun ClinicalKeyPointsCard(
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = point.description,
-                                fontSize = 12.sp,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = brandWarmGray,
                                 lineHeight = 17.sp
                             )
@@ -1448,7 +1448,7 @@ private fun ClinicalKeyPointsCard(
                     )
                     Text(
                         text = calloutTip,
-                        fontSize = 11.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         color = brandWarmGray,
                         lineHeight = 16.sp
                     )

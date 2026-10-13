@@ -204,11 +204,10 @@ fun EmergencyWarningListScreen(
 
                             Text(
                                 text = stringResource(R.string.emergency_banner_warning),
-                                style = MaterialTheme.typography.bodySmall,
+                                style = KanguruTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium,
                                 color = KanguruTheme.colors.error,
-                                lineHeight = 18.sp,
-                                fontSize = 12.5.sp
+                                lineHeight = 18.sp
                             )
                         }
                     }
@@ -253,9 +252,8 @@ fun EmergencyWarningListScreen(
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = stringResource(R.string.emergency_hotline_card_desc),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = if (isDark) TextSecondary else Color(0xFF9F1239),
-                                    fontSize = 11.5.sp
+                                    style = KanguruTheme.typography.labelSmall,
+                                    color = if (isDark) TextSecondary else Color(0xFF9F1239)
                                 )
                             }
 
@@ -277,8 +275,7 @@ fun EmergencyWarningListScreen(
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = stringResource(R.string.emergency_hotline_number),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp,
+                                    style = KanguruTheme.typography.titleSmall,
                                     color = White
                                 )
                             }
@@ -348,10 +345,9 @@ private fun EmergencyModuleCardItem(
             // Title
             Text(
                 text = module.title,
-                style = MaterialTheme.typography.bodyMedium,
+                style = KanguruTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary,
-                fontSize = 14.sp,
                 modifier = Modifier.weight(1f)
             )
 

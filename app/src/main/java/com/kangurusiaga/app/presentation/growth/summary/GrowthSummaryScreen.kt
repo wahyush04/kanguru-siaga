@@ -44,6 +44,7 @@ import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.GrowthCardBlue
 import com.kangurusiaga.app.core.designsystem.theme.GrowthCardGreen
 import com.kangurusiaga.app.core.designsystem.theme.GrowthCardRed
@@ -91,7 +92,7 @@ fun GrowthSummaryScreen(
 
                 Text(
                     text = stringResource(R.string.growth_summary_title),
-                    fontSize = 17.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center,
@@ -129,13 +130,13 @@ fun GrowthSummaryScreen(
                 Column {
                     Text(
                         text = baby?.name ?: "Nirmala",
-                        fontSize = 16.sp,
+                        style = KanguruTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
                         text = uiState.chronologicalAgeDisplay.ifBlank { "Usia 12 minggu (koreksi)" },
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextSecondary,
                         modifier = Modifier.padding(top = 2.dp)
@@ -143,8 +144,7 @@ fun GrowthSummaryScreen(
                     val birthGram = baby?.birthWeightGram ?: 1850
                     Text(
                         text = "Lahir $birthGram gram • Prematur",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Normal,
+                        style = KanguruTheme.typography.labelSmall,
                         color = TextTertiary,
                         modifier = Modifier.padding(top = 1.dp)
                     )
@@ -238,9 +238,9 @@ fun GrowthSummaryScreen(
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = stringResource(R.string.growth_summary_status_fenton, babyName),
-                    fontSize = 12.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Medium,
-                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
+                    color = KanguruTheme.colors.warningText,
                     lineHeight = 17.sp
                 )
             }
@@ -250,7 +250,7 @@ fun GrowthSummaryScreen(
             // Progress from Birth Section
             Text(
                 text = stringResource(R.string.growth_summary_progress_title),
-                fontSize = 14.5.sp,
+                style = KanguruTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
@@ -382,14 +382,14 @@ private fun MetricSummaryCard(
         Row(verticalAlignment = Alignment.Bottom) {
             Text(
                 text = value,
-                fontSize = 17.sp,
+                style = KanguruTheme.typography.titleMedium,
                 fontWeight = FontWeight.ExtraBold,
                 color = TextPrimary
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(
                 text = unit,
-                fontSize = 11.sp,
+                style = KanguruTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = TextSecondary,
                 modifier = Modifier.padding(bottom = 2.dp)
@@ -400,15 +400,15 @@ private fun MetricSummaryCard(
 
         Text(
             text = percentile,
-            fontSize = 10.sp,
+            style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
-            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
+            color = KanguruTheme.colors.successText
         )
         Text(
             text = status,
-            fontSize = 10.sp,
+            style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.Medium,
-            color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
+            color = KanguruTheme.colors.successText
         )
     }
 }
@@ -450,7 +450,7 @@ private fun ProgressFromBirthRow(
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = title,
-                fontSize = 13.sp,
+                style = KanguruTheme.typography.bodySmall,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary
             )
@@ -460,21 +460,21 @@ private fun ProgressFromBirthRow(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer)
-                    .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successBorder, RoundedCornerShape(8.dp))
+                    .background(KanguruTheme.colors.successContainer)
+                    .border(1.dp, KanguruTheme.colors.successBorder, RoundedCornerShape(8.dp))
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
                     text = gainText,
-                    fontSize = 11.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
+                    color = KanguruTheme.colors.successText
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = fromToText,
-                fontSize = 11.sp,
+                style = KanguruTheme.typography.labelSmall,
                 fontWeight = FontWeight.Medium,
                 color = TextTertiary
             )

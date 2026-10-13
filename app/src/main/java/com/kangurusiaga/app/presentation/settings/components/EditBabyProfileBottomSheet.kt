@@ -185,7 +185,7 @@ fun EditBabyProfileBottomSheet(
                     ) {
                         Text(
                             text = stringResource(R.string.edit_baby_title),
-                            fontSize = 20.sp,
+                            style = KanguruTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
@@ -197,7 +197,7 @@ fun EditBabyProfileBottomSheet(
                         ) {
                             Text(
                                 text = stringResource(R.string.edit_baby_badge),
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = KanguruTheme.colors.primary,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -206,7 +206,7 @@ fun EditBabyProfileBottomSheet(
                     }
                     Text(
                         text = stringResource(R.string.edit_baby_subtitle),
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         color = TextSecondary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
@@ -353,7 +353,7 @@ fun EditBabyProfileBottomSheet(
                                 )
                                 Text(
                                     text = "Ambil Foto",
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = KanguruTheme.colors.actionPillPrimaryText
                                 )
@@ -385,7 +385,7 @@ fun EditBabyProfileBottomSheet(
                                 )
                                 Text(
                                     text = "Pilih Galeri",
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = KanguruTheme.colors.actionPillSecondaryText
                                 )
@@ -399,14 +399,14 @@ fun EditBabyProfileBottomSheet(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = stringResource(R.string.edit_baby_label_name).uppercase(),
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.5.sp
                         )
                         Text(
                             text = " *",
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = KanguruTheme.colors.primary
                         )
@@ -421,7 +421,7 @@ fun EditBabyProfileBottomSheet(
                         placeholder = {
                             Text(
                                 stringResource(R.string.edit_baby_placeholder_name),
-                                fontSize = 14.sp,
+                                style = KanguruTheme.typography.bodySmall,
                                 color = TextTertiary
                             )
                         },
@@ -461,14 +461,14 @@ fun EditBabyProfileBottomSheet(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = stringResource(R.string.edit_baby_label_birth_date).uppercase(),
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.5.sp
                         )
                         Text(
                             text = " *",
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = KanguruTheme.colors.primary
                         )
@@ -522,7 +522,7 @@ fun EditBabyProfileBottomSheet(
                             }
                             Text(
                                 text = ageText,
-                                fontSize = 12.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 color = TextSecondary
                             )
                         }
@@ -534,14 +534,14 @@ fun EditBabyProfileBottomSheet(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = stringResource(R.string.edit_baby_label_gender).uppercase(),
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.5.sp
                         )
                         Text(
                             text = " *",
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = KanguruTheme.colors.primary
                         )
@@ -598,7 +598,7 @@ fun EditBabyProfileBottomSheet(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = stringResource(R.string.edit_baby_gender_male),
-                                    fontSize = 13.5.sp,
+                                    style = KanguruTheme.typography.bodySmall,
                                     fontWeight = if (isMale) FontWeight.Bold else FontWeight.SemiBold,
                                     color = if (isMale) KanguruTheme.colors.genderMaleActiveText
                                     else TextSecondary
@@ -671,7 +671,7 @@ fun EditBabyProfileBottomSheet(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = stringResource(R.string.edit_baby_gender_female),
-                                    fontSize = 13.5.sp,
+                                    style = KanguruTheme.typography.bodySmall,
                                     fontWeight = if (isFemale) FontWeight.Bold else FontWeight.SemiBold,
                                     color = if (isFemale) KanguruTheme.colors.genderFemaleActiveText
                                     else TextSecondary
@@ -709,14 +709,14 @@ fun EditBabyProfileBottomSheet(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = stringResource(R.string.edit_baby_label_birth_weight).uppercase(),
-                                fontSize = 11.5.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextSecondary,
                                 letterSpacing = 0.5.sp
                             )
                             Text(
                                 text = " *",
-                                fontSize = 11.5.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = KanguruTheme.colors.primary
                             )
@@ -734,7 +734,7 @@ fun EditBabyProfileBottomSheet(
                             ) {
                                 Text(
                                     text = if (isBblr) stringResource(R.string.edit_baby_status_bblr) else stringResource(R.string.edit_baby_status_normal),
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isBblr) KanguruTheme.colors.onWarningContainer else KanguruTheme.colors.onSuccessContainer,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -752,9 +752,7 @@ fun EditBabyProfileBottomSheet(
                         shape = RoundedCornerShape(12.dp),
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        textStyle = androidx.compose.ui.text.TextStyle(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
+                        textStyle = KanguruTheme.typography.titleSmall.copy(
                             color = TextPrimary
                         ),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -768,7 +766,7 @@ fun EditBabyProfileBottomSheet(
                         trailingIcon = {
                             Text(
                                 text = stringResource(R.string.edit_baby_unit_gram),
-                                fontSize = 14.sp,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = TextTertiary,
                                 modifier = Modifier.padding(end = 14.dp)
@@ -811,8 +809,7 @@ fun EditBabyProfileBottomSheet(
                                 }
                                 Text(
                                     text = warningText,
-                                    fontSize = 11.5.sp,
-                                    lineHeight = 16.5.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     color = tipTextColor
                                 )
                             }
@@ -824,7 +821,7 @@ fun EditBabyProfileBottomSheet(
                 if (!errorMessage.isNullOrBlank()) {
                     Text(
                         text = errorMessage,
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(horizontal = 4.dp)
@@ -860,7 +857,7 @@ fun EditBabyProfileBottomSheet(
                 ) {
                     Text(
                         text = stringResource(R.string.edit_baby_btn_cancel),
-                        fontSize = 14.sp,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = KanguruTheme.colors.buttonSecondaryText
                     )
@@ -888,7 +885,7 @@ fun EditBabyProfileBottomSheet(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = stringResource(R.string.edit_baby_btn_save),
-                            fontSize = 14.sp,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = KanguruTheme.colors.onPrimary
                         )

@@ -371,8 +371,8 @@ private fun HomeContent(
                     ) {
                         Text(
                             text = unreadNotificationsCount.toString(),
+                            style = KanguruTheme.typography.labelSmall,
                             color = White,
-                            fontSize = 9.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -473,8 +473,7 @@ private fun HomeContent(
                     Text(
                         text = stringResource(R.string.home_card_growth_subtitle),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary,
-                        fontSize = 11.sp
+                        color = TextSecondary
                     )
                 }
 
@@ -647,7 +646,6 @@ private fun ActionGridCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary,
                 textAlign = TextAlign.Center,
-                fontSize = 10.5.sp,
                 maxLines = 1,
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
@@ -690,8 +688,7 @@ private fun EmergencyBottomSheet(
                     Text(
                         text = stringResource(R.string.home_emergency_sheet_subtitle),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary,
-                        fontSize = 11.sp
+                        color = TextSecondary
                     )
                 }
 
@@ -781,8 +778,8 @@ private fun EmergencyBottomSheet(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.home_btn_call_ambulance),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    style = KanguruTheme.typography.titleSmall,
+                    color = White
                 )
             }
 
@@ -806,21 +803,19 @@ private fun DangerItemRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = icon, fontSize = 16.sp)
+            Text(text = icon, style = KanguruTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-                fontSize = 12.sp
+                color = TextPrimary
             )
         }
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodySmall,
-            color = TextSecondary,
-            fontSize = 11.sp
+            color = TextSecondary
         )
     }
 }
@@ -881,7 +876,7 @@ private fun NotificationBottomSheet(
                             .background(BrandLightPink),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "🦘", fontSize = 20.sp)
+                        Text(text = "🦘", style = KanguruTheme.typography.titleLarge)
                     }
 
                     Spacer(modifier = Modifier.width(14.dp))
@@ -896,8 +891,7 @@ private fun NotificationBottomSheet(
                         Text(
                             text = stringResource(R.string.home_notif_pmk_desc),
                             style = MaterialTheme.typography.bodySmall,
-                            color = TextSecondary,
-                            fontSize = 11.sp
+                            color = TextSecondary
                         )
                     }
                 }
@@ -973,7 +967,6 @@ fun HomeBottomBar(
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = contentColor,
-                            fontSize = 10.5.sp,
                             maxLines = 1,
                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
@@ -1026,8 +1019,7 @@ private fun EmptyHomeContent(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(R.string.home_btn_setup_profile),
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                style = KanguruTheme.typography.titleSmall,
                 color = KanguruTheme.colors.onPrimary
             )
         }

@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -145,10 +146,9 @@ fun EditFeedingScheduleBottomSheet(
                 ) {
                     Text(
                         text = stringResource(R.string.alarm_edit_title),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = KanguruTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                        fontSize = 18.sp
+                        color = TextPrimary
                     )
 
                     // Method Badge
@@ -161,7 +161,7 @@ fun EditFeedingScheduleBottomSheet(
                         Text(
                             text = selectedMethod.displayName,
                             color = Color(0xFFE11D48),
-                            fontSize = 11.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -276,9 +276,8 @@ fun EditFeedingScheduleBottomSheet(
             } else {
                 Text(
                     text = stringResource(R.string.alarm_tip_doctor_notice),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary,
-                    fontSize = 11.5.sp,
                     modifier = Modifier.padding(top = 6.dp)
                 )
             }
@@ -317,7 +316,7 @@ fun EditFeedingScheduleBottomSheet(
                         Text(
                             text = method.displayName,
                             color = if (isSelected) BrandPink else TextPrimary,
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             textAlign = TextAlign.Center
                         )
@@ -345,7 +344,7 @@ fun EditFeedingScheduleBottomSheet(
                     Text(
                         text = stringResource(R.string.alarm_placeholder_note_edit),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 13.sp
+                        style = KanguruTheme.typography.bodySmall
                     )
                 },
                 singleLine = true,
@@ -383,9 +382,8 @@ fun EditFeedingScheduleBottomSheet(
                         )
                         Text(
                             text = stringResource(R.string.alarm_toggle_reminder_desc),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TextSecondary,
-                            fontSize = 11.sp
+                            style = KanguruTheme.typography.labelSmall,
+                            color = TextSecondary
                         )
                     }
 
@@ -432,10 +430,9 @@ fun EditFeedingScheduleBottomSheet(
                         ) {
                             Text(
                                 text = selectedRepeatType.displayName,
-                                style = MaterialTheme.typography.bodySmall,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Medium,
-                                color = TextPrimary,
-                                fontSize = 11.5.sp
+                                color = TextPrimary
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
@@ -453,7 +450,7 @@ fun EditFeedingScheduleBottomSheet(
                         ) {
                             RepeatType.entries.forEach { repeat ->
                                 DropdownMenuItem(
-                                    text = { Text(repeat.displayName, fontSize = 13.sp) },
+                                    text = { Text(repeat.displayName, style = KanguruTheme.typography.bodySmall) },
                                     onClick = {
                                         selectedRepeatType = repeat
                                         showRepeatMenu = false
@@ -505,9 +502,7 @@ fun EditFeedingScheduleBottomSheet(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.alarm_btn_save_changes),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.titleSmall,
                     color = White
                 )
             }
@@ -536,10 +531,9 @@ fun EditFeedingScheduleBottomSheet(
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = stringResource(R.string.alarm_btn_delete_this),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFE11D48),
-                    fontSize = 12.5.sp
+                    color = Color(0xFFE11D48)
                 )
             }
 
@@ -552,10 +546,9 @@ fun EditFeedingScheduleBottomSheet(
             ) {
                 Text(
                     text = stringResource(R.string.alarm_btn_cancel),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF94A3B8),
-                    fontSize = 13.sp
+                    color = Color(0xFF94A3B8)
                 )
             }
         }

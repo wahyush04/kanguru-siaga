@@ -121,8 +121,6 @@ fun PmkCenterScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         textAlign = TextAlign.Center,
-                        fontSize = 11.5.sp,
-                        lineHeight = 16.sp,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp)
@@ -271,15 +269,13 @@ private fun PmkMenuItem(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                    fontSize = 14.sp
+                    color = TextPrimary
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondary,
-                    fontSize = 11.5.sp
+                    color = TextSecondary
                 )
             }
 

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -71,8 +72,7 @@ fun AboutFentonScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.about_fenton_btn_understand),
-                        fontSize = 14.5.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = KanguruTheme.typography.titleSmall,
                         color = White
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -117,7 +117,7 @@ fun AboutFentonScreen(
             ) {
                 Text(
                     text = stringResource(R.string.about_fenton_title),
-                    fontSize = 17.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center
@@ -131,7 +131,7 @@ fun AboutFentonScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.about_fenton_tag),
-                        fontSize = 10.5.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = BrandPink
                     )
@@ -171,7 +171,7 @@ fun AboutFentonScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.about_fenton_section_what),
-                    fontSize = 16.sp,
+                    style = KanguruTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
                 )
@@ -197,8 +197,7 @@ fun AboutFentonScreen(
 
             Text(
                 text = explanationText,
-                fontSize = 12.5.sp,
-                fontWeight = FontWeight.Normal,
+                style = KanguruTheme.typography.bodySmall,
                 color = TextSecondary,
                 lineHeight = 20.sp,
                 textAlign = TextAlign.Justify
@@ -209,7 +208,7 @@ fun AboutFentonScreen(
             // Section: Cara Membaca Grafik
             Text(
                 text = stringResource(R.string.about_fenton_section_how),
-                fontSize = 15.5.sp,
+                style = KanguruTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
@@ -240,7 +239,7 @@ fun AboutFentonScreen(
                     ) {
                         Text(
                             text = "${index + 1}",
-                            fontSize = 11.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = White
                         )
@@ -250,7 +249,7 @@ fun AboutFentonScreen(
 
                     Text(
                         text = step,
-                        fontSize = 13.sp,
+                        style = KanguruTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         color = TextSecondary
                     )

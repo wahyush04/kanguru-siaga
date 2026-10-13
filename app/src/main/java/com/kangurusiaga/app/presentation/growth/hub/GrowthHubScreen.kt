@@ -55,6 +55,7 @@ import com.kangurusiaga.app.core.designsystem.theme.GrowthCardRed
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBg
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBorder
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipText
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
@@ -132,7 +133,7 @@ fun GrowthHubScreen(
             ) {
                 Text(
                     text = stringResource(R.string.growth_hub_title),
-                    fontSize = 20.sp,
+                    style = KanguruTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center
@@ -140,7 +141,7 @@ fun GrowthHubScreen(
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = stringResource(R.string.growth_hub_subtitle),
-                    fontSize = 12.5.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     fontWeight = FontWeight.Medium,
                     color = TextSecondary,
                     textAlign = TextAlign.Center,
@@ -228,8 +229,7 @@ fun GrowthHubScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.growth_hub_btn_summary),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = KanguruTheme.typography.titleSmall,
                     color = BrandPink
                 )
             }
@@ -248,15 +248,14 @@ fun GrowthHubScreen(
             ) {
                 Text(
                     text = "+",
-                    fontSize = 20.sp,
+                    style = KanguruTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = White
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = stringResource(R.string.growth_hub_btn_add),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = KanguruTheme.typography.titleSmall,
                     color = White
                 )
             }
@@ -294,14 +293,13 @@ fun GrowthHubScreen(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(R.string.growth_hub_about_card_title),
-                        fontSize = 13.sp,
+                        style = KanguruTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
                         text = stringResource(R.string.growth_hub_about_card_desc),
-                        fontSize = 11.5.sp,
-                        fontWeight = FontWeight.Normal,
+                        style = KanguruTheme.typography.labelSmall,
                         color = GrowthTipText,
                         lineHeight = 16.sp,
                         modifier = Modifier.padding(top = 2.dp)
@@ -362,13 +360,13 @@ private fun GrowthCardItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                fontSize = 15.sp,
+                style = KanguruTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
             Text(
                 text = subtitle,
-                fontSize = 12.sp,
+                style = KanguruTheme.typography.labelSmall,
                 fontWeight = FontWeight.Medium,
                 color = TextSecondary,
                 modifier = Modifier.padding(top = 2.dp)

@@ -165,8 +165,7 @@ fun EmergencyWarningDetailScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(R.string.emergency_btn_call_nakes),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
+                            style = KanguruTheme.typography.titleSmall,
                             color = White
                         )
                     }

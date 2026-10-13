@@ -136,7 +136,7 @@ fun EducationListScreen(
 
                         Text(
                             text = stringResource(R.string.edu_list_title),
-                            fontSize = 17.sp,
+                            style = KanguruTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
                             textAlign = TextAlign.Center
@@ -240,7 +240,7 @@ private fun TabButton(
     ) {
         Text(
             text = title,
-            fontSize = 14.sp,
+            style = KanguruTheme.typography.bodyMedium,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
             color = if (selected) BrandPink else TextTertiary
         )
@@ -285,7 +285,7 @@ private fun EmptyEducationContent(
 
         Text(
             text = if (isFavoriteTab) stringResource(R.string.edu_list_empty_fav_title) else stringResource(R.string.edu_list_empty_all_title),
-            fontSize = 16.sp,
+            style = KanguruTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
             textAlign = TextAlign.Center
@@ -299,7 +299,7 @@ private fun EmptyEducationContent(
             } else {
                 stringResource(R.string.edu_list_empty_all_desc)
             },
-            fontSize = 13.sp,
+            style = KanguruTheme.typography.bodySmall,
             color = TextSecondary,
             textAlign = TextAlign.Center,
             lineHeight = 18.sp
@@ -315,7 +315,7 @@ private fun EmptyEducationContent(
             ) {
                 Text(
                     text = stringResource(R.string.edu_list_btn_see_all),
-                    fontSize = 13.sp,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = BrandPink,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)

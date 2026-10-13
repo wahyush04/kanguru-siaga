@@ -102,7 +102,7 @@ fun ThemeSelectionBottomSheet(
                     ) {
                         Text(
                             text = "Tema Aplikasi",
-                            fontSize = 20.sp,
+                            style = KanguruTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
@@ -113,7 +113,7 @@ fun ThemeSelectionBottomSheet(
                         ) {
                             Text(
                                 text = "Tampilan",
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = BrandPink,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -122,7 +122,7 @@ fun ThemeSelectionBottomSheet(
                     }
                     Text(
                         text = "Pilih skema warna dan pencahayaan yang paling nyaman untuk mata Ayah & Bunda saat memantau si kecil.",
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         color = TextSecondary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
@@ -220,8 +220,7 @@ fun ThemeSelectionBottomSheet(
                         }
                         Text(
                             text = "Pencahayaan redup dengan kontras lembut terbukti klinis membantu menjaga kestabilan tidur bayi prematur dan kenyamanan visual orang tua.",
-                            fontSize = 11.sp,
-                            lineHeight = 16.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = KanguruTheme.colors.onWarningContainer
                         )
@@ -248,6 +247,7 @@ fun ThemeSelectionBottomSheet(
                 ) {
                     Text(
                         text = "Batal",
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextSecondary
                     )
@@ -269,6 +269,7 @@ fun ThemeSelectionBottomSheet(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Terapkan Tema",
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = White
                     )
@@ -328,7 +329,7 @@ private fun ThemeOptionCard(
                 ) {
                     Text(
                         text = title,
-                        fontSize = 14.sp,
+                        style = KanguruTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
@@ -339,7 +340,7 @@ private fun ThemeOptionCard(
                     ) {
                         Text(
                             text = badgeText,
-                            fontSize = 10.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = if (isSelected) KanguruTheme.colors.onWarningContainer else TextSecondary,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -351,8 +352,7 @@ private fun ThemeOptionCard(
 
                 Text(
                     text = description,
-                    fontSize = 11.sp,
-                    lineHeight = 16.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary
                 )
 
@@ -365,7 +365,7 @@ private fun ThemeOptionCard(
                 ) {
                     Text(
                         text = "Palet:",
-                        fontSize = 10.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = TextTertiary
                     )

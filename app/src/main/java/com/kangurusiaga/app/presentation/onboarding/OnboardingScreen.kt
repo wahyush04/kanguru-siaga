@@ -210,8 +210,7 @@ fun OnboardingPagerScreen(
                     ) {
                         Text(
                             text = if (pagerState.currentPage == 0) stringResource(R.string.onboarding_btn_next) else stringResource(R.string.onboarding_btn_fill_baby_data),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
+                            style = KanguruTheme.typography.titleSmall,
                             color = White,
                             letterSpacing = 0.5.sp
                         )
@@ -274,11 +273,9 @@ private fun WelcomePageContent() {
         // Heading
         Text(
             text = stringResource(R.string.onboarding_welcome_title),
-            fontSize = 26.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = TextPrimary,
+            style = KanguruTheme.typography.displaySmall,
+            color = KanguruTheme.colors.textPrimary,
             textAlign = TextAlign.Center,
-            lineHeight = 34.sp,
             letterSpacing = (-0.5).sp
         )
 
@@ -287,11 +284,9 @@ private fun WelcomePageContent() {
         // Subtitle
         Text(
             text = stringResource(R.string.onboarding_welcome_desc),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            color = TextSecondary,
+            style = KanguruTheme.typography.bodySmall,
+            color = KanguruTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
-            lineHeight = 22.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
     }
@@ -347,22 +342,18 @@ private fun ProfileIntroPageContent() {
 
         Text(
             text = stringResource(R.string.onboarding_profile_intro_title),
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextPrimary,
-            textAlign = TextAlign.Center,
-            lineHeight = 34.sp
+            style = KanguruTheme.typography.headlineLarge,
+            color = KanguruTheme.colors.textPrimary,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = stringResource(R.string.onboarding_profile_intro_desc),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            color = TextSecondary,
+            style = KanguruTheme.typography.bodySmall,
+            color = KanguruTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
-            lineHeight = 22.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
     }

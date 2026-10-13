@@ -46,6 +46,7 @@ import com.kangurusiaga.app.core.designsystem.theme.GrowthCardRed
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBg
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBorder
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipText
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -90,14 +91,13 @@ fun SelectGrowthParameterBottomSheet(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(R.string.growth_select_sheet_title),
-                        fontSize = 18.sp,
+                        style = KanguruTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
                         text = stringResource(R.string.growth_select_sheet_subtitle),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
+                        style = KanguruTheme.typography.labelSmall,
                         color = TextSecondary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
@@ -198,7 +198,7 @@ fun SelectGrowthParameterBottomSheet(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = param.displayName,
-                                fontSize = 14.sp,
+                                style = KanguruTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
@@ -211,7 +211,7 @@ fun SelectGrowthParameterBottomSheet(
                             ) {
                                 Text(
                                     text = badge,
-                                    fontSize = 10.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = iconTint
                                 )
@@ -219,8 +219,7 @@ fun SelectGrowthParameterBottomSheet(
                         }
                         Text(
                             text = subtitle,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Normal,
+                            style = KanguruTheme.typography.labelSmall,
                             color = TextSecondary,
                             modifier = Modifier.padding(top = 2.dp)
                         )
@@ -272,8 +271,7 @@ fun SelectGrowthParameterBottomSheet(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.growth_select_tip),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Normal,
+                    style = KanguruTheme.typography.labelSmall,
                     color = GrowthTipText,
                     lineHeight = 16.sp
                 )
@@ -292,8 +290,7 @@ fun SelectGrowthParameterBottomSheet(
             ) {
                 Text(
                     text = stringResource(R.string.growth_select_btn_proceed),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = KanguruTheme.typography.titleSmall,
                     color = White
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -313,7 +310,7 @@ fun SelectGrowthParameterBottomSheet(
             ) {
                 Text(
                     text = stringResource(R.string.alarm_btn_cancel),
-                    fontSize = 13.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     fontWeight = FontWeight.SemiBold,
                     color = TextSecondary
                 )

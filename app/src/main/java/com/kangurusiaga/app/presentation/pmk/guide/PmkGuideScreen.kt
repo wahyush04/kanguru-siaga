@@ -122,7 +122,6 @@ fun PmkGuideScreen(
                         Text(
                             text = "PANDUAN KLINIS",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.primary
                         )
@@ -187,7 +186,6 @@ fun PmkGuideScreen(
                                 Text(
                                     text = "PMK KONTINU MANDIRI",
                                     style = KanguruTheme.typography.labelSmall,
-                                    fontSize = 10.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = Color.White
                                 )
@@ -253,7 +251,6 @@ fun PmkGuideScreen(
                                 Text(
                                     text = "Target Dekapan Harian",
                                     style = KanguruTheme.typography.labelSmall,
-                                    fontSize = 11.sp,
                                     color = colors.textSecondary
                                 )
                                 Text(
@@ -274,7 +271,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = "Target Ideal",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.onSuccessContainer
                             )
@@ -304,7 +300,7 @@ fun PmkGuideScreen(
                             .background(colors.primaryContainer),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "🤱", fontSize = 24.sp)
+                        Text(text = "🤱", style = KanguruTheme.typography.headlineLarge)
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -330,7 +326,6 @@ fun PmkGuideScreen(
                                 Text(
                                     text = "24 Jam",
                                     style = KanguruTheme.typography.labelSmall,
-                                    fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = colors.textSecondary
                                 )
@@ -339,7 +334,6 @@ fun PmkGuideScreen(
                         Text(
                             text = "Menjaga suhu stabil, saturasi oksigen, & berat badan naik teratur.",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 11.sp,
                             color = colors.textSecondary,
                             lineHeight = 16.sp
                         )
@@ -379,7 +373,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = "PILAR 01",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = colors.warning
                             )
@@ -481,7 +474,6 @@ fun PmkGuideScreen(
                                 Text(
                                     text = "PILAR 02",
                                     style = KanguruTheme.typography.labelSmall,
-                                    fontSize = 10.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = colors.primary
                                 )
@@ -503,7 +495,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = "M-Shape",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.onSuccessContainer
                             )
@@ -575,7 +566,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = "PILAR 03",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = colors.success
                             )
@@ -650,7 +640,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = "Hindari memandikan bayi dengan merendam di bak air dingin sampai berat badan mencapai 2.500 gram.",
                                 style = KanguruTheme.typography.bodySmall,
-                                fontSize = 11.sp,
                                 color = colors.onWarningContainer,
                                 lineHeight = 16.sp
                             )
@@ -691,7 +680,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = "PILAR 04",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = colors.caregiverAyah
                             )
@@ -777,7 +765,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = "Hentikan mandiri dan bawa ke Faskes / RS jika:",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 11.sp,
                                 color = colors.onErrorContainer.copy(alpha = 0.8f)
                             )
                         }
@@ -806,7 +793,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = dangerSign,
                                 style = KanguruTheme.typography.bodySmall,
-                                fontSize = 11.sp,
                                 color = colors.onErrorContainer,
                                 lineHeight = 16.sp
                             )
@@ -840,8 +826,8 @@ fun PmkGuideScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Panggil Ambulans Gawat Darurat (119)",
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
                             color = colors.error
                         )
                     }
@@ -895,7 +881,6 @@ fun PmkGuideScreen(
                             Text(
                                 text = "Konsultasikan foto/video dekapan Anda",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 color = colors.textSecondary
                             )
                         }
@@ -914,8 +899,8 @@ fun PmkGuideScreen(
                     ) {
                         Text(
                             text = "Tanya Bidan",
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp,
                             color = colors.primary
                         )
                     }
@@ -952,8 +937,8 @@ fun PmkGuideScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Mulai Timer PMK Kontinu",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
+                        style = KanguruTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
@@ -980,7 +965,6 @@ fun PmkGuideScreen(
                     Text(
                         text = "Kembali ke Atas",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = colors.textSecondary
                     )
@@ -1017,8 +1001,8 @@ private fun EstafetSlotItem(
     ) {
         Text(
             text = time,
+            style = KanguruTheme.typography.labelSmall,
             fontFamily = FontFamily.Monospace,
-            fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             color = iconTint,
             modifier = Modifier.width(90.dp)
@@ -1029,13 +1013,11 @@ private fun EstafetSlotItem(
                 text = title,
                 style = KanguruTheme.typography.bodySmall,
                 fontWeight = FontWeight.Bold,
-                color = colors.textPrimary,
-                fontSize = 12.sp
+                color = colors.textPrimary
             )
             Text(
                 text = desc,
                 style = KanguruTheme.typography.labelSmall,
-                fontSize = 10.sp,
                 color = colors.textSecondary,
                 lineHeight = 14.sp
             )
@@ -1072,7 +1054,6 @@ private fun NumberedStepItem(
             Text(
                 text = stepNumber,
                 style = KanguruTheme.typography.labelSmall,
-                fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = colors.primary
             )
@@ -1085,14 +1066,12 @@ private fun NumberedStepItem(
                 text = title,
                 style = KanguruTheme.typography.bodySmall,
                 fontWeight = FontWeight.Bold,
-                color = colors.textPrimary,
-                fontSize = 12.sp
+                color = colors.textPrimary
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = desc,
                 style = KanguruTheme.typography.labelSmall,
-                fontSize = 11.sp,
                 color = colors.textSecondary,
                 lineHeight = 16.sp
             )
@@ -1128,14 +1107,12 @@ private fun MiniActionBox(
             text = title,
             style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
-            color = colors.textPrimary,
-            fontSize = 10.sp
+            color = colors.textPrimary
         )
         Text(
             text = desc,
             style = KanguruTheme.typography.labelSmall,
-            color = colors.textSecondary,
-            fontSize = 9.sp
+            color = colors.textSecondary
         )
     }
 }
@@ -1179,8 +1156,7 @@ private fun VitalParamRow(
                     text = title,
                     style = KanguruTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary,
-                    fontSize = 12.sp
+                    color = colors.textPrimary
                 )
                 Box(
                     modifier = Modifier
@@ -1190,8 +1166,8 @@ private fun VitalParamRow(
                 ) {
                     Text(
                         text = badge,
+                        style = KanguruTheme.typography.labelSmall,
                         fontFamily = FontFamily.Monospace,
-                        fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
                         color = iconTint
                     )
@@ -1201,7 +1177,6 @@ private fun VitalParamRow(
             Text(
                 text = desc,
                 style = KanguruTheme.typography.labelSmall,
-                fontSize = 10.sp,
                 color = colors.textSecondary,
                 lineHeight = 14.sp
             )

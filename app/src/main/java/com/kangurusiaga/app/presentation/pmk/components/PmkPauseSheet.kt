@@ -112,7 +112,7 @@ fun PmkPauseSheet(
                         .border(2.dp, colors.tipBorder, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "⏸️", fontSize = 24.sp)
+                    Text(text = "⏸️", style = KanguruTheme.typography.headlineLarge)
                     Box(
                         modifier = Modifier
                             .size(18.dp)
@@ -122,7 +122,7 @@ fun PmkPauseSheet(
                             .border(1.5.dp, Color.White, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "⏱️", fontSize = 10.sp)
+                        Text(text = "⏱️", style = KanguruTheme.typography.labelSmall)
                     }
                 }
 
@@ -137,7 +137,6 @@ fun PmkPauseSheet(
                 Text(
                     text = "Pencatatan Alasan & Durasi Jeda Perawatan",
                     style = KanguruTheme.typography.bodySmall,
-                    fontSize = 11.sp,
                     color = colors.textSecondary
                 )
             }
@@ -154,13 +153,11 @@ fun PmkPauseSheet(
                     .padding(10.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                Text(text = "💡", fontSize = 14.sp)
+                Text(text = "💡", style = KanguruTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "IDAI & WHO menganjurkan jeda kontak kulit sesingkat mungkin. Pastikan bayi tetap hangat dan diselimuti selama jeda perawatan.",
                     style = KanguruTheme.typography.bodySmall,
-                    fontSize = 11.sp,
-                    lineHeight = 16.sp,
                     color = colors.tipText
                 )
             }
@@ -184,7 +181,6 @@ fun PmkPauseSheet(
                 Text(
                     text = "Wajib pilih satu",
                     style = KanguruTheme.typography.labelSmall,
-                    fontSize = 9.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = colors.primary
                 )
@@ -215,7 +211,6 @@ fun PmkPauseSheet(
                         Text(
                             text = "${reason.iconEmoji} ${reason.title}",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 10.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = if (isSelected) colors.primary else colors.textPrimary
                         )
@@ -375,7 +370,7 @@ fun PmkPauseSheet(
                 value = notesInput,
                 onValueChange = onNotesChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Catatan kondisi bayi saat jeda (misal: minum ASI 30ml)...", fontSize = 11.sp) },
+                placeholder = { Text("Catatan kondisi bayi saat jeda (misal: minum ASI 30ml)...", style = KanguruTheme.typography.bodySmall) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -405,7 +400,6 @@ fun PmkPauseSheet(
                 Text(
                     text = "Pilih respon yang sesuai",
                     style = KanguruTheme.typography.labelSmall,
-                    fontSize = 9.sp,
                     color = colors.textTertiary
                 )
             }
@@ -440,12 +434,11 @@ fun PmkPauseSheet(
                             .padding(horizontal = 10.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = emoji, fontSize = 11.sp)
+                        Text(text = emoji, style = KanguruTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = text,
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 10.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = if (isSelected) colors.primary else colors.textPrimary
                         )

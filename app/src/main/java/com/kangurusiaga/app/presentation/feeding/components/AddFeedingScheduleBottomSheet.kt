@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.FeedingMethod
@@ -144,10 +145,9 @@ fun AddFeedingScheduleForm(
         // Title
         Text(
             text = stringResource(R.string.alarm_add_title),
-            style = MaterialTheme.typography.titleMedium,
+            style = KanguruTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
-            fontSize = 18.sp,
             modifier = Modifier.padding(bottom = 18.dp)
         )
 
@@ -252,14 +252,14 @@ fun AddFeedingScheduleForm(
             placeholder = {
                 Text(
                     text = stringResource(R.string.alarm_placeholder_note),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 14.sp
+                    style = KanguruTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = BrandPink,
-                unfocusedBorderColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder,
+                unfocusedBorderColor = KanguruTheme.colors.cardBorder,
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )

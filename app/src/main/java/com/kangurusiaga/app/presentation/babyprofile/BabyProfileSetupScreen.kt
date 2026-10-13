@@ -245,12 +245,21 @@ fun BabyProfileFormScreen(
                         showDatePicker = false
                     }
                 ) {
-                    Text(stringResource(R.string.baby_profile_date_picker_select), color = BrandPink, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = stringResource(R.string.baby_profile_date_picker_select),
+                        style = KanguruTheme.typography.labelLarge,
+                        color = BrandPink,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text(stringResource(R.string.baby_profile_date_picker_cancel), color = TextSecondary)
+                    Text(
+                        text = stringResource(R.string.baby_profile_date_picker_cancel),
+                        style = KanguruTheme.typography.labelLarge,
+                        color = TextSecondary
+                    )
                 }
             }
         ) {
@@ -287,7 +296,7 @@ fun BabyProfileFormScreen(
                 }
                 Text(
                     text = stringResource(R.string.baby_profile_header_tag),
-                    fontSize = 11.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = TextTertiary,
                     letterSpacing = 1.5.sp
@@ -312,19 +321,16 @@ fun BabyProfileFormScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.baby_profile_form_title),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.ExtraBold,
+                        style = KanguruTheme.typography.headlineMedium,
                         color = TextPrimary,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = stringResource(R.string.baby_profile_form_guidance),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
+                        style = KanguruTheme.typography.bodySmall,
                         color = TextSecondary,
                         textAlign = TextAlign.Center,
-                        lineHeight = 18.sp,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
@@ -379,7 +385,7 @@ fun BabyProfileFormScreen(
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = stringResource(R.string.baby_profile_photo_select),
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextTertiary
                                 )
@@ -413,7 +419,7 @@ fun BabyProfileFormScreen(
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = stringResource(R.string.baby_profile_photo_take),
-                                fontSize = 12.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -438,7 +444,7 @@ fun BabyProfileFormScreen(
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = stringResource(R.string.baby_profile_photo_gallery),
-                                fontSize = 12.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -458,7 +464,7 @@ fun BabyProfileFormScreen(
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.baby_profile_photo_delete),
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 color = KanguruTheme.colors.error,
                                 fontWeight = FontWeight.Medium
                             )
@@ -483,7 +489,7 @@ fun BabyProfileFormScreen(
                         Column {
                             Text(
                                 text = stringResource(R.string.baby_profile_label_name),
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextSecondary,
                                 letterSpacing = 1.sp
@@ -495,8 +501,8 @@ fun BabyProfileFormScreen(
                                 placeholder = {
                                     Text(
                                         stringResource(R.string.baby_profile_placeholder_name),
-                                        color = TextTertiary,
-                                        fontSize = 14.sp
+                                        style = KanguruTheme.typography.bodySmall,
+                                        color = TextTertiary
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth(),
@@ -528,7 +534,7 @@ fun BabyProfileFormScreen(
                         Column {
                             Text(
                                 text = stringResource(R.string.baby_profile_label_birth_date),
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextSecondary,
                                 letterSpacing = 1.sp
@@ -545,7 +551,7 @@ fun BabyProfileFormScreen(
                             ) {
                                 Text(
                                     text = formatEpochToIndonesianDate(uiState.birthDateEpochMillis),
-                                    fontSize = 14.sp,
+                                    style = KanguruTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
                                 )
@@ -570,7 +576,7 @@ fun BabyProfileFormScreen(
                         Column {
                             Text(
                                 text = stringResource(R.string.baby_profile_label_gestational_age),
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextSecondary,
                                 letterSpacing = 1.sp
@@ -580,14 +586,14 @@ fun BabyProfileFormScreen(
                                 value = uiState.gestationalAgeWeeks,
                                 onValueChange = onGestationalAgeChange,
                                 placeholder = {
-                                    Text(stringResource(R.string.baby_profile_placeholder_gestational_age), color = TextTertiary, fontSize = 14.sp)
+                                    Text(stringResource(R.string.baby_profile_placeholder_gestational_age), style = KanguruTheme.typography.bodySmall, color = TextTertiary)
                                 },
                                 trailingIcon = {
                                     Text(
                                         stringResource(R.string.baby_profile_unit_weeks),
-                                        color = TextTertiary,
-                                        fontSize = 12.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
+                                        color = TextTertiary,
                                         modifier = Modifier.padding(end = 12.dp)
                                     )
                                 },
@@ -626,7 +632,7 @@ fun BabyProfileFormScreen(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = stringResource(R.string.baby_profile_label_birth_weight),
-                                        fontSize = 11.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TextSecondary,
                                         letterSpacing = 0.5.sp
@@ -635,13 +641,13 @@ fun BabyProfileFormScreen(
                                     OutlinedTextField(
                                         value = uiState.birthWeightInput,
                                         onValueChange = onBirthWeightChange,
-                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_birth), fontSize = 13.sp, color = TextTertiary) },
+                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_birth), style = KanguruTheme.typography.bodySmall, color = TextTertiary) },
                                         trailingIcon = {
                                             Text(
                                                 stringResource(R.string.baby_profile_unit_grams),
-                                                color = TextTertiary,
-                                                fontSize = 11.sp,
+                                                style = KanguruTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.Bold,
+                                                color = TextTertiary,
                                                 modifier = Modifier.padding(end = 8.dp)
                                             )
                                         },
@@ -666,7 +672,7 @@ fun BabyProfileFormScreen(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = stringResource(R.string.baby_profile_label_current_weight),
-                                        fontSize = 11.sp,
+                                        style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TextSecondary,
                                         letterSpacing = 0.5.sp
@@ -675,13 +681,13 @@ fun BabyProfileFormScreen(
                                     OutlinedTextField(
                                         value = uiState.currentWeightInput,
                                         onValueChange = onCurrentWeightChange,
-                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_current), fontSize = 13.sp, color = TextTertiary) },
+                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_current), style = KanguruTheme.typography.bodySmall, color = TextTertiary) },
                                         trailingIcon = {
                                             Text(
                                                 stringResource(R.string.baby_profile_unit_grams),
-                                                color = TextTertiary,
-                                                fontSize = 11.sp,
+                                                style = KanguruTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.Bold,
+                                                color = TextTertiary,
                                                 modifier = Modifier.padding(end = 8.dp)
                                             )
                                         },
@@ -719,13 +725,11 @@ fun BabyProfileFormScreen(
                                     modifier = Modifier
                                         .size(16.dp)
                                         .padding(top = 1.dp)
-                                )
+                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = stringResource(R.string.baby_profile_bblr_notice),
-                                    fontSize = 11.sp,
-                                    lineHeight = 16.sp,
-                                    fontWeight = FontWeight.Medium,
+                                    style = KanguruTheme.typography.labelSmall,
                                     color = if (isDark) KanguruTheme.colors.error else Color(0xFFE11D48)
                                 )
                             }
@@ -743,7 +747,7 @@ fun BabyProfileFormScreen(
                         Column {
                             Text(
                                 text = stringResource(R.string.baby_profile_label_gender),
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextSecondary,
                                 letterSpacing = 1.sp
@@ -808,7 +812,7 @@ fun BabyProfileFormScreen(
                                         Spacer(modifier = Modifier.height(6.dp))
                                         Text(
                                             text = stringResource(R.string.baby_profile_gender_male),
-                                            fontSize = 13.sp,
+                                            style = KanguruTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Bold,
                                             color = if (isMale) (if (isDark) Color(0xFF60A5FA) else Color(0xFF1D4ED8)) else TextSecondary
                                         )
@@ -870,7 +874,7 @@ fun BabyProfileFormScreen(
                                         Spacer(modifier = Modifier.height(6.dp))
                                         Text(
                                             text = stringResource(R.string.baby_profile_gender_female),
-                                            fontSize = 13.sp,
+                                            style = KanguruTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Bold,
                                             color = if (isFemale) (if (isDark) BrandPink else Color(0xFFE11D48)) else TextSecondary
                                         )
@@ -920,8 +924,7 @@ fun BabyProfileFormScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.baby_profile_btn_save),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = KanguruTheme.typography.titleSmall,
                         color = White
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -990,16 +993,14 @@ fun BabyProfileConfirmationScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.baby_profile_confirm_title),
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = KanguruTheme.typography.headlineMedium,
                         color = TextPrimary,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = stringResource(R.string.baby_profile_confirm_subtitle),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Normal,
+                        style = KanguruTheme.typography.bodySmall,
                         color = TextSecondary,
                         textAlign = TextAlign.Center
                     )
@@ -1063,7 +1064,7 @@ fun BabyProfileConfirmationScreen(
                             Column {
                                 Text(
                                     text = stringResource(R.string.baby_profile_photo_label),
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = TextTertiary,
                                     letterSpacing = 1.sp
@@ -1071,7 +1072,7 @@ fun BabyProfileConfirmationScreen(
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = if (uiState.photoUri != null) stringResource(R.string.baby_profile_photo_saved) else stringResource(R.string.baby_profile_photo_none),
-                                    fontSize = 14.sp,
+                                    style = KanguruTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
                                 )
@@ -1099,7 +1100,7 @@ fun BabyProfileConfirmationScreen(
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.baby_profile_photo_edit),
-                                fontSize = 12.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -1202,7 +1203,7 @@ fun BabyProfileConfirmationScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(R.string.baby_profile_confirm_bblr_status, formatWeightString(uiState.birthWeightInput)),
-                            fontSize = 11.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             color = if (isDark) KanguruTheme.colors.error else Color(0xFFE11D48),
                             fontWeight = FontWeight.Medium
                         )
@@ -1240,7 +1241,7 @@ fun BabyProfileConfirmationScreen(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = stringResource(R.string.baby_profile_btn_back),
-                            fontSize = 14.sp,
+                            style = KanguruTheme.typography.bodySmall,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -1269,8 +1270,7 @@ fun BabyProfileConfirmationScreen(
                         } else {
                             Text(
                                 text = stringResource(R.string.baby_profile_btn_save),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
+                                style = KanguruTheme.typography.titleSmall,
                                 color = White
                             )
                         }
@@ -1295,13 +1295,12 @@ private fun ConfirmationDataRow(
     ) {
         Text(
             text = label,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
+            style = KanguruTheme.typography.bodySmall,
             color = TextSecondary
         )
         Text(
             text = value,
-            fontSize = 13.5.sp,
+            style = KanguruTheme.typography.bodySmall,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
             textAlign = TextAlign.End

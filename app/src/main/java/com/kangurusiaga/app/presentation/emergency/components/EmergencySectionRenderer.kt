@@ -101,11 +101,10 @@ fun EmergencyHeroCard(
                 ) {
                     Text(
                         text = heroTag.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = if (isDark) KanguruTheme.colors.info else Color(0xFF0284C7),
-                        letterSpacing = 0.6.sp,
-                        fontSize = 10.5.sp
+                        letterSpacing = 0.6.sp
                     )
                 }
             }
@@ -122,11 +121,10 @@ fun EmergencySymptomsSection(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = KanguruTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
-            letterSpacing = (-0.2).sp,
-            fontSize = 18.sp
+            letterSpacing = (-0.2).sp
         )
 
         Spacer(modifier = Modifier.height(14.dp))
@@ -148,10 +146,9 @@ fun EmergencySymptomsSection(
                     )
                     Text(
                         text = symptomText,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = KanguruTheme.typography.bodyMedium,
                         color = TextSecondary,
-                        lineHeight = 22.sp,
-                        fontSize = 14.sp
+                        lineHeight = 22.sp
                     )
                 }
             }
@@ -215,10 +212,9 @@ fun EmergencyActionAlertCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = KanguruTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = titleColor,
-                    fontSize = 15.sp
+                    color = titleColor
                 )
             }
 
@@ -226,10 +222,9 @@ fun EmergencyActionAlertCard(
 
             Text(
                 text = message,
-                style = MaterialTheme.typography.bodyMedium,
+                style = KanguruTheme.typography.bodySmall,
                 color = textColor,
                 lineHeight = 21.sp,
-                fontSize = 13.5.sp,
                 modifier = Modifier.padding(start = 28.dp)
             )
         }

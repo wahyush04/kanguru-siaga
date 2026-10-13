@@ -217,7 +217,7 @@ fun SettingsScreen(
 
                         Text(
                             text = "Pengaturan",
-                            fontSize = 16.sp,
+                            style = KanguruTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
                             textAlign = TextAlign.Center
@@ -264,14 +264,14 @@ fun SettingsScreen(
                             ) {
                                 Text(
                                     text = "PROFIL BAYI",
-                                    fontSize = 12.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = TextSecondary,
                                     letterSpacing = 0.5.sp
                                 )
                                 Text(
                                     text = "Edit Cepat",
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
                                     color = BrandPink,
                                     modifier = Modifier.clickable(onClick = onOpenEditProfile)
@@ -340,13 +340,13 @@ fun SettingsScreen(
                                             Column {
                                                 Text(
                                                     text = "Foto Bayi",
-                                                    fontSize = 14.sp,
+                                                    style = KanguruTheme.typography.titleSmall,
                                                     fontWeight = FontWeight.SemiBold,
                                                     color = TextPrimary
                                                 )
                                                 Text(
                                                     text = "Perbarui foto profil si kecil",
-                                                    fontSize = 12.sp,
+                                                    style = KanguruTheme.typography.labelSmall,
                                                     color = TextSecondary,
                                                     modifier = Modifier.padding(top = 2.dp)
                                                 )
@@ -372,9 +372,9 @@ fun SettingsScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
+                                         Text(
                                             text = "Nama Bayi",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Medium,
                                             color = TextSecondary
                                         )
@@ -384,7 +384,7 @@ fun SettingsScreen(
                                         ) {
                                             Text(
                                                 text = baby.name,
-                                                fontSize = 14.sp,
+                                                style = KanguruTheme.typography.titleSmall,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = TextPrimary
                                             )
@@ -408,9 +408,9 @@ fun SettingsScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
+                                         Text(
                                             text = "Tanggal Lahir",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Medium,
                                             color = TextSecondary
                                         )
@@ -420,7 +420,7 @@ fun SettingsScreen(
                                         ) {
                                             Text(
                                                 text = uiState.formattedBirthDate,
-                                                fontSize = 14.sp,
+                                                style = KanguruTheme.typography.bodySmall,
                                                 fontWeight = FontWeight.Medium,
                                                 color = TextPrimary
                                             )
@@ -444,9 +444,9 @@ fun SettingsScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
+                                         Text(
                                             text = "Jenis Kelamin",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Medium,
                                             color = TextSecondary
                                         )
@@ -462,7 +462,7 @@ fun SettingsScreen(
                                             ) {
                                                 Text(
                                                     text = if (isFemale) "Perempuan" else "Laki-laki",
-                                                    fontSize = 12.sp,
+                                                    style = KanguruTheme.typography.labelSmall,
                                                     fontWeight = FontWeight.SemiBold,
                                                     color = if (isFemale) BrandPink else KanguruTheme.colors.onInfoContainer,
                                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp)
@@ -488,9 +488,9 @@ fun SettingsScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
+                                         Text(
                                             text = "Berat Lahir",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Medium,
                                             color = TextSecondary
                                         )
@@ -506,7 +506,7 @@ fun SettingsScreen(
                                             ) {
                                                 Text(
                                                     text = "$formattedWeight gram",
-                                                    fontSize = 14.sp,
+                                                    style = KanguruTheme.typography.titleSmall,
                                                     fontWeight = FontWeight.SemiBold,
                                                     color = TextPrimary
                                                 )
@@ -518,7 +518,7 @@ fun SettingsScreen(
                                                     ) {
                                                         Text(
                                                             text = "BBLR",
-                                                            fontSize = 11.sp,
+                                                            style = KanguruTheme.typography.labelSmall,
                                                             fontWeight = FontWeight.Medium,
                                                             color = KanguruTheme.colors.onWarningContainer,
                                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -545,7 +545,7 @@ fun SettingsScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             text = "PENGINGAT & NOTIFIKASI",
-                            fontSize = 12.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.5.sp,
@@ -575,13 +575,13 @@ fun SettingsScreen(
                                     ) {
                                         Text(
                                             text = "Notifikasi Umum",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.titleSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextPrimary
                                         )
                                         Text(
                                             text = "Izinkan push notification di perangkat",
-                                            fontSize = 12.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             color = TextSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
@@ -617,13 +617,13 @@ fun SettingsScreen(
                                     ) {
                                         Text(
                                             text = "Pengingat PMK",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.titleSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextPrimary
                                         )
                                         Text(
                                             text = "Jadwal alarm kontak kulit harian",
-                                            fontSize = 12.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             color = TextSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
@@ -639,7 +639,7 @@ fun SettingsScreen(
                                         ) {
                                             Text(
                                                 text = uiState.pmkScheduleBadgeText,
-                                                fontSize = 11.sp,
+                                                style = KanguruTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = BrandPink,
                                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -672,13 +672,13 @@ fun SettingsScreen(
                                     ) {
                                         Text(
                                             text = "Pengingat ASI OGT/NGT",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.titleSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextPrimary
                                         )
                                         Text(
                                             text = "Jadwal minum ASI per 2-3 jam",
-                                            fontSize = 12.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             color = TextSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
@@ -694,7 +694,7 @@ fun SettingsScreen(
                                         ) {
                                             Text(
                                                 text = uiState.feedingAlarmBadgeText,
-                                                fontSize = 11.sp,
+                                                style = KanguruTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = KanguruTheme.colors.onSuccessContainer,
                                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -718,7 +718,7 @@ fun SettingsScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             text = "TAMPILAN",
-                            fontSize = 12.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.5.sp,
@@ -758,7 +758,7 @@ fun SettingsScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             text = "DATA & PRIVASI",
-                            fontSize = 12.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.5.sp,
@@ -788,13 +788,13 @@ fun SettingsScreen(
                                     ) {
                                         Text(
                                             text = "Data Tersimpan di Perangkat",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.titleSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextPrimary
                                         )
                                         Text(
                                             text = "Penyimpanan lokal aman & terenkripsi",
-                                            fontSize = 12.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             color = TextSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
@@ -825,13 +825,13 @@ fun SettingsScreen(
                                     ) {
                                         Text(
                                             text = "Hapus Riwayat Aktivitas",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.titleSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = KanguruTheme.colors.error
                                         )
                                         Text(
                                             text = "Hapus log PMK & jadwal lama",
-                                            fontSize = 12.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             color = TextTertiary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
@@ -862,13 +862,13 @@ fun SettingsScreen(
                                     ) {
                                         Text(
                                             text = "Reset Data Aplikasi",
-                                            fontSize = 14.sp,
+                                            style = KanguruTheme.typography.titleSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = KanguruTheme.colors.error
                                         )
                                         Text(
                                             text = "Kembalikan ke pengaturan awal",
-                                            fontSize = 12.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             color = TextTertiary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
@@ -890,7 +890,7 @@ fun SettingsScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             text = "INFORMASI",
-                            fontSize = 12.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.5.sp,
@@ -924,7 +924,7 @@ fun SettingsScreen(
                                 ) {
                                     Text(
                                         text = "Versi Aplikasi",
-                                        fontSize = 14.sp,
+                                        style = KanguruTheme.typography.titleSmall,
                                         fontWeight = FontWeight.SemiBold,
                                         color = TextPrimary
                                     )
@@ -934,7 +934,7 @@ fun SettingsScreen(
                                     ) {
                                         Text(
                                             text = "v1.2.0 (Build 2026)",
-                                            fontSize = 12.sp,
+                                            style = KanguruTheme.typography.labelSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextSecondary,
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -969,7 +969,7 @@ fun SettingsScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             text = "BANTUAN",
-                            fontSize = 12.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.5.sp,
@@ -1002,7 +1002,7 @@ fun SettingsScreen(
                     ) {
                         Text(
                             text = "KANGURU SIAGA • Pendamping BBLR Mandiri",
-                            fontSize = 11.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = TextTertiary
                         )
@@ -1060,14 +1060,14 @@ fun SettingsScreen(
             title = {
                 Text(
                     text = "Hapus Riwayat Aktivitas?",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    style = KanguruTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
                     text = "Catatan sesi PMK yang telah selesai dan riwayat jadwal lama akan dibersihkan dari penyimpanan lokal. Data profil bayi dan riwayat pengukuran pertumbuhan tetap aman.",
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary
                 )
             },
@@ -1093,14 +1093,14 @@ fun SettingsScreen(
             title = {
                 Text(
                     text = "Reset Data Aplikasi?",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    style = KanguruTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
                     text = "Perhatian: Tindakan ini akan mengembalikan aplikasi ke pengaturan awal. Anda perlu mengatur ulang profil bayi.",
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.bodySmall,
                     color = TextSecondary
                 )
             },
@@ -1136,7 +1136,7 @@ private fun SettingsItemRow(
     ) {
         Text(
             text = label,
-            fontSize = 14.sp,
+            style = KanguruTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = TextPrimary
         )
@@ -1146,7 +1146,7 @@ private fun SettingsItemRow(
         ) {
             Text(
                 text = value,
-                fontSize = 14.sp,
+                style = KanguruTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 color = TextSecondary
             )
@@ -1177,13 +1177,13 @@ private fun SettingsNavigationItem(
         Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
             Text(
                 text = title,
-                fontSize = 14.sp,
+                style = KanguruTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary
             )
             Text(
                 text = subtitle,
-                fontSize = 12.sp,
+                style = KanguruTheme.typography.labelSmall,
                 color = TextSecondary,
                 modifier = Modifier.padding(top = 2.dp)
             )

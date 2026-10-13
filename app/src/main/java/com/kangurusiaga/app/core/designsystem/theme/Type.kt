@@ -101,7 +101,7 @@ val JetBrainsMono = FontFamily(
 val TimerDisplay = TextStyle(
     fontFamily = JetBrainsMono,
     fontWeight = FontWeight.ExtraBold,
-    fontSize = 38.sp,
+    fontSize = 42.sp,
     letterSpacing = (-1.5).sp,
     color = TypographyDefaultColor
 )
@@ -110,7 +110,7 @@ val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.ExtraBold,
-        fontSize = 32.sp,
+        fontSize = 34.sp,
         lineHeight = 40.sp,
         letterSpacing = (-0.5).sp,
         color = TypographyDefaultColor
@@ -118,98 +118,98 @@ val Typography = Typography(
     displayMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.ExtraBold,
-        fontSize = 28.sp,
+        fontSize = 30.sp,
         lineHeight = 36.sp,
         color = TypographyDefaultColor
     ),
     displaySmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.ExtraBold,
-        fontSize = 24.sp,
+        fontSize = 26.sp,
         lineHeight = 32.sp,
         color = TypographyDefaultColor
     ),
     headlineLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp,
+        fontSize = 26.sp,
         lineHeight = 32.sp,
         color = TypographyDefaultColor
     ),
     headlineMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp,
+        fontSize = 22.sp,
         lineHeight = 28.sp,
         color = TypographyDefaultColor
     ),
     headlineSmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
+        fontSize = 20.sp,
         lineHeight = 24.sp,
         color = TypographyDefaultColor
     ),
     titleLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
+        fontSize = 20.sp,
         lineHeight = 24.sp,
         color = TypographyDefaultColor
     ),
     titleMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         lineHeight = 22.sp,
         color = TypographyDefaultColor
     ),
     titleSmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         lineHeight = 20.sp,
         color = TypographyDefaultColor
     ),
     bodyLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         color = TypographyDefaultColor
     ),
     bodyMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         lineHeight = 20.sp,
         color = TypographyDefaultColor
     ),
     bodySmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
+        fontSize = 14.sp,
         lineHeight = 16.sp,
         color = TypographyDefaultColor
     ),
     labelLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         lineHeight = 20.sp,
         color = TypographyDefaultColor
     ),
     labelMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 12.sp,
+        fontSize = 14.sp,
         lineHeight = 16.sp,
         color = TypographyDefaultColor
     ),
     labelSmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
+        fontSize = 12.sp,
         lineHeight = 14.sp,
         color = TypographyDefaultColor
     )

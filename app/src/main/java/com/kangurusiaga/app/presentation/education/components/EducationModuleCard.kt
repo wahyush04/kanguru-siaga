@@ -110,7 +110,7 @@ fun EducationModuleCard(
                     ) {
                         Text(
                             text = "${module.order}. ${module.title}",
-                            fontSize = 14.sp,
+                            style = KanguruTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = TextPrimary,
                             lineHeight = 18.sp
@@ -139,7 +139,7 @@ fun EducationModuleCard(
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.edu_card_completed),
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 color = KanguruTheme.colors.onSuccessContainer,
                                 fontWeight = FontWeight.Medium
                             )
@@ -147,7 +147,7 @@ fun EducationModuleCard(
                     } else {
                         Text(
                             text = stringResource(R.string.edu_card_meta, module.category, module.readingTimeMinutes),
-                            fontSize = 11.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             color = TextSecondary,
                             modifier = Modifier.padding(top = 2.dp)
                         )

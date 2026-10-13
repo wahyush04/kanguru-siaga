@@ -41,6 +41,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.data.local.fenton.FentonCurvePoint
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
@@ -116,9 +118,9 @@ fun FentonChart(
                 )
                 Text(
                     text = stringResource(R.string.growth_chart_fenton_curve_title),
-                    fontSize = 12.sp,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = com.kangurusiaga.app.core.designsystem.theme.TextPrimary
+                    color = TextPrimary
                 )
             }
 
@@ -140,13 +142,13 @@ fun FentonChart(
             ) {
                 Text(
                     text = genderSymbol,
-                    fontSize = 11.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = genderColor
                 )
                 Text(
                     text = genderLabel,
-                    fontSize = 10.5.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Medium,
                     color = genderColor
                 )
@@ -164,7 +166,7 @@ fun FentonChart(
                 GrowthParameter.LENGTH -> stringResource(R.string.growth_chart_unit_length)
                 GrowthParameter.HEAD_CIRCUMFERENCE -> stringResource(R.string.growth_chart_unit_head)
             },
-            fontSize = 10.5.sp,
+            style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.Medium,
             color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = 2.dp, bottom = 4.dp)
@@ -364,7 +366,7 @@ fun FentonChart(
         // 4. X-axis label
         Text(
             text = stringResource(R.string.growth_chart_x_axis_label),
-            fontSize = 9.5.sp,
+            style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.Medium,
             color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -383,15 +385,15 @@ fun FentonChart(
         ) {
             Text(
                 text = stringResource(R.string.growth_chart_legend_title),
-                fontSize = 10.5.sp,
+                style = KanguruTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
-                color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.textPrimary
+                color = KanguruTheme.colors.textPrimary
             )
             Text(
                 text = "Fenton Preterm Growth",
-                fontSize = 9.5.sp,
+                style = KanguruTheme.typography.labelSmall,
                 fontWeight = FontWeight.Normal,
-                color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.textTertiary
+                color = KanguruTheme.colors.textTertiary
             )
         }
 
@@ -436,7 +438,7 @@ fun FentonChart(
 
             Text(
                 text = stringResource(R.string.growth_chart_legend_plot, parameter.displayName, babyName),
-                fontSize = 10.5.sp,
+                style = KanguruTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = BrandPink
             )
@@ -476,7 +478,7 @@ fun FentonChart(
                                 append(" (Median / Normal)")
                             }
                         },
-                        fontSize = 10.sp
+                        style = KanguruTheme.typography.labelSmall
                     )
                 }
 
@@ -500,7 +502,7 @@ fun FentonChart(
                                 append(" (Batas Bawah)")
                             }
                         },
-                        fontSize = 10.sp
+                        style = KanguruTheme.typography.labelSmall
                     )
                 }
             }
@@ -530,7 +532,7 @@ fun FentonChart(
                                 append(" (Batas Atas)")
                             }
                         },
-                        fontSize = 10.sp
+                        style = KanguruTheme.typography.labelSmall
                     )
                 }
 
@@ -568,7 +570,7 @@ fun FentonChart(
                                 append(" (Ekstrem)")
                             }
                         },
-                        fontSize = 9.5.sp
+                        style = KanguruTheme.typography.labelSmall
                     )
                 }
             }

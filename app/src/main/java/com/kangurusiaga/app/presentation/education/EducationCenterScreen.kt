@@ -187,7 +187,7 @@ fun EducationCenterScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.edu_center_pill_tag),
-                            fontSize = 11.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = brandCoral
                         )
@@ -197,7 +197,7 @@ fun EducationCenterScreen(
 
                     Text(
                         text = stringResource(R.string.edu_center_header_title),
-                        fontSize = 24.sp,
+                        style = KanguruTheme.typography.headlineMedium,
                         fontWeight = FontWeight.ExtraBold,
                         color = slate900,
                         letterSpacing = (-0.5).sp
@@ -207,7 +207,7 @@ fun EducationCenterScreen(
 
                     Text(
                         text = stringResource(R.string.edu_center_header_subtitle),
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         color = slate500,
                         lineHeight = 17.sp
@@ -250,7 +250,7 @@ fun EducationCenterScreen(
                     placeholder = {
                         Text(
                             text = stringResource(R.string.edu_center_search_placeholder),
-                            fontSize = 12.5.sp,
+                            style = KanguruTheme.typography.bodySmall,
                             color = slate400
                         )
                     },
@@ -288,14 +288,14 @@ fun EducationCenterScreen(
             ) {
                 Text(
                     text = stringResource(R.string.edu_center_topic_section),
-                    fontSize = 11.5.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = slate400,
                     letterSpacing = 0.8.sp
                 )
                 Text(
                     text = stringResource(R.string.edu_center_modules_available),
-                    fontSize = 11.5.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = brandCoral
                 )
@@ -377,7 +377,7 @@ fun EducationCenterScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.edu_center_no_results, searchQuery),
-                            fontSize = 13.sp,
+                            style = KanguruTheme.typography.bodySmall,
                             color = slate500,
                             fontWeight = FontWeight.Medium
                         )
@@ -465,7 +465,7 @@ private fun HeroIllustrationBanner(
                         PulsingEmeraldDot()
                         Text(
                             text = stringResource(R.string.edu_center_idai_tag),
-                            fontSize = 10.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = slate900
                         )
@@ -475,14 +475,14 @@ private fun HeroIllustrationBanner(
                     Column {
                         Text(
                             text = stringResource(R.string.edu_center_hero_title_1),
-                            fontSize = 16.5.sp,
+                            style = KanguruTheme.typography.titleMedium,
                             fontWeight = FontWeight.ExtraBold,
                             color = slate900,
                             letterSpacing = (-0.3).sp
                         )
                         Text(
                             text = stringResource(R.string.edu_center_hero_title_2),
-                            fontSize = 16.5.sp,
+                            style = KanguruTheme.typography.titleMedium,
                             fontWeight = FontWeight.ExtraBold,
                             color = brandCoral,
                             letterSpacing = (-0.3).sp
@@ -492,7 +492,7 @@ private fun HeroIllustrationBanner(
                     // Subtext description
                     Text(
                         text = stringResource(R.string.edu_center_hero_desc),
-                        fontSize = 11.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = slate600,
                         lineHeight = 16.sp
@@ -610,7 +610,7 @@ private fun EducationTopicCard(
             ) {
                 Text(
                     text = title,
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     maxLines = 1,
@@ -619,7 +619,7 @@ private fun EducationTopicCard(
 
                 Text(
                     text = description,
-                    fontSize = 11.5.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Normal,
                     color = TextSecondary,
                     maxLines = 1,
@@ -649,7 +649,7 @@ private fun EducationTopicCard(
                         )
                         Text(
                             text = tagText,
-                            fontSize = 10.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = tagTextColor
                         )
@@ -658,7 +658,7 @@ private fun EducationTopicCard(
                     // Bullet Text
                     Text(
                         text = bulletText,
-                        fontSize = 10.5.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextTertiary
                     )
@@ -739,13 +739,13 @@ private fun EmergencyHotlineBanner(
                 Column {
                     Text(
                         text = stringResource(R.string.edu_center_hotline_title),
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
                         text = stringResource(R.string.edu_center_hotline_desc),
-                        fontSize = 10.5.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Normal,
                         color = TextSecondary
                     )
@@ -766,7 +766,7 @@ private fun EmergencyHotlineBanner(
             ) {
                 Text(
                     text = stringResource(R.string.edu_center_hotline_btn),
-                    fontSize = 11.5.sp,
+                    style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold
                 )
             }

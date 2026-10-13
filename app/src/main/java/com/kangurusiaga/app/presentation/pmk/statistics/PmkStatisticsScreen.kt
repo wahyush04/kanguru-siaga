@@ -205,7 +205,7 @@ fun PmkStatisticsScreen(
                             ) {
                                 Text(
                                     text = "👶",
-                                    fontSize = 22.sp
+                                    style = KanguruTheme.typography.titleLarge
                                 )
                             }
 
@@ -231,7 +231,6 @@ fun PmkStatisticsScreen(
                                         Text(
                                             text = "BBLR ${birthWeight}g",
                                             style = KanguruTheme.typography.labelSmall,
-                                            fontSize = 9.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = colors.primary
                                         )
@@ -251,7 +250,6 @@ fun PmkStatisticsScreen(
                                     Text(
                                         text = "21 - 27 Okt 2024 (Minggu ke-4)",
                                         style = KanguruTheme.typography.labelSmall,
-                                        fontSize = 11.sp,
                                         color = colors.textSecondary
                                     )
                                 }
@@ -276,7 +274,6 @@ fun PmkStatisticsScreen(
                                 Text(
                                     text = "Sangat Baik",
                                     style = KanguruTheme.typography.labelSmall,
-                                    fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = colors.onSuccessContainer
                                 )
@@ -328,7 +325,6 @@ fun PmkStatisticsScreen(
                                 Text(
                                     text = "Filter",
                                     style = KanguruTheme.typography.labelSmall,
-                                    fontSize = 10.sp,
                                     color = colors.textSecondary
                                 )
                             }
@@ -474,8 +470,9 @@ fun PmkStatisticsScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Unduh Resume Medis (PDF)",
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp
+                        color = KanguruTheme.colors.onPrimary
                     )
                 }
 
@@ -502,8 +499,8 @@ fun PmkStatisticsScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Bagikan ke Bidan / Dokter Anak",
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 13.sp,
                         color = colors.textPrimary
                     )
                 }
@@ -536,7 +533,6 @@ private fun FilterPillButton(
         Text(
             text = title,
             style = KanguruTheme.typography.labelSmall,
-            fontSize = 11.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
             color = if (isSelected) colors.onPrimary else colors.textSecondary
         )
@@ -576,7 +572,6 @@ private fun KpiGridCard(
                 Text(
                     text = title,
                     style = KanguruTheme.typography.labelSmall,
-                    fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
                     color = colors.textSecondary
                 )
@@ -601,8 +596,8 @@ private fun KpiGridCard(
 
             Text(
                 text = value,
+                style = KanguruTheme.typography.titleMedium,
                 fontFamily = FontFamily.Monospace,
-                fontSize = 18.sp,
                 fontWeight = FontWeight.Black,
                 color = colors.textPrimary
             )
@@ -610,7 +605,6 @@ private fun KpiGridCard(
             Text(
                 text = subtitle,
                 style = KanguruTheme.typography.labelSmall,
-                fontSize = 9.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = subtitleColor,
                 maxLines = 1,
@@ -709,7 +703,6 @@ private fun InteractiveSevenDayTrendCard(
                     Text(
                         text = "Evaluasi kepatuhan harian vs target WHO",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 11.sp,
                         color = colors.textSecondary
                     )
                 }
@@ -731,7 +724,6 @@ private fun InteractiveSevenDayTrendCard(
                         Text(
                             text = "Target 18j",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.textSecondary
                         )
@@ -771,7 +763,6 @@ private fun InteractiveSevenDayTrendCard(
                     Text(
                         text = "18.0 Jam",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.primary
                     )
@@ -799,7 +790,6 @@ private fun InteractiveSevenDayTrendCard(
                             Text(
                                 text = String.format("%.1f", item.durationHours),
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 9.sp,
                                 fontWeight = if (isTargetMet) FontWeight.Bold else FontWeight.Medium,
                                 color = if (isTargetMet) colors.primary else colors.textTertiary
                             )
@@ -836,7 +826,6 @@ private fun InteractiveSevenDayTrendCard(
                             Text(
                                 text = item.dayLabel,
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 fontWeight = if (isSelected || isTargetMet) FontWeight.Bold else FontWeight.Medium,
                                 color = if (isSelected || isTargetMet) colors.primary else colors.textSecondary
                             )
@@ -871,14 +860,12 @@ private fun InteractiveSevenDayTrendCard(
                         Text(
                             text = "${selectedDay.dayLabel} • ",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.textPrimary
                         )
                         Text(
                             text = selectedDay.durationText,
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.primary
                         )
@@ -893,7 +880,6 @@ private fun InteractiveSevenDayTrendCard(
                         Text(
                             text = if (selectedDay.isPeak) "Pencapaian Rekor" else if (selectedDay.durationHours >= 18f) "Target WHO Terpenuhi" else "Perlu Ditingkatkan",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 9.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.primary
                         )
@@ -933,7 +919,6 @@ private fun CaregiverRelayCard(
                     Text(
                         text = "Dukungan keluarga menjaga PMK kontinu",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 11.sp,
                         color = colors.textSecondary
                     )
                 }
@@ -947,7 +932,6 @@ private fun CaregiverRelayCard(
                     Text(
                         text = "3 Pengasuh",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.primary
                     )
@@ -1048,7 +1032,6 @@ private fun CaregiverRelayCard(
                     Text(
                         text = "Keterlibatan Ayah dan Pendamping mengurangi beban kelelahan Ibu hingga 40% serta menjaga kontak kulit (skin-to-skin) bayi tetap kontinu 24 jam.",
                         style = KanguruTheme.typography.bodySmall,
-                        fontSize = 11.sp,
                         color = colors.onWarningContainer,
                         lineHeight = 16.sp
                     )
@@ -1099,7 +1082,6 @@ private fun CaregiverRowDetail(
                 Text(
                     text = roleBadge,
                     style = KanguruTheme.typography.labelSmall,
-                    fontSize = 9.sp,
                     fontWeight = FontWeight.Medium,
                     color = badgeColor
                 )
@@ -1109,17 +1091,17 @@ private fun CaregiverRowDetail(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = duration,
+                style = KanguruTheme.typography.bodySmall,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
                 color = colors.textPrimary
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = pct,
+                style = KanguruTheme.typography.bodySmall,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Black,
-                fontSize = 12.sp,
                 color = dotColor
             )
         }
@@ -1155,7 +1137,6 @@ private fun ClinicalImpactCard(
                     Text(
                         text = "Kestabilan fisiologis selama PMK berlangsung",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 11.sp,
                         color = colors.textSecondary
                     )
                 }
@@ -1203,7 +1184,6 @@ private fun ClinicalImpactCard(
                             Text(
                                 text = "Suhu Rata-rata",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 color = colors.textSecondary
                             )
                         }
@@ -1211,8 +1191,8 @@ private fun ClinicalImpactCard(
                         Row(verticalAlignment = Alignment.Bottom) {
                             Text(
                                 text = "36.8°C",
+                                style = KanguruTheme.typography.titleMedium,
                                 fontFamily = FontFamily.Monospace,
-                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
                                 color = colors.textPrimary
                             )
@@ -1220,7 +1200,6 @@ private fun ClinicalImpactCard(
                             Text(
                                 text = "Normal",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.success
                             )
@@ -1228,7 +1207,6 @@ private fun ClinicalImpactCard(
                         Text(
                             text = "Aman dari hipotermia",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 9.sp,
                             color = colors.textTertiary
                         )
                     }
@@ -1254,7 +1232,6 @@ private fun ClinicalImpactCard(
                             Text(
                                 text = "Zona Aman Suhu",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 10.sp,
                                 color = colors.textSecondary
                             )
                         }
@@ -1262,8 +1239,8 @@ private fun ClinicalImpactCard(
                         Row(verticalAlignment = Alignment.Bottom) {
                             Text(
                                 text = "100%",
+                                style = KanguruTheme.typography.titleMedium,
                                 fontFamily = FontFamily.Monospace,
-                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
                                 color = colors.success
                             )
@@ -1271,7 +1248,6 @@ private fun ClinicalImpactCard(
                             Text(
                                 text = "Sesi",
                                 style = KanguruTheme.typography.labelSmall,
-                                fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.textSecondary
                             )
@@ -1279,7 +1255,6 @@ private fun ClinicalImpactCard(
                         Text(
                             text = "Rentang 36.5°C - 37.5°C",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 9.sp,
                             color = colors.textTertiary
                         )
                     }
@@ -1298,14 +1273,12 @@ private fun ClinicalImpactCard(
                     Text(
                         text = "Respon Perilaku Bayi",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.textPrimary
                     )
                     Text(
                         text = "88% Tenang / Tidur",
                         style = KanguruTheme.typography.labelSmall,
-                        fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = colors.textSecondary
                     )
@@ -1352,7 +1325,6 @@ private fun ClinicalImpactCard(
                         Text(
                             text = "88% Tenang & Tidur Pulas",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 9.sp,
                             color = colors.textSecondary
                         )
                     }
@@ -1368,7 +1340,6 @@ private fun ClinicalImpactCard(
                         Text(
                             text = "12% Menyusu Aktif",
                             style = KanguruTheme.typography.labelSmall,
-                            fontSize = 9.sp,
                             color = colors.textSecondary
                         )
                     }

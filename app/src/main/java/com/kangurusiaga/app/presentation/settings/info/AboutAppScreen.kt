@@ -192,7 +192,7 @@ fun AboutAppScreen(
                 // Centered Title
                 Text(
                     text = stringResource(R.string.about_app_title),
-                    fontSize = 17.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center,
@@ -243,7 +243,7 @@ fun AboutAppScreen(
 
                         Text(
                             text = "KANGURU SIAGA",
-                            fontSize = 20.sp,
+                            style = KanguruTheme.typography.titleLarge,
                             fontWeight = FontWeight.ExtraBold,
                             color = TextPrimary,
                             letterSpacing = 0.5.sp
@@ -251,7 +251,7 @@ fun AboutAppScreen(
 
                         Text(
                             text = stringResource(R.string.about_app_subtitle).uppercase(),
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = BrandPink,
                             letterSpacing = 0.8.sp,
@@ -277,7 +277,7 @@ fun AboutAppScreen(
                                 )
                                 Text(
                                     text = stringResource(R.string.about_app_version),
-                                    fontSize = 11.5.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
                                     color = BrandPink
                                 )
@@ -293,8 +293,7 @@ fun AboutAppScreen(
                         }
                         Text(
                             text = aboutDesc,
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp,
+                            style = KanguruTheme.typography.bodySmall,
                             color = TextSecondary,
                             textAlign = TextAlign.Justify,
                             modifier = Modifier.padding(top = 12.dp, start = 4.dp, end = 4.dp)
@@ -335,7 +334,7 @@ fun AboutAppScreen(
                             }
                             Text(
                                 text = stringResource(R.string.about_app_vision_title),
-                                fontSize = 14.sp,
+                                style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
@@ -343,8 +342,7 @@ fun AboutAppScreen(
 
                         Text(
                             text = stringResource(R.string.about_app_vision_desc),
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp,
+                            style = KanguruTheme.typography.bodySmall,
                             color = TextSecondary
                         )
                     }
@@ -356,7 +354,7 @@ fun AboutAppScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
                         text = stringResource(R.string.about_app_pillars_title).uppercase(),
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = TextTertiary,
                         letterSpacing = 0.8.sp,
@@ -393,15 +391,14 @@ fun AboutAppScreen(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = pillar.title,
-                                        fontSize = 12.5.sp,
+                                        style = KanguruTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TextPrimary
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = pillar.description,
-                                        fontSize = 11.5.sp,
-                                        lineHeight = 16.sp,
+                                        style = KanguruTheme.typography.bodySmall,
                                         color = TextSecondary
                                     )
                                 }
@@ -443,7 +440,7 @@ fun AboutAppScreen(
                             }
                             Text(
                                 text = stringResource(R.string.about_app_references_title),
-                                fontSize = 13.sp,
+                                style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
@@ -464,8 +461,7 @@ fun AboutAppScreen(
                                     )
                                     Text(
                                         text = ref,
-                                        fontSize = 12.sp,
-                                        lineHeight = 17.sp,
+                                        style = KanguruTheme.typography.bodySmall,
                                         color = TextSecondary,
                                         modifier = Modifier.weight(1f)
                                     )
@@ -503,21 +499,21 @@ fun AboutAppScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.about_app_dev_team_note),
-                            fontSize = 11.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = TextSecondary,
                             textAlign = TextAlign.Center
                         )
                         Text(
                             text = stringResource(R.string.about_app_dev_team_name),
-                            fontSize = 12.5.sp,
+                            style = KanguruTheme.typography.bodySmall,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
                             textAlign = TextAlign.Center
                         )
                         Text(
                             text = stringResource(R.string.about_app_copyright),
-                            fontSize = 10.5.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             color = TextTertiary,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(top = 2.dp)

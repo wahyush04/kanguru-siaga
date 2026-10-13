@@ -56,6 +56,7 @@ import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBg
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBorder
 import com.kangurusiaga.app.core.designsystem.theme.GrowthTipText
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
@@ -131,8 +132,7 @@ fun AddGrowthMeasurementScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.growth_add_btn_cancel),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            style = KanguruTheme.typography.titleSmall,
                             color = BrandPink
                         )
                     }
@@ -157,8 +157,7 @@ fun AddGrowthMeasurementScreen(
                         } else {
                             Text(
                                 text = stringResource(R.string.growth_add_btn_save),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold,
+                                style = KanguruTheme.typography.titleSmall,
                                 color = White
                             )
                         }
@@ -193,7 +192,7 @@ fun AddGrowthMeasurementScreen(
 
                 Text(
                     text = stringResource(R.string.growth_add_title, parameter.displayName),
-                    fontSize = 17.sp,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     textAlign = TextAlign.Center,
@@ -208,7 +207,7 @@ fun AddGrowthMeasurementScreen(
             // Field 1: Tanggal Pengukuran
             Text(
                 text = stringResource(R.string.growth_add_label_date),
-                fontSize = 12.sp,
+                style = KanguruTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary
             )
@@ -226,7 +225,7 @@ fun AddGrowthMeasurementScreen(
             ) {
                 Text(
                     text = dateFormatter.format(uiState.measurementDateEpochMillis),
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = TextPrimary
                 )
@@ -248,7 +247,7 @@ fun AddGrowthMeasurementScreen(
             ) {
                 Text(
                     text = stringResource(R.string.growth_add_label_chronological),
-                    fontSize = 12.sp,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = TextPrimary
                 )
@@ -260,7 +259,7 @@ fun AddGrowthMeasurementScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.growth_add_tag_auto),
-                        fontSize = 11.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = BrandPink
                     )
@@ -277,7 +276,7 @@ fun AddGrowthMeasurementScreen(
             ) {
                 Text(
                     text = uiState.chronologicalAgeDisplay,
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = TextPrimary,
                     modifier = Modifier
@@ -291,7 +290,7 @@ fun AddGrowthMeasurementScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.growth_add_unit_weeks),
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextSecondary
                     )
@@ -299,7 +298,7 @@ fun AddGrowthMeasurementScreen(
             }
             Text(
                 text = stringResource(R.string.growth_add_chronological_desc),
-                fontSize = 11.sp,
+                style = KanguruTheme.typography.labelSmall,
                 color = TextTertiary,
                 modifier = Modifier.padding(top = 4.dp, start = 2.dp)
             )
@@ -315,7 +314,7 @@ fun AddGrowthMeasurementScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = stringResource(R.string.growth_add_label_pma),
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
                     )
@@ -335,7 +334,7 @@ fun AddGrowthMeasurementScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.growth_add_tag_auto),
-                        fontSize = 11.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = BrandPink
                     )
@@ -352,7 +351,7 @@ fun AddGrowthMeasurementScreen(
             ) {
                 Text(
                     text = uiState.pmaDisplay,
-                    fontSize = 14.sp,
+                    style = KanguruTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = TextPrimary,
                     modifier = Modifier
@@ -366,7 +365,7 @@ fun AddGrowthMeasurementScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.growth_add_unit_weeks),
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextSecondary
                     )
@@ -374,7 +373,7 @@ fun AddGrowthMeasurementScreen(
             }
             Text(
                 text = stringResource(R.string.growth_add_pma_desc),
-                fontSize = 11.sp,
+                style = KanguruTheme.typography.labelSmall,
                 color = TextTertiary,
                 modifier = Modifier.padding(top = 4.dp, start = 2.dp)
             )
@@ -384,7 +383,7 @@ fun AddGrowthMeasurementScreen(
             // Field 4: Parameter Value Input
             Text(
                 text = parameter.displayName,
-                fontSize = 12.sp,
+                style = KanguruTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary
             )
@@ -399,7 +398,7 @@ fun AddGrowthMeasurementScreen(
                             GrowthParameter.LENGTH -> stringResource(R.string.growth_add_placeholder_length)
                             GrowthParameter.HEAD_CIRCUMFERENCE -> stringResource(R.string.growth_add_placeholder_head)
                         },
-                        fontSize = 13.sp,
+                        style = KanguruTheme.typography.bodySmall,
                         color = TextTertiary
                     )
                 },
@@ -411,7 +410,7 @@ fun AddGrowthMeasurementScreen(
                     ) {
                         Text(
                             text = parameter.unit,
-                            fontSize = 12.sp,
+                            style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = TextSecondary
                         )
@@ -432,8 +431,8 @@ fun AddGrowthMeasurementScreen(
             if (uiState.errorMessage != null) {
                 Text(
                     text = uiState.errorMessage ?: "",
-                    fontSize = 11.5.sp,
-                    color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText,
+                    style = KanguruTheme.typography.labelSmall,
+                    color = KanguruTheme.colors.errorText,
                     modifier = Modifier.padding(top = 4.dp, start = 2.dp)
                 )
             }
@@ -443,7 +442,7 @@ fun AddGrowthMeasurementScreen(
             // Field 5: Catatan (Opsional)
             Text(
                 text = stringResource(R.string.growth_add_label_note),
-                fontSize = 12.sp,
+                style = KanguruTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary
             )
@@ -454,7 +453,7 @@ fun AddGrowthMeasurementScreen(
                 placeholder = {
                     Text(
                         text = stringResource(R.string.growth_add_placeholder_note),
-                        fontSize = 13.sp,
+                        style = KanguruTheme.typography.bodySmall,
                         color = TextTertiary
                     )
                 },
@@ -506,15 +505,14 @@ fun AddGrowthMeasurementScreen(
                     Column {
                         Text(
                             text = stringResource(R.string.growth_add_reminder_title),
-                            fontSize = 12.sp,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = TextPrimary
                         )
                         val nextDateFormatted = dateFormatter.format(uiState.nextReminderDateEpochMillis)
                         Text(
                             text = stringResource(R.string.growth_add_reminder_desc, nextDateFormatted),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Normal,
+                            style = KanguruTheme.typography.labelSmall,
                             color = TextTertiary,
                             lineHeight = 15.sp,
                             modifier = Modifier.padding(top = 2.dp)
@@ -564,8 +562,7 @@ fun AddGrowthMeasurementScreen(
                 }
                 Text(
                     text = tipText,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
+                    style = KanguruTheme.typography.labelSmall,
                     color = GrowthTipText,
                     lineHeight = 17.sp
                 )

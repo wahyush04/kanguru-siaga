@@ -106,7 +106,7 @@ fun TextSizeBottomSheet(
                     ) {
                         Text(
                             text = "Ukuran Teks",
-                            fontSize = 20.sp,
+                            style = KanguruTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
@@ -117,7 +117,7 @@ fun TextSizeBottomSheet(
                         ) {
                             Text(
                                 text = "Tampilan",
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = BrandPink,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -126,7 +126,7 @@ fun TextSizeBottomSheet(
                     }
                     Text(
                         text = "Sesuaikan ukuran huruf pada seluruh modul edukasi dan pemantauan agar nyaman dibaca saat menggendong si kecil.",
-                        fontSize = 12.sp,
+                        style = KanguruTheme.typography.labelSmall,
                         color = TextSecondary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
@@ -188,7 +188,7 @@ fun TextSizeBottomSheet(
                                 }
                                 Text(
                                     text = "Skala Ukuran",
-                                    fontSize = 13.sp,
+                                    style = KanguruTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
                                 )
@@ -200,7 +200,7 @@ fun TextSizeBottomSheet(
                             ) {
                                 Text(
                                     text = selectedScale.percentageLabel,
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = BrandPink,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -239,25 +239,25 @@ fun TextSizeBottomSheet(
                         ) {
                             Text(
                                 text = "Kecil",
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 color = if (selectedScale == AppTextScale.SMALL) BrandPink else TextTertiary,
                                 fontWeight = if (selectedScale == AppTextScale.SMALL) FontWeight.Bold else FontWeight.Normal
                             )
                             Text(
                                 text = "Sedang (Standar)",
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 color = if (selectedScale == AppTextScale.STANDARD) BrandPink else TextTertiary,
                                 fontWeight = if (selectedScale == AppTextScale.STANDARD) FontWeight.Bold else FontWeight.Normal
                             )
                             Text(
                                 text = "Besar",
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 color = if (selectedScale == AppTextScale.LARGE) BrandPink else TextTertiary,
                                 fontWeight = if (selectedScale == AppTextScale.LARGE) FontWeight.Bold else FontWeight.Normal
                             )
                             Text(
                                 text = "Ekstra",
-                                fontSize = 11.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 color = if (selectedScale == AppTextScale.EXTRA_LARGE) BrandPink else TextTertiary,
                                 fontWeight = if (selectedScale == AppTextScale.EXTRA_LARGE) FontWeight.Bold else FontWeight.Normal
                             )
@@ -295,7 +295,7 @@ fun TextSizeBottomSheet(
                             ) {
                                 Text(
                                     text = scale.percentageLabel,
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isSelected) White else TextSecondary
                                 )
@@ -308,7 +308,7 @@ fun TextSizeBottomSheet(
                                 ) {
                                     Text(
                                         text = scale.title,
-                                        fontSize = 14.sp,
+                                        style = KanguruTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TextPrimary
                                     )
@@ -320,7 +320,7 @@ fun TextSizeBottomSheet(
                                         ) {
                                             Text(
                                                 text = "Direkomendasikan",
-                                                fontSize = 10.sp,
+                                                style = KanguruTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.Bold,
                                                 color = BrandPink,
                                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -330,9 +330,8 @@ fun TextSizeBottomSheet(
                                 }
                                 Text(
                                     text = scale.description,
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.bodySmall,
                                     color = TextSecondary,
-                                    lineHeight = 15.sp,
                                     modifier = Modifier.padding(top = 2.dp)
                                 )
                             }
@@ -390,7 +389,7 @@ fun TextSizeBottomSheet(
                                 )
                                 Text(
                                     text = "PRATINJAU TEKS KLINIS",
-                                    fontSize = 11.sp,
+                                    style = KanguruTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = BrandPink,
                                     letterSpacing = 0.5.sp
@@ -398,7 +397,7 @@ fun TextSizeBottomSheet(
                             }
                             Text(
                                 text = "Skala ${selectedScale.percentageLabel}",
-                                fontSize = 10.sp,
+                                style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = TextTertiary
                             )
@@ -424,16 +423,14 @@ fun TextSizeBottomSheet(
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
                                         text = "Suhu normal bayi BBLR: 36,5°C - 37,5°C",
-                                        fontSize = 13.sp,
-                                        lineHeight = 18.sp,
+                                        style = KanguruTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = TextPrimary
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = "Jaga kontak kulit-ke-kulit (Kangaroo Mother Care) secara teratur untuk menjaga kestabilan suhu tubuh si kecil.",
-                                        fontSize = 11.sp,
-                                        lineHeight = 16.sp,
+                                        style = KanguruTheme.typography.bodySmall,
                                         color = TextSecondary
                                     )
                                 }
@@ -462,6 +459,7 @@ fun TextSizeBottomSheet(
                 ) {
                     Text(
                         text = "Batal",
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextSecondary
                     )
@@ -483,6 +481,7 @@ fun TextSizeBottomSheet(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Terapkan Ukuran",
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = White
                     )

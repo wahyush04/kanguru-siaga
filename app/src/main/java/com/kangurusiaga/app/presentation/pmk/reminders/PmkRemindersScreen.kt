@@ -178,7 +178,6 @@ fun PmkRemindersScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         textAlign = TextAlign.Center,
-                        fontSize = 11.5.sp,
                         lineHeight = 16.sp,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -248,7 +247,6 @@ fun PmkRemindersScreen(
                             text = stringResource(R.string.pmk_reminders_alert),
                             style = MaterialTheme.typography.bodySmall,
                             color = KanguruTheme.colors.onErrorContainer,
-                            fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             lineHeight = 17.sp
                         )
@@ -292,7 +290,7 @@ fun PmkRemindersScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = stringResource(R.string.pmk_reminders_target_header),
-                                    fontSize = 11.5.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary,
                                     letterSpacing = 0.5.sp
@@ -306,8 +304,8 @@ fun PmkRemindersScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.pmk_reminders_completed_count, uiState.todayCompletedSessions, uiState.todayTargetSessions),
+                                    style = MaterialTheme.typography.labelSmall,
                                     color = KanguruTheme.colors.onSuccessContainer,
-                                    fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                                 )
@@ -324,14 +322,14 @@ fun PmkRemindersScreen(
                             Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
                                     text = "${uiState.todayCompletedMinutes}",
-                                    fontSize = 24.sp,
+                                    style = MaterialTheme.typography.headlineMedium,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = TextPrimary
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = stringResource(R.string.pmk_reminders_target_minutes, uiState.todayTargetMinutes),
-                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.bodySmall,
                                     color = TextSecondary,
                                     fontWeight = FontWeight.Medium
                                 )
@@ -339,7 +337,7 @@ fun PmkRemindersScreen(
 
                             Text(
                                 text = stringResource(R.string.pmk_reminders_percent_fulfilled, uiState.progressPercent),
-                                fontSize = 12.sp,
+                                style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = BrandPink
                             )
@@ -376,7 +374,7 @@ fun PmkRemindersScreen(
                     )
                     Text(
                         text = stringResource(R.string.pmk_reminders_list_total, uiState.reminders.size),
-                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary,
                         fontWeight = FontWeight.Medium
                     )
@@ -408,7 +406,7 @@ fun PmkRemindersScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = stringResource(R.string.pmk_reminders_btn_add),
-                        fontSize = 14.sp,
+                        style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = White
                     )
@@ -522,7 +520,7 @@ private fun ReminderCardItem(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = reminder.formattedTime,
-                            fontSize = 20.sp,
+                            style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = if (reminder.isEnabled) TextPrimary else TextSecondary.copy(alpha = 0.6f)
                         )
@@ -533,7 +531,7 @@ private fun ReminderCardItem(
                         ) {
                             Text(
                                 text = reminder.label,
-                                fontSize = 11.sp,
+                                style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = badgeText,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -545,7 +543,7 @@ private fun ReminderCardItem(
 
                     Text(
                         text = "Target ${reminder.targetMinutes} Menit • Setiap hari ${if (!reminder.isEnabled) "(Nonaktif)" else ""}",
-                        fontSize = 11.5.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
                 }
@@ -633,7 +631,7 @@ private fun AddReminderDialog(
                             FilterChip(
                                 selected = isSelected,
                                 onClick = { label = item },
-                                label = { Text(item, fontSize = 11.5.sp) },
+                                label = { Text(item, style = MaterialTheme.typography.labelSmall) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = BrandLightPink,
                                     selectedLabelColor = BrandPink,
@@ -668,7 +666,7 @@ private fun AddReminderDialog(
                             FilterChip(
                                 selected = isSelected,
                                 onClick = { targetMinutes = min },
-                                label = { Text("$min m", fontSize = 11.5.sp) },
+                                label = { Text("$min m", style = MaterialTheme.typography.labelSmall) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = BrandLightPink,
                                     selectedLabelColor = BrandPink,
