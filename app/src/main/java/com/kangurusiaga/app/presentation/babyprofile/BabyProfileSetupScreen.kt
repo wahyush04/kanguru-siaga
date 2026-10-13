@@ -1,10 +1,16 @@
 package com.kangurusiaga.app.presentation.babyprofile
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import com.kangurusiaga.app.presentation.babyprofile.components.NotificationPermissionDialog
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -114,12 +120,34 @@ fun BabyProfileSetupRoute(
     modifier: Modifier = Modifier,
     viewModel: BabyProfileSetupViewModel = hiltViewModel()
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showNotificationPermissionDialog by remember { mutableStateOf(false) }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { _ ->
+        showNotificationPermissionDialog = false
+        onNavigateToHome()
+    }
 
     LaunchedEffect(uiState.isComplete) {
         if (uiState.isComplete) {
-            onNavigateToHome()
+            val needsPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            } else {
+                !NotificationManagerCompat.from(context).areNotificationsEnabled()
+            }
+
+            if (needsPermission) {
+                showNotificationPermissionDialog = true
+            } else {
+                onNavigateToHome()
+            }
         }
     }
 
@@ -203,6 +231,23 @@ fun BabyProfileSetupRoute(
                 )
             }
         }
+    }
+
+    if (showNotificationPermissionDialog) {
+        NotificationPermissionDialog(
+            onConfirm = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    showNotificationPermissionDialog = false
+                    onNavigateToHome()
+                }
+            },
+            onDismiss = {
+                showNotificationPermissionDialog = false
+                onNavigateToHome()
+            }
+        )
     }
 }
 

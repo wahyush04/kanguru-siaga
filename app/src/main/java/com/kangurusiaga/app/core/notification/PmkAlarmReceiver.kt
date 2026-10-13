@@ -8,6 +8,7 @@ import com.kangurusiaga.app.data.local.dao.InAppNotificationDao
 import com.kangurusiaga.app.data.local.entity.InAppNotificationEntity
 import com.kangurusiaga.app.domain.model.NotificationBadgeColor
 import com.kangurusiaga.app.domain.model.NotificationCategory
+import com.kangurusiaga.app.domain.repository.PmkReminderRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,12 +31,16 @@ class PmkAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var babyDao: BabyDao
 
+    @Inject
+    lateinit var reminderRepository: PmkReminderRepository
+
     override fun onReceive(context: Context, intent: Intent) {
         val reminderId = intent.getLongExtra(EXTRA_REMINDER_ID, 0L)
         val label = intent.getStringExtra(EXTRA_LABEL) ?: "PMK"
         val targetMinutes = intent.getIntExtra(EXTRA_TARGET_MINUTES, 60)
         val hour = intent.getIntExtra(EXTRA_HOUR, 8)
         val minute = intent.getIntExtra(EXTRA_MINUTE, 0)
+        val repeatDaily = intent.getBooleanExtra(EXTRA_REPEAT_DAILY, true)
 
         // Show system status bar notification
         notificationManager.showPmkReminderNotification(label, targetMinutes)
@@ -67,14 +72,20 @@ class PmkAlarmReceiver : BroadcastReceiver() {
                         timestampEpoch = System.currentTimeMillis()
                     )
                 )
+
+                if (!repeatDaily) {
+                    reminderRepository.toggleReminder(reminderId, false)
+                }
             } catch (_: Exception) {
             } finally {
                 pendingResult.finish()
             }
         }
 
-        // Reschedule for next day recurrence
-        reminderScheduler.scheduleNextOccurrence(reminderId, label, targetMinutes, hour, minute)
+        // Reschedule for next day recurrence only if repeatDaily is true
+        if (repeatDaily) {
+            reminderScheduler.scheduleNextOccurrence(reminderId, label, targetMinutes, hour, minute, true)
+        }
     }
 
     companion object {
@@ -83,5 +94,6 @@ class PmkAlarmReceiver : BroadcastReceiver() {
         const val EXTRA_TARGET_MINUTES = "extra_target_minutes"
         const val EXTRA_HOUR = "extra_hour"
         const val EXTRA_MINUTE = "extra_minute"
+        const val EXTRA_REPEAT_DAILY = "extra_repeat_daily"
     }
 }

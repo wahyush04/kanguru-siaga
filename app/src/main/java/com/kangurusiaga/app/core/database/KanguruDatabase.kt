@@ -26,7 +26,7 @@ import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
         GrowthMeasurementEntity::class,
         com.kangurusiaga.app.data.local.entity.InAppNotificationEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class KanguruDatabase : RoomDatabase() {

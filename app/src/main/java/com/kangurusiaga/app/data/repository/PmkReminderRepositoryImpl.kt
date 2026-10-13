@@ -65,6 +65,9 @@ class PmkReminderRepositoryImpl @Inject constructor(
 
     override suspend fun seedDefaultRemindersIfEmpty(babyId: Long) {
         withContext(ioDispatcher) {
+            // Bersihkan jadwal jam 1:00 dini hari jika sebelumnya sempat tersimpan
+            pmkReminderDao.deleteRemindersByTime(1, 0)
+
             val count = pmkReminderDao.getReminderCount(babyId)
             if (count == 0) {
                 val defaults = listOf(
@@ -72,25 +75,34 @@ class PmkReminderRepositoryImpl @Inject constructor(
                         babyId = babyId,
                         timeHour = 8,
                         timeMinute = 0,
-                        label = "Pagi",
-                        targetMinutes = 60,
-                        isEnabled = true
+                        label = "Estafet Sesi Pagi",
+                        targetMinutes = 240,
+                        isEnabled = true,
+                        category = "Pagi",
+                        notes = "Estafet Sesi Pagi bersama Ibu",
+                        repeatDaily = true
                     ),
                     PmkReminderEntity(
                         babyId = babyId,
                         timeHour = 13,
                         timeMinute = 0,
-                        label = "Siang",
-                        targetMinutes = 60,
-                        isEnabled = true
+                        label = "Estafet Sesi Siang",
+                        targetMinutes = 240,
+                        isEnabled = true,
+                        category = "Siang",
+                        notes = "Estafet Sesi Siang bersama Ayah",
+                        repeatDaily = true
                     ),
                     PmkReminderEntity(
                         babyId = babyId,
                         timeHour = 19,
                         timeMinute = 0,
-                        label = "Malam",
-                        targetMinutes = 60,
-                        isEnabled = false
+                        label = "Estafet Sesi Malam",
+                        targetMinutes = 240,
+                        isEnabled = true,
+                        category = "Malam",
+                        notes = "Estafet Sesi Malam bersama Ibu",
+                        repeatDaily = true
                     )
                 )
                 pmkReminderDao.insertReminders(defaults)

@@ -148,7 +148,8 @@ class BabyProfileSetupViewModel @Inject constructor(
                 photoUri = state.photoUri
             )
 
-            val result = saveBabyProfileUseCase(baby)
+            val currentWeight = if (state.currentWeightGram > 0) state.currentWeightGram else state.birthWeightGram
+            val result = saveBabyProfileUseCase(baby, currentWeight)
             result.fold(
                 onSuccess = {
                     _uiState.update { it.copy(isLoading = false, isComplete = true) }

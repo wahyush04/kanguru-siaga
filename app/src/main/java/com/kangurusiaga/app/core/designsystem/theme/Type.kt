@@ -125,91 +125,91 @@ val Typography = Typography(
     displaySmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.ExtraBold,
-        fontSize = 26.sp,
+        fontSize = 24.sp,
         lineHeight = 32.sp,
         color = TypographyDefaultColor
     ),
     headlineLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 26.sp,
+        fontSize = 24.sp,
         lineHeight = 32.sp,
         color = TypographyDefaultColor
     ),
     headlineMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
+        fontSize = 20.sp,
         lineHeight = 28.sp,
         color = TypographyDefaultColor
     ),
     headlineSmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         color = TypographyDefaultColor
     ),
     titleLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         color = TypographyDefaultColor
     ),
     titleMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         lineHeight = 22.sp,
         color = TypographyDefaultColor
     ),
     titleSmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
+        fontSize = 14.sp,
         lineHeight = 20.sp,
         color = TypographyDefaultColor
     ),
     bodyLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         lineHeight = 24.sp,
         color = TypographyDefaultColor
     ),
     bodyMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
+        fontSize = 14.sp,
         lineHeight = 20.sp,
         color = TypographyDefaultColor
     ),
     bodySmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        fontSize = 12.sp,
         lineHeight = 16.sp,
         color = TypographyDefaultColor
     ),
     labelLarge = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
+        fontSize = 14.sp,
         lineHeight = 20.sp,
         color = TypographyDefaultColor
     ),
     labelMedium = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp,
+        fontSize = 12.sp,
         lineHeight = 16.sp,
         color = TypographyDefaultColor
     ),
     labelSmall = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
+        fontSize = 10.sp,
         lineHeight = 14.sp,
         color = TypographyDefaultColor
     )

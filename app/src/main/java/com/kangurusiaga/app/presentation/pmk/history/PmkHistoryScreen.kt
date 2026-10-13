@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -83,8 +84,6 @@ import com.kangurusiaga.app.domain.model.TimerStatus
 import com.kangurusiaga.app.domain.usecase.DailyTimeline
 import com.kangurusiaga.app.domain.usecase.GetDailyPmkTimelineUseCase
 import com.kangurusiaga.app.domain.usecase.TimelineBlock
-import com.kangurusiaga.app.presentation.home.HomeBottomBar
-import com.kangurusiaga.app.presentation.home.HomeTab
 import com.kangurusiaga.app.presentation.pmk.components.PmkTimeline24HourBar
 import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsUiState
 import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsViewModel
@@ -155,13 +154,14 @@ fun PmkHistoryScreen(
         groupSessionsByDay(uiState.sessions)
     }
 
-    // Default expanded state: today is always expanded by default
+    // Default expanded state: hari ini selalu terbuka atau hari rekaman terbaru
     val expandedStates = remember(dailyGroups) {
         val map = mutableStateMapOf<String, Boolean>()
-        dailyGroups.forEach { group ->
-            if (group.isToday) {
-                map[group.dateKey] = true
-            }
+        val todayGroup = dailyGroups.firstOrNull { it.isToday }
+        if (todayGroup != null) {
+            map[todayGroup.dateKey] = true
+        } else {
+            dailyGroups.firstOrNull()?.let { map[it.dateKey] = true }
         }
         map
     }
@@ -221,25 +221,13 @@ fun PmkHistoryScreen(
                     }
                 }
             }
-        },
-        bottomBar = {
-            HomeBottomBar(
-                currentTab = HomeTab.PMK,
-                onTabSelected = { tab ->
-                    when (tab) {
-                        HomeTab.BERANDA -> onNavigateToHome()
-                        HomeTab.EDUKASI -> onNavigateToEducation()
-                        HomeTab.PMK -> Unit
-                        else -> Unit
-                    }
-                }
-            )
         }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .navigationBarsPadding(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 6.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -319,27 +307,51 @@ fun PmkHistoryScreen(
                 ) {
                     val stats = uiState.statistics
                     val avgDaily = stats.dailyAverageHours
+                    val avgHours = avgDaily.toInt()
+                    val avgMinutes = ((avgDaily - avgHours) * 60).toInt().coerceAtLeast(0)
                     val totalWeeklyHours = stats.totalDurationMinutes / 60
-                    val displayAvg = if (avgDaily >= 1f) "${avgDaily.toInt()}j" else "18j"
+                    val totalWeeklyMinutes = stats.totalDurationMinutes % 60
 
                     // 1. Rata-rata/Hari
+                    val avgValue = if (stats.totalDurationMinutes > 0) {
+                        "${avgHours}j ${avgMinutes}m"
+                    } else {
+                        "0j 0m"
+                    }
+                    val (avgBadgeText, avgBadgeColor) = when {
+                        avgDaily >= 18f -> ">18j WHO ✓" to colors.success
+                        stats.totalDurationMinutes > 0 -> "<18j WHO" to colors.warning
+                        else -> "Target >18j" to colors.textTertiary
+                    }
+
                     SummaryMiniCard(
                         title = "Rata-rata/Hari",
-                        value = "$displayAvg 45m",
-                        badgeText = ">18j WHO ✓",
-                        badgeColor = colors.success,
+                        value = avgValue,
+                        badgeText = avgBadgeText,
+                        badgeColor = avgBadgeColor,
                         icon = Icons.Default.CheckCircle,
-                        iconTint = colors.success,
-                        iconBg = colors.successContainer,
+                        iconTint = if (avgDaily >= 18f) colors.success else colors.textSecondary,
+                        iconBg = if (avgDaily >= 18f) colors.successContainer else colors.surfaceVariant,
                         modifier = Modifier.weight(1f)
                     )
 
                     // 2. Total Minggu Ini
+                    val weeklyValue = if (stats.totalDurationMinutes > 0) {
+                        if (totalWeeklyHours > 0) "${totalWeeklyHours} Jam" else "${totalWeeklyMinutes} Menit"
+                    } else {
+                        "0 Jam"
+                    }
+                    val weeklyBadge = if (stats.totalSessions > 0) {
+                        "${stats.totalSessions} sesi"
+                    } else {
+                        "Belum ada"
+                    }
+
                     SummaryMiniCard(
                         title = "Total Minggu Ini",
-                        value = "${totalWeeklyHours.coerceAtLeast(131)} Jam",
-                        badgeText = "7 hari berturut",
-                        badgeColor = colors.textSecondary,
+                        value = weeklyValue,
+                        badgeText = weeklyBadge,
+                        badgeColor = if (stats.totalDurationMinutes > 0) colors.primary else colors.textTertiary,
                         icon = Icons.Default.Timer,
                         iconTint = colors.primary,
                         iconBg = colors.primaryContainer,
@@ -347,14 +359,22 @@ fun PmkHistoryScreen(
                     )
 
                     // 3. Kepatuhan
+                    val compliancePct = stats.compliancePercentage
+                    val (compBadge, compColor) = when {
+                        compliancePct >= 90 -> "Sangat Baik ★" to colors.warning
+                        compliancePct >= 75 -> "Cukup Baik" to colors.primary
+                        compliancePct > 0 -> "Tingkatkan" to colors.textSecondary
+                        else -> "Belum Ada" to colors.textTertiary
+                    }
+
                     SummaryMiniCard(
                         title = "Kepatuhan",
-                        value = "${stats.compliancePercentage.coerceAtLeast(94)}%",
-                        badgeText = "Sangat Baik ★",
-                        badgeColor = colors.warning,
+                        value = "$compliancePct%",
+                        badgeText = compBadge,
+                        badgeColor = compColor,
                         icon = Icons.Default.Star,
-                        iconTint = colors.warning,
-                        iconBg = colors.warningContainer,
+                        iconTint = if (compliancePct > 0) colors.warning else colors.textTertiary,
+                        iconBg = if (compliancePct > 0) colors.warningContainer else colors.surfaceVariant,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -568,7 +588,8 @@ private fun DailyRecordCard(
     val (badgeText, badgeBg, badgeColor) = when {
         timeline.totalActiveMinutes >= (18 * 60) -> Triple("Target Terpenuhi ✓", colors.successContainer, colors.onSuccessContainer)
         timeline.totalActiveMinutes >= (14 * 60) -> Triple("Mendekati Ideal ★", colors.warningContainer, colors.onWarningContainer)
-        else -> Triple("Belum Optimal", colors.errorContainer, colors.onErrorContainer)
+        timeline.totalActiveMinutes > 0 -> Triple("Belum Optimal", colors.errorContainer, colors.onErrorContainer)
+        else -> Triple("Belum Ada Catatan", colors.surfaceVariant, colors.textSecondary)
     }
 
     val rotationState by animateFloatAsState(
@@ -746,10 +767,12 @@ private fun DailyRecordCard(
 @Composable
 private fun DistribusiPengasuhBox(timeline: DailyTimeline) {
     val colors = KanguruTheme.colors
-    val totalActive = timeline.totalActiveMinutes.coerceAtLeast(1)
-    val ibuPct = ((timeline.ibuMinutes.toFloat() / totalActive) * 100).toInt()
-    val ayahPct = ((timeline.ayahMinutes.toFloat() / totalActive) * 100).toInt()
-    val pendampingPct = (100 - ibuPct - ayahPct).coerceAtLeast(0)
+    val totalActive = timeline.totalActiveMinutes
+    val ibuPct = if (totalActive > 0) ((timeline.ibuMinutes.toFloat() / totalActive) * 100).toInt() else 0
+    val ayahPct = if (totalActive > 0) ((timeline.ayahMinutes.toFloat() / totalActive) * 100).toInt() else 0
+    val pendampingPct = if (totalActive > 0 && (timeline.pendampingMinutes > 0 || (ibuPct + ayahPct) > 0)) {
+        (100 - ibuPct - ayahPct).coerceAtLeast(0)
+    } else 0
 
     val ibuHours = timeline.ibuMinutes / 60
     val ibuMins = timeline.ibuMinutes % 60
@@ -787,8 +810,9 @@ private fun DistribusiPengasuhBox(timeline: DailyTimeline) {
 
                 val totalHours = timeline.totalActiveMinutes / 60
                 val totalMins = timeline.totalActiveMinutes % 60
+                val pctSuffix = if (totalActive > 0) " (100%)" else " (0%)"
                 Text(
-                    text = "${totalHours}j ${totalMins}m (100%)",
+                    text = "${totalHours}j ${totalMins}m$pctSuffix",
                     style = KanguruTheme.typography.labelSmall,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
@@ -806,29 +830,31 @@ private fun DistribusiPengasuhBox(timeline: DailyTimeline) {
                     .clip(CircleShape)
                     .background(colors.cardBorder)
             ) {
-                if (ibuPct > 0) {
-                    Box(
-                        modifier = Modifier
-                            .weight(ibuPct.toFloat().coerceAtLeast(1f))
-                            .fillMaxSize()
-                            .background(colors.caregiverIbu)
-                    )
-                }
-                if (ayahPct > 0) {
-                    Box(
-                        modifier = Modifier
-                            .weight(ayahPct.toFloat().coerceAtLeast(1f))
-                            .fillMaxSize()
-                            .background(colors.caregiverAyah)
-                    )
-                }
-                if (pendampingPct > 0) {
-                    Box(
-                        modifier = Modifier
-                            .weight(pendampingPct.toFloat().coerceAtLeast(1f))
-                            .fillMaxSize()
-                            .background(colors.caregiverPendamping)
-                    )
+                if (totalActive > 0) {
+                    if (ibuPct > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(ibuPct.toFloat())
+                                .fillMaxSize()
+                                .background(colors.caregiverIbu)
+                        )
+                    }
+                    if (ayahPct > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(ayahPct.toFloat())
+                                .fillMaxSize()
+                                .background(colors.caregiverAyah)
+                        )
+                    }
+                    if (pendampingPct > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(pendampingPct.toFloat())
+                                .fillMaxSize()
+                                .background(colors.caregiverPendamping)
+                        )
+                    }
                 }
             }
 
@@ -910,33 +936,46 @@ private fun RincianSesiSection(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        if (segments.isEmpty()) {
+        // Ambil segmen kontak aktif (dihitung per sesi setiap jenis pendamping saat ganti-gantian)
+        val activeSegments = segments
+            .filter { it.status == PmkSegmentStatus.ACTIVE }
+            .sortedBy { it.startTimeEpoch }
+
+        if (activeSegments.isEmpty()) {
             Text(
-                text = "Tidak ada sesi kontak terpisah.",
+                text = "Belum ada rincian sesi kontak.",
                 style = KanguruTheme.typography.bodySmall,
                 color = colors.textSecondary
             )
         } else {
-            segments.reversed().forEachIndexed { index, segment ->
+            val totalSessions = activeSegments.size
+            activeSegments.reversed().forEachIndexed { reverseIndex, segment ->
+                val sessionNumber = totalSessions - reverseIndex
                 val isOngoing = segment.endTimeEpoch == null && segment.status == PmkSegmentStatus.ACTIVE
-                val isPaused = segment.status == PmkSegmentStatus.PAUSED
 
                 val dotColor = when {
                     isOngoing -> colors.success
-                    isPaused -> colors.warning
                     segment.caregiver == PmkCaregiver.IBU -> colors.caregiverIbu
                     segment.caregiver == PmkCaregiver.AYAH -> colors.caregiverAyah
                     else -> colors.caregiverPendamping
                 }
 
                 val timeSdf = SimpleDateFormat("HH:mm", Locale("id", "ID"))
-                val startStr = timeSdf.format(segment.startTimeEpoch)
-                val endStr = segment.endTimeEpoch?.let { timeSdf.format(it) } ?: "Sekarang"
+                val startStr = timeSdf.format(Date(segment.startTimeEpoch))
+                val endStr = segment.endTimeEpoch?.let { timeSdf.format(Date(it)) } ?: "Sekarang"
 
                 val durationSec = segment.calculateDurationSeconds()
                 val hours = (durationSec / 3600).toInt()
                 val mins = ((durationSec % 3600) / 60).toInt()
                 val durationFormatted = String.format("%02dj %02dm", hours, mins)
+
+                val temp = segment.babyTemperature
+                    ?: sessions.firstOrNull { it.id == segment.sessionId }?.babyTemperature
+                val behaviorText = if (!segment.babyResponse.isNullOrBlank()) {
+                    segment.babyResponse
+                } else {
+                    sessions.firstOrNull { it.id == segment.sessionId }?.babyResponse ?: "Tenang & Hangat"
+                }
 
                 Card(
                     shape = RoundedCornerShape(12.dp),
@@ -961,11 +1000,7 @@ private fun RincianSesiSection(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
 
-                                val title = if (isPaused) {
-                                    "Jeda • ${segment.pauseReason ?: "Perawatan"}"
-                                } else {
-                                    "Sesi ${segments.size - index} • ${segment.caregiver.title}"
-                                }
+                                val title = "Sesi $sessionNumber • ${segment.caregiver.title}"
 
                                 Text(
                                     text = title,
@@ -1015,9 +1050,9 @@ private fun RincianSesiSection(
                             )
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (segment.babyTemperature != null) {
+                                if (temp != null) {
                                     Text(
-                                        text = "🌡️ ${segment.babyTemperature}°C (Stabil)",
+                                        text = "🌡️ ${temp}°C (Stabil)",
                                         style = KanguruTheme.typography.labelSmall,
                                         color = colors.success,
                                         fontWeight = FontWeight.SemiBold
@@ -1028,9 +1063,6 @@ private fun RincianSesiSection(
                                         color = colors.textTertiary
                                     )
                                 }
-                                val behaviorText = if (!segment.babyResponse.isNullOrBlank()) {
-                                    segment.babyResponse
-                                } else "Tenang & Hangat"
                                 Text(
                                     text = behaviorText,
                                     style = KanguruTheme.typography.labelSmall,
@@ -1051,7 +1083,7 @@ private fun RincianSesiSection(
 
 private fun groupSessionsByDay(sessions: List<PmkSession>): List<DailyGroup> {
     if (sessions.isEmpty()) {
-        return getSampleDailyGroups()
+        return emptyList()
     }
 
     val dateKeySdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -1086,8 +1118,27 @@ private fun groupSessionsByDay(sessions: List<PmkSession>): List<DailyGroup> {
 
         val formattedDate = displaySdf.format(Date(dayStart))
 
-        // Collect all segments for this day
-        val allSegments = daySessions.flatMap { it.segments }.sortedBy { it.startTimeEpoch }
+        // Collect all segments for this day, fallback to session-level segment if empty
+        val allSegments = daySessions.flatMap { session ->
+            if (session.segments.isNotEmpty()) {
+                session.segments
+            } else {
+                listOf(
+                    PmkSegment(
+                        id = session.id,
+                        sessionId = session.id,
+                        caregiver = session.currentCaregiver,
+                        startTimeEpoch = session.startTimeEpoch,
+                        endTimeEpoch = if (session.status == TimerStatus.RUNNING) null else session.endTimeEpoch,
+                        durationMinutes = session.activeDurationMinutes,
+                        status = PmkSegmentStatus.ACTIVE,
+                        babyTemperature = session.babyTemperature,
+                        babyResponse = session.babyResponse,
+                        notes = session.notes
+                    )
+                )
+            }
+        }.sortedBy { it.startTimeEpoch }
 
         // Compute 24h timeline
         val timeline = GetDailyPmkTimelineUseCase.computeTimeline(
@@ -1111,243 +1162,3 @@ private fun groupSessionsByDay(sessions: List<PmkSession>): List<DailyGroup> {
     }
 }
 
-private fun getSampleDailyGroups(): List<DailyGroup> {
-    val dateKeySdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    val displaySdf = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("id", "ID"))
-    val cal = Calendar.getInstance()
-
-    val todayKey = dateKeySdf.format(Date())
-    val todayFormatted = displaySdf.format(Date())
-    cal.set(Calendar.HOUR_OF_DAY, 0)
-    cal.set(Calendar.MINUTE, 0)
-    cal.set(Calendar.SECOND, 0)
-    cal.set(Calendar.MILLISECOND, 0)
-    val todayStart = cal.timeInMillis
-    cal.set(Calendar.HOUR_OF_DAY, 23)
-    cal.set(Calendar.MINUTE, 59)
-    cal.set(Calendar.SECOND, 59)
-    val todayEnd = cal.timeInMillis
-
-    cal.add(Calendar.DAY_OF_YEAR, -1)
-    val yesterdayKey = dateKeySdf.format(cal.time)
-    val yesterdayFormatted = displaySdf.format(cal.time)
-    cal.set(Calendar.HOUR_OF_DAY, 0)
-    cal.set(Calendar.MINUTE, 0)
-    val yesterdayStart = cal.timeInMillis
-    cal.set(Calendar.HOUR_OF_DAY, 23)
-    cal.set(Calendar.MINUTE, 59)
-    val yesterdayEnd = cal.timeInMillis
-
-    // 1. Today Group (Kamis, 24 Oktober 2024 in Stitch)
-    val todayBlocks = listOf(
-        TimelineBlock(PmkCaregiver.IBU, false, null, 0.02f, 0.31f, 420, "00:30 - 07:30"),
-        TimelineBlock(PmkCaregiver.IBU, true, "Jeda Ganti Popok & Mandi", 0.31f, 0.36f, 75, "07:30 - 08:45"),
-        TimelineBlock(PmkCaregiver.AYAH, false, null, 0.36f, 0.55f, 270, "08:45 - 13:15"),
-        TimelineBlock(PmkCaregiver.AYAH, true, "Oper & Menyusu", 0.55f, 0.60f, 75, "13:15 - 14:30"),
-        TimelineBlock(PmkCaregiver.IBU, false, null, 0.60f, 0.81f, 295, "14:30 - Sekarang"),
-        TimelineBlock(PmkCaregiver.PENDAMPING, false, null, 0.875f, 0.98f, 150, "21:00 - 23:30")
-    )
-    val todayTimeline = DailyTimeline(
-        dayEpoch = todayStart,
-        dayDateFormatted = todayFormatted,
-        blocks = todayBlocks,
-        totalActiveMinutes = 1165, // 19j 25m
-        totalPauseMinutes = 150,  // 2j 30m
-        ibuMinutes = 715,         // 11j 55m
-        ayahMinutes = 270,        // 4j 30m
-        pendampingMinutes = 180   // 3j 00m
-    )
-    val todaySegments = listOf(
-        PmkSegment(
-            id = 1,
-            sessionId = 1,
-            caregiver = PmkCaregiver.IBU,
-            startTimeEpoch = todayStart + 30 * 60 * 1000L,
-            endTimeEpoch = todayStart + (7 * 60 + 30) * 60 * 1000L,
-            durationMinutes = 420,
-            status = PmkSegmentStatus.ACTIVE,
-            babyTemperature = 36.9,
-            babyResponse = "Menyusu Nyaman",
-            notes = "Sesi 1 • Ibu (Pagi)"
-        ),
-        PmkSegment(
-            id = 2,
-            sessionId = 2,
-            caregiver = PmkCaregiver.AYAH,
-            startTimeEpoch = todayStart + (8 * 60 + 45) * 60 * 1000L,
-            endTimeEpoch = todayStart + (13 * 60 + 15) * 60 * 1000L,
-            durationMinutes = 270,
-            status = PmkSegmentStatus.ACTIVE,
-            babyTemperature = 36.7,
-            babyResponse = "Tidur Lelap",
-            notes = "Sesi 2 • Ayah (Siang)"
-        ),
-        PmkSegment(
-            id = 3,
-            sessionId = 3,
-            caregiver = PmkCaregiver.IBU,
-            startTimeEpoch = todayStart + (14 * 60 + 30) * 60 * 1000L,
-            endTimeEpoch = null,
-            durationMinutes = 295,
-            status = PmkSegmentStatus.ACTIVE,
-            babyTemperature = 36.8,
-            babyResponse = "Tenang & Hangat",
-            notes = "Sesi 3 • Ibu (Sore - Malam)"
-        ),
-        PmkSegment(
-            id = 4,
-            sessionId = 4,
-            caregiver = PmkCaregiver.PENDAMPING,
-            startTimeEpoch = todayStart + 21 * 60 * 60 * 1000L,
-            endTimeEpoch = todayStart + (23 * 60 + 30) * 60 * 1000L,
-            durationMinutes = 150,
-            status = PmkSegmentStatus.ACTIVE,
-            babyTemperature = 36.8,
-            babyResponse = "Dekapan Nyaman",
-            notes = "Sesi Tambahan • Pendamping"
-        )
-    )
-    val todaySessions = listOf(
-        PmkSession(
-            id = 3,
-            babyId = 1,
-            startTimeEpoch = todayStart + (14 * 60 + 30) * 60 * 1000L,
-            endTimeEpoch = todayStart + (19 * 60 + 25) * 60 * 1000L,
-            durationMinutes = 295,
-            currentCaregiver = PmkCaregiver.IBU,
-            status = TimerStatus.RUNNING,
-            babyTemperature = 36.8,
-            babyResponse = "Tenang & Hangat",
-            notes = "Sesi 3 • Ibu (Sore - Malam)",
-            segments = listOf(todaySegments[2])
-        ),
-        PmkSession(
-            id = 2,
-            babyId = 1,
-            startTimeEpoch = todayStart + (8 * 60 + 45) * 60 * 1000L,
-            endTimeEpoch = todayStart + (13 * 60 + 15) * 60 * 1000L,
-            durationMinutes = 270,
-            currentCaregiver = PmkCaregiver.AYAH,
-            status = TimerStatus.COMPLETED,
-            babyTemperature = 36.7,
-            babyResponse = "Tidur Lelap",
-            notes = "Sesi 2 • Ayah (Siang)",
-            segments = listOf(todaySegments[1])
-        ),
-        PmkSession(
-            id = 1,
-            babyId = 1,
-            startTimeEpoch = todayStart + 30 * 60 * 1000L,
-            endTimeEpoch = todayStart + (7 * 60 + 30) * 60 * 1000L,
-            durationMinutes = 420,
-            currentCaregiver = PmkCaregiver.IBU,
-            status = TimerStatus.COMPLETED,
-            babyTemperature = 36.9,
-            babyResponse = "Menyusu Nyaman",
-            notes = "Sesi 1 • Ibu (Pagi)",
-            segments = listOf(todaySegments[0])
-        ),
-        PmkSession(
-            id = 4,
-            babyId = 1,
-            startTimeEpoch = todayStart + 21 * 60 * 60 * 1000L,
-            endTimeEpoch = todayStart + (23 * 60 + 30) * 60 * 1000L,
-            durationMinutes = 150,
-            currentCaregiver = PmkCaregiver.PENDAMPING,
-            status = TimerStatus.COMPLETED,
-            babyTemperature = 36.8,
-            babyResponse = "Dekapan Nyaman",
-            notes = "Sesi Tambahan • Pendamping",
-            segments = listOf(todaySegments[3])
-        )
-    )
-
-    // 2. Yesterday Group (Rabu, 23 Oktober 2024 in Stitch)
-    val yestBlocks = listOf(
-        TimelineBlock(PmkCaregiver.IBU, false, null, 0.0f, 0.28f, 405, "00:00 - 06:45"),
-        TimelineBlock(PmkCaregiver.IBU, true, "Jeda 45m", 0.28f, 0.31f, 45, "06:45 - 07:30"),
-        TimelineBlock(PmkCaregiver.AYAH, false, null, 0.31f, 0.48f, 240, "07:30 - 11:30"),
-        TimelineBlock(PmkCaregiver.AYAH, true, "Jeda 30m", 0.48f, 0.50f, 30, "11:30 - 12:00"),
-        TimelineBlock(PmkCaregiver.IBU, false, null, 0.50f, 0.65f, 210, "12:00 - 15:30"),
-        TimelineBlock(PmkCaregiver.IBU, true, "Jeda 35m", 0.65f, 0.67f, 35, "15:30 - 16:05"),
-        TimelineBlock(PmkCaregiver.AYAH, false, null, 0.67f, 0.83f, 225, "16:05 - 19:50"),
-        TimelineBlock(PmkCaregiver.PENDAMPING, false, null, 0.84f, 0.99f, 215, "20:10 - 23:45")
-    )
-    val yestTimeline = DailyTimeline(
-        dayEpoch = yesterdayStart,
-        dayDateFormatted = yesterdayFormatted,
-        blocks = yestBlocks,
-        totalActiveMinutes = 1210, // 20j 10m
-        totalPauseMinutes = 130,
-        ibuMinutes = 615,
-        ayahMinutes = 465,
-        pendampingMinutes = 215
-    )
-    val yestSegments = listOf(
-        PmkSegment(
-            id = 5, sessionId = 5, caregiver = PmkCaregiver.IBU,
-            startTimeEpoch = yesterdayStart, endTimeEpoch = yesterdayStart + (6 * 60 + 45) * 60 * 1000L,
-            durationMinutes = 405, status = PmkSegmentStatus.ACTIVE, babyTemperature = 36.8, babyResponse = "Tenang & Hangat", notes = "Sesi 1 • Ibu"
-        ),
-        PmkSegment(
-            id = 6, sessionId = 6, caregiver = PmkCaregiver.AYAH,
-            startTimeEpoch = yesterdayStart + (7 * 60 + 30) * 60 * 1000L, endTimeEpoch = yesterdayStart + (11 * 60 + 30) * 60 * 1000L,
-            durationMinutes = 240, status = PmkSegmentStatus.ACTIVE, babyTemperature = 36.7, babyResponse = "Tidur Nyenyak", notes = "Sesi 2 • Ayah"
-        ),
-        PmkSegment(
-            id = 7, sessionId = 7, caregiver = PmkCaregiver.IBU,
-            startTimeEpoch = yesterdayStart + 12 * 60 * 60 * 1000L, endTimeEpoch = yesterdayStart + (15 * 60 + 30) * 60 * 1000L,
-            durationMinutes = 210, status = PmkSegmentStatus.ACTIVE, babyTemperature = 36.9, babyResponse = "Menyusu Aktif", notes = "Sesi 3 • Ibu"
-        ),
-        PmkSegment(
-            id = 8, sessionId = 8, caregiver = PmkCaregiver.AYAH,
-            startTimeEpoch = yesterdayStart + (16 * 60 + 5) * 60 * 1000L, endTimeEpoch = yesterdayStart + (19 * 60 + 50) * 60 * 1000L,
-            durationMinutes = 225, status = PmkSegmentStatus.ACTIVE, babyTemperature = 36.8, babyResponse = "Dekapan Nyaman", notes = "Sesi 4 • Ayah"
-        ),
-        PmkSegment(
-            id = 9, sessionId = 9, caregiver = PmkCaregiver.PENDAMPING,
-            startTimeEpoch = yesterdayStart + (20 * 60 + 10) * 60 * 1000L, endTimeEpoch = yesterdayStart + (23 * 60 + 45) * 60 * 1000L,
-            durationMinutes = 215, status = PmkSegmentStatus.ACTIVE, babyTemperature = 36.7, babyResponse = "Tidur Pulas", notes = "Sesi 5 • Pendamping"
-        )
-    )
-    val yestSessions = yestSegments.map { seg ->
-        PmkSession(
-            id = seg.id,
-            babyId = 1,
-            startTimeEpoch = seg.startTimeEpoch,
-            endTimeEpoch = seg.endTimeEpoch ?: System.currentTimeMillis(),
-            durationMinutes = seg.durationMinutes,
-            currentCaregiver = seg.caregiver,
-            status = TimerStatus.COMPLETED,
-            babyTemperature = seg.babyTemperature,
-            babyResponse = seg.babyResponse,
-            notes = seg.notes,
-            segments = listOf(seg)
-        )
-    }
-
-    return listOf(
-        DailyGroup(
-            dateKey = todayKey,
-            dateFormatted = todayFormatted,
-            isToday = true,
-            isYesterday = false,
-            dayStartEpoch = todayStart,
-            dayEndEpoch = todayEnd,
-            timeline = todayTimeline,
-            segments = todaySegments,
-            sessions = todaySessions
-        ),
-        DailyGroup(
-            dateKey = yesterdayKey,
-            dateFormatted = yesterdayFormatted,
-            isToday = false,
-            isYesterday = true,
-            dayStartEpoch = yesterdayStart,
-            dayEndEpoch = yesterdayEnd,
-            timeline = yestTimeline,
-            segments = yestSegments,
-            sessions = yestSessions
-        )
-    )
-}

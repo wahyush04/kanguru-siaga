@@ -34,7 +34,8 @@ class PmkReminderScheduler @Inject constructor(
             label = reminder.label,
             targetMinutes = reminder.targetMinutes,
             hour = reminder.timeHour,
-            minute = reminder.timeMinute
+            minute = reminder.timeMinute,
+            repeatDaily = reminder.repeatDaily
         )
 
         scheduleAlarm(triggerTime, pendingIntent)
@@ -45,10 +46,11 @@ class PmkReminderScheduler @Inject constructor(
         label: String,
         targetMinutes: Int,
         hour: Int,
-        minute: Int
+        minute: Int,
+        repeatDaily: Boolean = true
     ) {
         val nextTriggerTime = computeNextTriggerTime(hour, minute, allowToday = false)
-        val pendingIntent = createPendingIntent(reminderId, label, targetMinutes, hour, minute)
+        val pendingIntent = createPendingIntent(reminderId, label, targetMinutes, hour, minute, repeatDaily)
         scheduleAlarm(nextTriggerTime, pendingIntent)
     }
 
@@ -128,7 +130,8 @@ class PmkReminderScheduler @Inject constructor(
         label: String,
         targetMinutes: Int,
         hour: Int,
-        minute: Int
+        minute: Int,
+        repeatDaily: Boolean = true
     ): PendingIntent {
         val intent = Intent(context, PmkAlarmReceiver::class.java).apply {
             putExtra(PmkAlarmReceiver.EXTRA_REMINDER_ID, reminderId)
@@ -136,6 +139,7 @@ class PmkReminderScheduler @Inject constructor(
             putExtra(PmkAlarmReceiver.EXTRA_TARGET_MINUTES, targetMinutes)
             putExtra(PmkAlarmReceiver.EXTRA_HOUR, hour)
             putExtra(PmkAlarmReceiver.EXTRA_MINUTE, minute)
+            putExtra(PmkAlarmReceiver.EXTRA_REPEAT_DAILY, repeatDaily)
         }
 
         return PendingIntent.getBroadcast(

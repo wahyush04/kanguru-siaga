@@ -39,6 +39,9 @@ interface PmkReminderDao {
     @Query("DELETE FROM pmk_reminders WHERE id = :reminderId")
     suspend fun deleteReminderById(reminderId: Long)
 
+    @Query("DELETE FROM pmk_reminders WHERE time_hour = :hour AND time_minute = :minute")
+    suspend fun deleteRemindersByTime(hour: Int, minute: Int)
+
     @Query("SELECT COUNT(*) FROM pmk_reminders WHERE baby_id = :babyId")
     suspend fun getReminderCount(babyId: Long): Int
 }

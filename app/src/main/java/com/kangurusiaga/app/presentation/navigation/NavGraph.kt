@@ -28,6 +28,8 @@ import com.kangurusiaga.app.presentation.onboarding.SplashRoute
 import com.kangurusiaga.app.presentation.pmk.center.PmkCenterScreen
 import com.kangurusiaga.app.presentation.pmk.history.PmkHistoryRoute
 import com.kangurusiaga.app.presentation.pmk.manual.PmkManualLogRoute
+import com.kangurusiaga.app.presentation.pmk.reminders.PmkReminderAddRoute
+import com.kangurusiaga.app.presentation.pmk.reminders.PmkReminderEditRoute
 import com.kangurusiaga.app.presentation.pmk.reminders.PmkRemindersRoute
 import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsRoute
 import com.kangurusiaga.app.presentation.pmk.timer.PmkTimerRoute
@@ -336,9 +338,41 @@ fun KanguruNavGraph(
             )
         }
 
-        // PMK Reminders
+        // PMK Reminders (Stitch: Kanguru Siaga - Pengingat PMK)
         composable(route = Screen.PmkReminders.route) {
             PmkRemindersRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToAddSchedule = {
+                    navController.navigate(Screen.PmkReminderAdd.route)
+                },
+                onNavigateToEditSchedule = { reminderId ->
+                    navController.navigate(Screen.PmkReminderEdit.createRoute(reminderId))
+                }
+            )
+        }
+
+        // PMK Reminder Add (Stitch: Kanguru Siaga - Tambah Jadwal Pengingat PMK)
+        composable(route = Screen.PmkReminderAdd.route) {
+            PmkReminderAddRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // PMK Reminder Edit (Stitch: Kanguru Siaga - Edit Jadwal Pengingat PMK)
+        composable(
+            route = Screen.PmkReminderEdit.route,
+            arguments = listOf(
+                navArgument("reminderId") {
+                    type = NavType.LongType
+                    defaultValue = 0L
+                }
+            )
+        ) {
+            PmkReminderEditRoute(
                 onNavigateBack = {
                     navController.popBackStack()
                 }

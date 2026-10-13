@@ -380,20 +380,68 @@
     <string name="pmk_manual_placeholder_notes">Catatan khusus selama sesi PMK&#8230;</string>
     <string name="pmk_manual_btn_save">Simpan Sesi PMK</string>
 
-    <!-- PMK Reminders -->
+    <!-- PMK Reminders (Stitch: Kanguru Siaga - Pengingat PMK) -->
     <string name="pmk_reminders_title">Pengingat PMK</string>
-    <string name="pmk_reminders_cd_info">Info</string>
-    <string name="pmk_reminders_subtitle">Atur jadwal dan pengingat kontak kulit ke kulit (KMC) rutin untuk kenyamanan dan tumbuh kembang si kecil.</string>
-    <string name="pmk_reminders_alert">Disarankan melakukan PMK minimal 60 menit/sesi, 2-3 kali sehari secara teratur untuk stabilitas suhu dan kenaikan berat badan BBLR.</string>
-    <string name="pmk_reminders_target_header">TARGET PMK HARI INI</string>
-    <string name="pmk_reminders_completed_count">%1$d dari %2$d Selesai</string>
-    <string name="pmk_reminders_target_minutes">/ %1$d Menit</string>
-    <string name="pmk_reminders_percent_fulfilled">%1$d%% Terpenuhi</string>
+    <string name="pmk_reminders_cd_info">Informasi</string>
+    <string name="pmk_reminders_subtitle">Atur jadwal dan pengingat estafet kontak kulit ke kulit (KMC) kontinu tanpa putus untuk kenyamanan dan kestabilan bayi BBLR.</string>
+    <string name="pmk_reminders_guideline_header">Standar PMK Kontinu Mandiri:</string>
+    <string name="pmk_reminders_guideline_desc">Target minimal ≥ 8 Jam/hari, dengan rekomendasi ideal ≥ 20 Jam/hari (estafet bersama Ayah &amp; Pendamping) untuk hasil optimal.</string>
+    <string name="pmk_reminders_target_title">Target PMK Kontinu</string>
+    <string name="pmk_reminders_target_subtitle">Estafet 24 Jam Mandiri</string>
+    <string name="pmk_reminders_status_optimal">PMK Optimal (≥ 20 Jam)</string>
+    <string name="pmk_reminders_status_good">PMK Baik (12 - &lt;20 Jam)</string>
+    <string name="pmk_reminders_status_sufficient">PMK Cukup (8 - &lt;12 Jam)</string>
+    <string name="pmk_reminders_status_need_improvement">Perlu Peningkatan (&lt; 8 Jam)</string>
+    <string name="pmk_reminders_current_vs_ideal">%1$dj %2$dm / 20j Ideal</string>
+    <string name="pmk_reminders_percent_to_ideal">%1$d%% Menuju Ideal</string>
+    <string name="pmk_reminders_min_surpassed">Minimal 8 Jam Terlampaui ✓</string>
+    <string name="pmk_reminders_min_pending">Target Minimal 8 Jam</string>
+    <string name="pmk_reminders_threshold_zero">0 Jam</string>
+    <string name="pmk_reminders_threshold_min">Batas Min: 8 Jam</string>
+    <string name="pmk_reminders_threshold_ideal">Ideal: 20 Jam</string>
+    <string name="pmk_reminders_threshold_max">24 Jam</string>
     <string name="pmk_reminders_list_title">Daftar Waktu Pengingat</string>
-    <string name="pmk_reminders_list_total">Total: %1$d Jadwal</string>
-    <string name="pmk_reminders_btn_add">Tambah Jadwal Pengingat</string>
-    <string name="pmk_reminders_info_dialog_title">Petunjuk Pengingat PMK</string>
-    <string name="pmk_reminders_info_dialog_msg">Metode Kanguru terbukti efektif jika dilakukan konsisten setiap hari dengan kontak kulit langsung antara bayi dan dada orang tua selama minimal 60 menit per sesi. Pengingat ini membantu Anda menjaga rutinitas tanpa terlewat.</string>
+    <string name="pmk_reminders_list_total">Total: %1$d Jadwal Estafet</string>
+    <string name="pmk_reminders_item_target_hours">Target %1$d Jam • Setiap Hari</string>
+    <string name="pmk_reminders_item_target_hours_once">Target %1$d Jam • Hanya Sekali</string>
+    <string name="pmk_reminders_btn_add">+ Tambah Jadwal Pengingat</string>
+    <string name="pmk_reminders_info_dialog_title">Pedoman Medis PMK Kontinu</string>
+    <string name="pmk_reminders_info_dialog_msg">Metode Kanguru terbukti efektif jika dilakukan secara kontinu (tanpa putus) minimal 8 jam/hari hingga 20 jam/hari secara estafet bersama Ayah dan Pendamping. Durasi kontak kulit minimal 2 jam per sesi untuk mencegah fluktuasi suhu dan kelelahan bayi.</string>
+
+    <!-- PMK Reminder Add & Edit (Stitch: Tambah & Edit Jadwal Pengingat PMK) -->
+    <string name="pmk_reminder_add_title">Tambah Jadwal Pengingat</string>
+    <string name="pmk_reminder_edit_title">Edit Pengingat PMK</string>
+    <string name="pmk_reminder_banner_title">PMK Kontinu Mandiri di Rumah</string>
+    <string name="pmk_reminder_banner_desc">Dianjurkan kontak kulit dilakukan tanpa putus secara estafet (Ibu, Ayah &amp; Pendamping) dengan target kumulatif harian minimal ≥8 jam dan ideal ≥20 jam/hari (Standar Kemenkes/WHO/IDAI).</string>
+    <string name="pmk_reminder_field_start_time">Waktu Mulai Estafet / Sesi</string>
+    <string name="pmk_reminder_field_target_duration">Target Durasi Sesi</string>
+    <string name="pmk_reminder_badge_min_session">Minimal per sesi 2 jam</string>
+    <string name="pmk_reminder_unit_hours">Jam</string>
+    <string name="pmk_reminder_field_category">Kategori Sesi / Giliran Estafet</string>
+    <string name="pmk_reminder_category_hint">Kontinu tanpa putus</string>
+    <string name="pmk_reminder_cat_pagi">Pagi</string>
+    <string name="pmk_reminder_cat_siang">Siang</string>
+    <string name="pmk_reminder_cat_sore">Sore</string>
+    <string name="pmk_reminder_cat_malam">Malam</string>
+    <string name="pmk_reminder_cat_dini_hari">Dini Hari / Tidur (Estafet Pendamping)</string>
+    <string name="pmk_reminder_field_notes">Catatan / Rencana Pendamping (Opsional)</string>
+    <string name="pmk_reminder_notes_placeholder">Contoh: Estafet Sesi Pagi bersama Ibu</string>
+    <string name="pmk_reminder_toggle_title">Aktifkan Pengingat Estafet</string>
+    <string name="pmk_reminder_toggle_desc">Nyalakan alarm notifikasi pergantian di ponsel</string>
+    <string name="pmk_reminder_field_repeat">Ulangi Jadwal</string>
+    <string name="pmk_reminder_repeat_daily">Setiap Hari</string>
+    <string name="pmk_reminder_repeat_once">Hanya sekali</string>
+    <string name="pmk_reminder_btn_delete">Hapus Jadwal Ini</string>
+    <string name="pmk_reminder_btn_cancel">Batal</string>
+    <string name="pmk_reminder_btn_save_changes">Simpan Perubahan</string>
+    <string name="pmk_reminder_btn_save_new">Simpan Jadwal Estafet</string>
+    <string name="pmk_reminder_dialog_delete_title">Hapus Jadwal Estafet?</string>
+    <string name="pmk_reminder_dialog_delete_msg">Jadwal pengingat jam %1$s (%2$s) akan dihapus secara permanen dari daftar pengingat PMK Anda.</string>
+    <string name="pmk_reminder_dialog_delete_confirm">Ya, Hapus</string>
+    <string name="pmk_reminder_toast_saved">Perubahan jadwal berhasil disimpan!</string>
+    <string name="pmk_reminder_toast_added">Jadwal pengingat berhasil ditambahkan!</string>
+    <string name="pmk_reminder_toast_deleted">Jadwal pengingat berhasil dihapus!</string>
+
 
     <!-- PMK Statistics -->
     <string name="pmk_stats_title">Detail Statistik PMK</string>
@@ -539,4 +587,13 @@
     <string name="edit_baby_bblr_warning">Kategori BBLR (&lt; 2.500 gram) — Bayi memerlukan kontak kulit ke kulit (Metode Kanguru) rutin dan monitoring kenaikan berat badan intensif.</string>
     <string name="edit_baby_btn_cancel">Batal</string>
     <string name="edit_baby_btn_save">Simpan Perubahan</string>
+
+    <!-- Notification Permission Dialog After Onboarding -->
+    <string name="notification_permission_dialog_title">Aktifkan Notifikasi Pengingat</string>
+    <string name="notification_permission_dialog_subtitle">Data si kecil berhasil disimpan! Aktifkan notifikasi agar Anda tidak melewatkan jadwal penting perawatan si kecil:</string>
+    <string name="notification_permission_dialog_benefit_feeding">Pengingat &amp; alarm pemberian ASI/nutrisi setiap 2–3 jam</string>
+    <string name="notification_permission_dialog_benefit_pmk">Pengingat sesi kontak kulit PMK (Kangaroo Care) dan cek suhu</string>
+    <string name="notification_permission_dialog_benefit_health">Peringatan jadwal timbang mingguan &amp; tanda kegawatan BBLR</string>
+    <string name="notification_permission_dialog_btn_allow">Aktifkan Notifikasi</string>
+    <string name="notification_permission_dialog_btn_later">Nanti Saja</string>
 </resources>

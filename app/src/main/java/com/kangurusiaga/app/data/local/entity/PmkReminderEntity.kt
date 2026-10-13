@@ -15,13 +15,19 @@ data class PmkReminderEntity(
     @ColumnInfo(name = "time_minute")
     val timeMinute: Int, // 0 - 59
     @ColumnInfo(name = "label")
-    val label: String, // "Pagi", "Siang", "Malam"
+    val label: String, // "Estafet Sesi Pagi", etc.
     @ColumnInfo(name = "target_minutes")
-    val targetMinutes: Int = 60,
+    val targetMinutes: Int = 120,
     @ColumnInfo(name = "days_of_week_mask")
     val daysOfWeekMask: Int = 127, // Bitmask for Mon-Sun (1111111 = all days)
     @ColumnInfo(name = "is_enabled")
     val isEnabled: Boolean = true,
+    @ColumnInfo(name = "category")
+    val category: String = "Pagi",
+    @ColumnInfo(name = "notes")
+    val notes: String = "",
+    @ColumnInfo(name = "repeat_daily")
+    val repeatDaily: Boolean = true,
     @ColumnInfo(name = "created_at_epoch")
     val createdAtEpoch: Long = System.currentTimeMillis()
 )

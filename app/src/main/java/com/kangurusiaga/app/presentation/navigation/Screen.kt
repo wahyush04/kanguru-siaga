@@ -18,6 +18,10 @@ sealed class Screen(override val route: String, override val destination: String
     data object PmkStatisticsDetail : Screen(route = "pmk_statistics_detail", destination = "pmk_statistics_detail_destination")
     data object PmkStatistics : Screen(route = "pmk_statistics", destination = "pmk_statistics_destination") // legacy alias pointing to history/statistics
     data object PmkReminders : Screen(route = "pmk_reminders", destination = "pmk_reminders_destination")
+    data object PmkReminderAdd : Screen(route = "pmk_reminder_add", destination = "pmk_reminder_add_destination")
+    data object PmkReminderEdit : Screen(route = "pmk_reminder_edit/{reminderId}", destination = "pmk_reminder_edit_destination") {
+        fun createRoute(reminderId: Long): String = "pmk_reminder_edit/$reminderId"
+    }
     data object PmkGuide : Screen(route = "pmk_guide", destination = "pmk_guide_destination")
     data object PmkVideoList : Screen(route = "pmk_video_list", destination = "pmk_video_list_destination")
     data object PmkVideoDetail : Screen(route = "pmk_video_detail/{videoId}", destination = "pmk_video_detail_destination") {

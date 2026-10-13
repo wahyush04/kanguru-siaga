@@ -170,7 +170,7 @@ class BabyProfileSetupViewModelTest {
         viewModel.updateGender(Gender.FEMALE)
         viewModel.updateBirthWeight("2150")
 
-        coEvery { saveBabyProfileUseCase(any()) } returns Result.success(1L)
+        coEvery { saveBabyProfileUseCase(any(), any()) } returns Result.success(1L)
 
         viewModel.saveProfile()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -186,7 +186,7 @@ class BabyProfileSetupViewModelTest {
         viewModel.updateGender(Gender.FEMALE)
         viewModel.updateBirthWeight("2150")
 
-        coEvery { saveBabyProfileUseCase(any()) } returns Result.failure(RuntimeException("Gagal menyimpan ke basis data"))
+        coEvery { saveBabyProfileUseCase(any(), any()) } returns Result.failure(RuntimeException("Gagal menyimpan ke basis data"))
 
         viewModel.saveProfile()
         testDispatcher.scheduler.advanceUntilIdle()

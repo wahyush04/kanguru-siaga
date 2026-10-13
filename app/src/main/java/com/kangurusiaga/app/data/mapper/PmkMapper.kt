@@ -119,6 +119,9 @@ fun PmkReminderEntity.toDomain(): PmkReminder {
         targetMinutes = targetMinutes,
         daysOfWeekMask = daysOfWeekMask,
         isEnabled = isEnabled,
+        category = category,
+        notes = notes,
+        repeatDaily = repeatDaily,
         createdAtEpoch = createdAtEpoch
     )
 }
@@ -133,6 +136,9 @@ fun PmkReminder.toEntity(): PmkReminderEntity {
         targetMinutes = targetMinutes,
         daysOfWeekMask = daysOfWeekMask,
         isEnabled = isEnabled,
+        category = category,
+        notes = notes,
+        repeatDaily = repeatDaily,
         createdAtEpoch = createdAtEpoch
     )
 }

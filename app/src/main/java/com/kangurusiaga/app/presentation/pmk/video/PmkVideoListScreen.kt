@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -52,8 +53,6 @@ import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
-import com.kangurusiaga.app.presentation.home.HomeBottomBar
-import com.kangurusiaga.app.presentation.home.HomeTab
 
 /**
  * Screen: Kanguru Siaga - Video Edukasi PMK
@@ -115,26 +114,13 @@ fun PmkVideoListScreen(
                     )
                 }
             }
-        },
-        bottomBar = {
-            HomeBottomBar(
-                currentTab = HomeTab.PMK,
-                onTabSelected = { tab ->
-                    when (tab) {
-                        HomeTab.BERANDA -> onNavigateToHome()
-                        HomeTab.PMK -> onNavigateToPmk()
-                        HomeTab.EDUKASI -> onNavigateToEducation()
-                        HomeTab.ALARM -> onNavigateToAlarm()
-                        HomeTab.PROFIL -> onNavigateToProfile()
-                    }
-                }
-            )
         }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .navigationBarsPadding(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
