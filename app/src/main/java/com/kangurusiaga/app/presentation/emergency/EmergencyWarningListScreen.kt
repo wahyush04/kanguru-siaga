@@ -231,8 +231,8 @@ fun EmergencyWarningListScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, if (isDark) KanguruTheme.colors.errorBorder else Color(0xFFFFDDE4), RoundedCornerShape(18.dp)),
-                        colors = CardDefaults.cardColors(containerColor = if (isDark) KanguruTheme.colors.errorContainer else Color(0xFFFFF0F3)),
+                            .border(1.dp, KanguruTheme.colors.emergencyBannerBorder, RoundedCornerShape(18.dp)),
+                        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.emergencyBannerBackground),
                         shape = RoundedCornerShape(18.dp)
                     ) {
                         Row(
@@ -247,13 +247,13 @@ fun EmergencyWarningListScreen(
                                     text = stringResource(R.string.emergency_hotline_card_title),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isDark) KanguruTheme.colors.error else Color(0xFFE11D48)
+                                    color = KanguruTheme.colors.emergencyBannerTitle
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = stringResource(R.string.emergency_hotline_card_desc),
                                     style = KanguruTheme.typography.labelSmall,
-                                    color = if (isDark) TextSecondary else Color(0xFF9F1239)
+                                    color = KanguruTheme.colors.emergencyBannerSubtitle
                                 )
                             }
 
@@ -262,7 +262,7 @@ fun EmergencyWarningListScreen(
                                     val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:119"))
                                     context.startActivity(dialIntent)
                                 },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE11D48)),
+                                colors = ButtonDefaults.buttonColors(containerColor = KanguruTheme.colors.emergencyAction),
                                 shape = RoundedCornerShape(12.dp),
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
                             ) {
@@ -296,16 +296,15 @@ private fun EmergencyModuleCardItem(
     modifier: Modifier = Modifier
 ) {
     val isOrangeTheme = module.themeColor == "orange"
-    val isDark = KanguruTheme.colors.isDark
     val iconBadgeBg = if (isOrangeTheme) {
-        if (isDark) KanguruTheme.colors.warning.copy(alpha = 0.16f) else Color(0xFFFFF7ED)
+        KanguruTheme.colors.categoryOrangeContainer
     } else {
-        if (isDark) KanguruTheme.colors.error.copy(alpha = 0.16f) else Color(0xFFFFF1F2)
+        KanguruTheme.colors.categoryRoseContainer
     }
     val iconTint = if (isOrangeTheme) {
-        if (isDark) Color(0xFFFB923C) else Color(0xFFF97316)
+        KanguruTheme.colors.categoryOrange
     } else {
-        if (isDark) Color(0xFFFB7185) else Color(0xFFF43F5E)
+        KanguruTheme.colors.categoryRose
     }
     val iconVector = resolveIconVector(module.iconType)
 

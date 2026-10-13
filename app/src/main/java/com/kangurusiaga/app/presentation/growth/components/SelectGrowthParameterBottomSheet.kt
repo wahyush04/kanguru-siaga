@@ -148,8 +148,8 @@ fun SelectGrowthParameterBottomSheet(
                 }
                 val iconTint = when (param) {
                     GrowthParameter.WEIGHT -> BrandPink
-                    GrowthParameter.LENGTH -> Color(0xFF10B981)
-                    GrowthParameter.HEAD_CIRCUMFERENCE -> Color(0xFF3B82F6)
+                    GrowthParameter.LENGTH -> KanguruTheme.colors.growthLength
+                    GrowthParameter.HEAD_CIRCUMFERENCE -> KanguruTheme.colors.growthHead
                 }
                 val iconVector = when (param) {
                     GrowthParameter.WEIGHT -> GrowthIcons.Weight

@@ -150,7 +150,7 @@ fun EmergencyWarningDetailScreen(
                             val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:119"))
                             context.startActivity(dialIntent)
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE11D48)),
+                        colors = ButtonDefaults.buttonColors(containerColor = KanguruTheme.colors.emergencyAction),
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier
                             .fillMaxWidth()

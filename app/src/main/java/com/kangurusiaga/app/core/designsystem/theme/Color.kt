@@ -30,6 +30,11 @@ val FentonP50 = Color(0xFF34D399)
 val FentonP10 = Color(0xFFFCD34D)
 val FentonP3 = Color(0xFFFDA4AF)
 
+// Theme Swatch Previews (used in settings/theme picker)
+val WarmLightSwatches = listOf(Color(0xFFFFF9F6), Color(0xFFFF5C77), Color(0xFFF59E0B))
+val DimNursingSwatches = listOf(Color(0xFF141312), Color(0xFFFF5C77), Color(0xFFA8A399))
+val SystemThemeSwatches = listOf(Color(0xFFFAF7F2), Color(0xFFFF8598), Color(0xFF141312))
+
 // ============================================================================
 // THEME-REACTIVE DYNAMIC COLOR TOKENS
 // These properties resolve to KanguruTheme.colors based on the active theme
@@ -191,5 +196,150 @@ val TimelineTrackColor: Color
     @Composable
     @ReadOnlyComposable
     get() = KanguruTheme.colors.timelineTrack
+
+val CategoryPurple: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryPurple
+
+val CategoryPurpleContainer: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryPurpleContainer
+
+val CategoryPurpleBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryPurpleBorder
+
+val CategoryPurpleText: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryPurpleText
+
+val CategoryTeal: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryTeal
+
+val CategoryTealContainer: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryTealContainer
+
+val CategoryTealBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryTealBorder
+
+val CategoryTealText: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryTealText
+
+val CategoryOrange: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryOrange
+
+val CategoryOrangeContainer: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryOrangeContainer
+
+val CategoryOrangeBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryOrangeBorder
+
+val CategoryOrangeText: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryOrangeText
+
+val CategoryRose: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryRose
+
+val CategoryRoseContainer: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryRoseContainer
+
+val CategoryRoseBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryRoseBorder
+
+val CategoryRoseText: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.categoryRoseText
+
+val EmergencyBannerBackground: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.emergencyBannerBackground
+
+val EmergencyBannerBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.emergencyBannerBorder
+
+val EmergencyBannerTitle: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.emergencyBannerTitle
+
+val EmergencyBannerSubtitle: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.emergencyBannerSubtitle
+
+val EmergencyAction: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.emergencyAction
+
+val DisclaimerBackground: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.disclaimerBackground
+
+val DisclaimerBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.disclaimerBorder
+
+val DisclaimerTitle: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.disclaimerTitle
+
+val DisclaimerText: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.disclaimerText
+
+val GrowthLength: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthLength
+
+val GrowthLengthBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthLengthBorder
+
+val GrowthHead: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthHead
+
+val GrowthHeadBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthHeadBorder
 
 

@@ -140,15 +140,15 @@ fun MedicalDisclaimerScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     color = KanguruTheme.colors.surface,
-                    border = BorderStroke(1.dp, Color(0xFFFFD7DE)),
+                    border = BorderStroke(1.dp, KanguruTheme.colors.primaryBorder),
                     shadowElevation = 1.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         // Badge Pill
                         Surface(
                             shape = CircleShape,
-                            color = Color(0xFFFFF0F2),
-                            border = BorderStroke(1.dp, Color(0xFFFFD7DE)),
+                            color = KanguruTheme.colors.primaryContainer,
+                            border = BorderStroke(1.dp, KanguruTheme.colors.primaryBorder),
                             modifier = Modifier.heightIn(min = 24.dp)
                         ) {
                             Row(
@@ -199,7 +199,7 @@ fun MedicalDisclaimerScreen(
                         )
 
                         HorizontalDivider(
-                            color = Color(0xFFFFF0F2),
+                            color = KanguruTheme.colors.primaryContainer,
                             thickness = 1.dp,
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
@@ -231,8 +231,8 @@ fun MedicalDisclaimerScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color(0xFFFFF4F5),
-                    border = BorderStroke(1.dp, Color(0xFFFFCCD5)),
+                    color = KanguruTheme.colors.disclaimerBackground,
+                    border = BorderStroke(1.dp, KanguruTheme.colors.disclaimerBorder),
                     shadowElevation = 1.dp
                 ) {
                     Row(
@@ -243,13 +243,13 @@ fun MedicalDisclaimerScreen(
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
-                                .background(BrandPink.copy(alpha = 0.12f), CircleShape),
+                                .background(KanguruTheme.colors.errorContainer, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Warning,
                                 contentDescription = null,
-                                tint = BrandPink,
+                                tint = KanguruTheme.colors.error,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -259,7 +259,7 @@ fun MedicalDisclaimerScreen(
                                 text = stringResource(R.string.disclaimer_emergency_title),
                                 style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF881337)
+                                color = KanguruTheme.colors.disclaimerTitle
                             )
 
                             Spacer(modifier = Modifier.height(4.dp))
@@ -280,7 +280,7 @@ fun MedicalDisclaimerScreen(
                             Text(
                                 text = emergencyText,
                                 style = KanguruTheme.typography.bodySmall,
-                                color = Color(0xFF4C0519)
+                                color = KanguruTheme.colors.disclaimerText
                             )
 
                             Spacer(modifier = Modifier.height(12.dp))
@@ -288,8 +288,8 @@ fun MedicalDisclaimerScreen(
                             // Quick Call Action Chip
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
-                                color = Color.White,
-                                border = BorderStroke(1.dp, Color(0xFFFDA4AF)),
+                                color = KanguruTheme.colors.surface,
+                                border = BorderStroke(1.dp, KanguruTheme.colors.emergencyBannerBorder),
                                 modifier = Modifier
                                     .heightIn(min = 36.dp)
                                     .clickable {
@@ -307,14 +307,14 @@ fun MedicalDisclaimerScreen(
                                     Icon(
                                         imageVector = Icons.Default.Call,
                                         contentDescription = null,
-                                        tint = Color(0xFFE11D48),
+                                        tint = KanguruTheme.colors.emergencyAction,
                                         modifier = Modifier.size(14.dp)
                                     )
                                     Text(
                                         text = stringResource(R.string.disclaimer_emergency_btn),
                                         style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = Color(0xFFBE123C)
+                                        color = KanguruTheme.colors.emergencyBannerTitle
                                     )
                                 }
                             }
@@ -340,14 +340,14 @@ fun MedicalDisclaimerScreen(
                             Box(
                                 modifier = Modifier
                                     .size(28.dp)
-                                    .background(Color(0xFFFFF8ED), RoundedCornerShape(8.dp))
-                                    .border(1.dp, Color(0xFFFDE4BE), RoundedCornerShape(8.dp)),
+                                    .background(KanguruTheme.colors.warningContainer, RoundedCornerShape(8.dp))
+                                    .border(1.dp, KanguruTheme.colors.warningBorder, RoundedCornerShape(8.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Description,
                                     contentDescription = null,
-                                    tint = Color(0xFFE67E22),
+                                    tint = KanguruTheme.colors.warning,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -438,14 +438,14 @@ fun MedicalDisclaimerScreen(
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
-                                .background(Color(0xFFEFF6FF), RoundedCornerShape(10.dp))
-                                .border(1.dp, Color(0xFFDBEAFE), RoundedCornerShape(10.dp)),
+                                .background(KanguruTheme.colors.infoContainer, RoundedCornerShape(10.dp))
+                                .border(1.dp, KanguruTheme.colors.infoBorder, RoundedCornerShape(10.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.MenuBook,
                                 contentDescription = null,
-                                tint = Color(0xFF2563EB),
+                                tint = KanguruTheme.colors.info,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -496,14 +496,14 @@ fun MedicalDisclaimerScreen(
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
-                                .background(Color(0xFFECFDF5), RoundedCornerShape(10.dp))
-                                .border(1.dp, Color(0xFFA7F3D0), RoundedCornerShape(10.dp)),
+                                .background(KanguruTheme.colors.successContainer, RoundedCornerShape(10.dp))
+                                .border(1.dp, KanguruTheme.colors.successBorder, RoundedCornerShape(10.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Verified,
                                 contentDescription = null,
-                                tint = Color(0xFF059669),
+                                tint = KanguruTheme.colors.success,
                                 modifier = Modifier.size(18.dp)
                             )
                         }

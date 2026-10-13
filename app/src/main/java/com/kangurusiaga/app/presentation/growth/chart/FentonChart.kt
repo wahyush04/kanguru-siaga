@@ -176,6 +176,11 @@ fun FentonChart(
         val baseLineColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
         val axisTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
         val pointCenterColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
+        val p97Color = KanguruTheme.colors.fentonP97
+        val p90Color = KanguruTheme.colors.fentonP90
+        val p50Color = KanguruTheme.colors.fentonP50
+        val p10Color = KanguruTheme.colors.fentonP10
+        val p3Color = KanguruTheme.colors.fentonP3
 
         // 3. Chart Canvas Container
         Box(
@@ -298,11 +303,11 @@ fun FentonChart(
                 }
 
                 // Draw curves from outer to inner
-                drawFentonCurve({ it.p97 }, Color(0xFFEF4444), 1.2.dp.toPx(), "P97")
-                drawFentonCurve({ it.p90 }, Color(0xFFF97316), 1.2.dp.toPx(), "P90")
-                drawFentonCurve({ it.p50 }, Color(0xFF10B981), 1.8.dp.toPx(), "P50")
-                drawFentonCurve({ it.p10 }, Color(0xFFF59E0B), 1.2.dp.toPx(), "P10")
-                drawFentonCurve({ it.p3 }, Color(0xFFFB7185), 1.2.dp.toPx(), "P3")
+                drawFentonCurve({ it.p97 }, p97Color, 1.2.dp.toPx(), "P97")
+                drawFentonCurve({ it.p90 }, p90Color, 1.2.dp.toPx(), "P90")
+                drawFentonCurve({ it.p50 }, p50Color, 1.8.dp.toPx(), "P50")
+                drawFentonCurve({ it.p10 }, p10Color, 1.2.dp.toPx(), "P10")
+                drawFentonCurve({ it.p3 }, p3Color, 1.2.dp.toPx(), "P3")
 
                 // 4. Draw Baby's trajectory if any data points exist
                 val validMeasurements = measurements.filter { it.pmaWeeks in minX..maxX }
@@ -467,11 +472,11 @@ fun FentonChart(
                         modifier = Modifier
                             .size(width = 12.dp, height = 2.5.dp)
                             .clip(RoundedCornerShape(1.dp))
-                            .background(Color(0xFF10B981))
+                            .background(KanguruTheme.colors.fentonP50)
                     )
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF10B981))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP50)) {
                                 append("P50")
                             }
                             withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
@@ -491,11 +496,11 @@ fun FentonChart(
                         modifier = Modifier
                             .size(width = 12.dp, height = 2.5.dp)
                             .clip(RoundedCornerShape(1.dp))
-                            .background(Color(0xFFF59E0B))
+                            .background(KanguruTheme.colors.fentonP10)
                     )
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFF59E0B))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP10)) {
                                 append("P10")
                             }
                             withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
@@ -521,11 +526,11 @@ fun FentonChart(
                         modifier = Modifier
                             .size(width = 12.dp, height = 2.5.dp)
                             .clip(RoundedCornerShape(1.dp))
-                            .background(Color(0xFFF97316))
+                            .background(KanguruTheme.colors.fentonP90)
                     )
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFF97316))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP90)) {
                                 append("P90")
                             }
                             withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
@@ -546,24 +551,24 @@ fun FentonChart(
                             modifier = Modifier
                                 .size(width = 6.dp, height = 2.5.dp)
                                 .clip(RoundedCornerShape(1.dp))
-                                .background(Color(0xFFEF4444))
+                                .background(KanguruTheme.colors.fentonP97)
                         )
                         Box(
                             modifier = Modifier
                                 .size(width = 6.dp, height = 2.5.dp)
                                 .clip(RoundedCornerShape(1.dp))
-                                .background(Color(0xFFFB7185))
+                                .background(KanguruTheme.colors.fentonP3)
                         )
                     }
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP97)) {
                                 append("P97")
                             }
                             withStyle(SpanStyle(color = legendDescColor)) {
                                 append(" & ")
                             }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFFB7185))) {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP3)) {
                                 append("P3")
                             }
                             withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {

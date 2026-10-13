@@ -110,16 +110,17 @@ fun UserGuideScreen(
         }
     }
 
-    val featureCards = remember {
+    val colors = KanguruTheme.colors
+    val featureCards = remember(colors) {
         listOf(
             FeatureCardData(
                 id = "pmk",
                 tag = "METODE KANGGURU",
                 title = "Perawatan Metode Kanguru (PMK)",
                 icon = Icons.Default.Favorite,
-                accentColor = Color(0xFFF43F5E), // Rose / Coral
-                iconBgColor = Color(0xFFFFE4E6),
-                iconBorderColor = Color(0xFFFECDD3),
+                accentColor = colors.categoryRose,
+                iconBgColor = colors.categoryRoseContainer,
+                iconBorderColor = colors.categoryRoseBorder,
                 subheader = "Langkah Penerapan PMK di Rumah:"
             ),
             FeatureCardData(
@@ -127,9 +128,9 @@ fun UserGuideScreen(
                 tag = "PERTUMBUHAN",
                 title = "Pemantauan Grafik Fenton",
                 icon = Icons.AutoMirrored.Filled.ShowChart,
-                accentColor = Color(0xFF059669), // Emerald
-                iconBgColor = Color(0xFFECFDF5),
-                iconBorderColor = Color(0xFFA7F3D0),
+                accentColor = colors.success,
+                iconBgColor = colors.successContainer,
+                iconBorderColor = colors.successBorder,
                 subheader = "Cara Memantau Kurva Tumbuh Kembang:"
             ),
             FeatureCardData(
@@ -137,9 +138,9 @@ fun UserGuideScreen(
                 tag = "NUTRISI & JADWAL",
                 title = "Pengingat & Alarm ASI (OGT/NGT)",
                 icon = Icons.Default.LocalDrink,
-                accentColor = Color(0xFF0284C7), // Sky Blue
-                iconBgColor = Color(0xFFF0F9FF),
-                iconBorderColor = Color(0xFFBAE6FD),
+                accentColor = colors.info,
+                iconBgColor = colors.infoContainer,
+                iconBorderColor = colors.infoBorder,
                 subheader = "Panduan Pemberian ASI BBLR:"
             ),
             FeatureCardData(
@@ -147,9 +148,9 @@ fun UserGuideScreen(
                 tag = "KESELAMATAN KLINIS",
                 title = "Triase Tanda Bahaya & Kegawatan",
                 icon = Icons.Default.Warning,
-                accentColor = Color(0xFFD97706), // Amber
-                iconBgColor = Color(0xFFFFFBEB),
-                iconBorderColor = Color(0xFFFDE68A),
+                accentColor = colors.categoryOrange,
+                iconBgColor = colors.categoryOrangeContainer,
+                iconBorderColor = colors.categoryOrangeBorder,
                 subheader = "Kenali 6 Tanda Kegawatan BBLR:"
             ),
             FeatureCardData(
@@ -157,9 +158,9 @@ fun UserGuideScreen(
                 tag = "IDENTITAS & RIWAYAT",
                 title = "Pengaturan & Profil Bayi",
                 icon = Icons.Default.Person,
-                accentColor = Color(0xFF9333EA), // Purple
-                iconBgColor = Color(0xFFFAF5FF),
-                iconBorderColor = Color(0xFFF3E8FF),
+                accentColor = colors.categoryPurple,
+                iconBgColor = colors.categoryPurpleContainer,
+                iconBorderColor = colors.categoryPurpleBorder,
                 subheader = "Kelola data penting anak Anda di menu Profil:"
             )
         )
@@ -255,7 +256,7 @@ fun UserGuideScreen(
                                     colors = listOf(
                                         KanguruTheme.colors.surface,
                                         KanguruTheme.colors.surface,
-                                        Color(0xFFFFF1F2).copy(alpha = 0.8f)
+                                        KanguruTheme.colors.categoryRoseContainer
                                     )
                                 )
                             )
@@ -265,8 +266,8 @@ fun UserGuideScreen(
                             // Tag Badge
                             Surface(
                                 shape = RoundedCornerShape(100.dp),
-                                color = Color(0xFFFFE4E6).copy(alpha = 0.85f),
-                                border = BorderStroke(1.dp, Color(0xFFFECDD3))
+                                color = KanguruTheme.colors.primaryContainer,
+                                border = BorderStroke(1.dp, KanguruTheme.colors.categoryRoseBorder)
                             ) {
                                 Text(
                                     text = stringResource(R.string.user_guide_hero_badge),
@@ -318,8 +319,8 @@ fun UserGuideScreen(
 
                     Surface(
                         shape = RoundedCornerShape(100.dp),
-                        color = Color(0xFFFFE4E6).copy(alpha = 0.7f),
-                        border = BorderStroke(1.dp, Color(0xFFFECDD3))
+                        color = KanguruTheme.colors.primaryContainer,
+                        border = BorderStroke(1.dp, KanguruTheme.colors.categoryRoseBorder)
                     ) {
                         Text(
                             text = stringResource(R.string.user_guide_features_badge),
@@ -500,8 +501,8 @@ fun UserGuideScreen(
                             .background(
                                 Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color(0xFFFFF1F2).copy(alpha = 0.85f),
-                                        Color(0xFFFFF7ED).copy(alpha = 0.85f)
+                                        KanguruTheme.colors.categoryRoseContainer,
+                                        KanguruTheme.colors.categoryOrangeContainer
                                     )
                                 )
                             )
@@ -662,8 +663,8 @@ private fun PmkGuideContent() {
                     modifier = Modifier
                         .size(20.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFFE4E6))
-                        .border(1.dp, Color(0xFFFECDD3), CircleShape),
+                        .background(KanguruTheme.colors.categoryRoseContainer)
+                        .border(1.dp, KanguruTheme.colors.categoryRoseBorder, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -690,8 +691,8 @@ private fun PmkGuideContent() {
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFFFFFBEB))
-                .border(1.dp, Color(0xFFFDE68A), RoundedCornerShape(12.dp))
+                .background(KanguruTheme.colors.warningContainer)
+                .border(1.dp, KanguruTheme.colors.warningBorder, RoundedCornerShape(12.dp))
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -699,13 +700,13 @@ private fun PmkGuideContent() {
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = null,
-                tint = Color(0xFFD97706),
+                tint = KanguruTheme.colors.warning,
                 modifier = Modifier.size(16.dp)
             )
             Text(
                 text = "Pastikan posisi jalan napas bayi selalu tegak & leher tidak tertekuk saat kontak PMK.",
                 style = KanguruTheme.typography.labelSmall,
-                color = Color(0xFF92400E),
+                color = KanguruTheme.colors.onWarningContainer,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -734,7 +735,7 @@ private fun FentonGuideContent() {
                     text = "•",
                     style = KanguruTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF059669)
+                    color = KanguruTheme.colors.success
                 )
                 Text(
                     text = text,
@@ -769,7 +770,7 @@ private fun FeedingGuideContent() {
                     text = "•",
                     style = KanguruTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0284C7)
+                    color = KanguruTheme.colors.info
                 )
                 Text(
                     text = text,
@@ -808,8 +809,8 @@ private fun EmergencyGuideContent() {
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFFFEF2F2))
-                        .border(1.dp, Color(0xFFFEE2E2), RoundedCornerShape(10.dp))
+                        .background(KanguruTheme.colors.errorContainer)
+                        .border(1.dp, KanguruTheme.colors.errorBorder, RoundedCornerShape(10.dp))
                         .padding(horizontal = 8.dp, vertical = 7.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
@@ -817,7 +818,7 @@ private fun EmergencyGuideContent() {
                         text = symptoms[i],
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF991B1B)
+                        color = KanguruTheme.colors.onErrorContainer
                     )
                 }
 
@@ -827,8 +828,8 @@ private fun EmergencyGuideContent() {
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color(0xFFFEF2F2))
-                            .border(1.dp, Color(0xFFFEE2E2), RoundedCornerShape(10.dp))
+                            .background(KanguruTheme.colors.errorContainer)
+                            .border(1.dp, KanguruTheme.colors.errorBorder, RoundedCornerShape(10.dp))
                             .padding(horizontal = 8.dp, vertical = 7.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
@@ -836,7 +837,7 @@ private fun EmergencyGuideContent() {
                             text = symptoms[i + 1],
                             style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF991B1B)
+                            color = KanguruTheme.colors.onErrorContainer
                         )
                     }
                 }
@@ -850,7 +851,7 @@ private fun EmergencyGuideContent() {
             text = "⚠️ Jika menemukan salah satu tanda di atas, jangan tunda: segera bawa bayi ke Unit Gawat Darurat (UGD/IGD) rumah sakit terdekat.",
             style = KanguruTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFFDC2626)
+            color = KanguruTheme.colors.error
         )
     }
 }
@@ -877,7 +878,7 @@ private fun ProfileGuideContent() {
                     text = "•",
                     style = KanguruTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF9333EA)
+                    color = KanguruTheme.colors.categoryPurple
                 )
                 Text(
                     text = text,

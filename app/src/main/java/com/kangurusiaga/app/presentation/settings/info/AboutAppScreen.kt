@@ -74,7 +74,8 @@ fun AboutAppScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val pillars = remember {
+    val colors = KanguruTheme.colors
+    val pillars = remember(colors) {
         listOf(
             PillarItem(
                 title = "Perawatan Metode Kanguru (PMK)",
@@ -86,8 +87,8 @@ fun AboutAppScreen(
                     append(" harian, tutorial video langkah demi langkah, dan pencatatan riwayat sesi.")
                 },
                 icon = Icons.Default.Favorite,
-                iconColor = BrandPink,
-                iconBg = Color(0xFFFFF0F2)
+                iconColor = colors.primary,
+                iconBg = colors.primaryContainer
             ),
             PillarItem(
                 title = "Panduan Edukasi Komprehensif BBLR",
@@ -95,8 +96,8 @@ fun AboutAppScreen(
                     append("9 modul perawatan esensial di rumah mulai dari termoregulasi suhu, kebersihan tali pusat, hingga teknik menyusui.")
                 },
                 icon = Icons.AutoMirrored.Filled.MenuBook,
-                iconColor = Color(0xFF059669),
-                iconBg = Color(0xFFECFDF5)
+                iconColor = colors.success,
+                iconBg = colors.successContainer
             ),
             PillarItem(
                 title = "Pemantauan Grafik Fenton Terkoreksi",
@@ -104,8 +105,8 @@ fun AboutAppScreen(
                     append("Kalkulasi kurva pertumbuhan persentil khusus bayi prematur (Berat, Panjang Badan, Lingkar Kepala) sesuai usia gestasi koreksi.")
                 },
                 icon = Icons.AutoMirrored.Filled.ShowChart,
-                iconColor = Color(0xFFF43F5E),
-                iconBg = Color(0xFFFFF1F2)
+                iconColor = colors.categoryRose,
+                iconBg = colors.categoryRoseContainer
             ),
             PillarItem(
                 title = "Deteksi Dini Tanda Bahaya & Kegawatan",
@@ -113,8 +114,8 @@ fun AboutAppScreen(
                     append("Triase cepat mengenali apnea, perubahan warna kulit, kejang, dan hipotermia untuk mempercepat tindakan rujukan medis.")
                 },
                 icon = Icons.Default.Warning,
-                iconColor = Color(0xFFD97706),
-                iconBg = Color(0xFFFFFBEB)
+                iconColor = colors.warning,
+                iconBg = colors.warningContainer
             )
         )
     }
@@ -261,7 +262,7 @@ fun AboutAppScreen(
                         // Version Pill Badge
                         Surface(
                             shape = CircleShape,
-                            color = Color(0xFFFFF0F2),
+                            color = KanguruTheme.colors.primaryContainer,
                             border = BorderStroke(1.dp, BrandPink.copy(alpha = 0.25f)),
                             modifier = Modifier.heightIn(min = 24.dp)
                         ) {
@@ -322,7 +323,7 @@ fun AboutAppScreen(
                             Box(
                                 modifier = Modifier
                                     .size(32.dp)
-                                    .background(Color(0xFFFFF0F2), RoundedCornerShape(10.dp)),
+                                    .background(KanguruTheme.colors.primaryContainer, RoundedCornerShape(10.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -428,13 +429,13 @@ fun AboutAppScreen(
                             Box(
                                 modifier = Modifier
                                     .size(28.dp)
-                                    .background(Color(0xFFEFF6FF), RoundedCornerShape(8.dp)),
+                                    .background(KanguruTheme.colors.infoContainer, RoundedCornerShape(8.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Security,
                                     contentDescription = null,
-                                    tint = Color(0xFF2563EB),
+                                    tint = KanguruTheme.colors.info,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -481,7 +482,7 @@ fun AboutAppScreen(
                         .background(
                             Brush.verticalGradient(
                                 listOf(
-                                    Color(0xFFFFF0F2).copy(alpha = 0.8f),
+                                    KanguruTheme.colors.categoryRoseContainer,
                                     KanguruTheme.colors.surface
                                 )
                             )

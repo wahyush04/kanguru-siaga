@@ -461,25 +461,25 @@ private fun ReminderCardItem(
     reminder: PmkReminder,
     onToggle: () -> Unit
 ) {
-    val isDark = KanguruTheme.colors.isDark
+    val colors = KanguruTheme.colors
     val (iconBg, iconTint, badgeBg, badgeText) = when {
         reminder.timeHour < 12 -> Quadruple(
-            if (isDark) BrandPink.copy(alpha = 0.2f) else Color(0xFFFFF1F2),
-            BrandPink,
-            if (isDark) BrandPink.copy(alpha = 0.2f) else Color(0xFFFFF1F2),
-            if (isDark) Color(0xFFFFB3BA) else Color(0xFFE11D48)
+            colors.categoryRoseContainer,
+            colors.primary,
+            colors.categoryRoseContainer,
+            colors.categoryRoseText
         )
         reminder.timeHour < 17 -> Quadruple(
-            if (isDark) Color(0xFFF97316).copy(alpha = 0.2f) else Color(0xFFFFF7ED),
-            Color(0xFFF97316),
-            if (isDark) Color(0xFFF97316).copy(alpha = 0.2f) else Color(0xFFFFF7ED),
-            if (isDark) Color(0xFFFFCC99) else Color(0xFFC2410C)
+            colors.categoryOrangeContainer,
+            colors.categoryOrange,
+            colors.categoryOrangeContainer,
+            colors.categoryOrangeText
         )
         else -> Quadruple(
-            if (isDark) Color(0xFF6366F1).copy(alpha = 0.2f) else Color(0xFFEEF2FF),
-            Color(0xFF6366F1),
-            if (isDark) Color(0xFF6366F1).copy(alpha = 0.2f) else Color(0xFFEEF2FF),
-            if (isDark) Color(0xFFC7D2FE) else Color(0xFF4338CA)
+            colors.categoryPurpleContainer,
+            colors.categoryPurple,
+            colors.categoryPurpleContainer,
+            colors.categoryPurpleText
         )
     }
 

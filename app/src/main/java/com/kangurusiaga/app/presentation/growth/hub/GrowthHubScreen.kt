@@ -187,7 +187,7 @@ fun GrowthHubScreen(
                 subtitle = stringResource(R.string.growth_hub_length_sub),
                 iconVector = GrowthIcons.Length,
                 iconBg = GrowthCardGreen,
-                iconTint = Color(0xFF10B981),
+                iconTint = KanguruTheme.colors.growthLength,
                 onClick = { onNavigateToChart(GrowthParameter.LENGTH) }
             )
 
@@ -198,7 +198,7 @@ fun GrowthHubScreen(
                 subtitle = stringResource(R.string.growth_hub_head_sub),
                 iconVector = GrowthIcons.Head,
                 iconBg = GrowthCardBlue,
-                iconTint = Color(0xFF3B82F6),
+                iconTint = KanguruTheme.colors.growthHead,
                 onClick = { onNavigateToChart(GrowthParameter.HEAD_CIRCUMFERENCE) }
             )
 

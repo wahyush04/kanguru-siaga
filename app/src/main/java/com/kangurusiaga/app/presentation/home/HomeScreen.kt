@@ -767,7 +767,7 @@ private fun EmergencyBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 52.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE11D48)),
+                colors = ButtonDefaults.buttonColors(containerColor = KanguruTheme.colors.emergencyAction),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Icon(

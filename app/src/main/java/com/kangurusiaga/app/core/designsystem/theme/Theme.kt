@@ -25,443 +25,581 @@ import com.kangurusiaga.app.domain.model.settings.AppThemeMode
  * PMK gradients, and Fenton chart palette.
  */
 @Immutable
-data class KanguruColors(
-    val isDark: Boolean,
+abstract class KanguruColors {
+    abstract val isDark: Boolean
 
     // Core Background & Surfaces
-    val background: Color,
-    val surface: Color,
-    val surfaceElevated: Color,
-    val surfaceVariant: Color,
-    val cardBackground: Color,
-    val cardBorder: Color,
-    val divider: Color,
-    val outline: Color,
-    val outlineVariant: Color,
+    abstract val background: Color
+    abstract val surface: Color
+    abstract val surfaceElevated: Color
+    abstract val surfaceVariant: Color
+    abstract val cardBackground: Color
+    abstract val cardBorder: Color
+    abstract val divider: Color
+    abstract val outline: Color
+    abstract val outlineVariant: Color
 
     // Primary Brand
-    val primary: Color,
-    val onPrimary: Color,
-    val primaryContainer: Color,
-    val onPrimaryContainer: Color,
+    abstract val primary: Color
+    abstract val onPrimary: Color
+    abstract val primaryContainer: Color
+    abstract val onPrimaryContainer: Color
 
     // Secondary / Soft Brand
-    val secondary: Color,
-    val onSecondary: Color,
-    val secondaryContainer: Color,
-    val onSecondaryContainer: Color,
+    abstract val secondary: Color
+    abstract val onSecondary: Color
+    abstract val secondaryContainer: Color
+    abstract val onSecondaryContainer: Color
 
     // Typography
-    val textPrimary: Color,
-    val textSecondary: Color,
-    val textTertiary: Color,
-    val textOnDark: Color,
+    abstract val textPrimary: Color
+    abstract val textSecondary: Color
+    abstract val textTertiary: Color
+    abstract val textOnDark: Color
 
     // Status Colors (Containers, Text, and Borders for Badges/Chips)
-    val success: Color,
-    val successContainer: Color,
-    val onSuccessContainer: Color,
-    val successBorder: Color,
+    abstract val success: Color
+    abstract val successContainer: Color
+    abstract val onSuccessContainer: Color
+    abstract val successBorder: Color
 
-    val warning: Color,
-    val warningContainer: Color,
-    val onWarningContainer: Color,
-    val warningBorder: Color,
+    abstract val warning: Color
+    abstract val warningContainer: Color
+    abstract val onWarningContainer: Color
+    abstract val warningBorder: Color
 
-    val error: Color,
-    val errorContainer: Color,
-    val onErrorContainer: Color,
-    val errorBorder: Color,
+    abstract val error: Color
+    abstract val errorContainer: Color
+    abstract val onErrorContainer: Color
+    abstract val errorBorder: Color
 
-    val info: Color,
-    val infoContainer: Color,
-    val onInfoContainer: Color,
-    val infoBorder: Color,
+    abstract val info: Color
+    abstract val infoContainer: Color
+    abstract val onInfoContainer: Color
+    abstract val infoBorder: Color
 
     // PMK / Gradients
-    val pinkGradientStart: Color,
-    val pinkGradientMid: Color,
-    val pinkGradientEnd: Color,
-    val timerTrack: Color,
-    val timerAccent: Color,
+    abstract val pinkGradientStart: Color
+    abstract val pinkGradientMid: Color
+    abstract val pinkGradientEnd: Color
+    abstract val timerTrack: Color
+    abstract val timerAccent: Color
 
     // Growth / Fenton Specific
-    val fentonP97: Color,
-    val fentonP90: Color,
-    val fentonP50: Color,
-    val fentonP10: Color,
-    val fentonP3: Color,
-    val growthCardRed: Color,
-    val growthCardGreen: Color,
-    val growthCardBlue: Color,
-    val tipBackground: Color,
-    val tipBorder: Color,
-    val tipText: Color,
+    abstract val fentonP97: Color
+    abstract val fentonP90: Color
+    abstract val fentonP50: Color
+    abstract val fentonP10: Color
+    abstract val fentonP3: Color
+    abstract val growthCardRed: Color
+    abstract val growthCardGreen: Color
+    abstract val growthCardBlue: Color
+    abstract val tipBackground: Color
+    abstract val tipBorder: Color
+    abstract val tipText: Color
 
     // Form Inputs & Modals (Stitch aligned)
-    val inputBackground: Color,
-    val inputFocusedBackground: Color,
-    val inputBorder: Color,
-    val dragHandle: Color,
-    val closeButtonBackground: Color,
-    val closeButtonTint: Color,
-    val buttonSecondaryBorder: Color,
-    val buttonSecondaryText: Color,
+    abstract val inputBackground: Color
+    abstract val inputFocusedBackground: Color
+    abstract val inputBorder: Color
+    abstract val dragHandle: Color
+    abstract val closeButtonBackground: Color
+    abstract val closeButtonTint: Color
+    abstract val buttonSecondaryBorder: Color
+    abstract val buttonSecondaryText: Color
 
     // Action Pills (Photo/Gallery & Quick Actions)
-    val actionPillPrimaryBackground: Color,
-    val actionPillPrimaryText: Color,
-    val actionPillSecondaryBackground: Color,
-    val actionPillSecondaryText: Color,
+    abstract val actionPillPrimaryBackground: Color
+    abstract val actionPillPrimaryText: Color
+    abstract val actionPillSecondaryBackground: Color
+    abstract val actionPillSecondaryText: Color
 
     // Gender Selection Tokens
-    val genderMaleActiveBackground: Color,
-    val genderMaleActiveBorder: Color,
-    val genderMaleActiveText: Color,
-    val genderMaleActiveIconContainer: Color,
-    val genderMaleInactiveIconContainer: Color,
-    val genderMaleIcon: Color,
-    val genderMaleInactiveIcon: Color,
+    abstract val genderMaleActiveBackground: Color
+    abstract val genderMaleActiveBorder: Color
+    abstract val genderMaleActiveText: Color
+    abstract val genderMaleActiveIconContainer: Color
+    abstract val genderMaleInactiveIconContainer: Color
+    abstract val genderMaleIcon: Color
+    abstract val genderMaleInactiveIcon: Color
 
-    val genderFemaleActiveBackground: Color,
-    val genderFemaleActiveBorder: Color,
-    val genderFemaleActiveText: Color,
-    val genderFemaleActiveIconContainer: Color,
-    val genderFemaleInactiveIconContainer: Color,
-    val genderFemaleIcon: Color,
-    val genderFemaleInactiveIcon: Color,
+    abstract val genderFemaleActiveBackground: Color
+    abstract val genderFemaleActiveBorder: Color
+    abstract val genderFemaleActiveText: Color
+    abstract val genderFemaleActiveIconContainer: Color
+    abstract val genderFemaleInactiveIconContainer: Color
+    abstract val genderFemaleIcon: Color
+    abstract val genderFemaleInactiveIcon: Color
 
     // Avatar Frame
-    val avatarRingStart: Color,
-    val avatarRingEnd: Color,
-    val avatarInnerBackground: Color,
+    abstract val avatarRingStart: Color
+    abstract val avatarRingEnd: Color
+    abstract val avatarInnerBackground: Color
 
     // Continuous PMK Caregiver & Timeline Tokens
-    val caregiverIbu: Color,
-    val caregiverIbuContainer: Color,
-    val caregiverIbuText: Color,
-    val caregiverAyah: Color,
-    val caregiverAyahContainer: Color,
-    val caregiverAyahText: Color,
-    val caregiverPendamping: Color,
-    val caregiverPendampingContainer: Color,
-    val caregiverPendampingText: Color,
-    val caregiverPause: Color,
-    val caregiverPauseContainer: Color,
-    val caregiverPauseText: Color,
-    val timelineTrack: Color,
+    abstract val caregiverIbu: Color
+    abstract val caregiverIbuContainer: Color
+    abstract val caregiverIbuText: Color
+    abstract val caregiverAyah: Color
+    abstract val caregiverAyahContainer: Color
+    abstract val caregiverAyahText: Color
+    abstract val caregiverPendamping: Color
+    abstract val caregiverPendampingContainer: Color
+    abstract val caregiverPendampingText: Color
+    abstract val caregiverPause: Color
+    abstract val caregiverPauseContainer: Color
+    abstract val caregiverPauseText: Color
+    abstract val timelineTrack: Color
 
     // Temperature Modal Tokens (Google Stitch aligned)
-    val tempColdTrack: Color,
-    val tempColdText: Color,
-    val tempNormalTrack: Color,
-    val tempNormalText: Color,
-    val tempWarmTrack: Color,
-    val tempWarmText: Color,
-    val tempNormalBadgeBg: Color,
-    val tempSliderTrack: Color,
-    val tempStepperBg: Color,
-    val tempStepperBorder: Color,
-    val tempStepperIcon: Color,
-    val tempCancelBg: Color,
-    val tempCancelText: Color,
+    abstract val tempColdTrack: Color
+    abstract val tempColdText: Color
+    abstract val tempNormalTrack: Color
+    abstract val tempNormalText: Color
+    abstract val tempWarmTrack: Color
+    abstract val tempWarmText: Color
+    abstract val tempNormalBadgeBg: Color
+    abstract val tempSliderTrack: Color
+    abstract val tempStepperBg: Color
+    abstract val tempStepperBorder: Color
+    abstract val tempStepperIcon: Color
+    abstract val tempCancelBg: Color
+    abstract val tempCancelText: Color
 
     // Toast / Snackbar Tokens (Pill shape, high-contrast)
-    val toastBackground: Color,
-    val toastText: Color,
-    val toastSuccessIconBg: Color,
-    val toastSuccessIconTint: Color,
-    val toastErrorIconBg: Color,
-    val toastErrorIconTint: Color
-) {
-    val primaryBorder: Color
+    abstract val toastBackground: Color
+    abstract val toastText: Color
+    abstract val toastSuccessIconBg: Color
+    abstract val toastSuccessIconTint: Color
+    abstract val toastErrorIconBg: Color
+    abstract val toastErrorIconTint: Color
+
+    // Multi-Category / Feature Accent Tokens (Education, Guides, Reminders)
+    abstract val categoryPurple: Color
+    abstract val categoryPurpleContainer: Color
+    abstract val categoryPurpleBorder: Color
+    abstract val categoryPurpleText: Color
+
+    abstract val categoryTeal: Color
+    abstract val categoryTealContainer: Color
+    abstract val categoryTealBorder: Color
+    abstract val categoryTealText: Color
+
+    abstract val categoryOrange: Color
+    abstract val categoryOrangeContainer: Color
+    abstract val categoryOrangeBorder: Color
+    abstract val categoryOrangeText: Color
+
+    abstract val categoryRose: Color
+    abstract val categoryRoseContainer: Color
+    abstract val categoryRoseBorder: Color
+    abstract val categoryRoseText: Color
+
+    // Emergency & Hotline Banner Tokens
+    abstract val emergencyBannerBackground: Color
+    abstract val emergencyBannerBorder: Color
+    abstract val emergencyBannerTitle: Color
+    abstract val emergencyBannerSubtitle: Color
+    abstract val emergencyAction: Color
+
+    // Medical Disclaimer Card Tokens
+    abstract val disclaimerBackground: Color
+    abstract val disclaimerBorder: Color
+    abstract val disclaimerTitle: Color
+    abstract val disclaimerText: Color
+
+    // Growth Parameter Specific Tokens
+    abstract val growthLength: Color
+    abstract val growthLengthBorder: Color
+    abstract val growthHead: Color
+    abstract val growthHeadBorder: Color
+
+    // Ambient / Illustration Tokens (Splash & Onboarding)
+    abstract val ambientRosePulse: Color
+    abstract val ambientAmberPulse: Color
+    abstract val ambientWave1: Color
+    abstract val ambientWave2: Color
+    abstract val onboardingCardBgStart: Color
+    abstract val onboardingCardBgEnd: Color
+
+    open val primaryBorder: Color
         get() = if (isDark) Color(0xFF5E2734) else Color(0xFFFFD1DC)
 
-    val successText: Color
+    open val successText: Color
         get() = onSuccessContainer
 
-    val warningText: Color
+    open val warningText: Color
         get() = onWarningContainer
 
-    val errorText: Color
+    open val errorText: Color
         get() = onErrorContainer
 
-    val infoText: Color
+    open val infoText: Color
         get() = onInfoContainer
 }
 
 // 1. TERANG HANGAT (Warm Light - Default)
-val LightKanguruColors = KanguruColors(
-    isDark = false,
-    background = Color(0xFFFAF7F2),
-    surface = Color(0xFFFFFFFF),
-    surfaceElevated = Color(0xFFFFFFFF),
-    surfaceVariant = Color(0xFFf8fafc),
-    cardBackground = Color(0xFFFFFFFF),
-    cardBorder = Color(0xFFF1ECE6),
-    divider = Color(0xFFF1ECE6),
-    outline = Color(0xFFE5DFD7),
-    outlineVariant = Color(0xFFF1ECE6),
+private class LightKanguruColorsImpl : KanguruColors() {
+    override val isDark: Boolean = false
+    override val background: Color = Color(0xFFFAF7F2)
+    override val surface: Color = Color(0xFFFFFFFF)
+    override val surfaceElevated: Color = Color(0xFFFFFFFF)
+    override val surfaceVariant: Color = Color(0xFFf8fafc)
+    override val cardBackground: Color = Color(0xFFFFFFFF)
+    override val cardBorder: Color = Color(0xFFF1ECE6)
+    override val divider: Color = Color(0xFFF1ECE6)
+    override val outline: Color = Color(0xFFE5DFD7)
+    override val outlineVariant: Color = Color(0xFFF1ECE6)
 
-    primary = Color(0xFFFF5C7A),
-    onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFFFF0F3),
-    onPrimaryContainer = Color(0xFFE04866),
+    override val primary: Color = Color(0xFFFF5C7A)
+    override val onPrimary: Color = Color(0xFFFFFFFF)
+    override val primaryContainer: Color = Color(0xFFFFF0F3)
+    override val onPrimaryContainer: Color = Color(0xFFE04866)
 
-    secondary = Color(0xFFFFEFEA),
-    onSecondary = Color(0xFF1E1E1E),
-    secondaryContainer = Color(0xFFFFEFEA),
-    onSecondaryContainer = Color(0xFF8A3C1B),
+    override val secondary: Color = Color(0xFFFFEFEA)
+    override val onSecondary: Color = Color(0xFF1E1E1E)
+    override val secondaryContainer: Color = Color(0xFFFFEFEA)
+    override val onSecondaryContainer: Color = Color(0xFF8A3C1B)
 
-    textPrimary = TypographyDefaultColor,
-    textSecondary = Color(0xFF6B7280),
-    textTertiary = Color(0xFF9CA3AF),
-    textOnDark = Color(0xFFFFFFFF),
+    override val textPrimary: Color = TypographyDefaultColor
+    override val textSecondary: Color = Color(0xFF6B7280)
+    override val textTertiary: Color = Color(0xFF9CA3AF)
+    override val textOnDark: Color = Color(0xFFFFFFFF)
 
-    success = Color(0xFF16A34A),
-    successContainer = Color(0xFFEAF8F1),
-    onSuccessContainer = Color(0xFF15803D),
-    successBorder = Color(0xFFBBF7D0),
+    override val success: Color = Color(0xFF16A34A)
+    override val successContainer: Color = Color(0xFFEAF8F1)
+    override val onSuccessContainer: Color = Color(0xFF15803D)
+    override val successBorder: Color = Color(0xFFBBF7D0)
 
-    warning = Color(0xFFD97706),
-    warningContainer = Color(0xFFFFF6E9),
-    onWarningContainer = Color(0xFFB45309),
-    warningBorder = Color(0xFFFED7AA),
+    override val warning: Color = Color(0xFFD97706)
+    override val warningContainer: Color = Color(0xFFFFF6E9)
+    override val onWarningContainer: Color = Color(0xFFB45309)
+    override val warningBorder: Color = Color(0xFFFED7AA)
 
-    error = Color(0xFFDC2626),
-    errorContainer = Color(0xFFFEE2E2),
-    onErrorContainer = Color(0xFF991B1B),
-    errorBorder = Color(0xFFFECACA),
+    override val error: Color = Color(0xFFDC2626)
+    override val errorContainer: Color = Color(0xFFFEE2E2)
+    override val onErrorContainer: Color = Color(0xFF991B1B)
+    override val errorBorder: Color = Color(0xFFFECACA)
 
-    info = Color(0xFF2563EB),
-    infoContainer = Color(0xFFEBF6FF),
-    onInfoContainer = Color(0xFF1D4ED8),
-    infoBorder = Color(0xFFBFDBFE),
+    override val info: Color = Color(0xFF2563EB)
+    override val infoContainer: Color = Color(0xFFEBF6FF)
+    override val onInfoContainer: Color = Color(0xFF1D4ED8)
+    override val infoBorder: Color = Color(0xFFBFDBFE)
 
-    pinkGradientStart = Color(0xFFFF5C77),
-    pinkGradientMid = Color(0xFFFF6D88),
-    pinkGradientEnd = Color(0xFFFF7B96),
-    timerTrack = Color(0xFFFFE4E8),
-    timerAccent = Color(0xFFFF8DA3),
+    override val pinkGradientStart: Color = Color(0xFFFF5C77)
+    override val pinkGradientMid: Color = Color(0xFFFF6D88)
+    override val pinkGradientEnd: Color = Color(0xFFFF7B96)
+    override val timerTrack: Color = Color(0xFFFFE4E8)
+    override val timerAccent: Color = Color(0xFFFF8DA3)
 
-    fentonP97 = Color(0xFFF87171),
-    fentonP90 = Color(0xFFFB923C),
-    fentonP50 = Color(0xFF34D399),
-    fentonP10 = Color(0xFFFCD34D),
-    fentonP3 = Color(0xFFFDA4AF),
-    growthCardRed = Color(0xFFFEECEC),
-    growthCardGreen = Color(0xFFEAF8F1),
-    growthCardBlue = Color(0xFFEBF4FE),
-    tipBackground = Color(0xFFFFF9EA),
-    tipBorder = Color(0xFFFEEAB8),
-    tipText = Color(0xFF92400E),
+    override val fentonP97: Color = Color(0xFFF87171)
+    override val fentonP90: Color = Color(0xFFFB923C)
+    override val fentonP50: Color = Color(0xFF34D399)
+    override val fentonP10: Color = Color(0xFFFCD34D)
+    override val fentonP3: Color = Color(0xFFFDA4AF)
+    override val growthCardRed: Color = Color(0xFFFEECEC)
+    override val growthCardGreen: Color = Color(0xFFEAF8F1)
+    override val growthCardBlue: Color = Color(0xFFEBF4FE)
+    override val tipBackground: Color = Color(0xFFFFF9EA)
+    override val tipBorder: Color = Color(0xFFFEEAB8)
+    override val tipText: Color = Color(0xFF92400E)
 
-    inputBackground = Color(0xFFFAF8F6),
-    inputFocusedBackground = Color(0xFFFFFFFF),
-    inputBorder = Color(0xFFE2E8F0),
-    dragHandle = Color(0xFFCBD5E1),
-    closeButtonBackground = Color(0xFFF1F5F9),
-    closeButtonTint = Color(0xFF64748B),
-    buttonSecondaryBorder = Color(0xFFCBD5E1),
-    buttonSecondaryText = Color(0xFF334155),
+    override val inputBackground: Color = Color(0xFFFAF8F6)
+    override val inputFocusedBackground: Color = Color(0xFFFFFFFF)
+    override val inputBorder: Color = Color(0xFFE2E8F0)
+    override val dragHandle: Color = Color(0xFFCBD5E1)
+    override val closeButtonBackground: Color = Color(0xFFF1F5F9)
+    override val closeButtonTint: Color = Color(0xFF64748B)
+    override val buttonSecondaryBorder: Color = Color(0xFFCBD5E1)
+    override val buttonSecondaryText: Color = Color(0xFF334155)
 
-    actionPillPrimaryBackground = Color(0xFFFFF1F2),
-    actionPillPrimaryText = Color(0xFFE11D48),
-    actionPillSecondaryBackground = Color(0xFFF1F5F9),
-    actionPillSecondaryText = Color(0xFF334155),
+    override val actionPillPrimaryBackground: Color = Color(0xFFFFF1F2)
+    override val actionPillPrimaryText: Color = Color(0xFFE11D48)
+    override val actionPillSecondaryBackground: Color = Color(0xFFF1F5F9)
+    override val actionPillSecondaryText: Color = Color(0xFF334155)
 
-    genderMaleActiveBackground = Color(0xFFEFF6FF),
-    genderMaleActiveBorder = Color(0xFF3B82F6),
-    genderMaleActiveText = Color(0xFF2563EB),
-    genderMaleActiveIconContainer = Color(0xFFDBEAFE),
-    genderMaleInactiveIconContainer = Color(0xFFEFF6FF),
-    genderMaleIcon = Color(0xFF2563EB),
-    genderMaleInactiveIcon = Color(0xFF3B82F6),
+    override val genderMaleActiveBackground: Color = Color(0xFFEFF6FF)
+    override val genderMaleActiveBorder: Color = Color(0xFF3B82F6)
+    override val genderMaleActiveText: Color = Color(0xFF2563EB)
+    override val genderMaleActiveIconContainer: Color = Color(0xFFDBEAFE)
+    override val genderMaleInactiveIconContainer: Color = Color(0xFFEFF6FF)
+    override val genderMaleIcon: Color = Color(0xFF2563EB)
+    override val genderMaleInactiveIcon: Color = Color(0xFF3B82F6)
 
-    genderFemaleActiveBackground = Color(0xFFFFF1F2),
-    genderFemaleActiveBorder = Color(0xFFFF5C77),
-    genderFemaleActiveText = Color(0xFFE11D48),
-    genderFemaleActiveIconContainer = Color(0xFFFFE4E6),
-    genderFemaleInactiveIconContainer = Color(0xFFFFF1F2),
-    genderFemaleIcon = Color(0xFFFF5C77),
-    genderFemaleInactiveIcon = Color(0xFFFF5C77),
+    override val genderFemaleActiveBackground: Color = Color(0xFFFFF1F2)
+    override val genderFemaleActiveBorder: Color = Color(0xFFFF5C77)
+    override val genderFemaleActiveText: Color = Color(0xFFE11D48)
+    override val genderFemaleActiveIconContainer: Color = Color(0xFFFFE4E6)
+    override val genderFemaleInactiveIconContainer: Color = Color(0xFFFFF1F2)
+    override val genderFemaleIcon: Color = Color(0xFFFF5C77)
+    override val genderFemaleInactiveIcon: Color = Color(0xFFFF5C77)
 
-    avatarRingStart = Color(0xFFFF5C77),
-    avatarRingEnd = Color(0xFFFDA4AF),
-    avatarInnerBackground = Color(0xFFFFF1F2),
+    override val avatarRingStart: Color = Color(0xFFFF5C77)
+    override val avatarRingEnd: Color = Color(0xFFFDA4AF)
+    override val avatarInnerBackground: Color = Color(0xFFFFF1F2)
 
-    caregiverIbu = Color(0xFFFF5C77),
-    caregiverIbuContainer = Color(0xFFFFF0F3),
-    caregiverIbuText = Color(0xFFE11D48),
-    caregiverAyah = Color(0xFF3B82F6),
-    caregiverAyahContainer = Color(0xFFEFF6FF),
-    caregiverAyahText = Color(0xFF1D4ED8),
-    caregiverPendamping = Color(0xFFF59E0B),
-    caregiverPendampingContainer = Color(0xFFFFFBEB),
-    caregiverPendampingText = Color(0xFFB45309),
-    caregiverPause = Color(0xFF94A3B8),
-    caregiverPauseContainer = Color(0xFFF1F5F9),
-    caregiverPauseText = Color(0xFF475569),
-    timelineTrack = Color(0xFFF1ECE6),
+    override val caregiverIbu: Color = Color(0xFFFF5C77)
+    override val caregiverIbuContainer: Color = Color(0xFFFFF0F3)
+    override val caregiverIbuText: Color = Color(0xFFE11D48)
+    override val caregiverAyah: Color = Color(0xFF3B82F6)
+    override val caregiverAyahContainer: Color = Color(0xFFEFF6FF)
+    override val caregiverAyahText: Color = Color(0xFF1D4ED8)
+    override val caregiverPendamping: Color = Color(0xFFF59E0B)
+    override val caregiverPendampingContainer: Color = Color(0xFFFFFBEB)
+    override val caregiverPendampingText: Color = Color(0xFFB45309)
+    override val caregiverPause: Color = Color(0xFF94A3B8)
+    override val caregiverPauseContainer: Color = Color(0xFFF1F5F9)
+    override val caregiverPauseText: Color = Color(0xFF475569)
+    override val timelineTrack: Color = Color(0xFFF1ECE6)
 
-    tempColdTrack = Color(0xFF7DD3FC),
-    tempColdText = Color(0xFF0284C7),
-    tempNormalTrack = Color(0xFF34D399),
-    tempNormalText = Color(0xFF047857),
-    tempWarmTrack = Color(0xFFFB7185),
-    tempWarmText = Color(0xFFF43F5E),
-    tempNormalBadgeBg = Color(0xFFD1FAE5),
-    tempSliderTrack = Color(0xFFE2E8F0),
-    tempStepperBg = Color(0xFFFFFFFF),
-    tempStepperBorder = Color(0xFFF1F5F9),
-    tempStepperIcon = Color(0xFF334155),
-    tempCancelBg = Color(0xFFF1F5F9),
-    tempCancelText = Color(0xFF475569),
+    override val tempColdTrack: Color = Color(0xFF7DD3FC)
+    override val tempColdText: Color = Color(0xFF0284C7)
+    override val tempNormalTrack: Color = Color(0xFF34D399)
+    override val tempNormalText: Color = Color(0xFF047857)
+    override val tempWarmTrack: Color = Color(0xFFFB7185)
+    override val tempWarmText: Color = Color(0xFFF43F5E)
+    override val tempNormalBadgeBg: Color = Color(0xFFD1FAE5)
+    override val tempSliderTrack: Color = Color(0xFFE2E8F0)
+    override val tempStepperBg: Color = Color(0xFFFFFFFF)
+    override val tempStepperBorder: Color = Color(0xFFF1F5F9)
+    override val tempStepperIcon: Color = Color(0xFF334155)
+    override val tempCancelBg: Color = Color(0xFFF1F5F9)
+    override val tempCancelText: Color = Color(0xFF475569)
 
-    toastBackground = Color(0xFF1E293B),
-    toastText = Color(0xFFFFFFFF),
-    toastSuccessIconBg = Color(0xFF10B981),
-    toastSuccessIconTint = Color(0xFFFFFFFF),
-    toastErrorIconBg = Color(0xFFEF4444),
-    toastErrorIconTint = Color(0xFFFFFFFF)
-)
+    override val toastBackground: Color = Color(0xFF1E293B)
+    override val toastText: Color = Color(0xFFFFFFFF)
+    override val toastSuccessIconBg: Color = Color(0xFF10B981)
+    override val toastSuccessIconTint: Color = Color(0xFFFFFFFF)
+    override val toastErrorIconBg: Color = Color(0xFFEF4444)
+    override val toastErrorIconTint: Color = Color(0xFFFFFFFF)
+
+    override val categoryPurple: Color = Color(0xFF9333EA)
+    override val categoryPurpleContainer: Color = Color(0xFFFAF5FF)
+    override val categoryPurpleBorder: Color = Color(0xFFE9D5FF)
+    override val categoryPurpleText: Color = Color(0xFF7E22CE)
+
+    override val categoryTeal: Color = Color(0xFF0D9488)
+    override val categoryTealContainer: Color = Color(0xFFF0FDFA)
+    override val categoryTealBorder: Color = Color(0xFF99F6E4)
+    override val categoryTealText: Color = Color(0xFF0F766E)
+
+    override val categoryOrange: Color = Color(0xFFEA580C)
+    override val categoryOrangeContainer: Color = Color(0xFFFFF7ED)
+    override val categoryOrangeBorder: Color = Color(0xFFFED7AA)
+    override val categoryOrangeText: Color = Color(0xFFC2410C)
+
+    override val categoryRose: Color = Color(0xFFF43F5E)
+    override val categoryRoseContainer: Color = Color(0xFFFFF1F2)
+    override val categoryRoseBorder: Color = Color(0xFFFECDD3)
+    override val categoryRoseText: Color = Color(0xFFBE123C)
+
+    override val emergencyBannerBackground: Color = Color(0xFFFFF0F3)
+    override val emergencyBannerBorder: Color = Color(0xFFFFDDE4)
+    override val emergencyBannerTitle: Color = Color(0xFFE11D48)
+    override val emergencyBannerSubtitle: Color = Color(0xFF9F1239)
+    override val emergencyAction: Color = Color(0xFFE11D48)
+
+    override val disclaimerBackground: Color = Color(0xFFFFF4F5)
+    override val disclaimerBorder: Color = Color(0xFFFFCCD5)
+    override val disclaimerTitle: Color = Color(0xFF4C0519)
+    override val disclaimerText: Color = Color(0xFF881337)
+
+    override val growthLength: Color = Color(0xFF10B981)
+    override val growthLengthBorder: Color = Color(0xFFDCF5E6)
+    override val growthHead: Color = Color(0xFF3B82F6)
+    override val growthHeadBorder: Color = Color(0xFFDFEEFF)
+
+    override val ambientRosePulse: Color = Color(0xFFFFE4E6)
+    override val ambientAmberPulse: Color = Color(0xFFFEF3C7)
+    override val ambientWave1: Color = Color(0xFFF8E5D8)
+    override val ambientWave2: Color = Color(0xFFF3D8C8)
+    override val onboardingCardBgStart: Color = Color(0xFFFFF0F3)
+    override val onboardingCardBgEnd: Color = Color(0xFFFFF6EA)
+}
+
+val LightKanguruColors: KanguruColors = LightKanguruColorsImpl()
 
 // 2. REDUP RUANG MENYUSUI (Dim Nursing Room - Dark)
 // Warm espresso/charcoal tones designed for eye comfort during nighttime nursing/monitoring.
-val DarkKanguruColors = KanguruColors(
-    isDark = true,
-    background = Color(0xFF141312),
-    surface = Color(0xFF1E1D1A),
-    surfaceElevated = Color(0xFF262421),
-    surfaceVariant = Color(0xFF2B2824),
-    cardBackground = Color(0xFF1E1D1A),
-    cardBorder = Color(0xFF33302B),
-    divider = Color(0xFF2B2824),
-    outline = Color(0xFF3E3A34),
-    outlineVariant = Color(0xFF2E2B27),
+private class DarkKanguruColorsImpl : KanguruColors() {
+    override val isDark: Boolean = true
+    override val background: Color = Color(0xFF141312)
+    override val surface: Color = Color(0xFF1E1D1A)
+    override val surfaceElevated: Color = Color(0xFF262421)
+    override val surfaceVariant: Color = Color(0xFF2B2824)
+    override val cardBackground: Color = Color(0xFF1E1D1A)
+    override val cardBorder: Color = Color(0xFF33302B)
+    override val divider: Color = Color(0xFF2B2824)
+    override val outline: Color = Color(0xFF3E3A34)
+    override val outlineVariant: Color = Color(0xFF2E2B27)
 
-    primary = Color(0xFFFF5C7A),
-    onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFF3E1A22),
-    onPrimaryContainer = Color(0xFFFFB3C1),
+    override val primary: Color = Color(0xFFFF5C7A)
+    override val onPrimary: Color = Color(0xFFFFFFFF)
+    override val primaryContainer: Color = Color(0xFF3E1A22)
+    override val onPrimaryContainer: Color = Color(0xFFFFB3C1)
 
-    secondary = Color(0xFF38231B),
-    onSecondary = Color(0xFFF5E6DC),
-    secondaryContainer = Color(0xFF38231B),
-    onSecondaryContainer = Color(0xFFFFD7C2),
+    override val secondary: Color = Color(0xFF38231B)
+    override val onSecondary: Color = Color(0xFFF5E6DC)
+    override val secondaryContainer: Color = Color(0xFF38231B)
+    override val onSecondaryContainer: Color = Color(0xFFFFD7C2)
 
-    textPrimary = Color(0xFFF5F3EF),
-    textSecondary = Color(0xFFA8A399),
-    textTertiary = Color(0xFF757065),
-    textOnDark = Color(0xFFF5F3EF),
+    override val textPrimary: Color = Color(0xFFF5F3EF)
+    override val textSecondary: Color = Color(0xFFA8A399)
+    override val textTertiary: Color = Color(0xFF757065)
+    override val textOnDark: Color = Color(0xFFF5F3EF)
 
-    success = Color(0xFF4ADE80),
-    successContainer = Color(0xFF152A1E),
-    onSuccessContainer = Color(0xFF86EFAC),
-    successBorder = Color(0xFF234C34),
+    override val success: Color = Color(0xFF4ADE80)
+    override val successContainer: Color = Color(0xFF152A1E)
+    override val onSuccessContainer: Color = Color(0xFF86EFAC)
+    override val successBorder: Color = Color(0xFF234C34)
 
-    warning = Color(0xFFFBBF24),
-    warningContainer = Color(0xFF33240F),
-    onWarningContainer = Color(0xFFFDE68A),
-    warningBorder = Color(0xFF593E1A),
+    override val warning: Color = Color(0xFFFBBF24)
+    override val warningContainer: Color = Color(0xFF33240F)
+    override val onWarningContainer: Color = Color(0xFFFDE68A)
+    override val warningBorder: Color = Color(0xFF593E1A)
 
-    error = Color(0xFFF87171),
-    errorContainer = Color(0xFF381717),
-    onErrorContainer = Color(0xFFFECACA),
-    errorBorder = Color(0xFF5E2727),
+    override val error: Color = Color(0xFFF87171)
+    override val errorContainer: Color = Color(0xFF381717)
+    override val onErrorContainer: Color = Color(0xFFFECACA)
+    override val errorBorder: Color = Color(0xFF5E2727)
 
-    info = Color(0xFF60A5FA),
-    infoContainer = Color(0xFF152538),
-    onInfoContainer = Color(0xFFBFDBFE),
-    infoBorder = Color(0xFF233E5E),
+    override val info: Color = Color(0xFF60A5FA)
+    override val infoContainer: Color = Color(0xFF152538)
+    override val onInfoContainer: Color = Color(0xFFBFDBFE)
+    override val infoBorder: Color = Color(0xFF233E5E)
 
-    pinkGradientStart = Color(0xFFFF5C77),
-    pinkGradientMid = Color(0xFFFF6D88),
-    pinkGradientEnd = Color(0xFFFF7B96),
-    timerTrack = Color(0xFF3B1D24),
-    timerAccent = Color(0xFFFF8DA3),
+    override val pinkGradientStart: Color = Color(0xFFFF5C77)
+    override val pinkGradientMid: Color = Color(0xFFFF6D88)
+    override val pinkGradientEnd: Color = Color(0xFFFF7B96)
+    override val timerTrack: Color = Color(0xFF3B1D24)
+    override val timerAccent: Color = Color(0xFFFF8DA3)
 
-    fentonP97 = Color(0xFFF87171),
-    fentonP90 = Color(0xFFFB923C),
-    fentonP50 = Color(0xFF34D399),
-    fentonP10 = Color(0xFFFCD34D),
-    fentonP3 = Color(0xFFFDA4AF),
-    growthCardRed = Color(0xFF331619),
-    growthCardGreen = Color(0xFF152A1E),
-    growthCardBlue = Color(0xFF152538),
-    tipBackground = Color(0xFF2D2314),
-    tipBorder = Color(0xFF4E3D20),
-    tipText = Color(0xFFFDE68A),
+    override val fentonP97: Color = Color(0xFFF87171)
+    override val fentonP90: Color = Color(0xFFFB923C)
+    override val fentonP50: Color = Color(0xFF34D399)
+    override val fentonP10: Color = Color(0xFFFCD34D)
+    override val fentonP3: Color = Color(0xFFFDA4AF)
+    override val growthCardRed: Color = Color(0xFF331619)
+    override val growthCardGreen: Color = Color(0xFF152A1E)
+    override val growthCardBlue: Color = Color(0xFF152538)
+    override val tipBackground: Color = Color(0xFF2D2314)
+    override val tipBorder: Color = Color(0xFF4E3D20)
+    override val tipText: Color = Color(0xFFFDE68A)
 
-    inputBackground = Color(0xFF2B2824),
-    inputFocusedBackground = Color(0xFF1E1D1A),
-    inputBorder = Color(0xFF3E3A34),
-    dragHandle = Color(0xFF524E48),
-    closeButtonBackground = Color(0xFF2B2824),
-    closeButtonTint = Color(0xFFA8A399),
-    buttonSecondaryBorder = Color(0xFF3E3A34),
-    buttonSecondaryText = Color(0xFFF5F3EF),
+    override val inputBackground: Color = Color(0xFF2B2824)
+    override val inputFocusedBackground: Color = Color(0xFF1E1D1A)
+    override val inputBorder: Color = Color(0xFF3E3A34)
+    override val dragHandle: Color = Color(0xFF524E48)
+    override val closeButtonBackground: Color = Color(0xFF2B2824)
+    override val closeButtonTint: Color = Color(0xFFA8A399)
+    override val buttonSecondaryBorder: Color = Color(0xFF3E3A34)
+    override val buttonSecondaryText: Color = Color(0xFFF5F3EF)
 
-    actionPillPrimaryBackground = Color(0xFF3E1A22),
-    actionPillPrimaryText = Color(0xFFFFB3C1),
-    actionPillSecondaryBackground = Color(0xFF2B2824),
-    actionPillSecondaryText = Color(0xFFF5F3EF),
+    override val actionPillPrimaryBackground: Color = Color(0xFF3E1A22)
+    override val actionPillPrimaryText: Color = Color(0xFFFFB3C1)
+    override val actionPillSecondaryBackground: Color = Color(0xFF2B2824)
+    override val actionPillSecondaryText: Color = Color(0xFFF5F3EF)
 
-    genderMaleActiveBackground = Color(0xFF152538),
-    genderMaleActiveBorder = Color(0xFF60A5FA),
-    genderMaleActiveText = Color(0xFF93C5FD),
-    genderMaleActiveIconContainer = Color(0xFF1E3A5F),
-    genderMaleInactiveIconContainer = Color(0xFF1B2838),
-    genderMaleIcon = Color(0xFF60A5FA),
-    genderMaleInactiveIcon = Color(0xFF60A5FA),
+    override val genderMaleActiveBackground: Color = Color(0xFF152538)
+    override val genderMaleActiveBorder: Color = Color(0xFF60A5FA)
+    override val genderMaleActiveText: Color = Color(0xFF93C5FD)
+    override val genderMaleActiveIconContainer: Color = Color(0xFF1E3A5F)
+    override val genderMaleInactiveIconContainer: Color = Color(0xFF1B2838)
+    override val genderMaleIcon: Color = Color(0xFF60A5FA)
+    override val genderMaleInactiveIcon: Color = Color(0xFF60A5FA)
 
-    genderFemaleActiveBackground = Color(0xFF3E1A22),
-    genderFemaleActiveBorder = Color(0xFFFF5C7A),
-    genderFemaleActiveText = Color(0xFFFF8DA3),
-    genderFemaleActiveIconContainer = Color(0xFF5A202D),
-    genderFemaleInactiveIconContainer = Color(0xFF3A1820),
-    genderFemaleIcon = Color(0xFFFF8DA3),
-    genderFemaleInactiveIcon = Color(0xFFFF5C7A),
+    override val genderFemaleActiveBackground: Color = Color(0xFF3E1A22)
+    override val genderFemaleActiveBorder: Color = Color(0xFFFF5C7A)
+    override val genderFemaleActiveText: Color = Color(0xFFFF8DA3)
+    override val genderFemaleActiveIconContainer: Color = Color(0xFF5A202D)
+    override val genderFemaleInactiveIconContainer: Color = Color(0xFF3A1820)
+    override val genderFemaleIcon: Color = Color(0xFFFF8DA3)
+    override val genderFemaleInactiveIcon: Color = Color(0xFFFF5C7A)
 
-    avatarRingStart = Color(0xFFFF5C77),
-    avatarRingEnd = Color(0xFFFDA4AF),
-    avatarInnerBackground = Color(0xFF3E1A22),
+    override val avatarRingStart: Color = Color(0xFFFF5C77)
+    override val avatarRingEnd: Color = Color(0xFFFDA4AF)
+    override val avatarInnerBackground: Color = Color(0xFF3E1A22)
 
-    caregiverIbu = Color(0xFFFF5C7A),
-    caregiverIbuContainer = Color(0xFF3E1A22),
-    caregiverIbuText = Color(0xFFFFB3C1),
-    caregiverAyah = Color(0xFF60A5FA),
-    caregiverAyahContainer = Color(0xFF152538),
-    caregiverAyahText = Color(0xFFBFDBFE),
-    caregiverPendamping = Color(0xFFFBBF24),
-    caregiverPendampingContainer = Color(0xFF33240F),
-    caregiverPendampingText = Color(0xFFFDE68A),
-    caregiverPause = Color(0xFF64748B),
-    caregiverPauseContainer = Color(0xFF242220),
-    caregiverPauseText = Color(0xFFCBD5E1),
-    timelineTrack = Color(0xFF2B2824),
+    override val caregiverIbu: Color = Color(0xFFFF5C7A)
+    override val caregiverIbuContainer: Color = Color(0xFF3E1A22)
+    override val caregiverIbuText: Color = Color(0xFFFFB3C1)
+    override val caregiverAyah: Color = Color(0xFF60A5FA)
+    override val caregiverAyahContainer: Color = Color(0xFF152538)
+    override val caregiverAyahText: Color = Color(0xFFBFDBFE)
+    override val caregiverPendamping: Color = Color(0xFFFBBF24)
+    override val caregiverPendampingContainer: Color = Color(0xFF33240F)
+    override val caregiverPendampingText: Color = Color(0xFFFDE68A)
+    override val caregiverPause: Color = Color(0xFF64748B)
+    override val caregiverPauseContainer: Color = Color(0xFF242220)
+    override val caregiverPauseText: Color = Color(0xFFCBD5E1)
+    override val timelineTrack: Color = Color(0xFF2B2824)
 
-    tempColdTrack = Color(0xFF0369A1),
-    tempColdText = Color(0xFF38BDF8),
-    tempNormalTrack = Color(0xFF059669),
-    tempNormalText = Color(0xFF34D399),
-    tempWarmTrack = Color(0xFFE11D48),
-    tempWarmText = Color(0xFFFDA4AF),
-    tempNormalBadgeBg = Color(0xFF064E3B),
-    tempSliderTrack = Color(0xFF334155),
-    tempStepperBg = Color(0xFF262421),
-    tempStepperBorder = Color(0xFF33302B),
-    tempStepperIcon = Color(0xFFF1F5F9),
-    tempCancelBg = Color(0xFF2B2824),
-    tempCancelText = Color(0xFF94A3B8),
+    override val tempColdTrack: Color = Color(0xFF0369A1)
+    override val tempColdText: Color = Color(0xFF38BDF8)
+    override val tempNormalTrack: Color = Color(0xFF059669)
+    override val tempNormalText: Color = Color(0xFF34D399)
+    override val tempWarmTrack: Color = Color(0xFFE11D48)
+    override val tempWarmText: Color = Color(0xFFFDA4AF)
+    override val tempNormalBadgeBg: Color = Color(0xFF064E3B)
+    override val tempSliderTrack: Color = Color(0xFF334155)
+    override val tempStepperBg: Color = Color(0xFF262421)
+    override val tempStepperBorder: Color = Color(0xFF33302B)
+    override val tempStepperIcon: Color = Color(0xFFF1F5F9)
+    override val tempCancelBg: Color = Color(0xFF2B2824)
+    override val tempCancelText: Color = Color(0xFF94A3B8)
 
-    toastBackground = Color(0xFF262421),
-    toastText = Color(0xFFFFFFFF),
-    toastSuccessIconBg = Color(0xFF10B981),
-    toastSuccessIconTint = Color(0xFFFFFFFF),
-    toastErrorIconBg = Color(0xFFEF4444),
-    toastErrorIconTint = Color(0xFFFFFFFF)
-)
+    override val toastBackground: Color = Color(0xFF262421)
+    override val toastText: Color = Color(0xFFFFFFFF)
+    override val toastSuccessIconBg: Color = Color(0xFF10B981)
+    override val toastSuccessIconTint: Color = Color(0xFFFFFFFF)
+    override val toastErrorIconBg: Color = Color(0xFFEF4444)
+    override val toastErrorIconTint: Color = Color(0xFFFFFFFF)
+
+    override val categoryPurple: Color = Color(0xFFC084FC)
+    override val categoryPurpleContainer: Color = Color(0xFF2E1945)
+    override val categoryPurpleBorder: Color = Color(0xFF4C2870)
+    override val categoryPurpleText: Color = Color(0xFFE9D5FF)
+
+    override val categoryTeal: Color = Color(0xFF2DD4BF)
+    override val categoryTealContainer: Color = Color(0xFF132B27)
+    override val categoryTealBorder: Color = Color(0xFF1E4B43)
+    override val categoryTealText: Color = Color(0xFF99F6E4)
+
+    override val categoryOrange: Color = Color(0xFFFB923C)
+    override val categoryOrangeContainer: Color = Color(0xFF331F14)
+    override val categoryOrangeBorder: Color = Color(0xFF57331E)
+    override val categoryOrangeText: Color = Color(0xFFFFD7C2)
+
+    override val categoryRose: Color = Color(0xFFFB7185)
+    override val categoryRoseContainer: Color = Color(0xFF3E1A22)
+    override val categoryRoseBorder: Color = Color(0xFF5E2734)
+    override val categoryRoseText: Color = Color(0xFFFFB3C1)
+
+    override val emergencyBannerBackground: Color = Color(0xFF381717)
+    override val emergencyBannerBorder: Color = Color(0xFF5E2727)
+    override val emergencyBannerTitle: Color = Color(0xFFF87171)
+    override val emergencyBannerSubtitle: Color = Color(0xFFFECACA)
+    override val emergencyAction: Color = Color(0xFFDC2626)
+
+    override val disclaimerBackground: Color = Color(0xFF2C1619)
+    override val disclaimerBorder: Color = Color(0xFF4C2229)
+    override val disclaimerTitle: Color = Color(0xFFFFD1DC)
+    override val disclaimerText: Color = Color(0xFFFFB3C1)
+
+    override val growthLength: Color = Color(0xFF4ADE80)
+    override val growthLengthBorder: Color = Color(0xFF234C34)
+    override val growthHead: Color = Color(0xFF60A5FA)
+    override val growthHeadBorder: Color = Color(0xFF233E5E)
+
+    override val ambientRosePulse: Color = Color(0xFF3E1A22)
+    override val ambientAmberPulse: Color = Color(0xFF33240F)
+    override val ambientWave1: Color = Color(0xFF25221F)
+    override val ambientWave2: Color = Color(0xFF2D2824)
+    override val onboardingCardBgStart: Color = Color(0xFF3B252C)
+    override val onboardingCardBgEnd: Color = Color(0xFF2C2520)
+}
+
+val DarkKanguruColors: KanguruColors = DarkKanguruColorsImpl()
 
 val LocalKanguruColors = staticCompositionLocalOf { LightKanguruColors }
 

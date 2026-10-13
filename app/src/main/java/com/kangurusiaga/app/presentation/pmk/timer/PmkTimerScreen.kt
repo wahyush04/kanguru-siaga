@@ -285,7 +285,7 @@ fun PmkTimerScreen(
                             modifier = Modifier
                                 .size(width = 128.dp, height = 4.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFCBD5E1))
+                                .background(KanguruTheme.colors.dragHandle)
                         )
                     }
                 }

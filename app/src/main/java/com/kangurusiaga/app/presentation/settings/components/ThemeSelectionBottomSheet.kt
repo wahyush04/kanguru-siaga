@@ -48,10 +48,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.DimNursingSwatches
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.SystemThemeSwatches
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
+import com.kangurusiaga.app.core.designsystem.theme.WarmLightSwatches
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.settings.AppThemeMode
 
@@ -158,10 +161,10 @@ fun ThemeSelectionBottomSheet(
                     badgeText = "Default • Ramah Bayi",
                     description = "Warna krem pastel hangat yang lembut, menenangkan dan tidak silau bagi mata bayi saat kontak kulit (PMK).",
                     icon = Icons.Default.LightMode,
-                    iconColor = Color(0xFFF59E0B),
-                    iconBgColor = Color(0xFFFEF3C7),
+                    iconColor = KanguruTheme.colors.warning,
+                    iconBgColor = KanguruTheme.colors.warningContainer,
                     isSelected = selectedTheme == AppThemeMode.WARM_LIGHT,
-                    swatches = listOf(Color(0xFFFFF9F6), Color(0xFFFF5C77), Color(0xFFF59E0B)),
+                    swatches = WarmLightSwatches,
                     onClick = { onSelectTheme(AppThemeMode.WARM_LIGHT) }
                 )
 
@@ -171,10 +174,10 @@ fun ThemeSelectionBottomSheet(
                     badgeText = "Khusus Malam",
                     description = "Latar gelap lembut dengan kontras rendah, ideal digunakan saat memantau suhu, timer PMK, atau jadwal ASI tanpa mengganggu tidur bayi.",
                     icon = Icons.Default.NightlightRound,
-                    iconColor = Color(0xFFFCD34D),
-                    iconBgColor = Color(0xFF282522),
+                    iconColor = KanguruTheme.colors.warning,
+                    iconBgColor = KanguruTheme.colors.surfaceVariant,
                     isSelected = selectedTheme == AppThemeMode.DIM_NURSING,
-                    swatches = listOf(Color(0xFF141312), Color(0xFFFF5C77), Color(0xFFA8A399)),
+                    swatches = DimNursingSwatches,
                     onClick = { onSelectTheme(AppThemeMode.DIM_NURSING) }
                 )
 
@@ -184,12 +187,10 @@ fun ThemeSelectionBottomSheet(
                     badgeText = "Dinamis",
                     description = "Secara otomatis beralih antara Terang Hangat di siang hari dan Mode Redup pada malam hari mengikuti setelan perangkat Anda.",
                     icon = Icons.Default.BrightnessMedium,
-                    iconColor = Color(0xFF60A5FA),
+                    iconColor = KanguruTheme.colors.info,
                     iconBgColor = MaterialTheme.colorScheme.surfaceVariant,
                     isSelected = selectedTheme == AppThemeMode.SYSTEM,
-                    gradientSwatch = Brush.horizontalGradient(
-                        listOf(Color(0xFFFAF7F2), Color(0xFFFF8598), Color(0xFF141312))
-                    ),
+                    gradientSwatch = Brush.horizontalGradient(SystemThemeSwatches),
                     onClick = { onSelectTheme(AppThemeMode.SYSTEM) }
                 )
 

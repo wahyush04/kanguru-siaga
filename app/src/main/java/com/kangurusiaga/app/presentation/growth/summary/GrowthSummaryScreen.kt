@@ -173,8 +173,8 @@ fun GrowthSummaryScreen(
                     status = weightStatus,
                     icon = GrowthIcons.Weight,
                     cardBg = GrowthCardRed,
-                    cardBorder = Color(0xFFFFCCD5),
-                    iconTint = BrandPink
+                    cardBorder = KanguruTheme.colors.primaryBorder,
+                    iconTint = KanguruTheme.colors.primary
                 )
 
                 // Card 2: Panjang Badan
@@ -192,8 +192,8 @@ fun GrowthSummaryScreen(
                     status = lengthStatus,
                     icon = GrowthIcons.Length,
                     cardBg = GrowthCardGreen,
-                    cardBorder = Color(0xFFDCF5E6),
-                    iconTint = Color(0xFF10B981)
+                    cardBorder = KanguruTheme.colors.growthLengthBorder,
+                    iconTint = KanguruTheme.colors.growthLength
                 )
 
                 // Card 3: Lingkar Kepala
@@ -211,8 +211,8 @@ fun GrowthSummaryScreen(
                     status = headStatus,
                     icon = GrowthIcons.Head,
                     cardBg = GrowthCardBlue,
-                    cardBorder = Color(0xFFDFEEFF),
-                    iconTint = Color(0xFF3B82F6)
+                    cardBorder = KanguruTheme.colors.growthHeadBorder,
+                    iconTint = KanguruTheme.colors.growthHead
                 )
             }
 
@@ -305,7 +305,7 @@ fun GrowthSummaryScreen(
                 fromToText = lenFromToStr,
                 icon = GrowthIcons.Length,
                 iconBg = GrowthCardGreen,
-                iconTint = Color(0xFF10B981)
+                iconTint = KanguruTheme.colors.growthLength
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -333,7 +333,7 @@ fun GrowthSummaryScreen(
                 fromToText = headFromToStr,
                 icon = GrowthIcons.Head,
                 iconBg = GrowthCardBlue,
-                iconTint = Color(0xFF3B82F6)
+                iconTint = KanguruTheme.colors.growthHead
             )
 
             Spacer(modifier = Modifier.height(24.dp))

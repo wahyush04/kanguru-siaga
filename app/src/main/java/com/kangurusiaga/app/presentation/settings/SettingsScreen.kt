@@ -1073,7 +1073,7 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = onConfirmClearHistory) {
-                    Text(text = "Hapus", color = Color(0xFFE11D48), fontWeight = FontWeight.Bold)
+                    Text(text = "Hapus", color = KanguruTheme.colors.error, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
@@ -1106,7 +1106,7 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = onConfirmResetApp) {
-                    Text(text = "Reset", color = Color(0xFFDC2626), fontWeight = FontWeight.Bold)
+                    Text(text = "Reset", color = KanguruTheme.colors.error, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {

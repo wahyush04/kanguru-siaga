@@ -286,9 +286,9 @@ fun AddFeedingScheduleForm(
                 onCheckedChange = { reminderEnabled = it },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = White,
-                    checkedTrackColor = Color(0xFF10B981),
+                    checkedTrackColor = KanguruTheme.colors.success,
                     uncheckedThumbColor = White,
-                    uncheckedTrackColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
+                    uncheckedTrackColor = KanguruTheme.colors.cardBorder
                 )
             )
         }
@@ -361,7 +361,7 @@ fun AddFeedingScheduleForm(
                     .weight(1f)
                     .heightIn(min = 48.dp),
                 shape = RoundedCornerShape(14.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFD1D8)),
+                border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.primaryBorder),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = BrandPink
                 )

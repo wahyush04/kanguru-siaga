@@ -59,8 +59,8 @@ fun EmergencyHeroCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, if (isDark) CardBorder else Color(0xFFE0F0F7), RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = if (isDark) KanguruTheme.colors.surfaceVariant else Color(0xFFEFF6FB)),
+            .border(1.dp, if (isDark) KanguruTheme.colors.cardBorder else KanguruTheme.colors.infoBorder, RoundedCornerShape(24.dp)),
+        colors = CardDefaults.cardColors(containerColor = if (isDark) KanguruTheme.colors.surfaceVariant else KanguruTheme.colors.infoContainer),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -77,7 +77,7 @@ fun EmergencyHeroCard(
                     .aspectRatio(16f / 10f)
                     .clip(RoundedCornerShape(16.dp))
                     .background(KanguruTheme.colors.surface)
-                    .border(1.dp, CardBorder, RoundedCornerShape(16.dp)),
+                    .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -95,7 +95,7 @@ fun EmergencyHeroCard(
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(KanguruTheme.colors.surface)
-                        .border(1.dp, if (isDark) KanguruTheme.colors.infoBorder else Color(0xFFBAE6FD), CircleShape)
+                        .border(1.dp, KanguruTheme.colors.infoBorder, CircleShape)
                         .padding(horizontal = 16.dp, vertical = 6.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -103,7 +103,7 @@ fun EmergencyHeroCard(
                         text = heroTag.uppercase(),
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = if (isDark) KanguruTheme.colors.info else Color(0xFF0284C7),
+                        color = KanguruTheme.colors.info,
                         letterSpacing = 0.6.sp
                     )
                 }
@@ -165,27 +165,11 @@ fun EmergencyActionAlertCard(
 ) {
     val isDark = KanguruTheme.colors.isDark
     val isRed = themeColor == "red" || themeColor == "rose"
-    val bgColor = if (isRed) {
-        if (isDark) KanguruTheme.colors.errorContainer else Color(0xFFFFF5F5)
-    } else {
-        if (isDark) KanguruTheme.colors.warningContainer else Color(0xFFFFF9EB)
-    }
-    val borderColor = if (isRed) {
-        if (isDark) KanguruTheme.colors.errorBorder else Color(0xFFFED7D7)
-    } else {
-        if (isDark) KanguruTheme.colors.warningBorder else Color(0xFFFDE68A)
-    }
+    val bgColor = if (isRed) KanguruTheme.colors.errorContainer else KanguruTheme.colors.warningContainer
+    val borderColor = if (isRed) KanguruTheme.colors.errorBorder else KanguruTheme.colors.warningBorder
     val iconColor = if (isRed) KanguruTheme.colors.error else KanguruTheme.colors.warning
-    val titleColor = if (isRed) {
-        if (isDark) KanguruTheme.colors.error else Color(0xFF9F1239)
-    } else {
-        if (isDark) KanguruTheme.colors.warning else Color(0xFF92400E)
-    }
-    val textColor = if (isRed) {
-        if (isDark) TextSecondary else Color(0xFF881337)
-    } else {
-        if (isDark) TextSecondary else Color(0xFF78350F)
-    }
+    val titleColor = if (isRed) KanguruTheme.colors.errorText else KanguruTheme.colors.warningText
+    val textColor = if (isRed) KanguruTheme.colors.errorText else KanguruTheme.colors.warningText
 
     Card(
         modifier = modifier

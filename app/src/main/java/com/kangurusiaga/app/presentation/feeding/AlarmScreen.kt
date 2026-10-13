@@ -484,10 +484,10 @@ private fun AlarmScheduleItem(
 ) {
     // Alternating soft accent colors for the clock icon (orange, blue, cyan, rose)
     val colorPalettes = listOf(
-        Color(0xFFF97316), // orange
-        Color(0xFF3B82F6), // blue
-        Color(0xFF06B6D4), // cyan
-        Color(0xFFF43F5E)  // rose
+        KanguruTheme.colors.categoryOrange,
+        KanguruTheme.colors.info,
+        KanguruTheme.colors.categoryTeal,
+        KanguruTheme.colors.categoryRose
     )
     val iconColor = colorPalettes[index % colorPalettes.size]
     val bgIconColor = iconColor.copy(alpha = 0.15f)

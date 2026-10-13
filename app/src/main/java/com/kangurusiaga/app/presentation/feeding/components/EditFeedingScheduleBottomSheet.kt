@@ -155,12 +155,12 @@ fun EditFeedingScheduleBottomSheet(
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFFFFF1F2))
+                            .background(KanguruTheme.colors.primaryContainer)
                             .padding(horizontal = 8.dp, vertical = 2.dp)
                     ) {
                         Text(
                             text = selectedMethod.displayName,
-                            color = Color(0xFFE11D48),
+                            color = KanguruTheme.colors.primary,
                             style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold
                         )
@@ -392,9 +392,9 @@ fun EditFeedingScheduleBottomSheet(
                         onCheckedChange = { reminderEnabled = it },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = White,
-                            checkedTrackColor = Color(0xFF10B981),
+                            checkedTrackColor = KanguruTheme.colors.success,
                             uncheckedThumbColor = White,
-                            uncheckedTrackColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
+                            uncheckedTrackColor = KanguruTheme.colors.cardBorder
                         )
                     )
                 }
@@ -517,15 +517,15 @@ fun EditFeedingScheduleBottomSheet(
                     .heightIn(min = 44.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFF1F2),
-                    contentColor = Color(0xFFE11D48)
+                    containerColor = KanguruTheme.colors.errorContainer,
+                    contentColor = KanguruTheme.colors.error
                 ),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFECDD3))
+                border = androidx.compose.foundation.BorderStroke(1.dp, KanguruTheme.colors.errorBorder)
             ) {
                 Icon(
                     imageVector = Icons.Default.DeleteOutline,
                     contentDescription = null,
-                    tint = Color(0xFFE11D48),
+                    tint = KanguruTheme.colors.error,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -533,7 +533,7 @@ fun EditFeedingScheduleBottomSheet(
                     text = stringResource(R.string.alarm_btn_delete_this),
                     style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFE11D48)
+                    color = KanguruTheme.colors.error
                 )
             }
 
@@ -548,7 +548,7 @@ fun EditFeedingScheduleBottomSheet(
                     text = stringResource(R.string.alarm_btn_cancel),
                     style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF94A3B8)
+                    color = KanguruTheme.colors.textTertiary
                 )
             }
         }

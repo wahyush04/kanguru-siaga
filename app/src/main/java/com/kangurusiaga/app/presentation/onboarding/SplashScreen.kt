@@ -378,8 +378,8 @@ fun SplashScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFFFEF3C7).copy(alpha = if (isDark) amberPulseAlpha * 0.15f else amberPulseAlpha),
-                            Color(0xFFFEF3C7).copy(alpha = (if (isDark) amberPulseAlpha * 0.15f else amberPulseAlpha) * 0.4f),
+                            KanguruTheme.colors.ambientAmberPulse.copy(alpha = if (isDark) amberPulseAlpha * 0.15f else amberPulseAlpha),
+                            KanguruTheme.colors.ambientAmberPulse.copy(alpha = (if (isDark) amberPulseAlpha * 0.15f else amberPulseAlpha) * 0.4f),
                             Color.Transparent
                         )
                     ),
@@ -396,14 +396,26 @@ fun SplashScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFFFFE4E6).copy(alpha = if (isDark) rosePulseAlpha * 0.15f else rosePulseAlpha),
-                            Color(0xFFFFE4E6).copy(alpha = (if (isDark) rosePulseAlpha * 0.15f else rosePulseAlpha) * 0.4f),
+                            KanguruTheme.colors.ambientRosePulse.copy(alpha = if (isDark) rosePulseAlpha * 0.15f else rosePulseAlpha),
+                            KanguruTheme.colors.ambientRosePulse.copy(alpha = (if (isDark) rosePulseAlpha * 0.15f else rosePulseAlpha) * 0.4f),
                             Color.Transparent
                         )
                     ),
                     shape = CircleShape
                 )
         )
+
+        val waveBaseColors = if (isDark) listOf(
+            KanguruTheme.colors.surfaceVariant.copy(alpha = 0.5f),
+            KanguruTheme.colors.surface.copy(alpha = 0.3f),
+            Color.Transparent
+        ) else listOf(
+            KanguruTheme.colors.secondaryContainer.copy(alpha = 0.9f),
+            KanguruTheme.colors.background.copy(alpha = 0.5f),
+            Color.Transparent
+        )
+        val wave1Color = KanguruTheme.colors.ambientWave1.copy(alpha = if (isDark) 0.5f else 0.65f)
+        val wave2Color = KanguruTheme.colors.ambientWave2.copy(alpha = if (isDark) 0.35f else 0.40f)
 
         // Bottom Organic Waves Canvas matching Stitch SVG specifications
         Canvas(
@@ -418,15 +430,7 @@ fun SplashScreen(
             // Soft radial base tint at the bottom
             drawRect(
                 brush = Brush.radialGradient(
-                    colors = if (isDark) listOf(
-                        Color(0xFF2A2421).copy(alpha = 0.5f),
-                        Color(0xFF1E1B18).copy(alpha = 0.3f),
-                        Color.Transparent
-                    ) else listOf(
-                        Color(0xFFFBEBE1).copy(alpha = 0.9f),
-                        Color(0xFFFBF3EB).copy(alpha = 0.5f),
-                        Color.Transparent
-                    ),
+                    colors = waveBaseColors,
                     center = Offset(w / 2f, h),
                     radius = w * 0.9f
                 ),
@@ -446,7 +450,7 @@ fun SplashScreen(
                 lineTo(0f, h)
                 close()
             }
-            drawPath(path1, color = if (isDark) Color(0xFF25221F).copy(alpha = 0.5f) else Color(0xFFF8E5D8).copy(alpha = 0.65f))
+            drawPath(path1, color = wave1Color)
 
             // Wave 2: Path D: M0,110 C140,50 280,140 390,110 L390,180 L0,180 Z (scaled)
             val path2 = Path().apply {
@@ -460,7 +464,7 @@ fun SplashScreen(
                 lineTo(0f, h)
                 close()
             }
-            drawPath(path2, color = if (isDark) Color(0xFF2D2824).copy(alpha = 0.35f) else Color(0xFFF3D8C8).copy(alpha = 0.40f))
+            drawPath(path2, color = wave2Color)
         }
 
         // ==========================================
@@ -471,7 +475,7 @@ fun SplashScreen(
         Icon(
             painter = painterResource(id = R.drawable.ic_splash_heart),
             contentDescription = null,
-            tint = Color(0xFFFDA4AF).copy(alpha = 0.85f),
+            tint = KanguruTheme.colors.avatarRingEnd.copy(alpha = 0.85f),
             modifier = Modifier
                 .padding(start = 36.dp, top = 90.dp)
                 .size(20.dp)
@@ -483,7 +487,7 @@ fun SplashScreen(
         Icon(
             painter = painterResource(id = R.drawable.ic_splash_heart),
             contentDescription = null,
-            tint = Color(0xFFFB7185).copy(alpha = 0.80f),
+            tint = KanguruTheme.colors.categoryRose.copy(alpha = 0.80f),
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(end = 44.dp, top = 140.dp)
@@ -496,7 +500,7 @@ fun SplashScreen(
         Icon(
             painter = painterResource(id = R.drawable.ic_splash_heart),
             contentDescription = null,
-            tint = Color(0xFFFECDD3).copy(alpha = 0.70f),
+            tint = KanguruTheme.colors.categoryRoseBorder.copy(alpha = 0.70f),
             modifier = Modifier
                 .padding(start = 22.dp, top = 340.dp)
                 .size(14.dp)
@@ -508,7 +512,7 @@ fun SplashScreen(
         Icon(
             painter = painterResource(id = R.drawable.ic_splash_leaf_1),
             contentDescription = null,
-            tint = Color(0xFF059669).copy(alpha = 0.35f),
+            tint = KanguruTheme.colors.success.copy(alpha = 0.35f),
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(end = 22.dp, top = 240.dp)
@@ -521,7 +525,7 @@ fun SplashScreen(
         Icon(
             painter = painterResource(id = R.drawable.ic_splash_leaf_2),
             contentDescription = null,
-            tint = Color(0xFF059669).copy(alpha = 0.30f),
+            tint = KanguruTheme.colors.success.copy(alpha = 0.30f),
             modifier = Modifier
                 .padding(start = 28.dp, top = 270.dp)
                 .size(24.dp)
@@ -571,10 +575,10 @@ fun SplashScreen(
                             .background(
                                 Brush.sweepGradient(
                                     listOf(
-                                        Color(0xFFFDE68A).copy(alpha = 0.45f),
-                                        Color(0xFFFFE4E6).copy(alpha = 0.60f),
-                                        Color(0xFFFED7AA).copy(alpha = 0.40f),
-                                        Color(0xFFFDE68A).copy(alpha = 0.45f)
+                                        KanguruTheme.colors.ambientAmberPulse.copy(alpha = 0.45f),
+                                        KanguruTheme.colors.ambientRosePulse.copy(alpha = 0.60f),
+                                        KanguruTheme.colors.categoryOrangeContainer.copy(alpha = 0.40f),
+                                        KanguruTheme.colors.ambientAmberPulse.copy(alpha = 0.45f)
                                     )
                                 ),
                                 shape = OrganicBlobShape
@@ -590,9 +594,9 @@ fun SplashScreen(
                             .background(
                                 Brush.radialGradient(
                                     listOf(
-                                        Color(0xFFFFF1F2).copy(alpha = 0.75f),
-                                        Color(0xFFFEF3C7).copy(alpha = 0.65f),
-                                        Color(0xFFFFEDD5).copy(alpha = 0.40f)
+                                        KanguruTheme.colors.primaryContainer.copy(alpha = 0.75f),
+                                        KanguruTheme.colors.ambientAmberPulse.copy(alpha = 0.65f),
+                                        KanguruTheme.colors.secondaryContainer.copy(alpha = 0.40f)
                                     )
                                 ),
                                 shape = OrganicBlobShape
@@ -659,7 +663,7 @@ fun SplashScreen(
                         .shadow(
                             elevation = 8.dp,
                             shape = RoundedCornerShape(28.dp),
-                            spotColor = Color(0xFFFF5C77)
+                            spotColor = KanguruTheme.colors.primary
                         ),
                     shape = RoundedCornerShape(28.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -673,8 +677,8 @@ fun SplashScreen(
                             .background(
                                 Brush.horizontalGradient(
                                     listOf(
-                                        Color(0xFFFF5C77),
-                                        Color(0xFFF43F5E)
+                                        KanguruTheme.colors.primary,
+                                        KanguruTheme.colors.avatarRingEnd
                                     )
                                 )
                             ),
@@ -779,19 +783,19 @@ fun SplashScreen(
                     0 -> Icon(
                         painter = painterResource(id = R.drawable.ic_splash_heart),
                         contentDescription = null,
-                        tint = Color(0xFFFB7185),
+                        tint = KanguruTheme.colors.categoryRose,
                         modifier = Modifier.size(18.dp)
                     )
                     1 -> Box(
                         modifier = Modifier
                             .size(10.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFFBBF24))
+                            .background(KanguruTheme.colors.warning)
                     )
                     else -> Icon(
                         painter = painterResource(id = R.drawable.ic_splash_leaf_1),
                         contentDescription = null,
-                        tint = Color(0xFF10B981),
+                        tint = KanguruTheme.colors.success,
                         modifier = Modifier.size(16.dp)
                     )
                 }

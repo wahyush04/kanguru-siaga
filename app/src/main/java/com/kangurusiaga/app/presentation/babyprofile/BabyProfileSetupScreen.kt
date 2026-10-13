@@ -173,7 +173,7 @@ fun BabyProfileSetupRoute(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
-        containerColor = Color(0xFFFDFBF9)
+        containerColor = BrandBackground
     ) { innerPadding ->
         when (uiState.currentStep) {
             ProfileSetupStep.FORM -> {
@@ -352,12 +352,12 @@ fun BabyProfileFormScreen(
                             .background(
                                 Brush.verticalGradient(
                                     listOf(
-                                        if (isDark) Color(0xFF3B252C) else Color(0xFFFFF1F2),
-                                        if (isDark) Color(0xFF2C2520) else Color(0xFFF4F4F5)
+                                        KanguruTheme.colors.onboardingCardBgStart,
+                                        KanguruTheme.colors.onboardingCardBgEnd
                                     )
                                 )
                             )
-                            .border(2.dp, if (isDark) BrandPink.copy(alpha = 0.5f) else Color(0xFFFECDD3), CircleShape)
+                            .border(2.dp, KanguruTheme.colors.avatarRingEnd, CircleShape)
                             .clickable { onGalleryClick() },
                         contentAlignment = Alignment.Center
                     ) {
@@ -713,8 +713,8 @@ fun BabyProfileFormScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(if (isDark) KanguruTheme.colors.errorContainer else Color(0xFFFFF1F2), RoundedCornerShape(12.dp))
-                                    .border(1.dp, if (isDark) KanguruTheme.colors.errorBorder else Color(0xFFFFE4E6), RoundedCornerShape(12.dp))
+                                    .background(KanguruTheme.colors.errorContainer, RoundedCornerShape(12.dp))
+                                    .border(1.dp, KanguruTheme.colors.errorBorder, RoundedCornerShape(12.dp))
                                     .padding(10.dp),
                                 verticalAlignment = Alignment.Top
                             ) {
@@ -730,7 +730,7 @@ fun BabyProfileFormScreen(
                                 Text(
                                     text = stringResource(R.string.baby_profile_bblr_notice),
                                     style = KanguruTheme.typography.labelSmall,
-                                    color = if (isDark) KanguruTheme.colors.error else Color(0xFFE11D48)
+                                    color = KanguruTheme.colors.error
                                 )
                             }
                         }
@@ -763,10 +763,10 @@ fun BabyProfileFormScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clip(RoundedCornerShape(14.dp))
-                                        .background(if (isMale) (if (isDark) Color(0xFF1E293B) else Color(0xFFEFF6FF)) else KanguruTheme.colors.surfaceVariant)
+                                        .background(if (isMale) KanguruTheme.colors.genderMaleActiveBackground else KanguruTheme.colors.surfaceVariant)
                                         .border(
                                             width = if (isMale) 2.dp else 1.dp,
-                                            color = if (isMale) Color(0xFF3B82F6) else CardBorder,
+                                            color = if (isMale) KanguruTheme.colors.genderMaleActiveBorder else CardBorder,
                                             shape = RoundedCornerShape(14.dp)
                                         )
                                         .clickable { onGenderChange(Gender.MALE) }
@@ -780,7 +780,7 @@ fun BabyProfileFormScreen(
                                                 .padding(end = 4.dp, top = 0.dp)
                                                 .size(18.dp)
                                                 .clip(CircleShape)
-                                                .background(Color(0xFF3B82F6)),
+                                                .background(KanguruTheme.colors.genderMaleActiveBorder),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
@@ -799,13 +799,13 @@ fun BabyProfileFormScreen(
                                             modifier = Modifier
                                                 .size(40.dp)
                                                 .clip(CircleShape)
-                                                .background(if (isDark) Color(0xFF1E3A8A) else Color(0xFFDBEAFE)),
+                                                .background(if (isMale) KanguruTheme.colors.genderMaleActiveIconContainer else KanguruTheme.colors.genderMaleInactiveIconContainer),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Male,
                                                 contentDescription = null,
-                                                tint = Color(0xFF3B82F6),
+                                                tint = if (isMale) KanguruTheme.colors.genderMaleIcon else KanguruTheme.colors.genderMaleInactiveIcon,
                                                 modifier = Modifier.size(24.dp)
                                             )
                                         }
@@ -814,7 +814,7 @@ fun BabyProfileFormScreen(
                                             text = stringResource(R.string.baby_profile_gender_male),
                                             style = KanguruTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Bold,
-                                            color = if (isMale) (if (isDark) Color(0xFF60A5FA) else Color(0xFF1D4ED8)) else TextSecondary
+                                            color = if (isMale) KanguruTheme.colors.genderMaleActiveText else TextSecondary
                                         )
                                     }
                                 }
@@ -825,10 +825,10 @@ fun BabyProfileFormScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clip(RoundedCornerShape(14.dp))
-                                        .background(if (isFemale) (if (isDark) Color(0xFF381E28) else Color(0xFFFFF1F2)) else KanguruTheme.colors.surfaceVariant)
+                                        .background(if (isFemale) KanguruTheme.colors.genderFemaleActiveBackground else KanguruTheme.colors.surfaceVariant)
                                         .border(
                                             width = if (isFemale) 2.dp else 1.dp,
-                                            color = if (isFemale) BrandPink else CardBorder,
+                                            color = if (isFemale) KanguruTheme.colors.genderFemaleActiveBorder else CardBorder,
                                             shape = RoundedCornerShape(14.dp)
                                         )
                                         .clickable { onGenderChange(Gender.FEMALE) }
@@ -842,7 +842,7 @@ fun BabyProfileFormScreen(
                                                 .padding(end = 4.dp, top = 0.dp)
                                                 .size(18.dp)
                                                 .clip(CircleShape)
-                                                .background(BrandPink),
+                                                .background(KanguruTheme.colors.genderFemaleActiveBorder),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
@@ -861,13 +861,13 @@ fun BabyProfileFormScreen(
                                             modifier = Modifier
                                                 .size(40.dp)
                                                 .clip(CircleShape)
-                                                .background(if (isDark) Color(0xFF4C1D24) else Color(0xFFFFE4E6)),
+                                                .background(if (isFemale) KanguruTheme.colors.genderFemaleActiveIconContainer else KanguruTheme.colors.genderFemaleInactiveIconContainer),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Female,
                                                 contentDescription = null,
-                                                tint = BrandPink,
+                                                tint = if (isFemale) KanguruTheme.colors.genderFemaleIcon else KanguruTheme.colors.genderFemaleInactiveIcon,
                                                 modifier = Modifier.size(24.dp)
                                             )
                                         }
@@ -876,7 +876,7 @@ fun BabyProfileFormScreen(
                                             text = stringResource(R.string.baby_profile_gender_female),
                                             style = KanguruTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Bold,
-                                            color = if (isFemale) (if (isDark) BrandPink else Color(0xFFE11D48)) else TextSecondary
+                                            color = if (isFemale) KanguruTheme.colors.genderFemaleActiveText else TextSecondary
                                         )
                                     }
                                 }
@@ -913,7 +913,7 @@ fun BabyProfileFormScreen(
                     .shadow(
                         elevation = 6.dp,
                         shape = RoundedCornerShape(16.dp),
-                        spotColor = Color(0xFFFF5C77).copy(alpha = 0.35f)
+                        spotColor = BrandPink.copy(alpha = 0.35f)
                     ),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = BrandPink)
@@ -1013,12 +1013,12 @@ fun BabyProfileConfirmationScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            if (isDark) KanguruTheme.colors.surface else Color(0xFFFFF1F2).copy(alpha = 0.5f),
+                            if (isDark) KanguruTheme.colors.surface else KanguruTheme.colors.primaryContainer.copy(alpha = 0.5f),
                             RoundedCornerShape(16.dp)
                         )
                         .border(
                             1.dp,
-                            if (isDark) CardBorder else Color(0xFFFFE4E6),
+                            if (isDark) CardBorder else KanguruTheme.colors.primaryBorder,
                             RoundedCornerShape(16.dp)
                         )
                         .padding(14.dp)
@@ -1037,8 +1037,8 @@ fun BabyProfileConfirmationScreen(
                                 modifier = Modifier
                                     .size(64.dp)
                                     .clip(CircleShape)
-                                    .background(if (isDark) KanguruTheme.colors.surfaceVariant else Color(0xFFFFE4E6))
-                                    .border(2.dp, if (isDark) CardBorder else Color.White, CircleShape),
+                                    .background(if (isDark) KanguruTheme.colors.surfaceVariant else KanguruTheme.colors.primaryContainer)
+                                    .border(2.dp, if (isDark) CardBorder else White, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (uiState.photoUri != null) {
@@ -1055,7 +1055,7 @@ fun BabyProfileConfirmationScreen(
                                     Icon(
                                         imageVector = Icons.Default.CameraAlt,
                                         contentDescription = null,
-                                        tint = if (isDark) KanguruTheme.colors.primary else Color(0xFFFB7185),
+                                        tint = if (isDark) KanguruTheme.colors.primary else KanguruTheme.colors.categoryRose,
                                         modifier = Modifier.size(26.dp)
                                     )
                                 }
@@ -1183,12 +1183,12 @@ fun BabyProfileConfirmationScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                if (isDark) KanguruTheme.colors.errorContainer else Color(0xFFFFF1F2),
+                                KanguruTheme.colors.errorContainer,
                                 RoundedCornerShape(12.dp)
                             )
                             .border(
                                 1.dp,
-                                if (isDark) KanguruTheme.colors.errorBorder else Color(0xFFFFE4E6),
+                                KanguruTheme.colors.errorBorder,
                                 RoundedCornerShape(12.dp)
                             )
                             .padding(10.dp),
@@ -1204,7 +1204,7 @@ fun BabyProfileConfirmationScreen(
                         Text(
                             text = stringResource(R.string.baby_profile_confirm_bblr_status, formatWeightString(uiState.birthWeightInput)),
                             style = KanguruTheme.typography.labelSmall,
-                            color = if (isDark) KanguruTheme.colors.error else Color(0xFFE11D48),
+                            color = KanguruTheme.colors.error,
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -1255,7 +1255,7 @@ fun BabyProfileConfirmationScreen(
                             .shadow(
                                 elevation = 4.dp,
                                 shape = RoundedCornerShape(14.dp),
-                                spotColor = Color(0xFFFF5C77).copy(alpha = 0.35f)
+                                spotColor = BrandPink.copy(alpha = 0.35f)
                             ),
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = BrandPink),

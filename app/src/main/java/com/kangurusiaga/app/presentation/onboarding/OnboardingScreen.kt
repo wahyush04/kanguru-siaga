@@ -198,7 +198,7 @@ fun OnboardingPagerScreen(
                         .shadow(
                             elevation = 6.dp,
                             shape = RoundedCornerShape(16.dp),
-                            spotColor = Color(0xFFFF5C77).copy(alpha = 0.35f)
+                            spotColor = BrandPink.copy(alpha = 0.35f)
                         ),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
@@ -252,11 +252,10 @@ private fun WelcomePageContent() {
                     .clip(CircleShape)
                     .background(
                         Brush.verticalGradient(
-                            colors = if (isDark) {
-                                listOf(Color(0xFF3B252C), Color(0xFF2C2520))
-                            } else {
-                                listOf(Color(0xFFFFF0F3), Color(0xFFFFF6EA))
-                            }
+                            colors = listOf(
+                                KanguruTheme.colors.onboardingCardBgStart,
+                                KanguruTheme.colors.onboardingCardBgEnd
+                            )
                         )
                     )
             )
@@ -316,15 +315,15 @@ private fun ProfileIntroPageContent() {
                         Brush.radialGradient(
                             colors = if (isDark) {
                                 listOf(
-                                    Color(0xFF4A252F).copy(alpha = 0.6f),
-                                    Color(0xFF382F1E).copy(alpha = 0.4f),
-                                    Color(0xFF2B2024).copy(alpha = 0.8f)
+                                    KanguruTheme.colors.onboardingCardBgStart.copy(alpha = 0.6f),
+                                    KanguruTheme.colors.onboardingCardBgEnd.copy(alpha = 0.4f),
+                                    KanguruTheme.colors.surfaceVariant.copy(alpha = 0.8f)
                                 )
                             } else {
                                 listOf(
-                                    Color(0xFFFFE4E6).copy(alpha = 0.6f),
-                                    Color(0xFFFEF3C7).copy(alpha = 0.4f),
-                                    Color(0xFFFFF0F2).copy(alpha = 0.8f)
+                                    KanguruTheme.colors.ambientRosePulse.copy(alpha = 0.6f),
+                                    KanguruTheme.colors.ambientAmberPulse.copy(alpha = 0.4f),
+                                    KanguruTheme.colors.primaryContainer.copy(alpha = 0.8f)
                                 )
                             }
                         )

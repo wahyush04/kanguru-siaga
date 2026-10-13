@@ -109,12 +109,12 @@ fun PmkCaregiverHandoverSheet(
                         .background(
                             Brush.linearGradient(
                                 listOf(
-                                    Color(0xFFFEEAD8),
-                                    Color(0xFFFFF5F7)
+                                    colors.categoryOrangeContainer,
+                                    colors.categoryRoseContainer
                                 )
                             )
                         )
-                        .border(2.dp, Color(0xFFFED7AA), CircleShape),
+                        .border(2.dp, colors.categoryOrangeBorder, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -164,12 +164,12 @@ fun PmkCaregiverHandoverSheet(
                     .background(
                         Brush.linearGradient(
                             listOf(
-                                Color(0xFFFFF9F2),
-                                Color(0xFFFFF5F7)
+                                colors.categoryOrangeContainer,
+                                colors.categoryRoseContainer
                             )
                         )
                     )
-                    .border(1.dp, Color(0xFFFED7AA).copy(alpha = 0.8f), RoundedCornerShape(16.dp))
+                    .border(1.dp, colors.categoryOrangeBorder, RoundedCornerShape(16.dp))
                     .padding(12.dp),
                 verticalAlignment = Alignment.Top
             ) {

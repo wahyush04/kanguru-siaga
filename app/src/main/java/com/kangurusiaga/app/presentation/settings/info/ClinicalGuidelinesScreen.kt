@@ -82,18 +82,19 @@ fun ClinicalGuidelinesScreen(
 ) {
     val primaryTextColor = TextPrimary
 
-    val sources = remember(primaryTextColor) {
+    val colors = KanguruTheme.colors
+    val sources = remember(primaryTextColor, colors) {
         listOf(
             // 1. IDAI
             GuidelineSource(
                 title = "Ikatan Dokter Anak Indonesia (IDAI)",
                 badgeText = "Organisasi Profesi Spesialis Anak",
-                badgeColor = Color(0xFF2563EB),
-                badgeBg = Color(0xFFEFF6FF),
+                badgeColor = colors.info,
+                badgeBg = colors.infoContainer,
                 icon = Icons.AutoMirrored.Filled.MenuBook,
-                iconColor = Color(0xFF2563EB),
-                iconBg = Color(0xFFEFF6FF),
-                iconBorder = Color(0xFFDBEAFE),
+                iconColor = colors.info,
+                iconBg = colors.infoContainer,
+                iconBorder = colors.infoBorder,
                 content = GuidelineContent.Bullets(
                     listOf(
                         buildAnnotatedString {
@@ -118,12 +119,12 @@ fun ClinicalGuidelinesScreen(
             GuidelineSource(
                 title = "Kementerian Kesehatan RI",
                 badgeText = "Kemenkes RI • Standar Pelayanan Nasional",
-                badgeColor = Color(0xFF047857),
-                badgeBg = Color(0xFFECFDF5),
+                badgeColor = colors.onSuccessContainer,
+                badgeBg = colors.successContainer,
                 icon = Icons.Default.Apartment,
-                iconColor = Color(0xFF059669),
-                iconBg = Color(0xFFECFDF5),
-                iconBorder = Color(0xFFA7F3D0),
+                iconColor = colors.success,
+                iconBg = colors.successContainer,
+                iconBorder = colors.successBorder,
                 content = GuidelineContent.Bullets(
                     listOf(
                         buildAnnotatedString {
@@ -152,12 +153,12 @@ fun ClinicalGuidelinesScreen(
             GuidelineSource(
                 title = "World Health Organization (WHO)",
                 badgeText = "Konsensus Klinis Global & UNICEF",
-                badgeColor = Color(0xFF0E7490),
-                badgeBg = Color(0xFFECFEFF),
+                badgeColor = colors.categoryTealText,
+                badgeBg = colors.categoryTealContainer,
                 icon = Icons.Default.Public,
-                iconColor = Color(0xFF0891B2),
-                iconBg = Color(0xFFECFEFF),
-                iconBorder = Color(0xFFA5F3FC),
+                iconColor = colors.categoryTeal,
+                iconBg = colors.categoryTealContainer,
+                iconBorder = colors.categoryTealBorder,
                 content = GuidelineContent.Bullets(
                     listOf(
                         buildAnnotatedString {
@@ -179,12 +180,12 @@ fun ClinicalGuidelinesScreen(
             GuidelineSource(
                 title = "Fenton Growth Charts (2013)",
                 badgeText = "Validasi Tanis R. Fenton & Jae H. Kim",
-                badgeColor = Color(0xFFE11D48),
-                badgeBg = Color(0xFFFFF1F2),
+                badgeColor = colors.categoryRoseText,
+                badgeBg = colors.categoryRoseContainer,
                 icon = Icons.AutoMirrored.Filled.ShowChart,
-                iconColor = BrandPink,
-                iconBg = Color(0xFFFFF1F2),
-                iconBorder = Color(0xFFFECDD3),
+                iconColor = colors.primary,
+                iconBg = colors.categoryRoseContainer,
+                iconBorder = colors.categoryRoseBorder,
                 content = GuidelineContent.Paragraph(
                     buildAnnotatedString {
                         append("Grafik pertumbuhan persentil spesifik preterm untuk berat badan, panjang badan, dan lingkar kepala bayi prematur berdasarkan ")
@@ -199,12 +200,12 @@ fun ClinicalGuidelinesScreen(
             GuidelineSource(
                 title = "Protokol Nutrisi & Pemberian ASI OGT/NGT",
                 badgeText = "Panduan Asuhan Nutrisi Neonatus",
-                badgeColor = Color(0xFFB45309),
-                badgeBg = Color(0xFFFFFBEB),
+                badgeColor = colors.onWarningContainer,
+                badgeBg = colors.warningContainer,
                 icon = Icons.Default.LocalDrink,
-                iconColor = Color(0xFFD97706),
-                iconBg = Color(0xFFFFFBEB),
-                iconBorder = Color(0xFFFDE68A),
+                iconColor = colors.warning,
+                iconBg = colors.warningContainer,
+                iconBorder = colors.warningBorder,
                 content = GuidelineContent.Paragraph(
                     buildAnnotatedString {
                         append("Tata cara higienis pemberian perahan ASI (ASIP) melalui selang sonde lambung, pencegahan aspirasi & distensi abdomen, serta panduan transisi bertahap menuju menyusu langsung ")
@@ -417,14 +418,14 @@ fun ClinicalGuidelinesScreen(
                             Box(
                                 modifier = Modifier
                                     .size(40.dp)
-                                    .background(Color(0xFFD1FAE5), CircleShape)
-                                    .border(1.dp, Color(0xFFA7F3D0), CircleShape),
+                                    .background(KanguruTheme.colors.successContainer, CircleShape)
+                                    .border(1.dp, KanguruTheme.colors.successBorder, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.MedicalServices,
                                     contentDescription = null,
-                                    tint = Color(0xFF059669),
+                                    tint = KanguruTheme.colors.success,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }

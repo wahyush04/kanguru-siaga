@@ -97,7 +97,7 @@ fun GrowthChartScreen(
                         measurementToDelete?.let { viewModel.deleteMeasurement(it.id) }
                         measurementToDelete = null
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDC2626))
+                    colors = ButtonDefaults.buttonColors(containerColor = KanguruTheme.colors.error)
                 ) {
                     Text(stringResource(R.string.alarm_btn_delete), color = White)
                 }

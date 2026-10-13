@@ -659,7 +659,7 @@ fun PmkVideoScreen(
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = brandRose,
-                                contentColor = White
+                                contentColor = KanguruTheme.colors.onPrimary
                             )
                         ) {
                             Icon(
@@ -672,7 +672,8 @@ fun PmkVideoScreen(
                             Text(
                                 text = stringResource(R.string.pmk_video_btn_timer),
                                 style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = KanguruTheme.colors.onPrimary
                             )
                         }
 
