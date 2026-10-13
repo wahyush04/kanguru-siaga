@@ -698,7 +698,7 @@ fun PmkVideoScreen(
                                     text = stringResource(R.string.pmk_video_btn_next),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = KanguruTheme.colors.onPrimary
+                                    color = KanguruTheme.colors.primary
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Icon(

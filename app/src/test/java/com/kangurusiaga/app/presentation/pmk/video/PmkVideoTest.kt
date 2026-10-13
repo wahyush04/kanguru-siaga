@@ -9,39 +9,34 @@ import org.junit.Test
 class PmkVideoTest {
 
     @Test
-    fun `video data source contains 6 educational modules from stitch`() {
+    fun `video data source contains 5 educational modules for bblr pmk`() {
         val videos = PmkVideoDataSource.videos
-        assertEquals(6, videos.size)
+        assertEquals(5, videos.size)
 
         // Verify module 1
         assertEquals(1, videos[0].id)
         assertEquals("1. Pengertian PMK", videos[0].title)
-        assertEquals("02:15", videos[0].duration)
+        assertEquals("00:27", videos[0].duration)
 
         // Verify module 2
         assertEquals(2, videos[1].id)
         assertEquals("2. Manfaat PMK untuk Bayi Berat Lahir Rendah", videos[1].title)
-        assertEquals("03:20", videos[1].duration)
+        assertEquals("01:05", videos[1].duration)
 
         // Verify module 3
         assertEquals(3, videos[2].id)
         assertEquals("3. Persiapan sebelum PMK", videos[2].title)
-        assertEquals("04:10", videos[2].duration)
+        assertEquals("01:29", videos[2].duration)
 
         // Verify module 4
         assertEquals(4, videos[3].id)
-        assertEquals("4. Posisi bayi yang benar", videos[3].title)
-        assertEquals("04:35", videos[3].duration)
+        assertEquals("4. Cara Perawatan Bayi Berat Lahir Rendah", videos[3].title)
+        assertEquals("00:39", videos[3].duration)
 
         // Verify module 5
         assertEquals(5, videos[4].id)
-        assertEquals("5. Cara melakukan PMK", videos[4].title)
-        assertEquals("05:28", videos[4].duration)
-
-        // Verify module 6
-        assertEquals(6, videos[5].id)
-        assertEquals("6. Hal yang perlu diperhatikan", videos[5].title)
-        assertEquals("03:40", videos[5].duration)
+        assertEquals("5. Tanda Kegawatan Bayi Berat Lahir Rendah", videos[4].title)
+        assertEquals("00:54", videos[4].duration)
     }
 
     @Test
@@ -58,7 +53,7 @@ class PmkVideoTest {
     fun `getVideoById returns corresponding video or fallback`() {
         val video4 = PmkVideoDataSource.getVideoById(4)
         assertEquals(4, video4.id)
-        assertEquals("4. Posisi bayi yang benar", video4.title)
+        assertEquals("4. Cara Perawatan Bayi Berat Lahir Rendah", video4.title)
 
         val video1 = PmkVideoDataSource.getVideoById(1)
         assertEquals(1, video1.id)
@@ -67,7 +62,7 @@ class PmkVideoTest {
         // Fallback for non-existent ID
         val fallback = PmkVideoDataSource.getVideoById(999)
         assertNotNull(fallback)
-        assertEquals(4, fallback.id)
+        assertEquals(1, fallback.id)
     }
 
     @Test
@@ -93,9 +88,9 @@ class PmkVideoTest {
         // Verify chaining / nextLessonId
         val video1 = PmkVideoDataSource.getVideoById(1)
         assertEquals(2, video1.nextLessonId)
+        val video4 = PmkVideoDataSource.getVideoById(4)
+        assertEquals(5, video4.nextLessonId)
         val video5 = PmkVideoDataSource.getVideoById(5)
-        assertEquals(6, video5.nextLessonId)
-        val video6 = PmkVideoDataSource.getVideoById(6)
-        assertEquals(null, video6.nextLessonId)
+        assertEquals(null, video5.nextLessonId)
     }
 }
