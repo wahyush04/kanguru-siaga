@@ -370,7 +370,7 @@ fun PmkPauseSheet(
                 value = notesInput,
                 onValueChange = onNotesChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Catatan kondisi bayi saat jeda (misal: minum ASI 30ml)...", style = KanguruTheme.typography.bodySmall) },
+                placeholder = { Text("Catatan kondisi bayi saat jeda (misal: minum ASI 30ml)...", style = KanguruTheme.typography.bodySmall, color = KanguruTheme.colors.textTertiary) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
