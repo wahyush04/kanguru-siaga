@@ -109,6 +109,44 @@ fun BabyProfileScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = BrandBackground,
+        topBar = {
+            Surface(
+                color = BrandBackground,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Kembali",
+                            tint = TextPrimary
+                        )
+                    }
+
+                    Text(
+                        text = "Profil Bayi",
+                        style = KanguruTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
+
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Pengaturan",
+                            tint = TextPrimary
+                        )
+                    }
+                }
+            }
+        },
         bottomBar = {
             HomeBottomBar(
                 currentTab = HomeTab.PROFIL,
@@ -129,39 +167,6 @@ fun BabyProfileScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Top App Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Kembali",
-                        tint = TextPrimary
-                    )
-                }
-
-                Text(
-                    text = "Profil Bayi",
-                    style = KanguruTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary
-                )
-
-                IconButton(onClick = onNavigateToSettings) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Pengaturan",
-                        tint = TextPrimary
-                    )
-                }
-            }
-
             if (uiState.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),

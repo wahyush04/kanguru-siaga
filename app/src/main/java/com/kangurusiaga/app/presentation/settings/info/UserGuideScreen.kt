@@ -168,68 +168,71 @@ fun UserGuideScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = BrandBackground
+        containerColor = BrandBackground,
+        topBar = {
+            Surface(
+                color = BrandBackground,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Circular Back Button
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(KanguruTheme.colors.surface)
+                            .border(1.dp, KanguruTheme.colors.cardBorder, CircleShape)
+                            .clickable(onClick = onNavigateBack),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Kembali",
+                            tint = TextPrimary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    // Centered Title
+                    Text(
+                        text = stringResource(R.string.user_guide_title),
+                        style = KanguruTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    // Info Action Button
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .clickable { showInfoDialog = true },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Informasi Panduan",
+                            tint = TextSecondary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
+            }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // ==========================================
-            // TOP APP BAR (Stitch Layout)
-            // ==========================================
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Circular Back Button
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(KanguruTheme.colors.surface)
-                        .border(1.dp, KanguruTheme.colors.cardBorder, CircleShape)
-                        .clickable(onClick = onNavigateBack),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Kembali",
-                        tint = TextPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                // Centered Title
-                Text(
-                    text = stringResource(R.string.user_guide_title),
-                    style = KanguruTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f)
-                )
-
-                // Info Action Button
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .clickable { showInfoDialog = true },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "Informasi Panduan",
-                        tint = TextSecondary,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-            }
-
             // ==========================================
             // SCROLLABLE CONTENT
             // ==========================================

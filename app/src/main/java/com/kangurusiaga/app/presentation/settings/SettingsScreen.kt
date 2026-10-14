@@ -368,14 +368,9 @@ fun SettingsScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = BrandBackground,
-        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            // BEGIN: NavigationHeader (matching Stitch nav header)
+        snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
+        topBar = {
+            // NavigationHeader (matching Stitch nav header)
             Surface(
                 color = BrandBackground,
                 modifier = Modifier.fillMaxWidth()
@@ -424,8 +419,13 @@ fun SettingsScreen(
                     )
                 }
             }
-            // END: NavigationHeader
-
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             if (uiState.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),

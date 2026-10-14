@@ -69,54 +69,58 @@ fun MedicalDisclaimerScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = BrandBackground
+        containerColor = BrandBackground,
+        topBar = {
+            Surface(
+                color = BrandBackground,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Circular Back Button
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(KanguruTheme.colors.surface)
+                            .border(1.dp, KanguruTheme.colors.cardBorder, CircleShape)
+                            .clickable(onClick = onNavigateBack),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                            tint = TextPrimary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    // Centered Title
+                    Text(
+                        text = stringResource(R.string.disclaimer_title),
+                        style = KanguruTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    // Placeholder for symmetrical balance
+                    Spacer(modifier = Modifier.size(40.dp))
+                }
+            }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // ==========================================
-            // TOP APP BAR NAVIGATION (Stitch Layout)
-            // ==========================================
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Circular Back Button
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(KanguruTheme.colors.surface)
-                        .border(1.dp, KanguruTheme.colors.cardBorder, CircleShape)
-                        .clickable(onClick = onNavigateBack),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.common_back),
-                        tint = TextPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                // Centered Title
-                Text(
-                    text = stringResource(R.string.disclaimer_title),
-                    style = KanguruTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f)
-                )
-
-                // Placeholder for symmetrical balance
-                Spacer(modifier = Modifier.size(40.dp))
-            }
 
             HorizontalDivider(
                 color = KanguruTheme.colors.cardBorder.copy(alpha = 0.5f),
