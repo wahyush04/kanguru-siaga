@@ -2,19 +2,18 @@ package com.kangurusiaga.app.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kangurusiaga.app.data.repository.FentonGrowthRepository
+import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.GrowthParameter
-import com.kangurusiaga.app.domain.model.MetricType
 import com.kangurusiaga.app.domain.repository.BabyRepository
 import com.kangurusiaga.app.domain.repository.GrowthRepository
-import com.kangurusiaga.app.domain.util.PmaCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -25,8 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BabyProfileViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
-    private val growthRepository: GrowthRepository,
-    private val fentonGrowthRepository: FentonGrowthRepository
+    private val growthRepository: GrowthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BabyProfileUiState())
@@ -47,8 +45,15 @@ class BabyProfileViewModel @Inject constructor(
                 val now = System.currentTimeMillis()
                 val diffMillis = (now - baby.birthDateEpochMillis).coerceAtLeast(0L)
                 val diffDays = (diffMillis / (1000L * 60 * 60 * 24)).toInt()
-                val weeks = diffDays / 7
+                val totalWeeks = diffDays / 7
                 val months = diffDays / 30
+                val remainingWeeks = (diffDays % 30) / 7
+
+                val ageDisplay = if (months > 0) {
+                    "${months} Bulan ${remainingWeeks} Minggu"
+                } else {
+                    "${totalWeeks} Minggu"
+                }
 
                 val dateFormatter = SimpleDateFormat("d MMMM yyyy", Locale("id", "ID"))
                 val formattedDate = dateFormatter.format(Date(baby.birthDateEpochMillis))
@@ -56,131 +61,171 @@ class BabyProfileViewModel @Inject constructor(
                 val isBblr = baby.birthWeightGram < 2500
                 val isPremature = baby.gestationalAgeWeeks < 37
 
-                val pma = PmaCalculator.calculate(
-                    birthDateEpochMillis = baby.birthDateEpochMillis,
-                    measurementDateEpochMillis = now,
-                    gestationalAgeAtBirthWeeks = baby.gestationalAgeWeeks
-                )
-
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         baby = baby,
                         formattedBirthDate = formattedDate,
-                        chronologicalAgeWeeks = weeks,
+                        chronologicalAgeWeeks = totalWeeks,
                         chronologicalAgeMonths = months,
+                        chronologicalAgeDisplay = ageDisplay,
                         isBblr = isBblr,
                         isPremature = isPremature
                     )
                 }
 
-                // Collect latest measurements
-                observeMeasurements(baby, pma.pmaWeeks.toInt())
+                // Observasi data real dari pengukuran pertumbuhan
+                observeGrowthMeasurements(baby)
             }
         }
     }
 
-    private fun observeMeasurements(baby: Baby, pmaWeeks: Int) {
+    private fun observeGrowthMeasurements(baby: Baby) {
         val gender = baby.gender ?: Gender.MALE
+        val pmaAtBirth = baby.gestationalAgeWeeks.toFloat().coerceIn(22f, 50f)
 
-        // Weight
         viewModelScope.launch {
-            growthRepository.getLatestMeasurement(baby.id, GrowthParameter.WEIGHT).collectLatest { m ->
-                val weightGrams: Double = m?.value?.let { it.toDouble() * 1000.0 } ?: baby.birthWeightGram.toDouble()
-                val weightKg = weightGrams / 1000.0
-                val formattedVal = String.format(Locale("id", "ID"), "%.1f", weightKg)
-
-                val eval = try {
-                    fentonGrowthRepository.evaluateMeasurement(
-                        metric = MetricType.WEIGHT,
+            combine(
+                growthRepository.getLatestMeasurement(baby.id, GrowthParameter.WEIGHT),
+                growthRepository.getLatestMeasurement(baby.id, GrowthParameter.LENGTH),
+                growthRepository.getLatestMeasurement(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE)
+            ) { latestWeight, latestLength, latestHead ->
+                // 1. Berat Badan
+                val weightEval = if (latestWeight != null) {
+                    val eval = FentonReferenceData.evaluatePercentile(
+                        parameter = GrowthParameter.WEIGHT,
                         gender = gender,
-                        pmaWeeks = pmaWeeks,
-                        value = weightGrams
+                        pmaWeeks = latestWeight.pmaWeeks,
+                        value = latestWeight.value
                     )
-                } catch (e: Exception) {
-                    null
+                    MetricEvaluation(
+                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestWeight.value),
+                        unit = "kg",
+                        percentileText = eval.percentileBadge,
+                        statusText = eval.statusText,
+                        isMeasured = true
+                    )
+                } else if (baby.birthWeightGram > 0) {
+                    val weightKg = baby.birthWeightGram / 1000f
+                    val eval = FentonReferenceData.evaluatePercentile(
+                        parameter = GrowthParameter.WEIGHT,
+                        gender = gender,
+                        pmaWeeks = pmaAtBirth,
+                        value = weightKg
+                    )
+                    MetricEvaluation(
+                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", weightKg),
+                        unit = "kg",
+                        percentileText = eval.percentileBadge,
+                        statusText = eval.statusText,
+                        isMeasured = true
+                    )
+                } else {
+                    MetricEvaluation(
+                        valueFormatted = "-",
+                        unit = "kg",
+                        percentileText = "-",
+                        statusText = "Belum diukur",
+                        isMeasured = false
+                    )
                 }
 
-                val percentileText = eval?.percentileBadge ?: "Persentil P50"
-                val statusText = eval?.statusText ?: "Normal"
+                // 2. Panjang Badan
+                val lengthEval = if (latestLength != null) {
+                    val eval = FentonReferenceData.evaluatePercentile(
+                        parameter = GrowthParameter.LENGTH,
+                        gender = gender,
+                        pmaWeeks = latestLength.pmaWeeks,
+                        value = latestLength.value
+                    )
+                    MetricEvaluation(
+                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestLength.value),
+                        unit = "cm",
+                        percentileText = eval.percentileBadge,
+                        statusText = eval.statusText,
+                        isMeasured = true
+                    )
+                } else if (baby.birthLengthCm > 0f) {
+                    val eval = FentonReferenceData.evaluatePercentile(
+                        parameter = GrowthParameter.LENGTH,
+                        gender = gender,
+                        pmaWeeks = pmaAtBirth,
+                        value = baby.birthLengthCm
+                    )
+                    MetricEvaluation(
+                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", baby.birthLengthCm),
+                        unit = "cm",
+                        percentileText = eval.percentileBadge,
+                        statusText = eval.statusText,
+                        isMeasured = true
+                    )
+                } else {
+                    MetricEvaluation(
+                        valueFormatted = "-",
+                        unit = "cm",
+                        percentileText = "-",
+                        statusText = "Belum diukur",
+                        isMeasured = false
+                    )
+                }
+
+                // 3. Lingkar Kepala
+                val headEval = if (latestHead != null) {
+                    val eval = FentonReferenceData.evaluatePercentile(
+                        parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
+                        gender = gender,
+                        pmaWeeks = latestHead.pmaWeeks,
+                        value = latestHead.value
+                    )
+                    MetricEvaluation(
+                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestHead.value),
+                        unit = "cm",
+                        percentileText = eval.percentileBadge,
+                        statusText = eval.statusText,
+                        isMeasured = true
+                    )
+                } else if (baby.birthHeadCircumferenceCm > 0f) {
+                    val eval = FentonReferenceData.evaluatePercentile(
+                        parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
+                        gender = gender,
+                        pmaWeeks = pmaAtBirth,
+                        value = baby.birthHeadCircumferenceCm
+                    )
+                    MetricEvaluation(
+                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", baby.birthHeadCircumferenceCm),
+                        unit = "cm",
+                        percentileText = eval.percentileBadge,
+                        statusText = eval.statusText,
+                        isMeasured = true
+                    )
+                } else {
+                    MetricEvaluation(
+                        valueFormatted = "-",
+                        unit = "cm",
+                        percentileText = "-",
+                        statusText = "Belum diukur",
+                        isMeasured = false
+                    )
+                }
+
+                // Summary status
+                val summaryStatus = when {
+                    !weightEval.isMeasured && !lengthEval.isMeasured && !headEval.isMeasured -> "Belum Diukur"
+                    weightEval.statusText.contains("Sesuai", ignoreCase = true) -> "Sesuai Kurva Fenton"
+                    weightEval.statusText.contains("Kecil", ignoreCase = true) -> "Perlu Pemantauan (Kecil)"
+                    weightEval.statusText.contains("Besar", ignoreCase = true) -> "Besar untuk Masa"
+                    else -> "Sesuai Kurva Fenton"
+                }
 
                 _uiState.update { state ->
                     state.copy(
-                        weightMetric = MetricEvaluation(
-                            valueFormatted = formattedVal,
-                            unit = "kg",
-                            percentileText = percentileText,
-                            statusText = statusText
-                        )
+                        weightMetric = weightEval,
+                        lengthMetric = lengthEval,
+                        headMetric = headEval,
+                        growthStatusSummary = summaryStatus
                     )
                 }
-            }
-        }
-
-        // Length
-        viewModelScope.launch {
-            growthRepository.getLatestMeasurement(baby.id, GrowthParameter.LENGTH).collectLatest { m ->
-                val lengthCm: Double = m?.value?.toDouble() ?: (if (baby.birthLengthCm > 0) baby.birthLengthCm.toDouble() else 48.0)
-                val formattedVal = String.format(Locale("id", "ID"), "%.1f", lengthCm)
-
-                val eval = try {
-                    fentonGrowthRepository.evaluateMeasurement(
-                        metric = MetricType.LENGTH,
-                        gender = gender,
-                        pmaWeeks = pmaWeeks,
-                        value = lengthCm
-                    )
-                } catch (e: Exception) {
-                    null
-                }
-
-                val percentileText = eval?.percentileBadge ?: "Persentil P50"
-                val statusText = eval?.statusText ?: "Normal"
-
-                _uiState.update { state ->
-                    state.copy(
-                        lengthMetric = MetricEvaluation(
-                            valueFormatted = formattedVal,
-                            unit = "cm",
-                            percentileText = percentileText,
-                            statusText = statusText
-                        )
-                    )
-                }
-            }
-        }
-
-        // Head Circumference
-        viewModelScope.launch {
-            growthRepository.getLatestMeasurement(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE).collectLatest { m ->
-                val headCm: Double = m?.value?.toDouble() ?: (if (baby.birthHeadCircumferenceCm > 0) baby.birthHeadCircumferenceCm.toDouble() else 34.0)
-                val formattedVal = String.format(Locale("id", "ID"), "%.1f", headCm)
-
-                val eval = try {
-                    fentonGrowthRepository.evaluateMeasurement(
-                        metric = MetricType.HEAD_CIRCUMFERENCE,
-                        gender = gender,
-                        pmaWeeks = pmaWeeks,
-                        value = headCm
-                    )
-                } catch (e: Exception) {
-                    null
-                }
-
-                val percentileText = eval?.percentileBadge ?: "Persentil P50"
-                val statusText = eval?.statusText ?: "Normal"
-
-                _uiState.update { state ->
-                    state.copy(
-                        headMetric = MetricEvaluation(
-                            valueFormatted = formattedVal,
-                            unit = "cm",
-                            percentileText = percentileText,
-                            statusText = statusText
-                        )
-                    )
-                }
-            }
+            }.collectLatest { }
         }
     }
 }

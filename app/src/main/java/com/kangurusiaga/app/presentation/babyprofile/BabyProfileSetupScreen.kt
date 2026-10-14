@@ -453,7 +453,8 @@ fun BabyProfileFormScreen(
                             shape = RoundedCornerShape(14.dp),
                             border = BorderStroke(1.dp, CardBorder),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = TextPrimary
+                                contentColor = TextPrimary,
+                                containerColor = White
                             )
                         ) {
                             Icon(
@@ -477,7 +478,8 @@ fun BabyProfileFormScreen(
                             shape = RoundedCornerShape(14.dp),
                             border = BorderStroke(1.dp, BrandPink),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = BrandPink
+                                contentColor = BrandPink,
+                                containerColor = White
                             )
                         ) {
                             Icon(

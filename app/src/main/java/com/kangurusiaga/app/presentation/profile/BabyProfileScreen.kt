@@ -260,8 +260,9 @@ fun BabyProfileScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             val statusTag = if (uiState.isBblr) "BBLR" else "Normal"
+                            val ageDisplay = uiState.chronologicalAgeDisplay.ifBlank { "${uiState.chronologicalAgeWeeks} Minggu" }
                             Text(
-                                text = "Usia: ${uiState.chronologicalAgeWeeks} Minggu (Kronologis) • $statusTag",
+                                text = "Usia: $ageDisplay (Kronologis) • $statusTag",
                                 style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = BrandPink
@@ -289,9 +290,10 @@ fun BabyProfileScreen(
                                     tint = BrandPink
                                 )
                             },
-                            value = "${uiState.weightMetric.valueFormatted} ${uiState.weightMetric.unit}",
+                            value = if (uiState.weightMetric.isMeasured) "${uiState.weightMetric.valueFormatted} ${uiState.weightMetric.unit}" else "--",
                             percentile = uiState.weightMetric.percentileText,
-                            status = uiState.weightMetric.statusText
+                            status = uiState.weightMetric.statusText,
+                            isMeasured = uiState.weightMetric.isMeasured
                         )
 
                         // Panjang Badan Card
@@ -301,15 +303,16 @@ fun BabyProfileScreen(
                             borderColor = KanguruTheme.colors.successBorder,
                             icon = {
                                 Icon(
-                                    imageVector = Icons.Default.SquareFoot,
+                                    imageVector = GrowthIcons.Length,
                                     contentDescription = null,
-                                    tint = KanguruTheme.colors.success,
+                                    tint = KanguruTheme.colors.growthLength,
                                     modifier = Modifier.size(20.dp)
                                 )
                             },
-                            value = "${uiState.lengthMetric.valueFormatted} ${uiState.lengthMetric.unit}",
+                            value = if (uiState.lengthMetric.isMeasured) "${uiState.lengthMetric.valueFormatted} ${uiState.lengthMetric.unit}" else "--",
                             percentile = uiState.lengthMetric.percentileText,
-                            status = uiState.lengthMetric.statusText
+                            status = uiState.lengthMetric.statusText,
+                            isMeasured = uiState.lengthMetric.isMeasured
                         )
 
                         // Lingkar Kepala Card
@@ -319,15 +322,16 @@ fun BabyProfileScreen(
                             borderColor = KanguruTheme.colors.infoBorder,
                             icon = {
                                 Icon(
-                                    imageVector = Icons.Default.ChildCare,
+                                    imageVector = GrowthIcons.Head,
                                     contentDescription = null,
-                                    tint = KanguruTheme.colors.info,
+                                    tint = KanguruTheme.colors.growthHead,
                                     modifier = Modifier.size(20.dp)
                                 )
                             },
-                            value = "${uiState.headMetric.valueFormatted} ${uiState.headMetric.unit}",
+                            value = if (uiState.headMetric.isMeasured) "${uiState.headMetric.valueFormatted} ${uiState.headMetric.unit}" else "--",
                             percentile = uiState.headMetric.percentileText,
-                            status = uiState.headMetric.statusText
+                            status = uiState.headMetric.statusText,
+                            isMeasured = uiState.headMetric.isMeasured
                         )
                     }
 
@@ -524,11 +528,12 @@ fun BabyProfileScreen(
                                     color = TextSecondary
                                 )
                                 Column(horizontalAlignment = Alignment.End) {
+                                    val isSummaryMeasured = uiState.growthStatusSummary != "Belum Diukur"
                                     Text(
                                         text = uiState.growthStatusSummary,
                                         style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
-                                        color = KanguruTheme.colors.success
+                                        color = if (isSummaryMeasured) KanguruTheme.colors.success else TextSecondary
                                     )
                                     Text(
                                         text = "Kurva Fenton",
@@ -583,8 +588,10 @@ private fun GrowthMetricCard(
     icon: @Composable () -> Unit,
     value: String,
     percentile: String,
-    status: String
+    status: String,
+    isMeasured: Boolean = true
 ) {
+    val colors = KanguruTheme.colors
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
@@ -601,7 +608,7 @@ private fun GrowthMetricCard(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(KanguruTheme.colors.surface),
+                    .background(colors.surface),
                 contentAlignment = Alignment.Center
             ) {
                 icon()
@@ -611,9 +618,9 @@ private fun GrowthMetricCard(
 
             Text(
                 text = value,
-                style = MaterialTheme.typography.titleMedium,
+                style = KanguruTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = KanguruTheme.colors.textPrimary,
+                color = colors.textPrimary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1
@@ -623,9 +630,9 @@ private fun GrowthMetricCard(
 
             Text(
                 text = percentile,
-                style = MaterialTheme.typography.labelSmall,
+                style = KanguruTheme.typography.labelSmall,
                 fontWeight = FontWeight.Medium,
-                color = KanguruTheme.colors.success,
+                color = if (isMeasured) colors.success else colors.textTertiary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1
@@ -633,9 +640,9 @@ private fun GrowthMetricCard(
 
             Text(
                 text = status,
-                style = MaterialTheme.typography.labelSmall,
+                style = KanguruTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
-                color = KanguruTheme.colors.success,
+                color = if (isMeasured) colors.success else colors.textTertiary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1
