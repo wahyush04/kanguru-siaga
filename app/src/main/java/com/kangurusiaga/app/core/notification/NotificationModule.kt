@@ -1,6 +1,7 @@
 package com.kangurusiaga.app.core.notification
 
 import android.content.Context
+import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,9 +16,10 @@ object NotificationModule {
     @Provides
     @Singleton
     fun provideKanguruNotificationManager(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        userPreferencesRepository: UserPreferencesRepository
     ): KanguruNotificationManager {
-        return KanguruNotificationManager(context)
+        return KanguruNotificationManager(context, userPreferencesRepository)
     }
 
     @Provides

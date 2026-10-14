@@ -10,14 +10,21 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.kangurusiaga.app.MainActivity
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class KanguruNotificationManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val userPreferencesRepository: UserPreferencesRepository? = null
 ) {
+    private var areAppNotificationsEnabled: Boolean = true
+
     companion object {
         const val CHANNEL_PMK_ID = "channel_pmk_timer"
         const val CHANNEL_PMK_NAME = "Timer PMK & Pengingat"
@@ -32,6 +39,13 @@ class KanguruNotificationManager @Inject constructor(
 
     init {
         createNotificationChannels()
+        userPreferencesRepository?.let { repo ->
+            CoroutineScope(Dispatchers.IO).launch {
+                repo.notificationsEnabled.collect { enabled ->
+                    areAppNotificationsEnabled = enabled
+                }
+            }
+        }
     }
 
     private fun createNotificationChannels() {
@@ -60,6 +74,8 @@ class KanguruNotificationManager @Inject constructor(
     }
 
     fun showPmkReminderNotification(label: String, targetMinutes: Int) {
+        if (!areAppNotificationsEnabled) return
+
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("navigate_to", "pmk_timer")
@@ -92,6 +108,8 @@ class KanguruNotificationManager @Inject constructor(
     }
 
     fun showNotification(channelId: String, notificationId: Int, title: String, message: String) {
+        if (!areAppNotificationsEnabled) return
+
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_kangaroo_mascot)
             .setContentTitle(title)
@@ -107,6 +125,8 @@ class KanguruNotificationManager @Inject constructor(
     }
 
     fun showFeedingReminderNotification(scheduleId: Long, volumeMl: Int, methodDisplayName: String) {
+        if (!areAppNotificationsEnabled) return
+
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("navigate_to", "feeding")
@@ -140,6 +160,8 @@ class KanguruNotificationManager @Inject constructor(
     }
 
     fun showPmkPauseLimitExceededNotification() {
+        if (!areAppNotificationsEnabled) return
+
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("navigate_to", "pmk_timer")

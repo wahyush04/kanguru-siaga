@@ -72,6 +72,27 @@ import com.kangurusiaga.app.domain.model.settings.AppThemeMode
 import com.kangurusiaga.app.presentation.settings.components.EditBabyProfileBottomSheet
 import com.kangurusiaga.app.presentation.settings.components.TextSizeBottomSheet
 import com.kangurusiaga.app.presentation.settings.components.ThemeSelectionBottomSheet
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import java.util.Locale
 
 @Composable
@@ -86,8 +107,88 @@ fun SettingsRoute(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    var showPermissionSettingsDialog by remember { mutableStateOf(false) }
+    var isAwaitingPermissionSettings by remember { mutableStateOf(false) }
+
+    fun checkNotificationPermission(): Boolean {
+        val areNotificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        if (!areNotificationsEnabled) return false
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+    }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            viewModel.toggleNotifications(true)
+        } else {
+            viewModel.toggleNotifications(false, showMessage = false)
+            val activity = context.findActivity()
+            val shouldShowRationale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && activity != null) {
+                ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                false
+            }
+            if (!shouldShowRationale) {
+                showPermissionSettingsDialog = true
+            } else {
+                viewModel.showSnackbarMessage("Izin notifikasi ditolak. Anda dapat mengaktifkannya di pengaturan perangkat.")
+            }
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val hasPerm = checkNotificationPermission()
+                if (isAwaitingPermissionSettings) {
+                    isAwaitingPermissionSettings = false
+                    if (hasPerm) {
+                        viewModel.toggleNotifications(true)
+                    }
+                } else if (!hasPerm && uiState.appSettings.notificationsEnabled) {
+                    viewModel.toggleNotifications(false, showMessage = false)
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    val handleToggleNotifications: (Boolean) -> Unit = { enabled ->
+        if (!enabled) {
+            viewModel.toggleNotifications(false)
+        } else {
+            if (checkNotificationPermission()) {
+                viewModel.toggleNotifications(true)
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val areNotificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
+                    if (!areNotificationsEnabled) {
+                        showPermissionSettingsDialog = true
+                    } else {
+                        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                } else {
+                    showPermissionSettingsDialog = true
+                }
+            }
+        }
+    }
 
     LaunchedEffect(uiState.snackbarMessage) {
         uiState.snackbarMessage?.let { msg ->
@@ -122,7 +223,7 @@ fun SettingsRoute(
         onCloseTextSize = viewModel::closeTextSizeSheet,
         onSelectTextSize = viewModel::selectTextScale,
         onApplyTextSize = viewModel::applyTextScale,
-        onToggleNotifications = viewModel::toggleNotifications,
+        onToggleNotifications = handleToggleNotifications,
         onOpenClearHistory = viewModel::openClearHistoryDialog,
         onCloseClearHistory = viewModel::closeClearHistoryDialog,
         onConfirmClearHistory = viewModel::confirmClearHistory,
@@ -132,6 +233,97 @@ fun SettingsRoute(
         modifier = modifier,
         snackbarHostState = snackbarHostState
     )
+
+    if (showPermissionSettingsDialog) {
+        AlertDialog(
+            onDismissRequest = { showPermissionSettingsDialog = false },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(
+                            color = KanguruTheme.colors.primaryContainer,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NotificationsActive,
+                        contentDescription = null,
+                        tint = KanguruTheme.colors.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = "Perizinan Notifikasi Dibutuhkan",
+                    style = KanguruTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = KanguruTheme.colors.textPrimary
+                )
+            },
+            text = {
+                Text(
+                    text = "Notifikasi untuk Kanguru Siaga saat ini dinonaktifkan di setelan sistem perangkat Anda. Silakan aktifkan izin notifikasi di Pengaturan Aplikasi agar pengingat sesi PMK dan jadwal pemberian ASI dapat diterima tepat waktu.",
+                    style = KanguruTheme.typography.bodySmall,
+                    color = KanguruTheme.colors.textSecondary,
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showPermissionSettingsDialog = false
+                        isAwaitingPermissionSettings = true
+                        try {
+                            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                }
+                            } else {
+                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                            }
+                            context.startActivity(intent)
+                        } catch (_: Exception) {
+                            try {
+                                val fallbackIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                                context.startActivity(fallbackIntent)
+                            } catch (_: Exception) {
+                            }
+                        }
+                    }
+                ) {
+                    Text(
+                        text = "Buka Pengaturan",
+                        style = KanguruTheme.typography.labelLarge,
+                        color = KanguruTheme.colors.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showPermissionSettingsDialog = false
+                    }
+                ) {
+                    Text(
+                        text = "Batal",
+                        style = KanguruTheme.typography.labelLarge,
+                        color = KanguruTheme.colors.textSecondary
+                    )
+                }
+            },
+            shape = RoundedCornerShape(20.dp),
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    }
 }
 
 @Composable
@@ -577,12 +769,12 @@ fun SettingsScreen(
                                             text = "Notifikasi Umum",
                                             style = KanguruTheme.typography.titleSmall,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = TextPrimary
+                                            color = KanguruTheme.colors.textPrimary
                                         )
                                         Text(
                                             text = "Izinkan push notification di perangkat",
                                             style = KanguruTheme.typography.labelSmall,
-                                            color = TextSecondary,
+                                            color = KanguruTheme.colors.textSecondary,
                                             modifier = Modifier.padding(top = 2.dp)
                                         )
                                     }
@@ -590,9 +782,9 @@ fun SettingsScreen(
                                         checked = uiState.appSettings.notificationsEnabled,
                                         onCheckedChange = onToggleNotifications,
                                         colors = SwitchDefaults.colors(
-                                            checkedThumbColor = White,
-                                            checkedTrackColor = BrandPink,
-                                            uncheckedThumbColor = White,
+                                            checkedThumbColor = KanguruTheme.colors.onPrimary,
+                                            checkedTrackColor = KanguruTheme.colors.primary,
+                                            uncheckedThumbColor = KanguruTheme.colors.surface,
                                             uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
                                             uncheckedBorderColor = Color.Transparent
                                         )
@@ -1196,3 +1388,10 @@ private fun SettingsNavigationItem(
         )
     }
 }
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+

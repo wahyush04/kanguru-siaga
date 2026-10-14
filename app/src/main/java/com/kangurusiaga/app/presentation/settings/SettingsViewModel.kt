@@ -278,13 +278,19 @@ class SettingsViewModel @Inject constructor(
     }
 
     // --- Notifications Toggle ---
-    fun toggleNotifications(enabled: Boolean) {
+    fun toggleNotifications(enabled: Boolean, showMessage: Boolean = true) {
         viewModelScope.launch {
             toggleNotificationsUseCase(enabled)
-            _uiState.update {
-                it.copy(snackbarMessage = if (enabled) "Notifikasi diaktifkan" else "Notifikasi dinonaktifkan")
+            if (showMessage) {
+                _uiState.update {
+                    it.copy(snackbarMessage = if (enabled) "Notifikasi diaktifkan" else "Notifikasi dinonaktifkan")
+                }
             }
         }
+    }
+
+    fun showSnackbarMessage(message: String) {
+        _uiState.update { it.copy(snackbarMessage = message) }
     }
 
     // --- Dialogs ---
