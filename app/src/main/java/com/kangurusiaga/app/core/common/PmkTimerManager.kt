@@ -36,6 +36,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 import kotlin.math.max
+import kotlin.math.min
 
 @Singleton
 class PmkTimerManager @Inject constructor(
@@ -337,7 +338,7 @@ class PmkTimerManager @Inject constructor(
                         caregiver = caregiver,
                         startTimeEpoch = segStart,
                         endTimeEpoch = nowEpoch,
-                        durationMinutes = (currentSegDurationMs / 60000L).toInt().coerceAtLeast(1),
+                        durationMinutes = (currentSegDurationMs / 60000L).toInt(),
                         status = PmkSegmentStatus.ACTIVE
                     )
                 )
@@ -348,7 +349,7 @@ class PmkTimerManager @Inject constructor(
                         caregiver = caregiver,
                         startTimeEpoch = segStart,
                         endTimeEpoch = nowEpoch,
-                        durationMinutes = (currentSegDurationMs / 60000L).toInt().coerceAtLeast(1),
+                        durationMinutes = (currentSegDurationMs / 60000L).toInt(),
                         status = PmkSegmentStatus.ACTIVE
                     )
                 )
@@ -434,7 +435,7 @@ class PmkTimerManager @Inject constructor(
                         caregiver = caregiver,
                         startTimeEpoch = pauseStart,
                         endTimeEpoch = nowEpoch,
-                        durationMinutes = (pauseDurationMs / 60000L).toInt().coerceAtLeast(1),
+                        durationMinutes = (pauseDurationMs / 60000L).toInt(),
                         status = PmkSegmentStatus.PAUSED,
                         pauseReason = pauseReason
                     )
@@ -517,7 +518,7 @@ class PmkTimerManager @Inject constructor(
                             caregiver = oldCaregiver,
                             startTimeEpoch = segStart,
                             endTimeEpoch = nowEpoch,
-                            durationMinutes = (currentSegDurationMs / 60000L).toInt().coerceAtLeast(1),
+                            durationMinutes = (currentSegDurationMs / 60000L).toInt(),
                             status = PmkSegmentStatus.ACTIVE,
                             babyTemperature = temperature,
                             babyResponse = response,
@@ -620,7 +621,7 @@ class PmkTimerManager @Inject constructor(
                         caregiver = currentState.currentCaregiver,
                         startTimeEpoch = segStart,
                         endTimeEpoch = nowEpoch,
-                        durationMinutes = (segMs / 60000L).toInt().coerceAtLeast(1),
+                        durationMinutes = (segMs / 60000L).toInt(),
                         status = PmkSegmentStatus.ACTIVE,
                         babyTemperature = finalTemp ?: currentState.babyTemperature,
                         babyResponse = finalResponse ?: currentState.babyResponse,
@@ -640,7 +641,7 @@ class PmkTimerManager @Inject constructor(
                         caregiver = currentState.currentCaregiver,
                         startTimeEpoch = pauseStart,
                         endTimeEpoch = nowEpoch,
-                        durationMinutes = (pauseMs / 60000L).toInt().coerceAtLeast(1),
+                        durationMinutes = (pauseMs / 60000L).toInt(),
                         status = PmkSegmentStatus.PAUSED,
                         pauseReason = currentState.pauseReason
                     )
@@ -702,23 +703,54 @@ class PmkTimerManager @Inject constructor(
     fun refreshTodayTotal() {
         scope.launch {
             val babyId = prefs.getLong(KEY_BABY_ID, 1L)
-            val timeline = getDailyTimelineUseCase(babyId, Calendar.getInstance()).firstOrNull()
-            if (timeline != null) {
-                val currentState = _timerState.value
-                val isSessionActive = currentState.isRunning || currentState.isPaused
-                val calculatedTimelineSeconds = timeline.totalActiveMinutes * 60L
+            val cal = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            val dayStartEpoch = cal.timeInMillis
+            cal.set(Calendar.HOUR_OF_DAY, 23)
+            cal.set(Calendar.MINUTE, 59)
+            cal.set(Calendar.SECOND, 59)
+            cal.set(Calendar.MILLISECOND, 999)
+            val dayEndEpoch = cal.timeInMillis
 
-                if (isSessionActive) {
-                    priorCompletedSecondsToday = max(0L, calculatedTimelineSeconds - currentState.elapsedSeconds)
-                    val activeTotal = max(calculatedTimelineSeconds, priorCompletedSecondsToday + currentState.elapsedSeconds)
-                    _timerState.update {
-                        it.copy(todayTotalActiveSeconds = activeTotal)
+            val activeSessionId = prefs.getLong(KEY_ACTIVE_SESSION_ID, 0L)
+            val currentState = _timerState.value
+            val isSessionActive = (currentState.isRunning || currentState.isPaused) && activeSessionId > 0L
+
+            val segments = pmkRepository.getSegmentsInRange(babyId, dayStartEpoch, dayEndEpoch).firstOrNull() ?: emptyList()
+
+            var priorActiveSec = 0L
+            var totalActiveSecondsAll = 0L
+
+            for (seg in segments) {
+                if (seg.status == PmkSegmentStatus.ACTIVE) {
+                    val segStart = seg.startTimeEpoch
+                    val segEnd = seg.endTimeEpoch ?: segStart
+                    val effStart = max(dayStartEpoch, segStart)
+                    val effEnd = min(dayEndEpoch, segEnd)
+                    if (effEnd > effStart) {
+                        val durationSec = (effEnd - effStart) / 1000L
+                        totalActiveSecondsAll += durationSec
+                        if (isSessionActive && seg.sessionId != activeSessionId) {
+                            priorActiveSec += durationSec
+                        }
                     }
-                } else {
-                    priorCompletedSecondsToday = calculatedTimelineSeconds
-                    _timerState.update {
-                        it.copy(todayTotalActiveSeconds = calculatedTimelineSeconds)
-                    }
+                }
+            }
+
+            if (isSessionActive) {
+                priorCompletedSecondsToday = priorActiveSec
+                val currentElapsed = currentState.elapsedSeconds
+                _timerState.update {
+                    it.copy(todayTotalActiveSeconds = priorCompletedSecondsToday + currentElapsed)
+                }
+            } else {
+                priorCompletedSecondsToday = totalActiveSecondsAll
+                _timerState.update {
+                    it.copy(todayTotalActiveSeconds = totalActiveSecondsAll)
                 }
             }
         }

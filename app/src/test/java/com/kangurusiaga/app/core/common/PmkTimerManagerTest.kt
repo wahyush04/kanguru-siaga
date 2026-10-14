@@ -76,6 +76,7 @@ class PmkTimerManagerTest {
 
         coEvery { repository.saveSession(any()) } returns 1L
         coEvery { repository.saveSegment(any()) } returns 10L
+        every { repository.getSegmentsInRange(any(), any(), any()) } returns flowOf(emptyList())
         every { getDailyTimelineUseCase(any(), any()) } returns flowOf(
             DailyTimeline(
                 dayEpoch = 0L,
@@ -151,6 +152,7 @@ class PmkTimerManagerTest {
         val pausedState = manager.timerState.value
         assertThat(pausedState.status).isEqualTo(TimerStatus.PAUSED)
         assertThat(pausedState.pauseReason).isEqualTo(PmkPauseReason.DIAPER.title)
+        assertThat(pausedState.todayTotalActiveSeconds).isEqualTo(0L)
 
         // Resume session
         manager.resume()
@@ -158,6 +160,7 @@ class PmkTimerManagerTest {
         val resumedState = manager.timerState.value
         assertThat(resumedState.status).isEqualTo(TimerStatus.RUNNING)
         assertThat(resumedState.pauseReason).isNull()
+        assertThat(resumedState.todayTotalActiveSeconds).isEqualTo(0L)
     }
 
     @Test

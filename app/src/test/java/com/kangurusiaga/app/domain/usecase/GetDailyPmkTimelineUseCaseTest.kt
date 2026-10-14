@@ -137,4 +137,104 @@ class GetDailyPmkTimelineUseCaseTest {
         assertThat(timeline.blocks[0].endFraction).isWithin(0.01f).of(4f / 24f)
         assertThat(timeline.totalActiveMinutes).isEqualTo(240)
     }
+
+    @Test
+    fun computeTimeline_shortSegments_accumulatesAccuratelyWithoutInflatingMinutes() {
+        val cal = Calendar.getInstance().apply {
+            set(2026, Calendar.OCTOBER, 24, 0, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val dayStart = cal.timeInMillis
+        cal.set(Calendar.HOUR_OF_DAY, 23)
+        cal.set(Calendar.MINUTE, 59)
+        cal.set(Calendar.SECOND, 59)
+        cal.set(Calendar.MILLISECOND, 999)
+        val dayEnd = cal.timeInMillis
+
+        // 3 short active segments: 20s, 25s, 15s (Total 60s = 1 min)
+        val t0 = dayStart + (8 * 3600 * 1000L)
+        val seg1 = PmkSegment(
+            id = 1L,
+            sessionId = 1L,
+            caregiver = PmkCaregiver.IBU,
+            startTimeEpoch = t0,
+            endTimeEpoch = t0 + 20_000L,
+            durationMinutes = 0,
+            status = PmkSegmentStatus.ACTIVE
+        )
+        val seg2 = PmkSegment(
+            id = 2L,
+            sessionId = 1L,
+            caregiver = PmkCaregiver.IBU,
+            startTimeEpoch = t0 + 30_000L,
+            endTimeEpoch = t0 + 55_000L,
+            durationMinutes = 0,
+            status = PmkSegmentStatus.ACTIVE
+        )
+        val seg3 = PmkSegment(
+            id = 3L,
+            sessionId = 1L,
+            caregiver = PmkCaregiver.IBU,
+            startTimeEpoch = t0 + 60_000L,
+            endTimeEpoch = t0 + 75_000L,
+            durationMinutes = 0,
+            status = PmkSegmentStatus.ACTIVE
+        )
+
+        val timeline = GetDailyPmkTimelineUseCase.computeTimeline(
+            dayStartEpoch = dayStart,
+            dayEndEpoch = dayEnd,
+            dayFormatted = "Sabtu, 24 Oktober 2026",
+            segments = listOf(seg1, seg2, seg3)
+        )
+
+        // 20s + 25s + 15s = 60s = 1 minute total, NOT 3 minutes!
+        assertThat(timeline.totalActiveMinutes).isEqualTo(1)
+        assertThat(timeline.totalActiveSeconds).isEqualTo(60L)
+    }
+
+    @Test
+    fun syncWithActiveTimer_updatesTimelineToMatchTimerActiveMinutesAndBlocks() {
+        val initialTimeline = DailyTimeline(
+            dayEpoch = 0L,
+            dayDateFormatted = "Sabtu, 24 Oktober 2026",
+            blocks = listOf(
+                TimelineBlock(
+                    caregiver = PmkCaregiver.IBU,
+                    isPaused = false,
+                    startFraction = 8f / 24f, // 08:00
+                    endFraction = 11f / 24f,  // 11:00
+                    durationMinutes = 180,
+                    timeRangeLabel = "08:00 - 11:00"
+                )
+            ),
+            totalActiveMinutes = 180,
+            totalPauseMinutes = 0,
+            ibuMinutes = 180,
+            ayahMinutes = 0,
+            pendampingMinutes = 0
+        )
+
+        // Active timer is at 200 minutes today (20 minutes additional)
+        val timerState = com.kangurusiaga.app.domain.model.PmkTimerState(
+            status = com.kangurusiaga.app.domain.model.TimerStatus.RUNNING,
+            currentCaregiver = PmkCaregiver.IBU,
+            elapsedSeconds = 20 * 60L,
+            todayTotalActiveSeconds = 200 * 60L
+        )
+
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 11)
+            set(Calendar.MINUTE, 20)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val synced = initialTimeline.syncWithActiveTimer(timerState, cal)
+
+        assertThat(synced.totalActiveMinutes).isEqualTo(200)
+        assertThat(synced.ibuMinutes).isEqualTo(200)
+        assertThat(synced.blocks.last().durationMinutes).isEqualTo(200)
+    }
 }
+

@@ -96,10 +96,11 @@ class PmkTimerViewModel @Inject constructor(
             getDailyTimelineUseCase(babyId, Calendar.getInstance()),
             _sheetState
         ) { timer, timeline, sheets ->
+            val syncedTimeline = timeline.syncWithActiveTimer(timer)
             PmkTimerUiState(
                 timerState = timer,
                 baby = baby,
-                timeline = timeline,
+                timeline = syncedTimeline,
                 showCaregiverHandoverSheet = sheets.showCaregiverHandoverSheet,
                 showPauseSheet = sheets.showPauseSheet,
                 showFinishConfirmDialog = sheets.showFinishConfirmDialog,

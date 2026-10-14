@@ -3,6 +3,7 @@ package com.kangurusiaga.app.domain.usecase
 import com.kangurusiaga.app.domain.model.PmkCaregiver
 import com.kangurusiaga.app.domain.model.PmkSegment
 import com.kangurusiaga.app.domain.model.PmkSegmentStatus
+import com.kangurusiaga.app.domain.model.PmkTimerState
 import com.kangurusiaga.app.domain.repository.PmkRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,6 +13,7 @@ import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 data class TimelineBlock(
     val caregiver: PmkCaregiver,
@@ -31,10 +33,95 @@ data class DailyTimeline(
     val totalPauseMinutes: Int,
     val ibuMinutes: Int,
     val ayahMinutes: Int,
-    val pendampingMinutes: Int
+    val pendampingMinutes: Int,
+    val totalActiveSeconds: Long = totalActiveMinutes * 60L
 ) {
     val totalActiveHours: Float get() = totalActiveMinutes / 60f
     val isTargetMet: Boolean get() = totalActiveMinutes >= (18 * 60)
+
+    fun syncWithActiveTimer(
+        timer: PmkTimerState,
+        nowCalendar: Calendar = Calendar.getInstance()
+    ): DailyTimeline {
+        if (!timer.isActive) return this
+
+        val totalDayMs = 24 * 3600 * 1000f
+        val nowMsInDay = (nowCalendar.get(Calendar.HOUR_OF_DAY) * 3600 +
+                nowCalendar.get(Calendar.MINUTE) * 60 +
+                nowCalendar.get(Calendar.SECOND)) * 1000L + nowCalendar.get(Calendar.MILLISECOND)
+        val currentFraction = (nowMsInDay / totalDayMs).coerceIn(0f, 1f)
+
+        val realtimeActiveMinutes = (timer.todayTotalActiveSeconds / 60).toInt()
+        val activeDiff = max(0, realtimeActiveMinutes - totalActiveMinutes)
+
+        val timeSdf = SimpleDateFormat("HH:mm", Locale("id", "ID"))
+        val nowFormatted = timeSdf.format(nowCalendar.time)
+
+        val updatedBlocks = if (blocks.isNotEmpty()) {
+            val last = blocks.last()
+            val isLastMatchingState = (timer.isRunning && !last.isPaused) || (timer.isPaused && last.isPaused)
+            if (isLastMatchingState && currentFraction >= last.startFraction) {
+                val updatedDuration = ((currentFraction - last.startFraction) * 24 * 60).roundToInt().coerceAtLeast(0)
+                val updatedLast = last.copy(
+                    endFraction = currentFraction,
+                    durationMinutes = updatedDuration,
+                    timeRangeLabel = if (last.timeRangeLabel.contains(" - ")) {
+                        val startLabel = last.timeRangeLabel.substringBefore(" - ")
+                        "$startLabel - $nowFormatted"
+                    } else last.timeRangeLabel
+                )
+                blocks.dropLast(1) + updatedLast
+            } else if (currentFraction >= last.endFraction) {
+                val newBlock = TimelineBlock(
+                    caregiver = timer.currentCaregiver,
+                    isPaused = timer.isPaused,
+                    pauseReason = timer.pauseReason,
+                    startFraction = last.endFraction,
+                    endFraction = currentFraction,
+                    durationMinutes = ((currentFraction - last.endFraction) * 24 * 60).roundToInt().coerceAtLeast(0),
+                    timeRangeLabel = "$nowFormatted - $nowFormatted"
+                )
+                blocks + newBlock
+            } else {
+                blocks
+            }
+        } else {
+            if (timer.sessionStartEpoch > 0L) {
+                val startCal = Calendar.getInstance().apply { timeInMillis = timer.sessionStartEpoch }
+                val startMsInDay = (startCal.get(Calendar.HOUR_OF_DAY) * 3600 +
+                        startCal.get(Calendar.MINUTE) * 60 +
+                        startCal.get(Calendar.SECOND)) * 1000L + startCal.get(Calendar.MILLISECOND)
+                val startFraction = (startMsInDay / totalDayMs).coerceIn(0f, 1f)
+                val initialBlock = TimelineBlock(
+                    caregiver = timer.currentCaregiver,
+                    isPaused = timer.isPaused,
+                    pauseReason = timer.pauseReason,
+                    startFraction = startFraction,
+                    endFraction = currentFraction,
+                    durationMinutes = realtimeActiveMinutes,
+                    timeRangeLabel = "${timeSdf.format(startCal.time)} - $nowFormatted"
+                )
+                listOf(initialBlock)
+            } else {
+                blocks
+            }
+        }
+
+        val newIbu = if (timer.isRunning && timer.currentCaregiver == PmkCaregiver.IBU) ibuMinutes + activeDiff else ibuMinutes
+        val newAyah = if (timer.isRunning && timer.currentCaregiver == PmkCaregiver.AYAH) ayahMinutes + activeDiff else ayahMinutes
+        val newPendamping = if (timer.isRunning && timer.currentCaregiver == PmkCaregiver.PENDAMPING) pendampingMinutes + activeDiff else pendampingMinutes
+        val newPauseMinutes = if (timer.isPaused) totalPauseMinutes + (timer.pauseElapsedSeconds / 60).toInt() else totalPauseMinutes
+
+        return copy(
+            blocks = updatedBlocks,
+            totalActiveMinutes = max(totalActiveMinutes, realtimeActiveMinutes),
+            totalPauseMinutes = newPauseMinutes,
+            ibuMinutes = newIbu,
+            ayahMinutes = newAyah,
+            pendampingMinutes = newPendamping,
+            totalActiveSeconds = max(totalActiveSeconds, timer.todayTotalActiveSeconds)
+        )
+    }
 }
 
 class GetDailyPmkTimelineUseCase @Inject constructor(
@@ -75,11 +162,11 @@ class GetDailyPmkTimelineUseCase @Inject constructor(
             val timeSdf = SimpleDateFormat("HH:mm", Locale("id", "ID"))
             val blocks = mutableListOf<TimelineBlock>()
 
-            var totalActiveMin = 0
-            var totalPauseMin = 0
-            var ibuMin = 0
-            var ayahMin = 0
-            var pendampingMin = 0
+            var totalActiveMs = 0L
+            var totalPauseMs = 0L
+            var ibuMs = 0L
+            var ayahMs = 0L
+            var pendampingMs = 0L
 
             for (seg in segments) {
                 val segStart = seg.startTimeEpoch
@@ -90,9 +177,10 @@ class GetDailyPmkTimelineUseCase @Inject constructor(
                 val effectiveEnd = min(dayEndEpoch, segEnd)
 
                 if (effectiveEnd > effectiveStart) {
+                    val durationMs = effectiveEnd - effectiveStart
                     val startFraction = ((effectiveStart - dayStartEpoch) / totalDayMs).coerceIn(0f, 1f)
                     val endFraction = ((effectiveEnd - dayStartEpoch) / totalDayMs).coerceIn(0f, 1f)
-                    val durationMin = ((effectiveEnd - effectiveStart) / 60000L).toInt().coerceAtLeast(1)
+                    val durationMin = (durationMs / 60000L).toInt()
 
                     val label = "${timeSdf.format(effectiveStart)} - ${timeSdf.format(effectiveEnd)}"
 
@@ -109,17 +197,24 @@ class GetDailyPmkTimelineUseCase @Inject constructor(
                     )
 
                     if (seg.status == PmkSegmentStatus.ACTIVE) {
-                        totalActiveMin += durationMin
+                        totalActiveMs += durationMs
                         when (seg.caregiver) {
-                            PmkCaregiver.IBU -> ibuMin += durationMin
-                            PmkCaregiver.AYAH -> ayahMin += durationMin
-                            PmkCaregiver.PENDAMPING -> pendampingMin += durationMin
+                            PmkCaregiver.IBU -> ibuMs += durationMs
+                            PmkCaregiver.AYAH -> ayahMs += durationMs
+                            PmkCaregiver.PENDAMPING -> pendampingMs += durationMs
                         }
                     } else {
-                        totalPauseMin += durationMin
+                        totalPauseMs += durationMs
                     }
                 }
             }
+
+            val totalActiveSec = totalActiveMs / 1000L
+            val totalActiveMin = (totalActiveMs / 60000L).toInt()
+            val totalPauseMin = (totalPauseMs / 60000L).toInt()
+            val ibuMin = (ibuMs / 60000L).toInt()
+            val ayahMin = (ayahMs / 60000L).toInt()
+            val pendampingMin = (pendampingMs / 60000L).toInt()
 
             if (blocks.isEmpty()) {
                 return DailyTimeline(
@@ -130,7 +225,8 @@ class GetDailyPmkTimelineUseCase @Inject constructor(
                     totalPauseMinutes = 0,
                     ibuMinutes = 0,
                     ayahMinutes = 0,
-                    pendampingMinutes = 0
+                    pendampingMinutes = 0,
+                    totalActiveSeconds = 0L
                 )
             }
 
@@ -142,7 +238,8 @@ class GetDailyPmkTimelineUseCase @Inject constructor(
                 totalPauseMinutes = totalPauseMin,
                 ibuMinutes = ibuMin,
                 ayahMinutes = ayahMin,
-                pendampingMinutes = pendampingMin
+                pendampingMinutes = pendampingMin,
+                totalActiveSeconds = totalActiveSec
             )
         }
     }
