@@ -120,6 +120,9 @@ fun KanguruNavGraph(
                         launchSingleTop = true
                     }
                 },
+                onNavigateToEducationList = {
+                    navController.navigate(Screen.EducationList.route)
+                },
                 onNavigateToEmergency = {
                     navController.navigate(Screen.EmergencyWarningList.route)
                 },
@@ -561,27 +564,6 @@ fun KanguruNavGraph(
                 },
                 onNavigateToDetail = { moduleId ->
                     navController.navigate(Screen.EducationDetail.createRoute(moduleId))
-                },
-                onNavigateToHome = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateToPmk = {
-                    navController.navigate(Screen.PmkCenter.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateToAlarm = {
-                    navController.navigate(Screen.Feeding.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateToEducation = {
-                    navController.popBackStack()
                 }
             )
         }

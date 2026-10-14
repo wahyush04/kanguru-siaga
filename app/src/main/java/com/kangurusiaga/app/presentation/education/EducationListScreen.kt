@@ -56,17 +56,11 @@ import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.education.EducationModule
 import com.kangurusiaga.app.presentation.education.components.EducationModuleCard
-import com.kangurusiaga.app.presentation.home.HomeBottomBar
-import com.kangurusiaga.app.presentation.home.HomeTab
 
 @Composable
 fun EducationListRoute(
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
-    onNavigateToHome: () -> Unit = onNavigateBack,
-    onNavigateToPmk: () -> Unit = {},
-    onNavigateToAlarm: () -> Unit = {},
-    onNavigateToEducation: () -> Unit = onNavigateBack,
     modifier: Modifier = Modifier,
     viewModel: EducationListViewModel = hiltViewModel()
 ) {
@@ -76,10 +70,6 @@ fun EducationListRoute(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onNavigateToDetail = onNavigateToDetail,
-        onNavigateToHome = onNavigateToHome,
-        onNavigateToPmk = onNavigateToPmk,
-        onNavigateToAlarm = onNavigateToAlarm,
-        onNavigateToEducation = onNavigateToEducation,
         onSelectTab = viewModel::selectTab,
         onToggleBookmark = viewModel::toggleBookmark,
         modifier = modifier
@@ -91,10 +81,6 @@ fun EducationListScreen(
     uiState: EducationListUiState,
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
-    onNavigateToHome: () -> Unit,
-    onNavigateToPmk: () -> Unit,
-    onNavigateToAlarm: () -> Unit = {},
-    onNavigateToEducation: () -> Unit = onNavigateBack,
     onSelectTab: (EducationTab) -> Unit,
     onToggleBookmark: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -169,20 +155,6 @@ fun EducationListScreen(
                     HorizontalDivider(color = CardBorder, thickness = 1.dp)
                 }
             }
-        },
-        bottomBar = {
-            HomeBottomBar(
-                currentTab = HomeTab.EDUKASI,
-                onTabSelected = { tab ->
-                    when (tab) {
-                        HomeTab.BERANDA -> onNavigateToHome()
-                        HomeTab.PMK -> onNavigateToPmk()
-                        HomeTab.EDUKASI -> onNavigateToEducation()
-                        HomeTab.ALARM -> onNavigateToAlarm()
-                        else -> {}
-                    }
-                }
-            )
         }
     ) { innerPadding ->
         Box(

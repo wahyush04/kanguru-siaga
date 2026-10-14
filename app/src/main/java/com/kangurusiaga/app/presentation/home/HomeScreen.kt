@@ -102,6 +102,7 @@ fun HomeRoute(
     onNavigateToPmk: () -> Unit,
     onNavigateToProfileSetup: () -> Unit = {},
     onNavigateToEducation: () -> Unit = {},
+    onNavigateToEducationList: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
     onNavigateToGrowth: () -> Unit = {},
@@ -118,6 +119,7 @@ fun HomeRoute(
         onNavigateToPmk = onNavigateToPmk,
         onNavigateToProfileSetup = onNavigateToProfileSetup,
         onNavigateToEducation = onNavigateToEducation,
+        onNavigateToEducationList = onNavigateToEducationList,
         onNavigateToEmergency = onNavigateToEmergency,
         onNavigateToAlarm = onNavigateToAlarm,
         onNavigateToGrowth = onNavigateToGrowth,
@@ -141,6 +143,7 @@ fun HomeScreen(
     onNavigateToPmk: () -> Unit,
     onNavigateToProfileSetup: () -> Unit = {},
     onNavigateToEducation: () -> Unit = {},
+    onNavigateToEducationList: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
     onNavigateToGrowth: () -> Unit = {},
@@ -207,6 +210,7 @@ fun HomeScreen(
                         unreadNotificationsCount = uiState.unreadNotificationsCount,
                         onNavigateToPmk = onNavigateToPmk,
                         onNavigateToEducation = onNavigateToEducation,
+                        onNavigateToEducationList = onNavigateToEducationList,
                         onNavigateToEmergency = onNavigateToEmergency,
                         onNavigateToAlarm = onNavigateToAlarm,
                         onNavigateToGrowth = onNavigateToGrowth,
@@ -269,6 +273,7 @@ private fun HomeContent(
     unreadNotificationsCount: Int,
     onNavigateToPmk: () -> Unit,
     onNavigateToEducation: () -> Unit = {},
+    onNavigateToEducationList: () -> Unit = {},
     onNavigateToEmergency: () -> Unit = {},
     onNavigateToAlarm: () -> Unit,
     onNavigateToGrowth: () -> Unit = {},
@@ -403,7 +408,7 @@ private fun HomeContent(
                 iconRes = R.drawable.ic_card_bblr,
                 containerColor = KanguruTheme.colors.successContainer,
                 borderColor = KanguruTheme.colors.successBorder,
-                onClick = onNavigateToEducation,
+                onClick = onNavigateToEducationList,
                 modifier = Modifier.weight(1f)
             )
         }

@@ -92,7 +92,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -564,11 +566,12 @@ fun PmkVideoScreen(
                     color = brandCream,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .statusBarsPadding()
+                        .zIndex(1f)
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .statusBarsPadding()
                             .padding(horizontal = 16.dp, vertical = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
@@ -716,14 +719,16 @@ fun PmkVideoScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
                     .padding(innerPadding)
+                    .clipToBounds()
+                    .verticalScroll(rememberScrollState())
             ) {
                 // 16:9 Landscape Video Player Container
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(16f / 9f)
+                        .clipToBounds()
                         .background(Color.Black),
                     contentAlignment = Alignment.Center
                 ) {
