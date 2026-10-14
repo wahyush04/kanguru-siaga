@@ -38,8 +38,16 @@ class GrowthRepositoryImpl @Inject constructor(
         return dao.getLatestMeasurement(babyId, parameter.name).map { it?.toDomain() }
     }
 
+    override suspend fun getInitialBirthMeasurement(babyId: Long, parameter: GrowthParameter, birthDate: Long): GrowthMeasurement? {
+        return dao.getInitialBirthMeasurement(babyId, parameter.name, birthDate)?.toDomain()
+    }
+
     override suspend fun insertMeasurement(measurement: GrowthMeasurement): Long {
         return dao.insertMeasurement(measurement.toEntity())
+    }
+
+    override suspend fun updateMeasurement(measurement: GrowthMeasurement) {
+        dao.updateMeasurement(measurement.toEntity())
     }
 
     override suspend fun deleteMeasurement(id: Long) {

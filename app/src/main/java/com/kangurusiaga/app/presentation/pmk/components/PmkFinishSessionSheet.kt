@@ -688,7 +688,7 @@ private fun BehaviorChipItem(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = option.label,
-                style = KanguruTheme.typography.labelSmall,
+                style = KanguruTheme.typography.labelMedium,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                 color = if (isSelected) colors.primary else colors.textPrimary,
                 maxLines = 1,

@@ -187,7 +187,17 @@ fun PmkCenterScreen(
                     onClick = onNavigateToVideo
                 )
 
-                // Menu Item 2: Mulai PMK
+                // Menu Item 2: Pengingat PMK
+                PmkMenuItem(
+                    title = stringResource(R.string.pmk_center_menu_reminder_title),
+                    subtitle = stringResource(R.string.pmk_center_menu_reminder_sub),
+                    iconVector = Icons.Default.Notifications,
+                    iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer,
+                    iconTintColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText,
+                    onClick = onNavigateToReminders
+                )
+
+                // Menu Item 3: Mulai PMK
                 PmkMenuItem(
                     title = stringResource(R.string.pmk_center_menu_start_title),
                     subtitle = stringResource(R.string.pmk_center_menu_start_sub),
@@ -197,15 +207,6 @@ fun PmkCenterScreen(
                     onClick = onNavigateToTimer
                 )
 
-                // Menu Item 3: Pengingat PMK
-                PmkMenuItem(
-                    title = stringResource(R.string.pmk_center_menu_reminder_title),
-                    subtitle = stringResource(R.string.pmk_center_menu_reminder_sub),
-                    iconVector = Icons.Default.Notifications,
-                    iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer,
-                    iconTintColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText,
-                    onClick = onNavigateToReminders
-                )
 
                 // Menu Item 4: Riwayat PMK
                 PmkMenuItem(

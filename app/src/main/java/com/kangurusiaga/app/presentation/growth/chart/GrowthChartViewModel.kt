@@ -9,6 +9,7 @@ import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
 import com.kangurusiaga.app.domain.repository.GrowthRepository
+import com.kangurusiaga.app.domain.usecase.EnsureInitialGrowthDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +34,7 @@ class GrowthChartViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
     private val growthRepository: GrowthRepository,
     private val fentonGrowthRepository: FentonGrowthRepository,
+    private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -61,6 +63,12 @@ class GrowthChartViewModel @Inject constructor(
             babyRepository.getActiveBaby().collectLatest { baby ->
                 _uiState.update { it.copy(baby = baby, isLoading = false) }
                 if (baby != null) {
+                    launch {
+                        try {
+                            ensureInitialGrowthDataUseCase(baby)
+                        } catch (_: Exception) {
+                        }
+                    }
                     launch {
                         growthRepository.getMeasurementsAsc(baby.id, parameter).collectLatest { list ->
                             _uiState.update { it.copy(measurementsAsc = list) }

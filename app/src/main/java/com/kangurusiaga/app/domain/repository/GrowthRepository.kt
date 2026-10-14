@@ -9,6 +9,8 @@ interface GrowthRepository {
     fun getMeasurementsDesc(babyId: Long, parameter: GrowthParameter): Flow<List<GrowthMeasurement>>
     fun getAllMeasurementsDesc(babyId: Long): Flow<List<GrowthMeasurement>>
     fun getLatestMeasurement(babyId: Long, parameter: GrowthParameter): Flow<GrowthMeasurement?>
+    suspend fun getInitialBirthMeasurement(babyId: Long, parameter: GrowthParameter, birthDate: Long): GrowthMeasurement?
     suspend fun insertMeasurement(measurement: GrowthMeasurement): Long
+    suspend fun updateMeasurement(measurement: GrowthMeasurement)
     suspend fun deleteMeasurement(id: Long)
 }

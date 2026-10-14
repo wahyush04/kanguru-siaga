@@ -33,6 +33,9 @@ interface GrowthMeasurementDao {
     @Delete
     suspend fun deleteMeasurement(entity: GrowthMeasurementEntity)
 
+    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId AND parameter = :parameter AND (note = 'Berat Lahir' OR note = 'Panjang Lahir' OR note = 'Lingkar Kepala Lahir' OR measurementDateEpochMillis = :birthDate) ORDER BY measurementDateEpochMillis ASC LIMIT 1")
+    suspend fun getInitialBirthMeasurement(babyId: Long, parameter: String, birthDate: Long): GrowthMeasurementEntity?
+
     @Query("DELETE FROM growth_measurements WHERE id = :id")
     suspend fun deleteById(id: Long)
 }

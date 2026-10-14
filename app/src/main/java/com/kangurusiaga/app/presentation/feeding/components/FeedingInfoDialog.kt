@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
+import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
@@ -74,7 +75,7 @@ fun FeedingInfoDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(R.string.alarm_info_dialog_point3),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                     lineHeight = 18.sp
                 )
@@ -89,7 +90,11 @@ fun FeedingInfoDialog(
                     contentColor = White
                 )
             ) {
-                Text(stringResource(R.string.alarm_btn_understand), fontWeight = FontWeight.SemiBold)
+                Text(
+                    stringResource(R.string.alarm_btn_understand),
+                    fontWeight = FontWeight.SemiBold,
+                    color = KanguruTheme.colors.onPrimary
+                )
             }
         }
     )

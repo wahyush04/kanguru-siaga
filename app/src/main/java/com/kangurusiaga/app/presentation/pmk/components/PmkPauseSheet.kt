@@ -174,13 +174,13 @@ fun PmkPauseSheet(
             ) {
                 Text(
                     text = "Alasan Jeda PMK:",
-                    style = KanguruTheme.typography.labelSmall,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = colors.textPrimary
                 )
                 Text(
                     text = "Wajib pilih satu",
-                    style = KanguruTheme.typography.labelSmall,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = colors.primary
                 )
@@ -210,7 +210,7 @@ fun PmkPauseSheet(
                     ) {
                         Text(
                             text = "${reason.iconEmoji} ${reason.title}",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = if (isSelected) colors.primary else colors.textPrimary
                         )
@@ -393,13 +393,13 @@ fun PmkPauseSheet(
             ) {
                 Text(
                     text = "Respon Perilaku Bayi:",
-                    style = KanguruTheme.typography.labelSmall,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = colors.textPrimary
                 )
                 Text(
                     text = "Pilih respon yang sesuai",
-                    style = KanguruTheme.typography.labelSmall,
+                    style = KanguruTheme.typography.labelMedium,
                     color = colors.textTertiary
                 )
             }
@@ -438,7 +438,7 @@ fun PmkPauseSheet(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = text,
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.bodySmall,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = if (isSelected) colors.primary else colors.textPrimary
                         )

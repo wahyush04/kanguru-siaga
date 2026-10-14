@@ -5,6 +5,7 @@ import com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.repository.BabyRepository
+import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,11 +23,15 @@ class SaveBabyProfileUseCaseTest {
     private val babyRepository: BabyRepository = mockk()
     private val userPreferencesRepository: UserPreferencesRepository = mockk(relaxed = true)
     private val babyFirestoreSyncManager: BabyFirestoreSyncManager = mockk(relaxed = true)
+    private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase = mockk(relaxed = true)
+    private val growthRepository: GrowthRepository = mockk(relaxed = true)
 
     private val useCase = SaveBabyProfileUseCase(
         babyRepository = babyRepository,
         userPreferencesRepository = userPreferencesRepository,
         babyFirestoreSyncManager = babyFirestoreSyncManager,
+        ensureInitialGrowthDataUseCase = ensureInitialGrowthDataUseCase,
+        growthRepository = growthRepository,
         ioDispatcher = testDispatcher
     )
 
@@ -110,6 +115,9 @@ class SaveBabyProfileUseCaseTest {
                 match { it.name == "Aisyah Putri" },
                 2100
             )
+        }
+        coVerify(exactly = 1) {
+            ensureInitialGrowthDataUseCase(match { it.id == 101L && it.name == "Aisyah Putri" })
         }
     }
 

@@ -7,6 +7,7 @@ import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
 import com.kangurusiaga.app.domain.repository.GrowthRepository
+import com.kangurusiaga.app.domain.usecase.EnsureInitialGrowthDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +28,8 @@ data class GrowthHubUiState(
 @HiltViewModel
 class GrowthHubViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
-    private val growthRepository: GrowthRepository
+    private val growthRepository: GrowthRepository,
+    private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GrowthHubUiState())
@@ -42,6 +44,12 @@ class GrowthHubViewModel @Inject constructor(
             babyRepository.getActiveBaby().collectLatest { baby ->
                 _uiState.update { it.copy(baby = baby, isLoading = false) }
                 if (baby != null) {
+                    launch {
+                        try {
+                            ensureInitialGrowthDataUseCase(baby)
+                        } catch (_: Exception) {
+                        }
+                    }
                     launch {
                         growthRepository.getLatestMeasurement(baby.id, GrowthParameter.WEIGHT)
                             .collectLatest { m -> _uiState.update { it.copy(latestWeight = m) } }

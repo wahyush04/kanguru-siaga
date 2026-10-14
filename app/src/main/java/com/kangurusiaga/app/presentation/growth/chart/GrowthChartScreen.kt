@@ -87,27 +87,45 @@ fun GrowthChartScreen(
     var measurementToDelete by remember { mutableStateOf<GrowthMeasurement?>(null) }
 
     if (measurementToDelete != null) {
-        AlertDialog(
-            onDismissRequest = { measurementToDelete = null },
-            title = { Text(stringResource(R.string.growth_chart_delete_title), fontWeight = FontWeight.Bold) },
-            text = { Text(stringResource(R.string.growth_chart_delete_msg)) },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        measurementToDelete?.let { viewModel.deleteMeasurement(it.id) }
-                        measurementToDelete = null
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = KanguruTheme.colors.error)
-                ) {
-                    Text(stringResource(R.string.alarm_btn_delete), color = White)
+        val target = measurementToDelete!!
+        val isBirthData = target.note == "Berat Lahir" || target.note == "Panjang Lahir" || target.note == "Lingkar Kepala Lahir"
+        if (isBirthData) {
+            AlertDialog(
+                onDismissRequest = { measurementToDelete = null },
+                title = { Text(stringResource(R.string.growth_chart_initial_birth_data_title), fontWeight = FontWeight.Bold) },
+                text = { Text(stringResource(R.string.growth_chart_initial_birth_data_msg)) },
+                confirmButton = {
+                    Button(
+                        onClick = { measurementToDelete = null },
+                        colors = ButtonDefaults.buttonColors(containerColor = BrandPink)
+                    ) {
+                        Text(stringResource(R.string.common_ok), color = White)
+                    }
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { measurementToDelete = null }) {
-                    Text(stringResource(R.string.alarm_btn_cancel))
+            )
+        } else {
+            AlertDialog(
+                onDismissRequest = { measurementToDelete = null },
+                title = { Text(stringResource(R.string.growth_chart_delete_title), fontWeight = FontWeight.Bold) },
+                text = { Text(stringResource(R.string.growth_chart_delete_msg)) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.deleteMeasurement(target.id)
+                            measurementToDelete = null
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = KanguruTheme.colors.error)
+                    ) {
+                        Text(stringResource(R.string.alarm_btn_delete), color = White)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { measurementToDelete = null }) {
+                        Text(stringResource(R.string.alarm_btn_cancel))
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     Scaffold(
@@ -308,26 +326,50 @@ fun GrowthChartScreen(
                                         val birthKg = baby.birthWeightGram / 1000f
                                         val diff = latest.value - birthKg
                                         val grams = (diff * 1000).toInt()
-                                        val str = if (diff >= 0) "+$grams g dari lahir" else "$grams g dari lahir"
-                                        Pair(str, diff >= 0)
+                                        if (latest.note == "Berat Lahir" || kotlin.math.abs(diff) < 0.001f) {
+                                            Pair(stringResource(R.string.growth_chart_initial_birth_pill), null)
+                                        } else {
+                                            val str = if (diff > 0) "+$grams g dari lahir" else "$grams g dari lahir"
+                                            Pair(str, diff > 0)
+                                        }
                                     }
                                     GrowthParameter.LENGTH -> {
                                         val diff = latest.value - baby.birthLengthCm
-                                        val str = if (diff >= 0) "+${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
-                                        else "${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
-                                        Pair(str, diff >= 0)
+                                        if (latest.note == "Panjang Lahir" || (baby.birthLengthCm > 0f && kotlin.math.abs(diff) < 0.001f)) {
+                                            Pair(stringResource(R.string.growth_chart_initial_birth_pill), null)
+                                        } else {
+                                            val str = if (diff >= 0) "+${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
+                                            else "${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
+                                            Pair(str, diff >= 0)
+                                        }
                                     }
                                     GrowthParameter.HEAD_CIRCUMFERENCE -> {
                                         val diff = latest.value - baby.birthHeadCircumferenceCm
-                                        val str = if (diff >= 0) "+${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
-                                        else "${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
-                                        Pair(str, diff >= 0)
+                                        if (latest.note == "Lingkar Kepala Lahir" || (baby.birthHeadCircumferenceCm > 0f && kotlin.math.abs(diff) < 0.001f)) {
+                                            Pair(stringResource(R.string.growth_chart_initial_birth_pill), null)
+                                        } else {
+                                            val str = if (diff >= 0) "+${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
+                                            else "${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
+                                            Pair(str, diff >= 0)
+                                        }
                                     }
                                 }
 
-                                val deltaBg = if (deltaPositive) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorContainer
-                                val deltaBorder = if (deltaPositive) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successBorder else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorBorder
-                                val deltaTextColor = if (deltaPositive) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
+                                val deltaBg = when (deltaPositive) {
+                                    true -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer
+                                    false -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorContainer
+                                    null -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceVariant
+                                }
+                                val deltaBorder = when (deltaPositive) {
+                                    true -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successBorder
+                                    false -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorBorder
+                                    null -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
+                                }
+                                val deltaTextColor = when (deltaPositive) {
+                                    true -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
+                                    false -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
+                                    null -> TextSecondary
+                                }
 
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Box(
@@ -337,8 +379,13 @@ fun GrowthChartScreen(
                                         .border(1.dp, deltaBorder, RoundedCornerShape(8.dp))
                                         .padding(horizontal = 8.dp, vertical = 3.dp)
                                 ) {
+                                    val prefix = when (deltaPositive) {
+                                        true -> "↑ "
+                                        false -> "↓ "
+                                        null -> ""
+                                    }
                                     Text(
-                                        text = (if (deltaPositive) "↑ " else "") + deltaStr,
+                                        text = prefix + deltaStr,
                                         style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.SemiBold,
                                         color = deltaTextColor
@@ -516,9 +563,14 @@ fun GrowthChartScreen(
                                     modifier = Modifier.width(100.dp)
                                 )
 
-                                // Age in weeks
+                                // Age in weeks & Note
                                 val weeksInt = item.chronologicalAgeWeeks.toInt()
-                                val ageText = if (weeksInt > 0) "$weeksInt minggu" else "${(item.chronologicalAgeWeeks * 7).toInt()} hari"
+                                val baseAge = if (weeksInt > 0) "$weeksInt minggu" else "${(item.chronologicalAgeWeeks * 7).toInt()} hari"
+                                val ageText = if (!item.note.isNullOrBlank()) {
+                                    "$baseAge • ${item.note}"
+                                } else {
+                                    baseAge
+                                }
                                 Text(
                                     text = ageText,
                                     style = KanguruTheme.typography.bodySmall,

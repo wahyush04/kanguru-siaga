@@ -9,7 +9,8 @@ import javax.inject.Inject
 
 class UpdateBabyProfileUseCase @Inject constructor(
     private val babyRepository: BabyRepository,
-    private val babyProfileDao: BabyProfileDao
+    private val babyProfileDao: BabyProfileDao,
+    private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase
 ) {
     suspend operator fun invoke(baby: Baby): Result<Unit> {
         if (baby.name.trim().isBlank()) {
@@ -29,19 +30,8 @@ class UpdateBabyProfileUseCase @Inject constructor(
             )
             babyRepository.updateBaby(sanitizedBaby)
 
-            // Synchronize to Fenton baby profile reference for accurate percentile evaluations
-            val fentonEntity = BabyProfileEntity(
-                babyId = sanitizedBaby.id,
-                name = sanitizedBaby.name,
-                gender = if (sanitizedBaby.gender == Gender.FEMALE) "FEMALE" else "MALE",
-                birthDate = sanitizedBaby.birthDateEpochMillis,
-                gestationalAgeWeeksAtBirth = sanitizedBaby.gestationalAgeWeeks,
-                gestationalAgeDaysAtBirth = 0,
-                birthWeightGrams = sanitizedBaby.birthWeightGram.toDouble(),
-                birthLengthCm = sanitizedBaby.birthLengthCm.toDouble(),
-                birthHeadCircumferenceCm = sanitizedBaby.birthHeadCircumferenceCm.toDouble()
-            )
-            babyProfileDao.insertProfile(fentonEntity)
+            // Synchronize initial birth growth data & Fenton profile
+            ensureInitialGrowthDataUseCase(sanitizedBaby)
 
             Result.success(Unit)
         } catch (e: Exception) {

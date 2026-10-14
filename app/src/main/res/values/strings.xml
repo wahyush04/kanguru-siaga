@@ -160,6 +160,7 @@
     <string name="alarm_error_volume">Jumlah ASI harus lebih dari 0 ml</string>
     <string name="alarm_btn_cancel">Batal</string>
     <string name="alarm_btn_save">Simpan</string>
+    <string name="common_ok">Mengerti</string>
 
     <!-- Edit Feeding Schedule BottomSheet -->
     <string name="alarm_edit_title">Edit Jadwal ASI</string>
@@ -297,6 +298,10 @@
     <!-- Growth Chart -->
     <string name="growth_chart_delete_title">Hapus Data Pengukuran?</string>
     <string name="growth_chart_delete_msg">Data pengukuran ini akan dihapus secara permanen.</string>
+    <string name="growth_chart_initial_birth_data_title">Data Awal Kelahiran</string>
+    <string name="growth_chart_initial_birth_data_msg">Data ini bersumber dari identitas kelahiran bayi. Anda dapat memperbaruinya sewaktu-waktu melalui menu Profil Bayi di Pengaturan.</string>
+    <string name="growth_chart_initial_birth_pill">Data Lahir (Awal)</string>
+    <string name="growth_chart_from_birth">%1$s dari lahir</string>
 
     <string name="growth_chart_tab_chart">Grafik</string>
     <string name="growth_chart_tab_data">Data</string>
@@ -404,7 +409,7 @@
     <string name="pmk_reminders_list_total">Total: %1$d Jadwal Estafet</string>
     <string name="pmk_reminders_item_target_hours">Target %1$d Jam • Setiap Hari</string>
     <string name="pmk_reminders_item_target_hours_once">Target %1$d Jam • Hanya Sekali</string>
-    <string name="pmk_reminders_btn_add">+ Tambah Jadwal Pengingat</string>
+    <string name="pmk_reminders_btn_add">Tambah Jadwal Pengingat</string>
     <string name="pmk_reminders_info_dialog_title">Pedoman Medis PMK Kontinu</string>
     <string name="pmk_reminders_info_dialog_msg">Metode Kanguru terbukti efektif jika dilakukan secara kontinu (tanpa putus) minimal 8 jam/hari hingga 20 jam/hari secara estafet bersama Ayah dan Pendamping. Durasi kontak kulit minimal 2 jam per sesi untuk mencegah fluktuasi suhu dan kelelahan bayi.</string>
 
