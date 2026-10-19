@@ -20,7 +20,12 @@ interface BabyFirestoreSyncManager {
      * Menyinkronkan identitas data bayi ke Firebase Firestore saat onboarding.
      * Bersifat non-blocking, hanya aktif saat online, dan aman terhadap exception.
      */
-    suspend fun syncOnboardingBaby(baby: Baby, currentWeightGram: Int): Boolean
+    suspend fun syncOnboardingBaby(
+        baby: Baby,
+        currentWeightGram: Int,
+        currentLengthCm: Float = baby.birthLengthCm,
+        currentHeadCircumferenceCm: Float = baby.birthHeadCircumferenceCm
+    ): Boolean
 }
 
 @Singleton
@@ -35,7 +40,12 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
         const val COLLECTION_BABY_PROFILES = "baby_onboarding_profiles"
     }
 
-    override suspend fun syncOnboardingBaby(baby: Baby, currentWeightGram: Int): Boolean {
+    override suspend fun syncOnboardingBaby(
+        baby: Baby,
+        currentWeightGram: Int,
+        currentLengthCm: Float,
+        currentHeadCircumferenceCm: Float
+    ): Boolean {
         return withContext(ioDispatcher) {
             // 1. Cek koneksi internet. Jika offline, lewati tanpa blocking atau error.
             val isOnline = networkMonitor.isOnline()
@@ -46,7 +56,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 return@withContext false
             }
 
-            // 2. Siapkan DTO sesuai ketentuan 6 field utama
+            // 2. Siapkan DTO sesuai ketentuan data bayi
             val genderString = when (baby.gender) {
                 Gender.MALE -> "LAKI_LAKI"
                 Gender.FEMALE -> "PEREMPUAN"
@@ -59,6 +69,10 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 gestationalAgeWeeks = baby.gestationalAgeWeeks,
                 birthWeightGram = baby.birthWeightGram,
                 currentWeightGram = currentWeightGram,
+                birthLengthCm = baby.birthLengthCm,
+                currentLengthCm = currentLengthCm,
+                birthHeadCircumferenceCm = baby.birthHeadCircumferenceCm,
+                currentHeadCircumferenceCm = currentHeadCircumferenceCm,
                 gender = genderString,
                 environment = BuildConfig.ENVIRONMENT,
                 appVersion = BuildConfig.VERSION_NAME

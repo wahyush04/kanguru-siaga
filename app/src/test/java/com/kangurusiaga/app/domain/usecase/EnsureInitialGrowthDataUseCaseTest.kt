@@ -173,4 +173,56 @@ class EnsureInitialGrowthDataUseCaseTest {
         coVerify(exactly = 0) { growthRepository.insertMeasurement(any()) }
         coVerify(exactly = 0) { growthRepository.updateMeasurement(any()) }
     }
+
+    @Test
+    fun invoke_whenBirthLengthAndHeadCircumferenceProvided_insertsInitialMeasurements() = runTest {
+        val birthDate = System.currentTimeMillis() - 86400000L * 7
+        val baby = Baby(
+            id = 15L,
+            name = "Nirmala",
+            gender = Gender.FEMALE,
+            birthDateEpochMillis = birthDate,
+            birthWeightGram = 1850,
+            birthLengthCm = 42f,
+            birthHeadCircumferenceCm = 30f,
+            gestationalAgeWeeks = 32
+        )
+
+        coEvery {
+            growthRepository.getInitialBirthMeasurement(15L, any(), birthDate)
+        } returns null
+
+        val result = useCase(baby)
+
+        assertThat(result.isSuccess).isTrue()
+        // Cek Berat Lahir
+        coVerify(exactly = 1) {
+            growthRepository.insertMeasurement(match {
+                it.babyId == 15L &&
+                        it.parameter == GrowthParameter.WEIGHT &&
+                        it.value == 1.85f &&
+                        it.note == "Berat Lahir"
+            })
+        }
+        // Cek Panjang Lahir
+        coVerify(exactly = 1) {
+            growthRepository.insertMeasurement(match {
+                it.babyId == 15L &&
+                        it.parameter == GrowthParameter.LENGTH &&
+                        it.value == 42f &&
+                        it.note == "Panjang Lahir" &&
+                        it.unit == "cm"
+            })
+        }
+        // Cek Lingkar Kepala Lahir
+        coVerify(exactly = 1) {
+            growthRepository.insertMeasurement(match {
+                it.babyId == 15L &&
+                        it.parameter == GrowthParameter.HEAD_CIRCUMFERENCE &&
+                        it.value == 30f &&
+                        it.note == "Lingkar Kepala Lahir" &&
+                        it.unit == "cm"
+            })
+        }
+    }
 }

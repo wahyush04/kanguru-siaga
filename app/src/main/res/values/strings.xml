@@ -32,6 +32,18 @@
     <string name="baby_profile_placeholder_weight_current">Contoh: 3200</string>
     <string name="baby_profile_unit_grams">gram</string>
     <string name="baby_profile_bblr_notice">Bayi dengan berat lahir kurang dari 2.500 gram dikategorikan sebagai BBLR (Bayi Berat Lahir Rendah).</string>
+
+    <string name="baby_profile_label_birth_length">PANJANG LAHIR</string>
+    <string name="baby_profile_placeholder_length_birth">Contoh: 42</string>
+    <string name="baby_profile_label_current_length">PANJANG SEKARANG</string>
+    <string name="baby_profile_placeholder_length_current">Contoh: 48.5</string>
+    <string name="baby_profile_unit_cm">cm</string>
+
+    <string name="baby_profile_label_birth_head">LINGKAR KEPALA LAHIR</string>
+    <string name="baby_profile_placeholder_head_birth">Contoh: 30</string>
+    <string name="baby_profile_label_current_head">LINGKAR KEPALA SEKARANG</string>
+    <string name="baby_profile_placeholder_head_current">Contoh: 34.2</string>
+
     <string name="baby_profile_label_gender">JENIS KELAMIN</string>
     <string name="baby_profile_gender_male">Laki-laki</string>
     <string name="baby_profile_gender_female">Perempuan</string>
@@ -41,9 +53,14 @@
     <string name="baby_profile_confirm_label_gestational_age">Usia Gestasi</string>
     <string name="baby_profile_confirm_label_birth_weight">Berat Lahir</string>
     <string name="baby_profile_confirm_label_current_weight">Berat Sekarang</string>
+    <string name="baby_profile_confirm_label_birth_length">Panjang Lahir</string>
+    <string name="baby_profile_confirm_label_current_length">Panjang Sekarang</string>
+    <string name="baby_profile_confirm_label_birth_head">Lingkar Kepala Lahir</string>
+    <string name="baby_profile_confirm_label_current_head">Lingkar Kepala Sekarang</string>
     <string name="baby_profile_confirm_label_gender">Jenis Kelamin</string>
     <string name="baby_profile_value_weeks">%1$s minggu</string>
     <string name="baby_profile_value_grams">%1$s gram</string>
+    <string name="baby_profile_value_cm">%1$s cm</string>
     <string name="baby_profile_confirm_bblr_status">Status: BBLR (%1$s gram) — Panduan Perawatan BBLR &amp; PMK diaktifkan.</string>
 
     <string name="baby_profile_btn_save">Simpan Data</string>

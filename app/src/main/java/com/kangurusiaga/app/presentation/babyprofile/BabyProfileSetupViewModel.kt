@@ -55,6 +55,26 @@ class BabyProfileSetupViewModel @Inject constructor(
         _uiState.update { it.copy(currentWeightInput = sanitized, errorMessage = null) }
     }
 
+    fun updateBirthLength(length: String) {
+        val sanitized = length.replace(',', '.').filter { it.isDigit() || it == '.' }
+        _uiState.update { it.copy(birthLengthInput = sanitized, errorMessage = null) }
+    }
+
+    fun updateCurrentLength(length: String) {
+        val sanitized = length.replace(',', '.').filter { it.isDigit() || it == '.' }
+        _uiState.update { it.copy(currentLengthInput = sanitized, errorMessage = null) }
+    }
+
+    fun updateBirthHeadCircumference(value: String) {
+        val sanitized = value.replace(',', '.').filter { it.isDigit() || it == '.' }
+        _uiState.update { it.copy(birthHeadCircumferenceInput = sanitized, errorMessage = null) }
+    }
+
+    fun updateCurrentHeadCircumference(value: String) {
+        val sanitized = value.replace(',', '.').filter { it.isDigit() || it == '.' }
+        _uiState.update { it.copy(currentHeadCircumferenceInput = sanitized, errorMessage = null) }
+    }
+
     fun createTempCameraUri(): Uri {
         return photoStorageManager.createTempCameraUri()
     }
@@ -144,12 +164,21 @@ class BabyProfileSetupViewModel @Inject constructor(
                 gender = state.gender,
                 birthDateEpochMillis = state.birthDateEpochMillis,
                 birthWeightGram = state.birthWeightGram,
+                birthLengthCm = state.birthLengthCm,
+                birthHeadCircumferenceCm = state.birthHeadCircumferenceCm,
                 gestationalAgeWeeks = state.gestationalAgeWeeks.toIntOrNull() ?: 32,
                 photoUri = state.photoUri
             )
 
             val currentWeight = if (state.currentWeightGram > 0) state.currentWeightGram else state.birthWeightGram
-            val result = saveBabyProfileUseCase(baby, currentWeight)
+            val currentLength = if (state.currentLengthCm > 0f) state.currentLengthCm else state.birthLengthCm
+            val currentHead = if (state.currentHeadCircumferenceCm > 0f) state.currentHeadCircumferenceCm else state.birthHeadCircumferenceCm
+            val result = saveBabyProfileUseCase(
+                baby = baby,
+                currentWeightGram = currentWeight,
+                currentLengthCm = currentLength,
+                currentHeadCircumferenceCm = currentHead
+            )
             result.fold(
                 onSuccess = {
                     _uiState.update { it.copy(isLoading = false, isComplete = true) }

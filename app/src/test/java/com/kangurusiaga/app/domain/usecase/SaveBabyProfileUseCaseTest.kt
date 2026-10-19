@@ -93,19 +93,26 @@ class SaveBabyProfileUseCaseTest {
             gender = Gender.FEMALE,
             birthDateEpochMillis = System.currentTimeMillis() - 10000,
             birthWeightGram = 1950,
+            birthLengthCm = 44f,
+            birthHeadCircumferenceCm = 31f,
             photoUri = "file:///data/user/0/com.kangurusiaga.app/files/baby_photos/1.jpg"
         )
 
         coEvery { babyRepository.saveBaby(any()) } returns 101L
-        coEvery { babyFirestoreSyncManager.syncOnboardingBaby(any(), any()) } returns true
+        coEvery { babyFirestoreSyncManager.syncOnboardingBaby(any(), any(), any(), any()) } returns true
 
-        val result = useCase(baby, currentWeightGram = 2100)
+        val result = useCase(
+            baby = baby,
+            currentWeightGram = 2100,
+            currentLengthCm = 46f,
+            currentHeadCircumferenceCm = 32f
+        )
         advanceUntilIdle()
 
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).isEqualTo(101L)
         coVerify(exactly = 1) {
-            babyRepository.saveBaby(match { it.name == "Aisyah Putri" && it.birthWeightGram == 1950 })
+            babyRepository.saveBaby(match { it.name == "Aisyah Putri" && it.birthWeightGram == 1950 && it.birthLengthCm == 44f && it.birthHeadCircumferenceCm == 31f })
         }
         coVerify(exactly = 1) {
             userPreferencesRepository.setOnboardingCompleted(true)
@@ -113,11 +120,29 @@ class SaveBabyProfileUseCaseTest {
         coVerify(exactly = 1) {
             babyFirestoreSyncManager.syncOnboardingBaby(
                 match { it.name == "Aisyah Putri" },
-                2100
+                2100,
+                46f,
+                32f
             )
         }
         coVerify(exactly = 1) {
             ensureInitialGrowthDataUseCase(match { it.id == 101L && it.name == "Aisyah Putri" })
+        }
+        // Pastikan pengukuran saat ini untuk berat, panjang, dan lingkar kepala disimpan
+        coVerify(exactly = 1) {
+            growthRepository.insertMeasurement(match {
+                it.babyId == 101L && it.parameter == com.kangurusiaga.app.domain.model.GrowthParameter.WEIGHT && it.value == 2.1f
+            })
+        }
+        coVerify(exactly = 1) {
+            growthRepository.insertMeasurement(match {
+                it.babyId == 101L && it.parameter == com.kangurusiaga.app.domain.model.GrowthParameter.LENGTH && it.value == 46f
+            })
+        }
+        coVerify(exactly = 1) {
+            growthRepository.insertMeasurement(match {
+                it.babyId == 101L && it.parameter == com.kangurusiaga.app.domain.model.GrowthParameter.HEAD_CIRCUMFERENCE && it.value == 32f
+            })
         }
     }
 
@@ -131,7 +156,7 @@ class SaveBabyProfileUseCaseTest {
         )
 
         coEvery { babyRepository.saveBaby(any()) } returns 102L
-        coEvery { babyFirestoreSyncManager.syncOnboardingBaby(any(), any()) } throws RuntimeException("Network timeout")
+        coEvery { babyFirestoreSyncManager.syncOnboardingBaby(any(), any(), any(), any()) } throws RuntimeException("Network timeout")
 
         val result = useCase(baby)
         advanceUntilIdle()

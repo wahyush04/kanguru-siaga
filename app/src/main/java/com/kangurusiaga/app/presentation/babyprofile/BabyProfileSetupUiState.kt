@@ -15,6 +15,10 @@ data class BabyProfileSetupUiState(
     val gestationalAgeWeeks: String = "",
     val birthWeightInput: String = "",
     val currentWeightInput: String = "",
+    val birthLengthInput: String = "",
+    val currentLengthInput: String = "",
+    val birthHeadCircumferenceInput: String = "",
+    val currentHeadCircumferenceInput: String = "",
     val photoUri: String? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -25,6 +29,18 @@ data class BabyProfileSetupUiState(
 
     val currentWeightGram: Int
         get() = currentWeightInput.replace(".", "").replace(",", "").toIntOrNull() ?: 0
+
+    val birthLengthCm: Float
+        get() = birthLengthInput.replace(',', '.').toFloatOrNull() ?: 0f
+
+    val currentLengthCm: Float
+        get() = currentLengthInput.replace(',', '.').toFloatOrNull() ?: 0f
+
+    val birthHeadCircumferenceCm: Float
+        get() = birthHeadCircumferenceInput.replace(',', '.').toFloatOrNull() ?: 0f
+
+    val currentHeadCircumferenceCm: Float
+        get() = currentHeadCircumferenceInput.replace(',', '.').toFloatOrNull() ?: 0f
 
     val isBblr: Boolean
         get() = birthWeightGram in 1..2499

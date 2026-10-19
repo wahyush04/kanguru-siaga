@@ -108,13 +108,13 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
                     parameter = GrowthParameter.LENGTH,
                     birthDate = baby.birthDateEpochMillis
                 )
+                val evalLength = FentonReferenceData.evaluatePercentile(
+                    parameter = GrowthParameter.LENGTH,
+                    gender = baby.gender,
+                    pmaWeeks = pmaWeeks,
+                    value = baby.birthLengthCm
+                )
                 if (existingLength == null) {
-                    val evalLength = FentonReferenceData.evaluatePercentile(
-                        parameter = GrowthParameter.LENGTH,
-                        gender = baby.gender,
-                        pmaWeeks = pmaWeeks,
-                        value = baby.birthLengthCm
-                    )
                     growthRepository.insertMeasurement(
                         GrowthMeasurement(
                             babyId = baby.id,
@@ -128,6 +128,18 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
                             percentileBadge = evalLength.percentileBadge
                         )
                     )
+                } else if (existingLength.note == "Panjang Lahir" &&
+                    (existingLength.value != baby.birthLengthCm || existingLength.measurementDateEpochMillis != baby.birthDateEpochMillis || existingLength.pmaWeeks != pmaWeeks)
+                ) {
+                    growthRepository.updateMeasurement(
+                        existingLength.copy(
+                            measurementDateEpochMillis = baby.birthDateEpochMillis,
+                            pmaWeeks = pmaWeeks,
+                            value = baby.birthLengthCm,
+                            percentileBadge = evalLength.percentileBadge,
+                            updatedAt = System.currentTimeMillis()
+                        )
+                    )
                 }
             }
 
@@ -137,13 +149,13 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
                     parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
                     birthDate = baby.birthDateEpochMillis
                 )
+                val evalHc = FentonReferenceData.evaluatePercentile(
+                    parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
+                    gender = baby.gender,
+                    pmaWeeks = pmaWeeks,
+                    value = baby.birthHeadCircumferenceCm
+                )
                 if (existingHc == null) {
-                    val evalHc = FentonReferenceData.evaluatePercentile(
-                        parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
-                        gender = baby.gender,
-                        pmaWeeks = pmaWeeks,
-                        value = baby.birthHeadCircumferenceCm
-                    )
                     growthRepository.insertMeasurement(
                         GrowthMeasurement(
                             babyId = baby.id,
@@ -155,6 +167,18 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
                             unit = GrowthParameter.HEAD_CIRCUMFERENCE.unit,
                             note = "Lingkar Kepala Lahir",
                             percentileBadge = evalHc.percentileBadge
+                        )
+                    )
+                } else if (existingHc.note == "Lingkar Kepala Lahir" &&
+                    (existingHc.value != baby.birthHeadCircumferenceCm || existingHc.measurementDateEpochMillis != baby.birthDateEpochMillis || existingHc.pmaWeeks != pmaWeeks)
+                ) {
+                    growthRepository.updateMeasurement(
+                        existingHc.copy(
+                            measurementDateEpochMillis = baby.birthDateEpochMillis,
+                            pmaWeeks = pmaWeeks,
+                            value = baby.birthHeadCircumferenceCm,
+                            percentileBadge = evalHc.percentileBadge,
+                            updatedAt = System.currentTimeMillis()
                         )
                     )
                 }

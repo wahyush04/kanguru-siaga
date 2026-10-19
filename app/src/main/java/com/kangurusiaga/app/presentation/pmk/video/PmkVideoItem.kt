@@ -70,8 +70,8 @@ object PmkVideoDataSource {
                 ),
                 ClinicalPoint(
                     number = 5,
-                    title = "Durasi Efektif Sesi PMK",
-                    description = "Disarankan minimal 60 menit per sesi agar siklus tidur lelap (deep sleep cycle) bayi tidak terputus dan pemulihan tubuh berlangsung secara optimal."
+                    title = "Durasi PMK Kontinu",
+                    description = "PMK dapat dilakukan secara kontinu selama 8–24 jam per hari, sesuai kondisi bayi dan kesiapan pengasuh. Usahakan meminimalkan jeda agar bayi mendapatkan manfaat kontak kulit ke kulit secara berkelanjutan. Pastikan posisi bayi aman, pernapasan terpantau, dan ikuti anjuran tenaga kesehatan."
                 )
             ),
             calloutTip = "Ayah dan anggota keluarga lainnya juga sangat dianjurkan melakukan PMK secara bergantian untuk membantu istirahat Bunda sekaligus mempererat ikatan kasih sayang dengan si kecil!",
@@ -85,7 +85,7 @@ object PmkVideoDataSource {
             durationSeconds = 65,
             thumbnailRes = R.drawable.thumb_pmk_video_2,
             videoRes = R.raw.video_manfaat_pmk_2,
-            description = "Memahami berbagai manfaat fisiologis, neurologis, dan emosional PMK untuk bayi prematur dan BBLR, mulai dari stabilitas suhu tubuh, percepatan kenaikan berat badan, hingga pematangan fungsi organ vital.",
+            description = "Memahami berbagai manfaat fisiologis, neurologis, dan emosional PMK untuk bayi prematur dan Bayi Berat Lahir Rendah, mulai dari stabilitas suhu tubuh, percepatan kenaikan berat badan, hingga pematangan fungsi organ vital.",
             clinicalPoints = listOf(
                 ClinicalPoint(
                     number = 1,
@@ -113,7 +113,7 @@ object PmkVideoDataSource {
                     description = "Stabilitas klinis yang lebih cepat tercapai membantu mempercepat bayi pulang ke rumah bersama keluarga dan menurunkan tingkat stres orang tua."
                 )
             ),
-            calloutTip = "Riset WHO membuktikan bahwa penerapan Perawatan Metode Kanguru secara rutin dapat menurunkan angka kematian neonatal pada bayi BBLR hingga lebih dari 30%.",
+            calloutTip = "Riset WHO membuktikan bahwa penerapan Perawatan Metode Kanguru secara rutin dapat menurunkan angka kematian neonatal pada Bayi Berat Lahir Rendah hingga lebih dari 30%.",
             nextLessonId = 3
         ),
         PmkVideoItem(
@@ -158,7 +158,7 @@ object PmkVideoDataSource {
         PmkVideoItem(
             id = 4,
             title = "4. Cara Perawatan Bayi Berat Lahir Rendah",
-            category = "Perawatan Bayi BBLR",
+            category = "Perawatan Bayi Berat Lahir Rendah",
             duration = "00:39",
             durationSeconds = 39,
             thumbnailRes = R.drawable.thumb_pmk_video_4,
@@ -191,13 +191,13 @@ object PmkVideoDataSource {
                     description = "Tidurkan bayi selalu telentang di kasur padat tanpa bantal empuk berlebih (mencegah SIDS), dan timbang berat badan secara berkala dengan target kenaikan 15–30 gram per hari."
                 )
             ),
-            calloutTip = "Lambung bayi BBLR berukuran kecil dan cepat lelah saat menyusu. Berikan ASI sedikit demi sedikit namun sering, lalu sendawakan bayi dengan posisi kepala sedikit terangkat (30°) untuk mencegah gumoh atau tersedak.",
+            calloutTip = "Lambung Bayi Berat Lahir Rendah berukuran kecil dan cepat lelah saat menyusu. Berikan ASI sedikit demi sedikit namun sering, lalu sendawakan bayi dengan posisi kepala sedikit terangkat (30°) untuk mencegah gumoh atau tersedak.",
             nextLessonId = 5
         ),
         PmkVideoItem(
             id = 5,
             title = "5. Tanda Kegawatan Bayi Berat Lahir Rendah",
-            category = "Tanda Kegawatan BBLR",
+            category = "Tanda Kegawatan Bayi Berat Lahir Rendah",
             duration = "00:54",
             durationSeconds = 54,
             thumbnailRes = R.drawable.thumb_pmk_video_5,
@@ -232,7 +232,48 @@ object PmkVideoDataSource {
             ),
             calloutTip = "TANGGAP DARURAT: Jika Bunda atau Ayah menemukan SALAH SATU tanda kegawatan di atas, JANGAN MENUNDA! Segera hubungi ambulans 119 atau bawa si kecil ke IGD / Puskesmas terdekat!",
             nextLessonId = null
+        ),
+
+        PmkVideoItem(
+            id = 6,
+            title = "6. Cara Memandikan Bayi",
+            category = "Perawatan Bayi BBLR",
+            duration = "01:07",
+            durationSeconds = 67,
+            thumbnailRes = R.drawable.thumb_pmk_video_5,
+            videoRes = R.raw.video_cara_memandikan_bayi_6,
+            description = "Edukasi mengenai cara memandikan bayi dengan benar, aman, dan lembut, mulai dari menyiapkan perlengkapan mandi, menggunakan air suam-suam kuku, membersihkan lipatan kulit, menggunakan sabun khusus bayi, hingga menjaga bayi tetap hangat setelah mandi.",
+            clinicalPoints = listOf(
+                ClinicalPoint(
+                    number = 1,
+                    title = "Persiapan Sebelum Mandi",
+                    description = "Siapkan bak mandi bayi, air hangat, handuk bersih, dan sabun khusus bayi sebelum mulai memandikan. Pastikan seluruh perlengkapan tersedia agar bayi tidak ditinggalkan sendirian selama proses mandi."
+                ),
+                ClinicalPoint(
+                    number = 2,
+                    title = "Gunakan Air Suam-Suam Kuku",
+                    description = "Gunakan air suam-suam kuku dan pastikan suhunya nyaman sebelum mulai memandikan bayi. Periksa suhu air terlebih dahulu untuk membantu mencegah bayi terkena air yang terlalu panas atau terlalu dingin."
+                ),
+                ClinicalPoint(
+                    number = 3,
+                    title = "Bersihkan Lipatan Kulit dengan Lembut",
+                    description = "Bersihkan lipatan kulit, terutama area leher dan ketiak, secara perlahan menggunakan usapan lembut. Hindari menggosok kulit terlalu keras agar kulit bayi tetap terjaga."
+                ),
+                ClinicalPoint(
+                    number = 4,
+                    title = "Gunakan Sabun Khusus Bayi",
+                    description = "Gunakan sabun khusus bayi dengan formula lembut yang sesuai untuk kulit bayi. Setelah membersihkan tubuh, bilas hingga bersih untuk memastikan tidak ada sisa sabun yang tertinggal pada kulit."
+                ),
+                ClinicalPoint(
+                    number = 5,
+                    title = "Jaga Bayi Tetap Hangat Setelah Mandi",
+                    description = "Setelah mandi, segera bungkus bayi menggunakan handuk bersih untuk membantu menjaga kehangatan tubuhnya. Keringkan tubuh dengan lembut dan pastikan bayi berada di lingkungan yang hangat."
+                )
+            ),
+            calloutTip = "PENTING: Jangan pernah meninggalkan bayi sendirian saat mandi, meskipun hanya sebentar. Untuk bayi BBLR, pastikan kondisi bayi stabil dan ikuti petunjuk tenaga kesehatan mengenai cara serta waktu mandi yang aman.",
+            nextLessonId = null
         )
+
     )
 
     fun getVideoById(id: Int): PmkVideoItem {

@@ -165,12 +165,42 @@ class BabyProfileSetupViewModelTest {
     }
 
     @Test
+    fun updateBirthLength_sanitizesAndUpdatesState() {
+        viewModel.updateBirthLength("48,5")
+        assertThat(viewModel.uiState.value.birthLengthInput).isEqualTo("48.5")
+        assertThat(viewModel.uiState.value.birthLengthCm).isEqualTo(48.5f)
+    }
+
+    @Test
+    fun updateCurrentLength_sanitizesAndUpdatesState() {
+        viewModel.updateCurrentLength("50.2")
+        assertThat(viewModel.uiState.value.currentLengthInput).isEqualTo("50.2")
+        assertThat(viewModel.uiState.value.currentLengthCm).isEqualTo(50.2f)
+    }
+
+    @Test
+    fun updateBirthHeadCircumference_sanitizesAndUpdatesState() {
+        viewModel.updateBirthHeadCircumference("33,0")
+        assertThat(viewModel.uiState.value.birthHeadCircumferenceInput).isEqualTo("33.0")
+        assertThat(viewModel.uiState.value.birthHeadCircumferenceCm).isEqualTo(33.0f)
+    }
+
+    @Test
+    fun updateCurrentHeadCircumference_sanitizesAndUpdatesState() {
+        viewModel.updateCurrentHeadCircumference("34.5")
+        assertThat(viewModel.uiState.value.currentHeadCircumferenceInput).isEqualTo("34.5")
+        assertThat(viewModel.uiState.value.currentHeadCircumferenceCm).isEqualTo(34.5f)
+    }
+
+    @Test
     fun saveProfile_onSuccess_setsIsCompleteTrue() = runTest {
         viewModel.updateName("Kirana")
         viewModel.updateGender(Gender.FEMALE)
         viewModel.updateBirthWeight("2150")
+        viewModel.updateBirthLength("45")
+        viewModel.updateBirthHeadCircumference("32")
 
-        coEvery { saveBabyProfileUseCase(any(), any()) } returns Result.success(1L)
+        coEvery { saveBabyProfileUseCase(any(), any(), any(), any()) } returns Result.success(1L)
 
         viewModel.saveProfile()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -178,6 +208,14 @@ class BabyProfileSetupViewModelTest {
         assertThat(viewModel.uiState.value.isLoading).isFalse()
         assertThat(viewModel.uiState.value.isComplete).isTrue()
         assertThat(viewModel.uiState.value.errorMessage).isNull()
+        coVerify(exactly = 1) {
+            saveBabyProfileUseCase(
+                baby = match { it.name == "Kirana" && it.birthLengthCm == 45f && it.birthHeadCircumferenceCm == 32f },
+                currentWeightGram = 2150,
+                currentLengthCm = 45f,
+                currentHeadCircumferenceCm = 32f
+            )
+        }
     }
 
     @Test
@@ -186,7 +224,7 @@ class BabyProfileSetupViewModelTest {
         viewModel.updateGender(Gender.FEMALE)
         viewModel.updateBirthWeight("2150")
 
-        coEvery { saveBabyProfileUseCase(any(), any()) } returns Result.failure(RuntimeException("Gagal menyimpan ke basis data"))
+        coEvery { saveBabyProfileUseCase(any(), any(), any(), any()) } returns Result.failure(RuntimeException("Gagal menyimpan ke basis data"))
 
         viewModel.saveProfile()
         testDispatcher.scheduler.advanceUntilIdle()
