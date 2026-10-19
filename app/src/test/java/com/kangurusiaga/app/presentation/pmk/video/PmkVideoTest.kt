@@ -9,9 +9,9 @@ import org.junit.Test
 class PmkVideoTest {
 
     @Test
-    fun `video data source contains 5 educational modules for bblr pmk`() {
+    fun `video data source contains 6 educational modules for bblr pmk`() {
         val videos = PmkVideoDataSource.videos
-        assertEquals(5, videos.size)
+        assertEquals(6, videos.size)
 
         // Verify module 1
         assertEquals(1, videos[0].id)
@@ -37,6 +37,11 @@ class PmkVideoTest {
         assertEquals(5, videos[4].id)
         assertEquals("5. Tanda Kegawatan Bayi Berat Lahir Rendah", videos[4].title)
         assertEquals("00:54", videos[4].duration)
+
+        // Verify module 6
+        assertEquals(6, videos[5].id)
+        assertEquals("6. Cara Memandikan Bayi", videos[5].title)
+        assertEquals("01:07", videos[5].duration)
     }
 
     @Test

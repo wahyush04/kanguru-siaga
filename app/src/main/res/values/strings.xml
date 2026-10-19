@@ -210,9 +210,43 @@
     <!-- Feeding TimePicker Dialog -->
     <string name="alarm_time_picker_title">Pilih Waktu Pemberian ASI</string>
 
-    <!-- Home Module -->
+    <!-- Home Module (Stitch Grid Version 1 - Gaya Grid Kasidig) -->
     <string name="home_toast_profile_phase">Pengaturan Profil Bayi tersedia di fase berikutnya.</string>
-    <string name="home_hello">Halo,</string>
+    <string name="home_hello">Halo, %1$s</string>
+    <string name="home_welcome_app">Selamat datang di KANGURU SIAGA</string>
+    <string name="home_hero_baby_title">Bayi Hebat</string>
+    <string name="home_hero_baby_subtitle">Terus dekap dan pantau perkembangannya</string>
+    <string name="home_hero_pmk_active">PMK Aktif</string>
+
+    <!-- 6 Grid Menu Items -->
+    <string name="home_grid_pmk_video_title">Perawatan Metode\nKanguru</string>
+    <string name="home_grid_pmk_video_sub">Video</string>
+
+    <string name="home_grid_bblr_care_title">Cara Perawatan\nBayi Kecil (BBLR)</string>
+    <string name="home_grid_bblr_care_sub">Video &amp; Materi</string>
+
+    <string name="home_grid_emergency_title">Tanda Kegawatan\nBayi (BBLR)</string>
+    <string name="home_grid_emergency_sub">Video &amp; Materi</string>
+
+    <string name="home_grid_pmk_timer_title">Perawatan Metode\nKanguru</string>
+    <string name="home_grid_pmk_timer_sub">Alarm &amp; Timer</string>
+
+    <string name="home_grid_bathing_title">Cara Memandikan\nBayi</string>
+    <string name="home_grid_bathing_sub">Video</string>
+
+    <string name="home_grid_asi_alarm_title">Alarm Pemberian\nASI</string>
+    <string name="home_grid_asi_alarm_sub">Untuk bayi dengan OGT/NGT</string>
+
+    <!-- Growth Fenton Separate Card -->
+    <string name="home_growth_card_title">Pertumbuhan Bayi</string>
+    <string name="home_growth_card_sub">Grafik fenton</string>
+
+    <!-- Target PMK Hari Ini Widget -->
+    <string name="home_target_pmk_title">Target PMK Hari ini</string>
+    <string name="home_target_pmk_min_label">Minimal ≥ 8 Jam</string>
+    <string name="home_target_pmk_duration_format">Durasi: %1$s</string>
+    <string name="home_target_pmk_target_met">Target: 8 Jam</string>
+
     <string name="home_cd_notifications">Notifikasi</string>
     <string name="home_card_pmk_title">Perawatan Metode\nKanguru (PMK)</string>
     <string name="home_card_pmk_subtitle">Video, Timer, Pengingat</string>

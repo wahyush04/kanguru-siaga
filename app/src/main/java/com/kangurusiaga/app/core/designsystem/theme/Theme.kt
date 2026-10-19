@@ -222,6 +222,50 @@ abstract class KanguruColors {
     abstract val onboardingCardBgStart: Color
     abstract val onboardingCardBgEnd: Color
 
+    // Home Kasidig Grid & Hero Banner Tokens (Stitch aligned)
+    abstract val heroBannerBgStart: Color
+    abstract val heroBannerBgMid: Color
+    abstract val heroBannerBgEnd: Color
+    abstract val heroBannerBorder: Color
+    abstract val heroBadgeBg: Color
+    abstract val heroBadgeText: Color
+
+    abstract val gridIconRoseStart: Color
+    abstract val gridIconRoseEnd: Color
+    abstract val gridIconRoseOuterStart: Color
+    abstract val gridIconRoseOuterEnd: Color
+    abstract val gridSubtitleRose: Color
+
+    abstract val gridIconTealStart: Color
+    abstract val gridIconTealEnd: Color
+    abstract val gridIconTealOuterStart: Color
+    abstract val gridIconTealOuterEnd: Color
+    abstract val gridSubtitleTeal: Color
+
+    abstract val gridIconAmberStart: Color
+    abstract val gridIconAmberEnd: Color
+    abstract val gridIconAmberOuterStart: Color
+    abstract val gridIconAmberOuterEnd: Color
+    abstract val gridSubtitleAmber: Color
+
+    abstract val gridIconPinkStart: Color
+    abstract val gridIconPinkEnd: Color
+    abstract val gridIconPinkOuterStart: Color
+    abstract val gridIconPinkOuterEnd: Color
+    abstract val gridSubtitlePink: Color
+
+    abstract val gridIconBlueStart: Color
+    abstract val gridIconBlueEnd: Color
+    abstract val gridIconBlueOuterStart: Color
+    abstract val gridIconBlueOuterEnd: Color
+    abstract val gridSubtitleBlue: Color
+
+    abstract val gridIconPurpleStart: Color
+    abstract val gridIconPurpleEnd: Color
+    abstract val gridIconPurpleOuterStart: Color
+    abstract val gridIconPurpleOuterEnd: Color
+    abstract val gridSubtitlePurple: Color
+
     open val primaryBorder: Color
         get() = if (isDark) Color(0xFF5E2734) else Color(0xFFFFD1DC)
 
@@ -415,6 +459,50 @@ private class LightKanguruColorsImpl : KanguruColors() {
     override val ambientWave2: Color = Color(0xFFF3D8C8)
     override val onboardingCardBgStart: Color = Color(0xFFFFF0F3)
     override val onboardingCardBgEnd: Color = Color(0xFFFFF6EA)
+
+    // Home Kasidig Grid & Hero Banner Tokens (Stitch aligned)
+    override val heroBannerBgStart: Color = Color(0xFFA7F3D0)
+    override val heroBannerBgMid: Color = Color(0xFF6EE7B7)
+    override val heroBannerBgEnd: Color = Color(0xFF99F6E4)
+    override val heroBannerBorder: Color = Color(0xFF5EEAD4).copy(alpha = 0.5f)
+    override val heroBadgeBg: Color = Color(0xB3FFFFFF)
+    override val heroBadgeText: Color = Color(0xFF115E59)
+
+    override val gridIconRoseStart: Color = Color(0xFFF43F5E)
+    override val gridIconRoseEnd: Color = Color(0xFFEC4899)
+    override val gridIconRoseOuterStart: Color = Color(0xFFFFE4E6)
+    override val gridIconRoseOuterEnd: Color = Color(0xFFFDF2F8)
+    override val gridSubtitleRose: Color = Color(0xFFF43F5E)
+
+    override val gridIconTealStart: Color = Color(0xFF10B981)
+    override val gridIconTealEnd: Color = Color(0xFF14B8A6)
+    override val gridIconTealOuterStart: Color = Color(0xFFD1FAE5)
+    override val gridIconTealOuterEnd: Color = Color(0xFFF0FDFA)
+    override val gridSubtitleTeal: Color = Color(0xFF0D9488)
+
+    override val gridIconAmberStart: Color = Color(0xFFF59E0B)
+    override val gridIconAmberEnd: Color = Color(0xFFFB923C)
+    override val gridIconAmberOuterStart: Color = Color(0xFFFEF3C7)
+    override val gridIconAmberOuterEnd: Color = Color(0xFFFFF7ED)
+    override val gridSubtitleAmber: Color = Color(0xFFD97706)
+
+    override val gridIconPinkStart: Color = Color(0xFFEC4899)
+    override val gridIconPinkEnd: Color = Color(0xFFFB7185)
+    override val gridIconPinkOuterStart: Color = Color(0xFFFCE7F3)
+    override val gridIconPinkOuterEnd: Color = Color(0xFFFFF1F2)
+    override val gridSubtitlePink: Color = Color(0xFFEC4899)
+
+    override val gridIconBlueStart: Color = Color(0xFF6366F1)
+    override val gridIconBlueEnd: Color = Color(0xFF3B82F6)
+    override val gridIconBlueOuterStart: Color = Color(0xFFE0E7FF)
+    override val gridIconBlueOuterEnd: Color = Color(0xFFEFF6FF)
+    override val gridSubtitleBlue: Color = Color(0xFF6366F1)
+
+    override val gridIconPurpleStart: Color = Color(0xFFA855F7)
+    override val gridIconPurpleEnd: Color = Color(0xFF6366F1)
+    override val gridIconPurpleOuterStart: Color = Color(0xFFF3E8FF)
+    override val gridIconPurpleOuterEnd: Color = Color(0xFFF5F3FF)
+    override val gridSubtitlePurple: Color = Color(0xFF9333EA)
 }
 
 val LightKanguruColors: KanguruColors = LightKanguruColorsImpl()
@@ -597,6 +685,50 @@ private class DarkKanguruColorsImpl : KanguruColors() {
     override val ambientWave2: Color = Color(0xFF2D2824)
     override val onboardingCardBgStart: Color = Color(0xFF3B252C)
     override val onboardingCardBgEnd: Color = Color(0xFF2C2520)
+
+    // Home Kasidig Grid & Hero Banner Tokens (Dark / Dim Nursing Mode)
+    override val heroBannerBgStart: Color = Color(0xFF16382E)
+    override val heroBannerBgMid: Color = Color(0xFF1A4538)
+    override val heroBannerBgEnd: Color = Color(0xFF13362E)
+    override val heroBannerBorder: Color = Color(0xFF245749)
+    override val heroBadgeBg: Color = Color(0xFF1E4238)
+    override val heroBadgeText: Color = Color(0xFF5EEAD4)
+
+    override val gridIconRoseStart: Color = Color(0xFFE11D48)
+    override val gridIconRoseEnd: Color = Color(0xFFBE123C)
+    override val gridIconRoseOuterStart: Color = Color(0xFF3B151F)
+    override val gridIconRoseOuterEnd: Color = Color(0xFF2E1218)
+    override val gridSubtitleRose: Color = Color(0xFFFB7185)
+
+    override val gridIconTealStart: Color = Color(0xFF059669)
+    override val gridIconTealEnd: Color = Color(0xFF0D9488)
+    override val gridIconTealOuterStart: Color = Color(0xFF142B24)
+    override val gridIconTealOuterEnd: Color = Color(0xFF11241E)
+    override val gridSubtitleTeal: Color = Color(0xFF2DD4BF)
+
+    override val gridIconAmberStart: Color = Color(0xFFD97706)
+    override val gridIconAmberEnd: Color = Color(0xFFEA580C)
+    override val gridIconAmberOuterStart: Color = Color(0xFF382310)
+    override val gridIconAmberOuterEnd: Color = Color(0xFF2E1C0D)
+    override val gridSubtitleAmber: Color = Color(0xFFFBBF24)
+
+    override val gridIconPinkStart: Color = Color(0xFFDB2777)
+    override val gridIconPinkEnd: Color = Color(0xFFE11D48)
+    override val gridIconPinkOuterStart: Color = Color(0xFF3B1426)
+    override val gridIconPinkOuterEnd: Color = Color(0xFF2E101E)
+    override val gridSubtitlePink: Color = Color(0xFFF472B6)
+
+    override val gridIconBlueStart: Color = Color(0xFF4F46E5)
+    override val gridIconBlueEnd: Color = Color(0xFF2563EB)
+    override val gridIconBlueOuterStart: Color = Color(0xFF1A1C38)
+    override val gridIconBlueOuterEnd: Color = Color(0xFF14162B)
+    override val gridSubtitleBlue: Color = Color(0xFF818CF8)
+
+    override val gridIconPurpleStart: Color = Color(0xFF9333EA)
+    override val gridIconPurpleEnd: Color = Color(0xFF7C3AED)
+    override val gridIconPurpleOuterStart: Color = Color(0xFF281438)
+    override val gridIconPurpleOuterEnd: Color = Color(0xFF1F102B)
+    override val gridSubtitlePurple: Color = Color(0xFFC084FC)
 }
 
 val DarkKanguruColors: KanguruColors = DarkKanguruColorsImpl()

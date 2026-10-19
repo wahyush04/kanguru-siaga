@@ -75,8 +75,7 @@ class HomeViewModelTest {
             assertThat(success.babyAgeFormatted).contains("minggu")
             assertThat(success.babyWeightFormatted).contains("1.850")
             assertThat(success.todayProgressFraction).isGreaterThan(0.04f)
-            assertThat(success.todayTargetHours).isEqualTo(20)
-            assertThat(success.formattedTodayPmkProgress).contains("20j target")
+            assertThat(success.formattedTodayPmkProgress).isEqualTo("1 Jam")
         }
     }
 

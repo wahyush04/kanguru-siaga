@@ -118,9 +118,10 @@ class HomeViewModel @Inject constructor(
         val progress = (totalMinutes.toFloat() / (targetHours * 60f)).coerceIn(0f, 1f)
 
         val progressText = when {
-            hours > 0 && minutesRemainder > 0 -> "${hours}j ${minutesRemainder}m dari ${targetHours}j target"
-            hours > 0 -> "${hours}j dari ${targetHours}j target"
-            else -> "${minutesRemainder} mnt dari ${targetHours}j target"
+            hours > 0 && minutesRemainder > 0 -> "${hours} Jam ${minutesRemainder} Menit"
+            hours > 0 -> "${hours} Jam"
+            minutesRemainder > 0 -> "${minutesRemainder} Menit"
+            else -> "0 Menit"
         }
 
         return HomeUiState(

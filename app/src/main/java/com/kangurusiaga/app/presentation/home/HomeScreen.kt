@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,15 +30,22 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -170,7 +178,7 @@ fun HomeScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = BrandBackground,
+        containerColor = KanguruTheme.colors.background,
         snackbarHost = { com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost(snackbarHostState) },
         bottomBar = {
             HomeBottomBar(
@@ -284,25 +292,172 @@ private fun HomeContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        // 1. Header Profile Bayi
-        Row(
+        // 1. Header Sapaan & Notifikasi
+        HomeHeaderSection(
+            babyName = baby.name,
+            ageFormatted = ageFormatted,
+            weightFormatted = weightFormatted,
+            onOpenNotification = onOpenNotification
+        )
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // 2. Hero Banner Status Bayi ("Bayi Hebat")
+        HeroBabyStatusCard(
+            baby = baby,
+            onClick = onNavigateToTimer
+        )
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // 3. Main Feature Menu Grid (2 Baris x 3 Kolom)
+        HomeFeatureMenuGrid(
+            onNavigateToPmkVideo = onNavigateToEducation,
+            onNavigateToBblrCare = onNavigateToEducationList,
+            onOpenEmergency = onOpenEmergency,
+            onNavigateToPmkTimer = onNavigateToTimer,
+            onNavigateToBathingVideo = onNavigateToEducation,
+            onNavigateToAsiAlarm = onNavigateToAlarm
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // 4. Kartu Horizontal Pertumbuhan Bayi (Grafik Fenton)
+        HomeGrowthBannerCard(
+            onClick = onNavigateToGrowth
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // 5. Widget Target PMK Hari Ini
+        HomeDailyActivityCard(
+            progressFraction = todayProgress,
+            durationFormatted = pmkProgressFormatted,
+            onClick = onNavigateToTimer
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun HomeHeaderSection(
+    babyName: String,
+    ageFormatted: String,
+    weightFormatted: String,
+    onOpenNotification: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.home_hello, babyName),
+                style = KanguruTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = KanguruTheme.colors.textPrimary
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = stringResource(R.string.home_welcome_app),
+                style = KanguruTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = KanguruTheme.colors.textPrimary
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "$ageFormatted – $weightFormatted",
+                style = KanguruTheme.typography.bodySmall,
+                fontWeight = FontWeight.Normal,
+                color = KanguruTheme.colors.textSecondary
+            )
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        // Notification Bell Button with Red Alert Badge (unclipped, top-most)
+        Box(
+            modifier = Modifier
+                .padding(top = 2.dp)
+                .size(44.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Circle Bell Button
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(KanguruTheme.colors.surface)
+                    .border(1.dp, KanguruTheme.colors.cardBorder, CircleShape)
+                    .clickable(onClick = onOpenNotification),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = stringResource(R.string.home_cd_notifications),
+                    tint = KanguruTheme.colors.gridSubtitleRose,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
+            // Red dot indicator - rendered on top, unclipped
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(11.dp)
+                    .clip(CircleShape)
+                    .background(KanguruTheme.colors.gridSubtitleRose)
+                    .border(2.dp, KanguruTheme.colors.surface, CircleShape)
+            )
+        }
+    }
+}
+
+@Composable
+private fun HeroBabyStatusCard(
+    baby: Baby,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(1.dp, KanguruTheme.colors.heroBannerBorder, RoundedCornerShape(24.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 4.dp, bottom = 20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            KanguruTheme.colors.heroBannerBgStart,
+                            KanguruTheme.colors.heroBannerBgMid,
+                            KanguruTheme.colors.heroBannerBgEnd
+                        )
+                    )
+                )
+                .padding(14.dp)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Circular Photo / Avatar
+                // Baby Image Container Squircle
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(BrandLightPink)
-                        .border(1.5.dp, BrandCardBorder, CircleShape),
+                        .size(86.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(KanguruTheme.colors.surface.copy(alpha = 0.9f))
+                        .border(1.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(18.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     if (baby.photoUri != null) {
@@ -311,349 +466,499 @@ private fun HomeContent(
                             contentDescription = baby.name,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clip(CircleShape),
+                                .clip(RoundedCornerShape(18.dp)),
                             contentScale = ContentScale.Crop
                         )
                     } else {
                         Image(
                             painter = painterResource(id = R.drawable.ic_kangaroo_mascot),
-                            contentDescription = null,
-                            modifier = Modifier.size(36.dp)
+                            contentDescription = baby.name,
+                            modifier = Modifier.size(54.dp)
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.width(14.dp))
 
-                Column {
-                    Text(
-                        text = stringResource(R.string.home_hello),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        text = baby.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                        letterSpacing = (-0.3).sp
-                    )
-                    Text(
-                        text = "$ageFormatted • $weightFormatted",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
-            }
-
-            // Notification button with badge
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .clickable { onOpenNotification() },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = stringResource(R.string.home_cd_notifications),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
-                )
-
-                if (unreadNotificationsCount > 0) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(top = 4.dp, end = 4.dp)
-                            .size(16.dp)
-                            .clip(CircleShape)
-                            .background(BrandPink)
-                            .border(2.dp, BrandBackground, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = unreadNotificationsCount.toString(),
-                            style = KanguruTheme.typography.labelSmall,
-                            color = White,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-        }
-
-        // 2. 4 Main Action Cards Grid (2x2)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            // Card 1: PMK
-            ActionGridCard(
-                title = stringResource(R.string.home_card_pmk_title),
-                subtitle = stringResource(R.string.home_card_pmk_subtitle),
-                iconRes = R.drawable.ic_pmk_mascot,
-                containerColor = BrandLightPink,
-                borderColor = KanguruTheme.colors.outline,
-                onClick = onNavigateToPmk,
-                modifier = Modifier.weight(1f)
-            )
-
-            // Card 2: Bayi BBLR
-            ActionGridCard(
-                title = stringResource(R.string.home_card_bblr_title),
-                subtitle = stringResource(R.string.home_card_bblr_subtitle),
-                iconRes = R.drawable.ic_card_bblr,
-                containerColor = KanguruTheme.colors.successContainer,
-                borderColor = KanguruTheme.colors.successBorder,
-                onClick = onNavigateToEducationList,
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            // Card 3: Tanda Kegawatan
-            ActionGridCard(
-                title = stringResource(R.string.home_card_emergency_title),
-                subtitle = stringResource(R.string.home_card_emergency_subtitle),
-                iconRes = R.drawable.ic_card_emergency,
-                containerColor = KanguruTheme.colors.warningContainer,
-                borderColor = KanguruTheme.colors.warningBorder,
-                onClick = onNavigateToEmergency,
-                modifier = Modifier.weight(1f)
-            )
-
-            // Card 4: Alarm ASI
-            ActionGridCard(
-                title = stringResource(R.string.home_card_asi_title),
-                subtitle = stringResource(R.string.home_card_asi_subtitle),
-                iconRes = R.drawable.ic_card_asi,
-                containerColor = KanguruTheme.colors.infoContainer,
-                borderColor = KanguruTheme.colors.infoBorder,
-                onClick = onNavigateToAlarm,
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        // 3. Pertumbuhan Bayi Card Banner
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, KanguruTheme.colors.outline, RoundedCornerShape(24.dp))
-                .clickable { onNavigateToGrowth() },
-            colors = CardDefaults.cardColors(containerColor = BrandLightPink),
-            shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_card_growth),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp)
-                )
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(R.string.home_card_growth_title),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary
-                    )
-                    Text(
-                        text = stringResource(R.string.home_card_growth_subtitle),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
-                    )
-                }
-
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                    contentDescription = null,
-                    tint = BrandPink,
-                    modifier = Modifier.size(14.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // 4. Aktivitas Hari Ini Section
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = stringResource(R.string.home_section_today_activity),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = KanguruTheme.colors.textPrimary
-            )
-
-            Text(
-                text = stringResource(R.string.home_see_all),
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold,
-                color = KanguruTheme.colors.primary,
-                modifier = Modifier.clickable { onNavigateToPmk() }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // PMK Activity Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(20.dp))
-                .clickable { onNavigateToTimer() },
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Amber Icon Badge
-                Box(
+                Column(
                     modifier = Modifier
-                        .size(42.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(KanguruTheme.colors.warningContainer),
-                    contentAlignment = Alignment.Center
+                        .weight(1f)
+                        .padding(end = 4.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_kangaroo_mascot),
-                        contentDescription = null,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
+                    // Badge: ● PMK Aktif
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(KanguruTheme.colors.heroBadgeBg)
+                            .padding(horizontal = 8.dp, vertical = 3.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "PMK Kontinu Mandiri",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = KanguruTheme.colors.textPrimary
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(KanguruTheme.colors.gridSubtitleTeal)
                         )
+                        Spacer(modifier = Modifier.width(5.dp))
                         Text(
-                            text = pmkProgressFormatted,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Medium,
-                            color = KanguruTheme.colors.textSecondary
+                            text = stringResource(R.string.home_hero_pmk_active),
+                            style = KanguruTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = KanguruTheme.colors.heroBadgeText
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
-                    LinearProgressIndicator(
-                        progress = { todayProgress },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp)),
-                        color = KanguruTheme.colors.success,
-                        trackColor = MaterialTheme.colorScheme.outlineVariant,
-                        strokeCap = StrokeCap.Round
+                    Text(
+                        text = stringResource(R.string.home_hero_baby_title),
+                        style = KanguruTheme.typography.titleMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = KanguruTheme.colors.textPrimary
+                    )
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    Text(
+                        text = stringResource(R.string.home_hero_baby_subtitle),
+                        style = KanguruTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium,
+                        color = KanguruTheme.colors.textSecondary
                     )
                 }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                    contentDescription = null,
-                    tint = KanguruTheme.colors.primary,
-                    modifier = Modifier.size(16.dp)
-                )
             }
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
     }
 }
 
 @Composable
-private fun ActionGridCard(
+private fun HomeFeatureMenuGrid(
+    onNavigateToPmkVideo: () -> Unit,
+    onNavigateToBblrCare: () -> Unit,
+    onOpenEmergency: () -> Unit,
+    onNavigateToPmkTimer: () -> Unit,
+    onNavigateToBathingVideo: () -> Unit,
+    onNavigateToAsiAlarm: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        // Row 1
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            HomeFeatureGridCard(
+                title = stringResource(R.string.home_grid_pmk_video_title),
+                subtitle = stringResource(R.string.home_grid_pmk_video_sub),
+                subtitleColor = KanguruTheme.colors.gridSubtitleRose,
+                outerGradient = listOf(
+                    KanguruTheme.colors.gridIconRoseOuterStart,
+                    KanguruTheme.colors.gridIconRoseOuterEnd
+                ),
+                innerGradient = listOf(
+                    KanguruTheme.colors.gridIconRoseStart,
+                    KanguruTheme.colors.gridIconRoseEnd
+                ),
+                icon = Icons.Default.PlayArrow,
+                onClick = onNavigateToPmkVideo,
+                modifier = Modifier.weight(1f)
+            )
+
+            HomeFeatureGridCard(
+                title = stringResource(R.string.home_grid_bblr_care_title),
+                subtitle = stringResource(R.string.home_grid_bblr_care_sub),
+                subtitleColor = KanguruTheme.colors.gridSubtitleTeal,
+                outerGradient = listOf(
+                    KanguruTheme.colors.gridIconTealOuterStart,
+                    KanguruTheme.colors.gridIconTealOuterEnd
+                ),
+                innerGradient = listOf(
+                    KanguruTheme.colors.gridIconTealStart,
+                    KanguruTheme.colors.gridIconTealEnd
+                ),
+                icon = Icons.AutoMirrored.Filled.MenuBook,
+                onClick = onNavigateToBblrCare,
+                modifier = Modifier.weight(1f)
+            )
+
+            HomeFeatureGridCard(
+                title = stringResource(R.string.home_grid_emergency_title),
+                subtitle = stringResource(R.string.home_grid_emergency_sub),
+                subtitleColor = KanguruTheme.colors.gridSubtitleAmber,
+                outerGradient = listOf(
+                    KanguruTheme.colors.gridIconAmberOuterStart,
+                    KanguruTheme.colors.gridIconAmberOuterEnd
+                ),
+                innerGradient = listOf(
+                    KanguruTheme.colors.gridIconAmberStart,
+                    KanguruTheme.colors.gridIconAmberEnd
+                ),
+                icon = Icons.Default.Warning,
+                onClick = onOpenEmergency,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        // Row 2
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            HomeFeatureGridCard(
+                title = stringResource(R.string.home_grid_pmk_timer_title),
+                subtitle = stringResource(R.string.home_grid_pmk_timer_sub),
+                subtitleColor = KanguruTheme.colors.gridSubtitlePink,
+                outerGradient = listOf(
+                    KanguruTheme.colors.gridIconPinkOuterStart,
+                    KanguruTheme.colors.gridIconPinkOuterEnd
+                ),
+                innerGradient = listOf(
+                    KanguruTheme.colors.gridIconPinkStart,
+                    KanguruTheme.colors.gridIconPinkEnd
+                ),
+                icon = Icons.Default.AccessTime,
+                onClick = onNavigateToPmkTimer,
+                modifier = Modifier.weight(1f)
+            )
+
+            HomeFeatureGridCard(
+                title = stringResource(R.string.home_grid_bathing_title),
+                subtitle = stringResource(R.string.home_grid_bathing_sub),
+                subtitleColor = KanguruTheme.colors.gridSubtitleBlue,
+                outerGradient = listOf(
+                    KanguruTheme.colors.gridIconBlueOuterStart,
+                    KanguruTheme.colors.gridIconBlueOuterEnd
+                ),
+                innerGradient = listOf(
+                    KanguruTheme.colors.gridIconBlueStart,
+                    KanguruTheme.colors.gridIconBlueEnd
+                ),
+                icon = Icons.Default.WaterDrop,
+                onClick = onNavigateToBathingVideo,
+                modifier = Modifier.weight(1f)
+            )
+
+            HomeFeatureGridCard(
+                title = stringResource(R.string.home_grid_asi_alarm_title),
+                subtitle = stringResource(R.string.home_grid_asi_alarm_sub),
+                subtitleColor = KanguruTheme.colors.gridSubtitlePurple,
+                outerGradient = listOf(
+                    KanguruTheme.colors.gridIconPurpleOuterStart,
+                    KanguruTheme.colors.gridIconPurpleOuterEnd
+                ),
+                innerGradient = listOf(
+                    KanguruTheme.colors.gridIconPurpleStart,
+                    KanguruTheme.colors.gridIconPurpleEnd
+                ),
+                icon = Icons.Default.Alarm,
+                onClick = onNavigateToAsiAlarm,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeFeatureGridCard(
     title: String,
     subtitle: String,
-    iconRes: Int,
-    containerColor: Color,
-    borderColor: Color,
+    subtitleColor: Color,
+    outerGradient: List<Color>,
+    innerGradient: List<Color>,
+    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
-            .heightIn(min = 164.dp)
-            .border(1.dp, borderColor, RoundedCornerShape(24.dp))
+            .height(128.dp)
+            .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(16.dp))
             .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 6.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                modifier = Modifier.size(46.dp)
+            // Nested Gradient Icon Container
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Brush.linearGradient(outerGradient)),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Brush.linearGradient(innerGradient)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
+            // Text Labels - vertically centered in remaining card space to eliminate white space gap
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(top = 4.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = KanguruTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = KanguruTheme.colors.textPrimary,
+                    textAlign = TextAlign.Center,
+                    maxLines = 3
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = subtitleColor,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeGrowthBannerCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // BarChart Icon Container
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(
+                                KanguruTheme.colors.gridIconTealOuterStart,
+                                KanguruTheme.colors.gridIconTealOuterEnd
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            Brush.linearGradient(
+                                listOf(
+                                    KanguruTheme.colors.gridIconTealStart,
+                                    KanguruTheme.colors.gridIconTealEnd
+                                )
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.BarChart,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.home_growth_card_title),
+                    style = KanguruTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = KanguruTheme.colors.textPrimary
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = stringResource(R.string.home_growth_card_sub),
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = KanguruTheme.colors.gridSubtitleTeal
+                )
+            }
+
+            // Circular chevron right button
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(KanguruTheme.colors.surfaceVariant),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                    contentDescription = null,
+                    tint = KanguruTheme.colors.textSecondary,
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeDailyActivityCard(
+    progressFraction: Float,
+    durationFormatted: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Header Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(KanguruTheme.colors.gridSubtitleRose)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.home_target_pmk_title),
+                        style = KanguruTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = KanguruTheme.colors.textPrimary
+                    )
+                }
+
+                Text(
+                    text = stringResource(R.string.home_target_pmk_min_label),
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = KanguruTheme.colors.gridSubtitleRose
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Custom Gradient Progress Bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .clip(CircleShape)
+                    .background(KanguruTheme.colors.outlineVariant)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = progressFraction.coerceIn(0.04f, 1f))
+                        .fillMaxHeight()
+                        .clip(CircleShape)
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(
+                                    KanguruTheme.colors.gridIconRoseStart,
+                                    KanguruTheme.colors.gridIconPinkStart
+                                )
+                            )
+                        )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            HorizontalDivider(
+                color = KanguruTheme.colors.divider.copy(alpha = 0.6f),
+                thickness = 1.dp
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-                textAlign = TextAlign.Center,
-                lineHeight = 15.sp
-            )
+            // Footer Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Durasi: ",
+                        style = KanguruTheme.typography.bodySmall,
+                        color = KanguruTheme.colors.textSecondary
+                    )
+                    Text(
+                        text = durationFormatted,
+                        style = KanguruTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold,
+                        color = KanguruTheme.colors.textPrimary
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-            )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = KanguruTheme.colors.gridSubtitleTeal,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.home_target_pmk_target_met),
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = KanguruTheme.colors.gridSubtitleTeal
+                    )
+                }
+            }
         }
     }
 }
@@ -941,12 +1246,12 @@ fun HomeBottomBar(
             ) {
                 HomeTab.entries.forEach { tab ->
                     val isSelected = tab == currentTab
-                    val contentColor = if (isSelected) BrandPink else MaterialTheme.colorScheme.onSurfaceVariant
+                    val contentColor = if (isSelected) KanguruTheme.colors.gridSubtitleRose else KanguruTheme.colors.textSecondary
                     val icon: ImageVector = when (tab) {
                         HomeTab.BERANDA -> Icons.Default.Home
-                        HomeTab.PMK -> Icons.Default.VolunteerActivism
+                        HomeTab.PMK -> Icons.Default.FavoriteBorder
                         HomeTab.EDUKASI -> Icons.AutoMirrored.Filled.MenuBook
-                        HomeTab.ALARM -> Icons.Default.Notifications
+                        HomeTab.ALARM -> Icons.Default.Alarm
                         HomeTab.PROFIL -> Icons.Default.Person
                     }
 
