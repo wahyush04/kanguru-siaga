@@ -34,6 +34,7 @@ class KanguruNotificationManager @Inject constructor(
         const val NOTIFICATION_ID_PMK_REMINDER = 1001
         const val NOTIFICATION_ID_PMK_TIMER = 1002
         const val NOTIFICATION_ID_PMK_PAUSE_ALERT = 1003
+        const val NOTIFICATION_ID_PMK_PERIOD_COMPLETED = 1004
         const val NOTIFICATION_ID_FEEDING_BASE = 2000
     }
 
@@ -197,6 +198,49 @@ class KanguruNotificationManager @Inject constructor(
     fun cancelPmkPauseLimitExceededNotification() {
         try {
             NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID_PMK_PAUSE_ALERT)
+        } catch (_: SecurityException) {
+            // Handled safely
+        }
+    }
+
+    fun showPmkPeriodCompletedNotification(periodNumber: Int) {
+        if (!areAppNotificationsEnabled) return
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigate_to", "pmk_timer")
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            NOTIFICATION_ID_PMK_PERIOD_COMPLETED,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val title = "Periode $periodNumber PMK Selesai! 🎉"
+        val message = "Hebat Bunda/Ayah! Sesi 8 jam Periode $periodNumber telah selesai otomatis. Pantau si kecil dan mulai periode berikutnya saat siap."
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_PMK_ID)
+            .setSmallIcon(R.drawable.ic_kangaroo_mascot)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        try {
+            NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_PMK_PERIOD_COMPLETED, builder.build())
+        } catch (_: SecurityException) {
+            // Handled when notification permission is not granted
+        }
+    }
+
+    fun cancelPmkPeriodCompletedNotification() {
+        try {
+            NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID_PMK_PERIOD_COMPLETED)
         } catch (_: SecurityException) {
             // Handled safely
         }

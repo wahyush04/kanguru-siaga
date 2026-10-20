@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 import android.os.Build
 import com.kangurusiaga.app.core.notification.KanguruNotificationManager
 import com.kangurusiaga.app.core.notification.PmkPauseAlarmReceiver
+import com.kangurusiaga.app.core.notification.PmkPeriodAlarmReceiver
 import com.kangurusiaga.app.domain.model.PmkCaregiver
 import com.kangurusiaga.app.domain.model.PmkPauseReason
 import com.kangurusiaga.app.domain.model.PmkSegment
@@ -73,7 +74,11 @@ class PmkTimerManager @Inject constructor(
 
     companion object {
         const val PAUSE_LIMIT_SECONDS = 900L // 15 Menit batas maksimal jeda
+        const val PERIOD_1_LIMIT_SECONDS = 8 * 3600L // 28,800s (8 Jam)
+        const val PERIOD_2_LIMIT_SECONDS = 16 * 3600L // 57,600s (16 Jam)
+        const val PERIOD_3_LIMIT_SECONDS = 24 * 3600L // 86,400s (24 Jam)
         private const val REQUEST_CODE_PAUSE_ALARM = 9090
+        private const val REQUEST_CODE_PERIOD_ALARM = 9091
         private const val KEY_STATUS = "timer_status"
         private const val KEY_ACTIVE_SESSION_ID = "timer_active_session_id"
         private const val KEY_ACTIVE_SEGMENT_ID = "timer_active_segment_id"
@@ -88,6 +93,131 @@ class PmkTimerManager @Inject constructor(
         private const val KEY_NOTES = "timer_notes"
         private const val KEY_BABY_TEMP = "timer_baby_temp"
         private const val KEY_BABY_RESPONSE = "timer_baby_response"
+    }
+
+    fun calculatePeriod(totalActiveSec: Long): Int {
+        return when {
+            totalActiveSec < PERIOD_1_LIMIT_SECONDS -> 1
+            totalActiveSec < PERIOD_2_LIMIT_SECONDS -> 2
+            totalActiveSec < PERIOD_3_LIMIT_SECONDS -> 3
+            else -> 3
+        }
+    }
+
+    fun getTargetPeriodEndSeconds(period: Int): Long {
+        return when (period) {
+            1 -> PERIOD_1_LIMIT_SECONDS
+            2 -> PERIOD_2_LIMIT_SECONDS
+            3 -> PERIOD_3_LIMIT_SECONDS
+            else -> PERIOD_3_LIMIT_SECONDS
+        }
+    }
+
+    fun setCaregiver(newCaregiver: PmkCaregiver) {
+        prefs.edit().putString(KEY_CURRENT_CAREGIVER, newCaregiver.name).apply()
+        _timerState.update { it.copy(currentCaregiver = newCaregiver) }
+    }
+
+    private fun isSameDay(epoch1: Long, epoch2: Long): Boolean {
+        if (epoch1 <= 0L || epoch2 <= 0L) return true
+        val cal1 = Calendar.getInstance().apply { timeInMillis = epoch1 }
+        val cal2 = Calendar.getInstance().apply { timeInMillis = epoch2 }
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+    }
+
+    private var isHandlingMidnight: Boolean = false
+
+    suspend fun handleMidnightCrossing() {
+        if (isHandlingMidnight) return
+        isHandlingMidnight = true
+        try {
+            val currentState = _timerState.value
+            val isRunning = currentState.isRunning
+            val caregiver = currentState.currentCaregiver
+            val babyId = prefs.getLong(KEY_BABY_ID, 1L)
+
+            // Finish existing session so entire elapsed duration is recorded for its start date
+            finishSession(finalNotes = "Selesai otomatis saat pergantian hari (00:00)")
+
+            // Start fresh cycle for the new day
+            if (isRunning) {
+                start(babyId = babyId, initialCaregiver = caregiver)
+            } else {
+                reset()
+                refreshTodayTotal()
+            }
+        } finally {
+            isHandlingMidnight = false
+        }
+    }
+
+    private var isAutoFinishing: Boolean = false
+
+    suspend fun autoFinishPeriod(periodNumber: Int) {
+        if (isAutoFinishing) return
+        isAutoFinishing = true
+        try {
+            cancelPeriodLimitAlarm()
+            finishSession(
+                finalNotes = "Selesai otomatis mencapai target 8 jam (Periode $periodNumber)"
+            )
+            actualNotificationManager.showPmkPeriodCompletedNotification(periodNumber)
+        } finally {
+            isAutoFinishing = false
+        }
+    }
+
+    suspend fun finishSessionOnPeriodComplete(periodNumber: Int) {
+        if (_timerState.value.status == TimerStatus.RUNNING || _timerState.value.status == TimerStatus.PAUSED) {
+            autoFinishPeriod(periodNumber)
+        }
+    }
+
+    private fun schedulePeriodLimitAlarm(triggerAtMillis: Long, periodNumber: Int) {
+        val am = alarmManager ?: return
+        try {
+            val intent = Intent(context, PmkPeriodAlarmReceiver::class.java).apply {
+                putExtra("period_number", periodNumber)
+            }
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                REQUEST_CODE_PERIOD_ALARM,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (am.canScheduleExactAlarms()) {
+                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+                } else {
+                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+            } else {
+                am.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+            }
+        } catch (_: Throwable) {
+        }
+    }
+
+    private fun cancelPeriodLimitAlarm() {
+        val am = alarmManager ?: return
+        try {
+            val intent = Intent(context, PmkPeriodAlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                REQUEST_CODE_PERIOD_ALARM,
+                intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )
+            if (pendingIntent != null) {
+                am.cancel(pendingIntent)
+                pendingIntent.cancel()
+            }
+        } catch (_: Throwable) {
+        }
     }
 
     private fun schedulePauseLimitAlarm(triggerAtMillis: Long) {
@@ -180,6 +310,14 @@ class PmkTimerManager @Inject constructor(
 
         val nowEpoch = System.currentTimeMillis()
 
+        // If saved active session started on a previous day, handle midnight crossing
+        if (sessionStart > 0L && !isSameDay(sessionStart, nowEpoch)) {
+            scope.launch {
+                handleMidnightCrossing()
+            }
+            return
+        }
+
         val activeElapsedSeconds = when (status) {
             TimerStatus.RUNNING -> {
                 val currentSegmentMs = max(0L, nowEpoch - segStart)
@@ -203,6 +341,7 @@ class PmkTimerManager @Inject constructor(
             pauseElapsedSeconds = pauseElapsedSeconds,
             pauseReason = pauseReason,
             todayTotalActiveSeconds = 0L,
+            currentPeriod = calculatePeriod(activeElapsedSeconds),
             notes = notes,
             babyTemperature = babyTemp,
             babyResponse = babyResponse
@@ -266,8 +405,16 @@ class PmkTimerManager @Inject constructor(
                     sessionStartEpoch = nowEpoch,
                     currentSegmentStartEpoch = nowEpoch,
                     pauseElapsedSeconds = 0L,
-                    pauseReason = null
+                    pauseReason = null,
+                    currentPeriod = calculatePeriod(priorCompletedSecondsToday)
                 )
+            }
+
+            val period = calculatePeriod(priorCompletedSecondsToday)
+            val targetSec = getTargetPeriodEndSeconds(period)
+            val remainingSec = (targetSec - priorCompletedSecondsToday).coerceAtLeast(0L)
+            if (remainingSec > 0L) {
+                schedulePeriodLimitAlarm(nowEpoch + remainingSec * 1000L, period)
             }
 
             refreshTodayTotal()
@@ -401,6 +548,7 @@ class PmkTimerManager @Inject constructor(
             }
 
             hasAlertedPauseLimit = false
+            cancelPeriodLimitAlarm()
             schedulePauseLimitAlarm(nowEpoch + PAUSE_LIMIT_SECONDS * 1000L)
             refreshTodayTotal()
         }
@@ -480,8 +628,17 @@ class PmkTimerManager @Inject constructor(
                     activeSessionId = sessionId,
                     currentSegmentStartEpoch = nowEpoch,
                     pauseElapsedSeconds = 0L,
-                    pauseReason = null
+                    pauseReason = null,
+                    currentPeriod = calculatePeriod(priorCompletedSecondsToday + it.elapsedSeconds)
                 )
+            }
+
+            val period = calculatePeriod(priorCompletedSecondsToday)
+            val targetSec = getTargetPeriodEndSeconds(period)
+            val currentActiveTotal = priorCompletedSecondsToday + (_timerState.value.elapsedSeconds)
+            val remainingSec = (targetSec - currentActiveTotal).coerceAtLeast(0L)
+            if (remainingSec > 0L) {
+                schedulePeriodLimitAlarm(nowEpoch + remainingSec * 1000L, period)
             }
 
             startTicker()
@@ -674,6 +831,8 @@ class PmkTimerManager @Inject constructor(
         // Update session in Room
         pmkRepository.saveSession(completedSession)
 
+        cancelPeriodLimitAlarm()
+
         // Reset runtime state
         reset()
         refreshTodayTotal()
@@ -684,6 +843,7 @@ class PmkTimerManager @Inject constructor(
     fun reset() {
         tickerJob?.cancel()
         cancelPauseLimitAlarm()
+        cancelPeriodLimitAlarm()
         actualNotificationManager.cancelPmkPauseLimitExceededNotification()
         hasAlertedPauseLimit = false
 
@@ -693,7 +853,8 @@ class PmkTimerManager @Inject constructor(
             PmkTimerState(
                 status = TimerStatus.IDLE,
                 currentCaregiver = PmkCaregiver.fromString(lastCaregiver),
-                todayTotalActiveSeconds = it.todayTotalActiveSeconds
+                todayTotalActiveSeconds = it.todayTotalActiveSeconds,
+                currentPeriod = calculatePeriod(it.todayTotalActiveSeconds)
             )
         }
     }
@@ -727,15 +888,18 @@ class PmkTimerManager @Inject constructor(
 
             for (seg in segments) {
                 if (seg.status == PmkSegmentStatus.ACTIVE) {
-                    val segStart = seg.startTimeEpoch
-                    val segEnd = seg.endTimeEpoch ?: segStart
-                    val effStart = max(dayStartEpoch, segStart)
-                    val effEnd = min(dayEndEpoch, segEnd)
-                    if (effEnd > effStart) {
-                        val durationSec = (effEnd - effStart) / 1000L
-                        totalActiveSecondsAll += durationSec
-                        if (isSessionActive && seg.sessionId != activeSessionId) {
-                            priorActiveSec += durationSec
+                    // Rule 7: If a session crossed midnight, it belongs entirely to its start date
+                    if (seg.startTimeEpoch >= dayStartEpoch) {
+                        val segStart = seg.startTimeEpoch
+                        val segEnd = seg.endTimeEpoch ?: segStart
+                        val effStart = max(dayStartEpoch, segStart)
+                        val effEnd = min(dayEndEpoch, segEnd)
+                        if (effEnd > effStart) {
+                            val durationSec = (effEnd - effStart) / 1000L
+                            totalActiveSecondsAll += durationSec
+                            if (isSessionActive && seg.sessionId != activeSessionId) {
+                                priorActiveSec += durationSec
+                            }
                         }
                     }
                 }
@@ -744,13 +908,22 @@ class PmkTimerManager @Inject constructor(
             if (isSessionActive) {
                 priorCompletedSecondsToday = priorActiveSec
                 val currentElapsed = currentState.elapsedSeconds
+                val totalActive = priorCompletedSecondsToday + currentElapsed
+                val period = calculatePeriod(totalActive)
                 _timerState.update {
-                    it.copy(todayTotalActiveSeconds = priorCompletedSecondsToday + currentElapsed)
+                    it.copy(
+                        todayTotalActiveSeconds = totalActive,
+                        currentPeriod = period
+                    )
                 }
             } else {
                 priorCompletedSecondsToday = totalActiveSecondsAll
+                val period = calculatePeriod(totalActiveSecondsAll)
                 _timerState.update {
-                    it.copy(todayTotalActiveSeconds = totalActiveSecondsAll)
+                    it.copy(
+                        todayTotalActiveSeconds = totalActiveSecondsAll,
+                        currentPeriod = period
+                    )
                 }
             }
         }
@@ -772,6 +945,16 @@ class PmkTimerManager @Inject constructor(
                 val status = _timerState.value.status
                 val nowEpoch = System.currentTimeMillis()
 
+                // Check midnight crossing while active
+                val sessionStart = prefs.getLong(KEY_SESSION_START_EPOCH, nowEpoch)
+                if (sessionStart > 0L && !isSameDay(sessionStart, nowEpoch)) {
+                    scope.launch {
+                        handleMidnightCrossing()
+                    }
+                    delay(1000)
+                    continue
+                }
+
                 if (status == TimerStatus.RUNNING) {
                     val segStart = prefs.getLong(KEY_CURRENT_SEGMENT_START_EPOCH, 0L)
                     val currentElapsedSec = if (segStart == 0L) {
@@ -782,11 +965,23 @@ class PmkTimerManager @Inject constructor(
                         (accumulatedActive + currentSegMs) / 1000L
                     }
 
+                    val totalTodaySec = priorCompletedSecondsToday + currentElapsedSec
+                    val period = calculatePeriod(priorCompletedSecondsToday)
+                    val targetSec = getTargetPeriodEndSeconds(period)
+
                     _timerState.update {
                         it.copy(
                             elapsedSeconds = currentElapsedSec,
-                            todayTotalActiveSeconds = priorCompletedSecondsToday + currentElapsedSec
+                            todayTotalActiveSeconds = totalTodaySec,
+                            currentPeriod = period
                         )
+                    }
+
+                    // Auto finish when the active 8-hour period goal is reached
+                    if (totalTodaySec >= targetSec) {
+                        scope.launch {
+                            autoFinishPeriod(period)
+                        }
                     }
                 } else if (status == TimerStatus.PAUSED) {
                     val pauseStart = prefs.getLong(KEY_PAUSE_START_EPOCH, nowEpoch)

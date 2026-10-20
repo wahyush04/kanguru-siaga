@@ -178,4 +178,28 @@ class PmkTimerManagerTest {
         val finalState = manager.timerState.value
         assertThat(finalState.status).isEqualTo(TimerStatus.IDLE)
     }
+
+    @Test
+    fun setCaregiver_updatesCaregiverBeforeStart() = runTest {
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        val manager = createManager(testDispatcher)
+
+        manager.setCaregiver(PmkCaregiver.AYAH)
+
+        val state = manager.timerState.value
+        assertThat(state.currentCaregiver).isEqualTo(PmkCaregiver.AYAH)
+    }
+
+    @Test
+    fun autoFinishPeriod_completesSessionAndShowsNotification() = runTest {
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        val manager = createManager(testDispatcher)
+        manager.start(babyId = 1L, initialCaregiver = PmkCaregiver.IBU)
+
+        manager.autoFinishPeriod(periodNumber = 1)
+
+        val state = manager.timerState.value
+        assertThat(state.status).isEqualTo(TimerStatus.IDLE)
+        coVerify { notificationManager.showPmkPeriodCompletedNotification(1) }
+    }
 }

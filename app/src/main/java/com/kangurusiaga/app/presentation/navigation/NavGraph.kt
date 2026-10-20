@@ -26,6 +26,7 @@ import com.kangurusiaga.app.presentation.onboarding.OnboardingRoute
 import com.kangurusiaga.app.presentation.onboarding.SplashScreen
 import com.kangurusiaga.app.presentation.onboarding.SplashRoute
 import com.kangurusiaga.app.presentation.pmk.center.PmkCenterScreen
+import com.kangurusiaga.app.presentation.pmk.history.PmkDailyDetailRoute
 import com.kangurusiaga.app.presentation.pmk.history.PmkHistoryRoute
 import com.kangurusiaga.app.presentation.pmk.manual.PmkManualLogRoute
 import com.kangurusiaga.app.presentation.pmk.reminders.PmkReminderAddRoute
@@ -284,6 +285,9 @@ fun KanguruNavGraph(
                 onNavigateToDetail = {
                     navController.navigate(Screen.PmkStatisticsDetail.route)
                 },
+                onNavigateToDailyDetail = { dateKey ->
+                    navController.navigate(Screen.PmkDailyDetail.createRoute(dateKey))
+                },
                 onNavigateToManualLog = {
                     navController.navigate(Screen.PmkManualLog.route)
                 },
@@ -298,6 +302,22 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        // Screen: Kanguru Siaga - Detail Riwayat PMK Harian
+        composable(
+            route = Screen.PmkDailyDetail.route,
+            arguments = listOf(
+                navArgument("dateKey") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val dateKey = backStackEntry.arguments?.getString("dateKey") ?: ""
+            PmkDailyDetailRoute(
+                dateKey = dateKey,
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -322,6 +342,9 @@ fun KanguruNavGraph(
                 },
                 onNavigateToDetail = {
                     navController.navigate(Screen.PmkStatisticsDetail.route)
+                },
+                onNavigateToDailyDetail = { dateKey ->
+                    navController.navigate(Screen.PmkDailyDetail.createRoute(dateKey))
                 },
                 onNavigateToManualLog = {
                     navController.navigate(Screen.PmkManualLog.route)

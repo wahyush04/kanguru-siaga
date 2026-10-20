@@ -125,9 +125,18 @@ class PmkTimerViewModel @Inject constructor(
         initialValue = PmkTimerUiState()
     )
 
-    fun startContinuousTimer(caregiver: PmkCaregiver = PmkCaregiver.IBU) {
+    fun startContinuousTimer(caregiver: PmkCaregiver? = null) {
         val babyId = uiState.value.baby?.id ?: 1L
-        timerManager.start(babyId, caregiver)
+        val activeCaregiver = caregiver ?: uiState.value.timerState.currentCaregiver
+        timerManager.start(babyId, activeCaregiver)
+    }
+
+    fun selectInitialCaregiver(caregiver: PmkCaregiver) {
+        timerManager.setCaregiver(caregiver)
+    }
+
+    fun updateNotes(notes: String) {
+        timerManager.setNotes(notes)
     }
 
     // Caregiver Handover Modal actions

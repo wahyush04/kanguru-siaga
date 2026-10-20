@@ -278,6 +278,75 @@ abstract class KanguruColors {
     open val errorText: Color
         get() = onErrorContainer
 
+    open val pmkGaugeTrack: Color
+        get() = if (isDark) Color(0xFF3A2028) else Color(0xFFFFE4E8)
+
+    open val pmkPauseButtonBg: Color
+        get() = if (isDark) Color(0xFF3D2029) else Color(0xFFFFE8EC)
+
+    open val pmkPauseButtonBorder: Color
+        get() = if (isDark) Color(0xFF5A2C38) else Color(0xFFFFCCD5)
+
+    open val pmkCaregiverTitleBrown: Color
+        get() = if (isDark) Color(0xFFFDE68A) else Color(0xFF78350F)
+
+    open val pmkCaregiverSubtitleOrange: Color
+        get() = if (isDark) Color(0xFFFCA5A5) else Color(0xFFD9531E)
+
+    open val pmkCaregiverBadgeBg: Color
+        get() = if (isDark) Color(0xFF452614) else Color(0xFFFEEAD8)
+
+    open val pmkCaregiverIbu: Color
+        get() = if (isDark) Color(0xFFFF758F) else Color(0xFFFF5C77)
+
+    open val pmkCaregiverIbuBg: Color
+        get() = if (isDark) Color(0xFF3D2029) else Color(0xFFFFF0F3)
+
+    open val pmkCaregiverIbuBorder: Color
+        get() = if (isDark) Color(0xFF5A2C38) else Color(0xFFFFE4E8)
+
+    open val pmkCaregiverAyah: Color
+        get() = if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7)
+
+    open val pmkCaregiverAyahBg: Color
+        get() = if (isDark) Color(0xFF132E47) else Color(0xFFF0F9FF)
+
+    open val pmkCaregiverAyahBorder: Color
+        get() = if (isDark) Color(0xFF1E4E73) else Color(0xFFBAE6FD)
+
+    open val pmkCaregiverPendamping: Color
+        get() = if (isDark) Color(0xFFFBBF24) else Color(0xFFD97706)
+
+    open val pmkCaregiverPendampingBg: Color
+        get() = if (isDark) Color(0xFF3D2E14) else Color(0xFFFFFBEB)
+
+    open val pmkCaregiverPendampingBorder: Color
+        get() = if (isDark) Color(0xFF5C451D) else Color(0xFFFEF3C7)
+
+    open val pmkPauseDashedBg: Color
+        get() = if (isDark) Color(0xFF332712) else Color(0xFFFFFBEB)
+
+    open val pmkPauseDashedBorder: Color
+        get() = if (isDark) Color(0xFF523F1B) else Color(0xFFFDE68A)
+
+    open val pmkDoctorNoteBg: Color
+        get() = if (isDark) Color(0xFF381E26) else Color(0xFFFFF0F3)
+
+    open val pmkDoctorNoteBorder: Color
+        get() = if (isDark) Color(0xFF542835) else Color(0xFFFFE4E8)
+
+    open val pmkTargetMetMarker: Color
+        get() = if (isDark) Color(0xFFFF758F) else Color(0xFFFF5C77)
+
+    open val pmkTargetUnmetMarker: Color
+        get() = if (isDark) Color(0xFF64748B) else Color(0xFF94A3B8)
+
+    open val pmkMotivationCardBg: Color
+        get() = if (isDark) Color(0xFF3A1C25) else Color(0xFFFFE4E8)
+
+    open val pmkMotivationHeartBg: Color
+        get() = if (isDark) Color(0xFFFF758F) else Color(0xFFFF5C77)
+
     open val infoText: Color
         get() = onInfoContainer
 }
