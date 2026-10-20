@@ -79,7 +79,18 @@ data class PmkTimerState(
     val remainingSecondsInPeriod: Long
         get() = (targetPeriodSeconds - currentPeriodElapsedSeconds).coerceAtLeast(0L)
 
-    val formattedTime: String
+    val formattedContinuousTime: String
+        get() {
+            val totalSec = todayTotalActiveSeconds
+            val hours = totalSec / 3600
+            val minutes = (totalSec % 3600) / 60
+            val seconds = totalSec % 60
+            return String.format(java.util.Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
+        }
+
+    val formattedTime: String get() = formattedContinuousTime
+
+    val formattedSessionTime: String
         get() {
             val hours = elapsedSeconds / 3600
             val minutes = (elapsedSeconds % 3600) / 60

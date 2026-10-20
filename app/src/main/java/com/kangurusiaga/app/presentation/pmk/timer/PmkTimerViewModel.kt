@@ -64,6 +64,7 @@ class PmkTimerViewModel @Inject constructor(
 
     init {
         timerManager.ensureTickerRunning()
+        timerManager.refreshTodayTotal()
     }
 
     private data class SheetState(
@@ -129,6 +130,10 @@ class PmkTimerViewModel @Inject constructor(
         val babyId = uiState.value.baby?.id ?: 1L
         val activeCaregiver = caregiver ?: uiState.value.timerState.currentCaregiver
         timerManager.start(babyId, activeCaregiver)
+    }
+
+    fun refreshToday() {
+        timerManager.refreshTodayTotal()
     }
 
     fun selectInitialCaregiver(caregiver: PmkCaregiver) {

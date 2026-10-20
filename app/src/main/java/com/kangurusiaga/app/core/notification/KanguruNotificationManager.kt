@@ -218,8 +218,8 @@ class KanguruNotificationManager @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val title = "Periode $periodNumber PMK Selesai! 🎉"
-        val message = "Hebat Bunda/Ayah! Sesi 8 jam Periode $periodNumber telah selesai otomatis. Pantau si kecil dan mulai periode berikutnya saat siap."
+        val title = "Target Periode $periodNumber PMK Tercapai! 🎉"
+        val message = "Hebat Bunda & Ayah! Target 8 jam Periode $periodNumber telah tercapai. Timer PMK terus berlanjut tanpa henti."
 
         val builder = NotificationCompat.Builder(context, CHANNEL_PMK_ID)
             .setSmallIcon(R.drawable.ic_kangaroo_mascot)

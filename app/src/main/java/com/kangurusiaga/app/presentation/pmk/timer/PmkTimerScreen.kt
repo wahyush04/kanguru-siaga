@@ -91,6 +91,7 @@ fun PmkTimerRoute(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
+        viewModel.refreshToday()
         viewModel.events.collect { event ->
             when (event) {
                 is PmkTimerUiEvent.SessionCompleted -> {
@@ -346,7 +347,7 @@ fun PmkTimerScreen(
     if (uiState.showFinishSessionSheet || uiState.showFinishConfirmDialog) {
         PmkFinishSessionSheet(
             sheetState = finishSheetState,
-            formattedActiveDuration = timerState.formattedTime,
+            formattedActiveDuration = timerState.formattedContinuousTime,
             caregiver = timerState.currentCaregiver,
             formattedPauseDuration = timerState.formattedPauseTime,
             formattedTodayAccumulation = timerState.formattedTodayTotal,
@@ -639,12 +640,8 @@ private fun PmkTimerDisplaySection(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        // Large Digital Stopwatch Display
-        val displayedTime = if (timerState.isPaused) {
-            timerState.formattedPauseTime
-        } else {
-            timerState.formattedTime
-        }
+        // Large Digital Stopwatch Display - always displays continuous daily PMK active time
+        val displayedTime = timerState.formattedContinuousTime
 
         Text(
             text = displayedTime,
@@ -682,8 +679,12 @@ private fun PmkTimerDisplaySection(
             Text(
                 text = when {
                     timerState.isRunning -> "Sedang berlangsung..."
-                    timerState.isPaused -> "Jeda Sementara (${timerState.pauseReason ?: "Perawatan"})"
-                    else -> "Siap Memulai ${timerState.periodLabel}"
+                    timerState.isPaused -> "Jeda Sementara (${timerState.formattedPauseTime}) • ${timerState.pauseReason ?: "Perawatan"}"
+                    else -> if (timerState.todayTotalActiveSeconds > 0) {
+                        "Siap Melanjutkan PMK (${timerState.periodLabel})"
+                    } else {
+                        "Siap Memulai ${timerState.periodLabel}"
+                    }
                 },
                 style = KanguruTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
@@ -902,7 +903,7 @@ private fun PmkSessionActionControls(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Mulai PMK",
+                        text = if (timerState.todayTotalActiveSeconds > 0L) "Lanjutkan PMK" else "Mulai PMK",
                         style = KanguruTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = Color.White

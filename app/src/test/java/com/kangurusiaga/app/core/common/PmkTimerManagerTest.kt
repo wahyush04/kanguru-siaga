@@ -191,7 +191,7 @@ class PmkTimerManagerTest {
     }
 
     @Test
-    fun autoFinishPeriod_completesSessionAndShowsNotification() = runTest {
+    fun autoFinishPeriod_notifiesAndContinuesRunningWithoutReset() = runTest {
         val testDispatcher = UnconfinedTestDispatcher(testScheduler)
         val manager = createManager(testDispatcher)
         manager.start(babyId = 1L, initialCaregiver = PmkCaregiver.IBU)
@@ -199,7 +199,55 @@ class PmkTimerManagerTest {
         manager.autoFinishPeriod(periodNumber = 1)
 
         val state = manager.timerState.value
-        assertThat(state.status).isEqualTo(TimerStatus.IDLE)
+        assertThat(state.status).isEqualTo(TimerStatus.RUNNING)
         coVerify { notificationManager.showPmkPeriodCompletedNotification(1) }
+    }
+
+    @Test
+    fun start_onNewDay_resetsTimerToZero() = runTest {
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        val manager = createManager(testDispatcher)
+
+        // Simulate last day was yesterday
+        val calYesterday = java.util.Calendar.getInstance().apply {
+            add(java.util.Calendar.DAY_OF_YEAR, -1)
+        }
+        memoryPrefs["timer_last_day_epoch"] = calYesterday.timeInMillis
+
+        manager.start(babyId = 1L, initialCaregiver = PmkCaregiver.IBU)
+
+        val state = manager.timerState.value
+        assertThat(state.status).isEqualTo(TimerStatus.RUNNING)
+        assertThat(state.elapsedSeconds).isEqualTo(0L)
+        assertThat(state.todayTotalActiveSeconds).isEqualTo(0L)
+        assertThat(state.currentPeriod).isEqualTo(1)
+    }
+
+    @Test
+    fun start_onSameDayWithCompletedSessions_continuesFromAccumulatedSeconds() = runTest {
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        val manager = createManager(testDispatcher)
+
+        val now = System.currentTimeMillis()
+        memoryPrefs["timer_last_day_epoch"] = now
+
+        // Mock 2 hours completed earlier today
+        val segment = PmkSegment(
+            id = 1L,
+            sessionId = 99L,
+            caregiver = PmkCaregiver.IBU,
+            startTimeEpoch = now - 7200_000L,
+            endTimeEpoch = now,
+            durationMinutes = 120,
+            status = PmkSegmentStatus.ACTIVE
+        )
+        every { repository.getSegmentsInRange(any(), any(), any()) } returns flowOf(listOf(segment))
+
+        manager.start(babyId = 1L, initialCaregiver = PmkCaregiver.IBU)
+
+        val state = manager.timerState.value
+        assertThat(state.status).isEqualTo(TimerStatus.RUNNING)
+        assertThat(state.todayTotalActiveSeconds).isEqualTo(7200L)
+        assertThat(state.currentPeriod).isEqualTo(1)
     }
 }
