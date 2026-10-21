@@ -33,13 +33,11 @@ class PmkPeriodAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val periodNumber = intent.getIntExtra("period_number", 1)
 
-        notificationManager.showPmkPeriodCompletedNotification(periodNumber)
-
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Period milestone reached - timer continues running!
-                timerManager.onPeriodTargetReached(periodNumber)
+                // Period milestone reached - timer auto-finishes session automatically!
+                timerManager.autoFinishPeriod(periodNumber)
 
                 val baby = babyDao.getActiveBabyOnce() ?: babyDao.getFirstBaby()
                 val babyId = baby?.id ?: 1L
@@ -50,8 +48,8 @@ class PmkPeriodAlarmReceiver : BroadcastReceiver() {
                         babyId = babyId,
                         category = NotificationCategory.PMK_REMINDER.name,
                         referenceId = System.currentTimeMillis(),
-                        title = "Target Periode $periodNumber PMK Tercapai! 🎉",
-                        message = "Hebat Bunda & Ayah! Target 8 jam Periode $periodNumber telah tercapai. Pemantauan PMK terus berlanjut tanpa henti.",
+                        title = "Target Periode $periodNumber PMK Selesai Otomatis! 🎉",
+                        message = "Hebat Bunda & Ayah! Target 8 jam Periode $periodNumber telah selesai otomatis. Buka aplikasi dan klik 'Mulai PMK' untuk melanjutkan periode berikutnya.",
                         badgeLabel = "Periode $periodNumber Tuntas",
                         badgeColor = NotificationBadgeColor.GREEN.name,
                         timeLabel = "Baru saja",

@@ -191,7 +191,7 @@ class PmkTimerManagerTest {
     }
 
     @Test
-    fun autoFinishPeriod_notifiesAndContinuesRunningWithoutReset() = runTest {
+    fun autoFinishPeriod_savesCompletedSessionAndResetsToIdle() = runTest {
         val testDispatcher = UnconfinedTestDispatcher(testScheduler)
         val manager = createManager(testDispatcher)
         manager.start(babyId = 1L, initialCaregiver = PmkCaregiver.IBU)
@@ -199,7 +199,8 @@ class PmkTimerManagerTest {
         manager.autoFinishPeriod(periodNumber = 1)
 
         val state = manager.timerState.value
-        assertThat(state.status).isEqualTo(TimerStatus.RUNNING)
+        assertThat(state.status).isEqualTo(TimerStatus.IDLE)
+        assertThat(state.elapsedSeconds).isEqualTo(0L)
         coVerify { notificationManager.showPmkPeriodCompletedNotification(1) }
     }
 
@@ -228,16 +229,23 @@ class PmkTimerManagerTest {
         val testDispatcher = UnconfinedTestDispatcher(testScheduler)
         val manager = createManager(testDispatcher)
 
-        val now = System.currentTimeMillis()
-        memoryPrefs["timer_last_day_epoch"] = now
+        val cal = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 10)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val startEpoch = cal.timeInMillis
+        val endEpoch = startEpoch + 7200_000L
+        memoryPrefs["timer_last_day_epoch"] = startEpoch
 
-        // Mock 2 hours completed earlier today
+        // Mock 2 hours completed earlier today (10:00 - 12:00)
         val segment = PmkSegment(
             id = 1L,
             sessionId = 99L,
             caregiver = PmkCaregiver.IBU,
-            startTimeEpoch = now - 7200_000L,
-            endTimeEpoch = now,
+            startTimeEpoch = startEpoch,
+            endTimeEpoch = endEpoch,
             durationMinutes = 120,
             status = PmkSegmentStatus.ACTIVE
         )
@@ -249,5 +257,50 @@ class PmkTimerManagerTest {
         assertThat(state.status).isEqualTo(TimerStatus.RUNNING)
         assertThat(state.todayTotalActiveSeconds).isEqualTo(7200L)
         assertThat(state.currentPeriod).isEqualTo(1)
+    }
+
+    @Test
+    fun autoFinishPeriod_setsPeriod2_andNextManualStartBeginsPeriod2() = runTest {
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        val manager = createManager(testDispatcher)
+        manager.start(babyId = 1L, initialCaregiver = PmkCaregiver.IBU)
+
+        // Mock 8 hours completed session in repository
+        val cal = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 2)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val startEpoch = cal.timeInMillis
+        val endEpoch = startEpoch + 28800_000L
+        val segPeriod1 = PmkSegment(
+            id = 1L,
+            sessionId = 99L,
+            caregiver = PmkCaregiver.IBU,
+            startTimeEpoch = startEpoch,
+            endTimeEpoch = endEpoch,
+            durationMinutes = 480,
+            status = PmkSegmentStatus.ACTIVE
+        )
+        every { repository.getSegmentsInRange(any(), any(), any()) } returns flowOf(listOf(segPeriod1))
+
+        // 8 hours period 1 finished automatically
+        manager.autoFinishPeriod(periodNumber = 1)
+
+        val completedState = manager.timerState.value
+        assertThat(completedState.status).isEqualTo(TimerStatus.IDLE)
+        assertThat(completedState.todayTotalActiveSeconds).isEqualTo(28800L)
+        assertThat(completedState.currentPeriod).isEqualTo(2)
+
+        // User manually starts PMK again for Period 2
+        manager.start(babyId = 1L, initialCaregiver = PmkCaregiver.AYAH)
+
+        val period2State = manager.timerState.value
+        assertThat(period2State.status).isEqualTo(TimerStatus.RUNNING)
+        assertThat(period2State.currentCaregiver).isEqualTo(PmkCaregiver.AYAH)
+        assertThat(period2State.todayTotalActiveSeconds).isEqualTo(28800L)
+        assertThat(period2State.elapsedSeconds).isEqualTo(0L)
+        assertThat(period2State.currentPeriod).isEqualTo(2)
     }
 }

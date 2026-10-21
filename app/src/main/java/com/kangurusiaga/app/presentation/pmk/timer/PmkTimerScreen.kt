@@ -900,7 +900,15 @@ private fun PmkSessionActionControls(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (timerState.todayTotalActiveSeconds > 0L) "Lanjutkan PMK" else "Mulai PMK",
+                        text = if (timerState.todayTotalActiveSeconds > 0L) {
+                            if (timerState.todayTotalActiveSeconds % (8 * 3600L) == 0L && timerState.currentPeriod > 1) {
+                                "Mulai PMK (${timerState.periodLabel})"
+                            } else {
+                                "Lanjutkan PMK"
+                            }
+                        } else {
+                            "Mulai PMK"
+                        },
                         style = KanguruTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
