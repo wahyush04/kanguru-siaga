@@ -117,6 +117,10 @@ fun HomeRoute(
     onNavigateToProfile: () -> Unit = {},
     onNavigateToTimer: () -> Unit = onNavigateToPmk,
     onNavigateToNotification: () -> Unit = {},
+    onNavigateToPmkVideo: () -> Unit = onNavigateToEducation,
+    onNavigateToBblrCare: () -> Unit = onNavigateToEducationList,
+    onNavigateToBblrEmergency: () -> Unit = onNavigateToEmergency,
+    onNavigateToBathingVideo: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -134,6 +138,10 @@ fun HomeRoute(
         onNavigateToProfile = onNavigateToProfile,
         onNavigateToTimer = onNavigateToTimer,
         onNavigateToNotification = onNavigateToNotification,
+        onNavigateToPmkVideo = onNavigateToPmkVideo,
+        onNavigateToBblrCare = onNavigateToBblrCare,
+        onNavigateToBblrEmergency = onNavigateToBblrEmergency,
+        onNavigateToBathingVideo = onNavigateToBathingVideo,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
         onOpenNotification = onNavigateToNotification,
@@ -158,6 +166,10 @@ fun HomeScreen(
     onNavigateToProfile: () -> Unit = {},
     onNavigateToTimer: () -> Unit = onNavigateToPmk,
     onNavigateToNotification: () -> Unit = {},
+    onNavigateToPmkVideo: () -> Unit = {},
+    onNavigateToBblrCare: () -> Unit = {},
+    onNavigateToBblrEmergency: () -> Unit = {},
+    onNavigateToBathingVideo: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     onCloseEmergency: () -> Unit = {},
     onOpenNotification: () -> Unit = {},
@@ -223,6 +235,10 @@ fun HomeScreen(
                         onNavigateToAlarm = onNavigateToAlarm,
                         onNavigateToGrowth = onNavigateToGrowth,
                         onNavigateToTimer = onNavigateToTimer,
+                        onNavigateToPmkVideo = onNavigateToPmkVideo,
+                        onNavigateToBblrCare = onNavigateToBblrCare,
+                        onNavigateToBblrEmergency = onNavigateToBblrEmergency,
+                        onNavigateToBathingVideo = onNavigateToBathingVideo,
                         onOpenEmergency = onOpenEmergency,
                         onOpenNotification = onOpenNotification,
                         onShowInfo = onShowInfo,
@@ -286,6 +302,10 @@ private fun HomeContent(
     onNavigateToAlarm: () -> Unit,
     onNavigateToGrowth: () -> Unit = {},
     onNavigateToTimer: () -> Unit = onNavigateToPmk,
+    onNavigateToPmkVideo: () -> Unit = {},
+    onNavigateToBblrCare: () -> Unit = {},
+    onNavigateToBblrEmergency: () -> Unit = {},
+    onNavigateToBathingVideo: () -> Unit = {},
     onOpenEmergency: () -> Unit,
     onOpenNotification: () -> Unit,
     onShowInfo: (String) -> Unit,
@@ -312,11 +332,11 @@ private fun HomeContent(
 
         // 3. Main Feature Menu Grid (2 Baris x 3 Kolom)
         HomeFeatureMenuGrid(
-            onNavigateToPmkVideo = onNavigateToEducation,
-            onNavigateToBblrCare = onNavigateToEducationList,
-            onOpenEmergency = onOpenEmergency,
+            onNavigateToPmkVideo = onNavigateToPmkVideo,
+            onNavigateToBblrCare = onNavigateToBblrCare,
+            onOpenEmergency = onNavigateToBblrEmergency,
             onNavigateToPmkTimer = onNavigateToTimer,
-            onNavigateToBathingVideo = onNavigateToEducation,
+            onNavigateToBathingVideo = onNavigateToBathingVideo,
             onNavigateToAsiAlarm = onNavigateToAlarm
         )
 

@@ -47,6 +47,10 @@ sealed class Screen(override val route: String, override val destination: String
     }
     data object Emergency : Screen(route = "emergency_warning_list", destination = "emergency_destination") // legacy alias
 
+    // BBLR Care & Emergency Dedicated Screens (Google Stitch)
+    data object BblrCare : Screen(route = "bblr_care", destination = "bblr_care_destination")
+    data object BblrEmergency : Screen(route = "bblr_emergency", destination = "bblr_emergency_destination")
+
     data object Feeding : Screen(route = "feeding", destination = "feeding_destination")
     data object Growth : Screen(route = "growth", destination = "growth_destination") // alias to GrowthHub
     data object GrowthHub : Screen(route = "growth_hub", destination = "growth_hub_destination")

@@ -15,9 +15,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.kangurusiaga.app.presentation.babyprofile.BabyProfileSetupRoute
+import com.kangurusiaga.app.presentation.education.BblrCareRoute
 import com.kangurusiaga.app.presentation.education.EducationCenterScreen
 import com.kangurusiaga.app.presentation.education.EducationDetailRoute
 import com.kangurusiaga.app.presentation.education.EducationListRoute
+import com.kangurusiaga.app.presentation.emergency.BblrEmergencyRoute
 import com.kangurusiaga.app.presentation.emergency.EmergencyWarningDetailRoute
 import com.kangurusiaga.app.presentation.emergency.EmergencyWarningListRoute
 import com.kangurusiaga.app.presentation.feeding.AlarmRoute
@@ -144,6 +146,18 @@ fun KanguruNavGraph(
                 },
                 onNavigateToNotification = {
                     navController.navigate(Screen.Notification.route)
+                },
+                onNavigateToPmkVideo = {
+                    navController.navigate(Screen.PmkVideoList.route)
+                },
+                onNavigateToBblrCare = {
+                    navController.navigate(Screen.BblrCare.route)
+                },
+                onNavigateToBblrEmergency = {
+                    navController.navigate(Screen.BblrEmergency.route)
+                },
+                onNavigateToBathingVideo = {
+                    navController.navigate(Screen.PmkVideoDetail.createRoute(6))
                 }
             )
         }
@@ -677,6 +691,48 @@ fun KanguruNavGraph(
             EmergencyWarningDetailRoute(
                 onNavigateBack = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        // Screen 2: Kanguru Siaga - Cara Perawatan Bayi Kecil (BBLR) (Stitch Screen 2)
+        composable(
+            route = Screen.BblrCare.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None }
+        ) {
+            BblrCareRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToVideo = { videoId ->
+                    navController.navigate(Screen.PmkVideoDetail.createRoute(videoId))
+                },
+                onNavigateToModule = { moduleId ->
+                    navController.navigate(Screen.EducationDetail.createRoute(moduleId))
+                }
+            )
+        }
+
+        // Screen 3: Kanguru Siaga - Tanda Kegawatan Bayi Kecil (BBLR) (Stitch Screen 3)
+        composable(
+            route = Screen.BblrEmergency.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None }
+        ) {
+            BblrEmergencyRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToVideo = { videoId ->
+                    navController.navigate(Screen.PmkVideoDetail.createRoute(videoId))
+                },
+                onNavigateToModule = { moduleId ->
+                    navController.navigate(Screen.EmergencyWarningDetail.createRoute(moduleId))
                 }
             )
         }

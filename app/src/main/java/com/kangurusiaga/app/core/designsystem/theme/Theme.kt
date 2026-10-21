@@ -349,6 +349,62 @@ abstract class KanguruColors {
 
     open val infoText: Color
         get() = onInfoContainer
+
+    // Educational & Emergency Hero Cards (Google Stitch aligned)
+    open val heroPlayButton: Color
+        get() = if (isDark) Color(0xFFFB7185) else Color(0xFFF43F5E)
+    open val heroPlayButtonBorder: Color
+        get() = Color(0x66FFFFFF)
+    open val heroPlayButtonRing: Color
+        get() = Color(0x33FFFFFF)
+    open val heroDurationBadgeBg: Color
+        get() = Color(0x99000000)
+    open val heroDurationBadgeText: Color
+        get() = Color(0xFFFFFFFF)
+    open val heroTypeBadgeBg: Color
+        get() = if (isDark) Color(0xFFE11D48) else Color(0xFFF43F5E)
+    open val heroTypeBadgeText: Color
+        get() = Color(0xFFFFFFFF)
+
+    open val headerPillRoseBg: Color
+        get() = if (isDark) Color(0xFF4C0519) else Color(0xFFFFE4E6)
+    open val headerPillRoseText: Color
+        get() = if (isDark) Color(0xFFFDA4AF) else Color(0xFFE11D48)
+    open val headerPillRoseBorder: Color
+        get() = if (isDark) Color(0xFF881337) else Color(0xFFFECDD3)
+
+    open val badgeEmeraldBg: Color
+        get() = if (isDark) Color(0xFF064E3B) else Color(0xFFD1FAE5)
+    open val badgeEmeraldText: Color
+        get() = if (isDark) Color(0xFF6EE7B7) else Color(0xFF047857)
+    open val badgeEmeraldBorder: Color
+        get() = if (isDark) Color(0xFF065F46) else Color(0xFFA7F3D0)
+
+    open val pediatricNoteCardBg: Color
+        get() = if (isDark) Color(0xFF2E2413) else Color(0xFFFFFBEB)
+    open val pediatricNoteCardBorder: Color
+        get() = if (isDark) Color(0xFF78350F) else Color(0xFFFDE68A)
+    open val pediatricNoteIconContainer: Color
+        get() = if (isDark) Color(0xFF451A03) else Color(0xFFFEF3C7)
+    open val pediatricNoteIconTint: Color
+        get() = if (isDark) Color(0xFFFDE68A) else Color(0xFF92400E)
+    open val pediatricNoteTitle: Color
+        get() = if (isDark) Color(0xFFFEF3C7) else Color(0xFF78350F)
+    open val pediatricNoteSubtitle: Color
+        get() = if (isDark) Color(0xFFFCD34D) else Color(0xFFB45309)
+    open val pediatricNoteQuoteCardBg: Color
+        get() = if (isDark) Color(0xFF1E170E) else Color(0xCCFFFFFF)
+    open val pediatricNoteQuoteCardBorder: Color
+        get() = if (isDark) Color(0xFF78350F) else Color(0x99FDE68A)
+    open val pediatricNoteQuoteText: Color
+        get() = if (isDark) Color(0xFFFDE68A) else Color(0xFF78350F)
+
+    open val emergencyStickyButtonStart: Color
+        get() = if (isDark) Color(0xFFE11D48) else Color(0xFFF43F5E)
+    open val emergencyStickyButtonEnd: Color
+        get() = if (isDark) Color(0xFFBE123C) else Color(0xFFE11D48)
+    open val emergencyStickyButtonText: Color
+        get() = Color(0xFFFFFFFF)
 }
 
 // 1. TERANG HANGAT (Warm Light - Default)

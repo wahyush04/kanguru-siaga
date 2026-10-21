@@ -71,6 +71,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.core.designsystem.theme.TimerDisplay
 import com.kangurusiaga.app.domain.model.PmkCaregiver
 import com.kangurusiaga.app.domain.model.PmkPauseReason
 import com.kangurusiaga.app.domain.model.PmkTimerState
@@ -645,12 +646,8 @@ private fun PmkTimerDisplaySection(
 
         Text(
             text = displayedTime,
-            style = KanguruTheme.typography.titleLarge.copy(
-                fontSize = 40.sp,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold,
-                color = if (timerState.isPaused) colors.warning else colors.textPrimary,
-                letterSpacing = (-1).sp
+            style = TimerDisplay.copy(
+                color = if (timerState.isPaused) colors.warning else colors.textPrimary
             ),
             maxLines = 1,
             softWrap = false

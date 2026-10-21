@@ -652,4 +652,36 @@
     <string name="notification_permission_dialog_benefit_health">Peringatan jadwal timbang mingguan &amp; tanda kegawatan BBLR</string>
     <string name="notification_permission_dialog_btn_allow">Aktifkan Notifikasi</string>
     <string name="notification_permission_dialog_btn_later">Nanti Saja</string>
+
+    <!-- BBLR Care Screen (Stitch Screen 2) -->
+    <string name="bblr_care_screen_title">Perawatan Bayi Kecil (BBLR)</string>
+    <string name="bblr_care_pill_badge">Video &amp; Panduan Lengkap</string>
+    <string name="bblr_care_hero_badge_video">VIDEO</string>
+    <string name="bblr_care_hero_tag">TUTORIAL PERAWATAN BBLR</string>
+    <string name="bblr_care_hero_title">Panduan Lengkap Merawat Bayi Kecil (BBLR) Mandiri di Rumah</string>
+    <string name="bblr_care_hero_desc">Panduan praktis langkah demi langkah bagi orang tua untuk menjaga kehangatan tubuh, teknik memandikan aman, perawatan tali pusat steril, posisi tidur supine, serta pemenuhan nutrisi ASI teratur di rumah.</string>
+    <string name="bblr_care_doctor_verified">Verifikasi Dokter Spesialis Anak</string>
+    <string name="bblr_care_cta_watch">Mulai Tonton</string>
+    <string name="bblr_care_section_modules">Materi &amp; Panduan Tertulis</string>
+    <string name="bblr_care_badge_modules_count">9 Modul Lengkap</string>
+    <string name="bblr_care_section_modules_sub">Disusun sistematis untuk dipraktikkan ayah &amp; bunda</string>
+    <string name="bblr_care_btn_download_pdf">Unduh PDF</string>
+    <string name="bblr_care_doctor_note_title">Catatan Dokter Spesialis Anak (Sp.A)</string>
+    <string name="bblr_care_doctor_note_subtitle">Prinsip Emas Perawatan BBLR</string>
+    <string name="bblr_care_doctor_note_quote">“Kunci utama berat badan naik optimal adalah kombinasi Metode Kanguru (PMK) minimal 1-2 jam per sesi, kehangatan termal stabil 36.5°C - 37.5°C, dan pemberian ASI setiap 2 jam secara disiplin.”</string>
+
+    <!-- BBLR Emergency Screen (Stitch Screen 3) -->
+    <string name="bblr_emergency_screen_title">Tanda Kegawatan Bayi Kecil (BBLR)</string>
+    <string name="bblr_emergency_pill_badge">Video &amp; Triase Bahaya</string>
+    <string name="bblr_emergency_hero_badge_video">VIDEO</string>
+    <string name="bblr_emergency_hero_tag">TUTORIAL DETEKSI DINI</string>
+    <string name="bblr_emergency_hero_title">Mengenali 7 Tanda Bahaya &amp; Tindakan Cepat pada Bayi BBLR</string>
+    <string name="bblr_emergency_hero_desc">Panduan tanggap darurat bagi orang tua untuk mendeteksi gangguan pernapasan, perubahan warna kulit, kejang halus, serta penurunan suhu secara cepat sebelum ke fasilitas kesehatan.</string>
+    <string name="bblr_emergency_section_triase">Materi &amp; Panduan Triase</string>
+    <string name="bblr_emergency_badge_triase_count">7 Tanda Bahaya</string>
+    <string name="bblr_emergency_section_triase_sub">Kenali gejala klinis kritis dan langkah pertolongan pertama di rumah</string>
+    <string name="bblr_emergency_protocol_title">PROTOKOL CEPAT TENAGA KESEHATAN</string>
+    <string name="bblr_emergency_protocol_subtitle">Standar Rekomendasi IDAI &amp; Kemenkes RI</string>
+    <string name="bblr_emergency_protocol_desc">“Jika menemukan salah satu dari 7 tanda kegawatan di atas, jangan menunda. Segera hangatkan bayi dengan Metode Kanguru (PMK) selama perjalanan dan bawa ke IGD rumah sakit terdekat.”</string>
+    <string name="bblr_emergency_sticky_call_button">Hubungi Ambulans / Faskes Terdekat (119)</string>
 </resources>

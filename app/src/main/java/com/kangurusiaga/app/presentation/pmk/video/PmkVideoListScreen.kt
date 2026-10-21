@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -29,7 +28,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,27 +35,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
 import com.kangurusiaga.app.R
-import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
-import com.kangurusiaga.app.core.designsystem.theme.CardBorder
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
-import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
-import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
-import com.kangurusiaga.app.core.designsystem.theme.White
+import com.kangurusiaga.app.presentation.home.HomeBottomBar
+import com.kangurusiaga.app.presentation.home.HomeTab
 
 /**
- * Screen: Kanguru Siaga - Video Edukasi PMK
- * Displays the list of educational video modules for PMK.
- * Stitch Screen ID: projects/10808370107038581899/screens/a4d9412fe5564a1796d5857c4d586db3
+ * Screen: Kanguru Siaga - Video Edukasi PMK (Menu Pertama)
+ * Khusus menampilkan list video perawatan metode kanguru (PMK):
+ * 1. Pengertian PMK
+ * 2. Manfaat PMK untuk bayi BBLR
+ * 3. Persiapan sebelum PMK
+ * Sesuai referensi Google Stitch: projects/10808370107038581899/screens/9739596850790247066
  */
 @Composable
 fun PmkVideoListScreen(
@@ -70,14 +66,18 @@ fun PmkVideoListScreen(
     onNavigateToProfile: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
+
+    // Khusus 3 video PMK sesuai spesifikasi Menu Pertama
+    val pmkVideos = PmkVideoDataSource.videos.filter { it.id in 1..3 }
+
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .background(BrandBackground),
-        containerColor = BrandBackground,
+        modifier = modifier.fillMaxSize(),
+        containerColor = colors.background,
         topBar = {
             Surface(
-                color = BrandBackground,
+                color = colors.background,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -90,49 +90,61 @@ fun PmkVideoListScreen(
                     IconButton(
                         onClick = onNavigateBack,
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(38.dp)
                             .clip(CircleShape)
+                            .background(colors.surface)
+                            .border(1.dp, colors.cardBorder, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.common_back),
-                            tint = TextPrimary,
+                            tint = colors.textPrimary,
                             modifier = Modifier.size(20.dp)
                         )
                     }
 
                     Text(
                         text = stringResource(R.string.pmk_video_list_title),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = colors.textPrimary,
                         textAlign = TextAlign.Center,
-                        letterSpacing = (-0.2).sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(end = 36.dp)
+                            .padding(end = 38.dp)
                     )
                 }
             }
+        },
+        bottomBar = {
+            HomeBottomBar(
+                currentTab = HomeTab.PMK,
+                onTabSelected = { tab ->
+                    when (tab) {
+                        HomeTab.BERANDA -> onNavigateToHome()
+                        HomeTab.PMK -> { /* already here */ }
+                        HomeTab.EDUKASI -> onNavigateToEducation()
+                        HomeTab.ALARM -> onNavigateToAlarm()
+                        HomeTab.PROFIL -> onNavigateToProfile()
+                    }
+                }
+            )
         }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .navigationBarsPadding(),
+                .padding(innerPadding),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             items(
-                items = PmkVideoDataSource.videos,
+                items = pmkVideos,
                 key = { it.id }
             ) { video ->
                 PmkVideoModuleCard(
                     video = video,
-                    onClick = { onNavigateToDetail(video.id) },
-                    borderColor = CardBorder,
-                    titleColor = TextPrimary
+                    onClick = { onNavigateToDetail(video.id) }
                 )
             }
         }
@@ -143,16 +155,17 @@ fun PmkVideoListScreen(
 private fun PmkVideoModuleCard(
     video: PmkVideoItem,
     onClick: () -> Unit,
-    borderColor: Color,
-    titleColor: Color,
     modifier: Modifier = Modifier
 ) {
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+            .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
             .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = KanguruTheme.colors.surface),
+        colors = CardDefaults.cardColors(containerColor = colors.surface),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -162,12 +175,12 @@ private fun PmkVideoModuleCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Thumbnail with duration tag
+            // Thumbnail with duration badge
             Box(
                 modifier = Modifier
                     .size(width = 100.dp, height = 68.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(KanguruTheme.colors.surfaceVariant)
+                    .background(colors.surfaceVariant)
             ) {
                 Image(
                     painter = painterResource(id = video.thumbnailRes),
@@ -176,21 +189,21 @@ private fun PmkVideoModuleCard(
                     contentScale = ContentScale.Crop
                 )
 
-                // Duration badge
+                // Duration badge overlay
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(start = 6.dp, bottom = 6.dp)
                         .background(
-                            color = Color.Black.copy(alpha = 0.65f),
+                            color = colors.heroDurationBadgeBg,
                             shape = RoundedCornerShape(6.dp)
                         )
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
                         text = video.duration,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = White,
+                        style = typography.labelSmall,
+                        color = colors.heroDurationBadgeText,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -201,10 +214,9 @@ private fun PmkVideoModuleCard(
             // Video Title
             Text(
                 text = video.title,
-                style = MaterialTheme.typography.bodyMedium,
+                style = typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
-                color = titleColor,
-                lineHeight = 19.sp,
+                color = colors.textPrimary,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -212,11 +224,11 @@ private fun PmkVideoModuleCard(
                     .padding(end = 6.dp)
             )
 
-            // Chevron Right
+            // Chevron Right Icon
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(R.string.pmk_video_cd_open),
-                tint = TextSecondary,
+                tint = colors.textTertiary,
                 modifier = Modifier.size(20.dp)
             )
         }
