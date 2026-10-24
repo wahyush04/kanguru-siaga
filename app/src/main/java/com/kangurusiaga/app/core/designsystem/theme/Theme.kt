@@ -405,7 +405,90 @@ abstract class KanguruColors {
         get() = if (isDark) Color(0xFFBE123C) else Color(0xFFE11D48)
     open val emergencyStickyButtonText: Color
         get() = Color(0xFFFFFFFF)
+
+    // Fenton Full Chart Tokens (Google Stitch d28b07eb3b934af1a98a28afd98704f7 aligned)
+    open val fentonPatientGradientStart: Color
+        get() = if (isDark) Color(0xFF0C253B) else Color(0xFF164E63)
+    open val fentonPatientGradientMid: Color
+        get() = if (isDark) Color(0xFF0F314D) else Color(0xFF0C4A6E)
+    open val fentonPatientGradientEnd: Color
+        get() = if (isDark) Color(0xFF161E36) else Color(0xFF1E1B4B)
+    open val fentonPatientCardBorder: Color
+        get() = if (isDark) Color(0xFF164E63) else Color(0x3306B6D4)
+    open val fentonPatientMetricCardBg: Color
+        get() = if (isDark) Color(0x1FFFFFFF) else Color(0x1FFFFFFF)
+    open val fentonPatientMetricCardBorder: Color
+        get() = if (isDark) Color(0x2EFFFFFF) else Color(0x2EFFFFFF)
+    open val fentonPmaBadgeBg: Color
+        get() = if (isDark) Color(0x33F59E0B) else Color(0x26FFFFFF)
+    open val fentonPmaBadgeText: Color
+        get() = if (isDark) Color(0xFFFDE68A) else Color(0xFFFCD34D)
+    open val fentonPatientSubtitleText: Color
+        get() = if (isDark) Color(0xFFA5F3FC) else Color(0xFFA5F3FC)
+    open val fentonFilterActiveBg: Color
+        get() = if (isDark) Color(0xFFF1F5F9) else Color(0xFF0F172A)
+    open val fentonFilterActiveText: Color
+        get() = if (isDark) Color(0xFF0F172A) else Color(0xFFFFFFFF)
+    open val fentonFilterInactiveBg: Color
+        get() = if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9)
+    open val fentonFilterInactiveText: Color
+        get() = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569)
+    open val fentonChartHeaderBg: Color
+        get() = if (isDark) Color(0xFF1E293B) else Color(0xFFF8FAFC)
+    open val fentonChartGridMajor: Color
+        get() = if (isDark) Color(0xFF475569) else Color(0xFF000000)
+    open val fentonChartGridMinor: Color
+        get() = if (isDark) Color(0xFF334155) else Color(0xFF718096)
+    open val fentonChartCurveMedian: Color
+        get() = if (isDark) Color(0xFFF1F5F9) else Color(0xFF1A202C)
+    open val fentonChartCurveOuter: Color
+        get() = if (isDark) Color(0xFF94A3B8) else Color(0xFF2D3748)
+    open val fentonChartCurveInner: Color
+        get() = if (isDark) Color(0xFF64748B) else Color(0xFF4A5568)
+    open val fentonPlotTrajectory: Color
+        get() = if (isDark) Color(0xFFFF5C77) else Color(0xFFFF3366)
+    open val fentonEvaluationTargetBg: Color
+        get() = if (isDark) Color(0xFF064E3B) else Color(0xFFECFDF5)
+    open val fentonEvaluationTargetBorder: Color
+        get() = if (isDark) Color(0xFF065F46) else Color(0xFFD1FAE5)
+    open val fentonEvaluationTargetBadgeBg: Color
+        get() = if (isDark) Color(0xFF059669) else Color(0xFF059669)
+    open val fentonEvaluationTargetBadgeText: Color
+        get() = Color(0xFFFFFFFF)
+    open val fentonEvaluationNormalBadgeBg: Color
+        get() = if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)
+    open val fentonEvaluationNormalBadgeText: Color
+        get() = if (isDark) Color(0xFFF1F5F9) else Color(0xFF334155)
+    open val fentonEvaluationNormalRowBg: Color
+        get() = if (isDark) Color(0xFF1E293B) else Color(0xFFF8FAFC)
+
+    // Fenton Batch Input Screen Tokens (Google Stitch 41abf5181c9c46e3aa16074c795fe9b7)
+    open val growthBabyBannerBg: Color
+        get() = if (isDark) Color(0xFF062E36) else Color(0xFF0A4A57)
+    open val growthBabyAvatarBg: Color
+        get() = if (isDark) Color(0xFF0C3E49) else Color(0xFF15606F)
+    open val growthBabyAvatarBorder: Color
+        get() = if (isDark) Color(0x4D22D3EE) else Color(0x6622D3EE)
+    open val growthBabyGenderBadgeBg: Color
+        get() = if (isDark) Color(0xFF0E4E5C) else Color(0xFF11697C)
+    open val growthBabyGenderBadgeText: Color
+        get() = if (isDark) Color(0xFFA5F3FC) else Color(0xFFA5F3FC)
+    open val growthPmaHighlight: Color
+        get() = if (isDark) Color(0xFFFCD34D) else Color(0xFFFCD34D)
+    open val growthTableDashedBorder: Color
+        get() = if (isDark) Color(0xFF881337) else Color(0xFFFDA4AF)
+    open val growthTableDashedBg: Color
+        get() = if (isDark) Color(0xFF2E1218) else Color(0xFFFFF1F2)
+    open val growthTableDashedText: Color
+        get() = if (isDark) Color(0xFFFDA4AF) else Color(0xFFFF5C77)
+    open val growthTableBadgePmaBg: Color
+        get() = if (isDark) Color(0xFF0C2B40) else Color(0xFFF0F9FF)
+    open val growthTableBadgePmaText: Color
+        get() = if (isDark) Color(0xFF38BDF8) else Color(0xFF0369A1)
+    open val growthTableBadgePmaBorder: Color
+        get() = if (isDark) Color(0xFF075985) else Color(0xFFE0F2FE)
 }
+
 
 // 1. TERANG HANGAT (Warm Light - Default)
 private class LightKanguruColorsImpl : KanguruColors() {

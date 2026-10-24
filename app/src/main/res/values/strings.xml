@@ -346,6 +346,42 @@
     <string name="growth_select_tip">Disarankan mengukur berat badan seminggu sekali pada jam yang sama (pagi hari sebelum minum ASI) untuk akurasi optimal.</string>
     <string name="growth_select_btn_proceed">Lanjut ke Formulir</string>
 
+    <!-- Batch Fenton Growth Measurement (Stitch: Catat Pengukuran Baru - Batch Input Fenton) -->
+    <string name="growth_batch_title">Catat Pengukuran Baru</string>
+    <string name="growth_batch_subtitle">Input Batch Data Pertumbuhan Fenton (PMA 22-50 Minggu)</string>
+    <string name="growth_batch_btn_help">Panduan Klinis Fenton</string>
+    <string name="growth_batch_pma_label">PMA SAAT INI</string>
+    <string name="growth_batch_born_summary">Lahir: %1$d mg • BB Lahir: %2$s g</string>
+    <string name="growth_batch_table_title">Multi-Baris Pengukuran Fenton</string>
+    <string name="growth_batch_table_subtitle">Sesuaikan usia gestasi (PMA) dan parameter klinis</string>
+    <string name="growth_batch_table_range_badge">22–50\nMinggu</string>
+    <string name="growth_batch_col_index">#</string>
+    <string name="growth_batch_col_ga">GA</string>
+    <string name="growth_batch_col_ga_sub">(minggu ke-)</string>
+    <string name="growth_batch_col_weight">Berat\nBadan</string>
+    <string name="growth_batch_col_weight_sub">(g)</string>
+    <string name="growth_batch_col_head">Lingkar\nKepala</string>
+    <string name="growth_batch_col_head_sub">(cm)</string>
+    <string name="growth_batch_col_length">Panjang\nBadan</string>
+    <string name="growth_batch_col_length_sub">(cm)</string>
+    <string name="growth_batch_btn_add_row">+ Tambah Baris Pengukuran Baru</string>
+    <string name="growth_batch_cd_delete_row">Hapus Baris</string>
+    <string name="growth_batch_label_entry_date">Tanggal Pengukuran Terakhir / Entri Data</string>
+    <string name="growth_batch_label_reminder">Ingatkan pengukuran rutin 1 minggu lagi</string>
+    <string name="growth_batch_desc_reminder">Notifikasi jadwal evaluasi catch-up growth bayi prematur</string>
+    <string name="growth_batch_label_notes">Catatan Klinis / Observasi</string>
+    <string name="growth_batch_label_notes_optional">(Opsional)</string>
+    <string name="growth_batch_placeholder_notes">Contoh: Asupan ASI terfortifikasi (HMF), metode KMC 2 jam/hari, toleransi minum baik...</string>
+    <string name="growth_batch_guidance_title">Standar Akurasi Pengukuran Fenton</string>
+    <string name="growth_batch_guidance_desc">Gunakan data pengukuran terverifikasi dari fasilitas kesehatan (timbangan digital bayi akurasi ±5g, pita ukur non-elastis, dan infantometer) untuk menjaga presisi pemetaan kurva pertumbuhan Fenton 2025.</string>
+    <string name="growth_batch_btn_save">+ Simpan &amp; Plot ke Grafik Fenton</string>
+    <string name="growth_batch_btn_cancel">Batal</string>
+    <string name="growth_batch_error_empty">Harap isi minimal satu baris data pengukuran</string>
+    <string name="growth_batch_error_pma">Usia gestasi (GA) harus antara 22 hingga 50 minggu</string>
+    <string name="growth_batch_error_no_value">Baris %1$d wajib memiliki minimal satu nilai pengukuran (BB, LK, atau PB)</string>
+    <string name="growth_batch_save_success">%1$d data pengukuran berhasil disimpan &amp; di-plot</string>
+
+
     <!-- Growth Chart -->
     <string name="growth_chart_delete_title">Hapus Data Pengukuran?</string>
     <string name="growth_chart_delete_msg">Data pengukuran ini akan dihapus secara permanen.</string>

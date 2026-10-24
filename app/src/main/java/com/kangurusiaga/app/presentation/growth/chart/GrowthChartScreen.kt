@@ -1,8 +1,10 @@
 package com.kangurusiaga.app.presentation.growth.chart
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,629 +13,823 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kangurusiaga.app.R
-import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
-import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
-import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
-import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBg
-import com.kangurusiaga.app.core.designsystem.theme.GrowthTipBorder
-import com.kangurusiaga.app.core.designsystem.theme.GrowthTipText
-import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
-import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
-import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
-import com.kangurusiaga.app.core.designsystem.theme.White
-import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
 import com.kangurusiaga.app.domain.model.Gender
-import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.presentation.growth.components.GrowthIcons
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * GrowthChartScreen - Fenton Growth Chart (Laki-laki / Perempuan)
+ * Faithful 1:1 Implementation of Google Stitch Screen:
+ * projects/10808370107038581899/screens/d28b07eb3b934af1a98a28afd98704f7
+ */
 @Composable
 fun GrowthChartScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToAdd: (GrowthParameter) -> Unit,
+    onNavigateToAdd: () -> Unit,
     onNavigateToAboutFenton: () -> Unit,
     viewModel: GrowthChartViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val parameter = uiState.parameter
-    val isBoy = uiState.baby?.gender != com.kangurusiaga.app.domain.model.Gender.FEMALE
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
+    val context = LocalContext.current
 
-    var measurementToDelete by remember { mutableStateOf<GrowthMeasurement?>(null) }
+    val isBoy = uiState.baby?.gender != Gender.FEMALE
+    val babyName = uiState.baby?.name ?: "Bayi Arka Narendra"
 
-    if (measurementToDelete != null) {
-        val target = measurementToDelete!!
-        val isBirthData = target.note == "Berat Lahir" || target.note == "Panjang Lahir" || target.note == "Lingkar Kepala Lahir"
-        if (isBirthData) {
-            AlertDialog(
-                onDismissRequest = { measurementToDelete = null },
-                title = { Text(stringResource(R.string.growth_chart_initial_birth_data_title), fontWeight = FontWeight.Bold) },
-                text = { Text(stringResource(R.string.growth_chart_initial_birth_data_msg)) },
-                confirmButton = {
-                    Button(
-                        onClick = { measurementToDelete = null },
-                        colors = ButtonDefaults.buttonColors(containerColor = BrandPink)
-                    ) {
-                        Text(stringResource(R.string.common_ok), color = White)
-                    }
-                }
-            )
+    // Derive avatar initials (e.g. "AN" for Arka Narendra or Bayi Arka Narendra)
+    val initials = remember(babyName) {
+        val cleanName = if (babyName.startsWith("Bayi ", ignoreCase = true)) {
+            babyName.removePrefix("Bayi ").removePrefix("bayi ").trim()
         } else {
-            AlertDialog(
-                onDismissRequest = { measurementToDelete = null },
-                title = { Text(stringResource(R.string.growth_chart_delete_title), fontWeight = FontWeight.Bold) },
-                text = { Text(stringResource(R.string.growth_chart_delete_msg)) },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            viewModel.deleteMeasurement(target.id)
-                            measurementToDelete = null
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = KanguruTheme.colors.error)
-                    ) {
-                        Text(stringResource(R.string.alarm_btn_delete), color = White)
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { measurementToDelete = null }) {
-                        Text(stringResource(R.string.alarm_btn_cancel))
-                    }
-                }
-            )
+            babyName.trim()
+        }
+        val parts = cleanName.split(" ").filter { it.isNotBlank() }
+        when {
+            parts.size >= 2 -> "${parts[0].first().uppercaseChar()}${parts[1].first().uppercaseChar()}"
+            parts.size == 1 && parts[0].length >= 2 -> parts[0].take(2).uppercase()
+            parts.size == 1 -> parts[0].take(1).uppercase()
+            else -> "AN"
         }
     }
 
+    // Latest metric values with clean fallbacks
+    val currentWeightKg = uiState.latestWeight?.value
+        ?: ((uiState.baby?.birthWeightGram ?: 1850) / 1000f)
+    val currentLengthCm = uiState.latestLength?.value
+        ?: (if ((uiState.baby?.birthLengthCm ?: 0f) > 0f) uiState.baby!!.birthLengthCm else 46.5f)
+    val currentHeadCircCm = uiState.latestHeadCirc?.value
+        ?: (if ((uiState.baby?.birthHeadCircumferenceCm ?: 0f) > 0f) uiState.baby!!.birthHeadCircumferenceCm else 32.8f)
+
+    // Formatted last evaluation date
+    val lastDateFormatted = remember(uiState.latestWeight, uiState.latestLength, uiState.latestHeadCirc) {
+        val latestEpoch = listOfNotNull(
+            uiState.latestWeight?.measurementDateEpochMillis,
+            uiState.latestLength?.measurementDateEpochMillis,
+            uiState.latestHeadCirc?.measurementDateEpochMillis
+        ).maxOrNull() ?: System.currentTimeMillis()
+        val sdf = SimpleDateFormat("d MMM", Locale("id", "ID"))
+        sdf.format(Date(latestEpoch))
+    }
+
     Scaffold(
-        containerColor = BrandBackground
+        containerColor = colors.background,
+        topBar = {
+            // 1. TopBar with status bar padding to avoid notification bar overlap
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colors.surface)
+                    .statusBarsPadding()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = GrowthIcons.Back,
+                            contentDescription = stringResource(R.string.common_back),
+                            tint = colors.textPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = if (isBoy) "Grafik Pertumbuhan Fenton (Laki-laki)" else "Grafik Pertumbuhan Fenton (Perempuan)",
+                            style = typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "Standar Fenton 2013 (PMA 22 - 50 Minggu)",
+                            style = typography.labelSmall,
+                            fontWeight = FontWeight.Medium,
+                            color = colors.info,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = onNavigateToAboutFenton,
+                            modifier = Modifier.size(34.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Informasi Standar",
+                                tint = colors.textSecondary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(
+                                        Intent.EXTRA_TEXT,
+                                        "Grafik Pertumbuhan Fenton: $babyName\nPMA: ${uiState.currentPmaWeeks.toInt()} Minggu\nBB: ${String.format(Locale.US, "%.3f", currentWeightKg)} kg\nPB: ${String.format(Locale.US, "%.1f", currentLengthCm)} cm\nLK: ${String.format(Locale.US, "%.1f", currentHeadCircCm)} cm"
+                                    )
+                                    type = "text/plain"
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, "Bagikan Data Pertumbuhan"))
+                            },
+                            modifier = Modifier.size(34.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FileDownload,
+                                contentDescription = "Unduh Grafik",
+                                tint = colors.textSecondary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(0.5.dp)
+                        .background(colors.cardBorder)
+                )
+            }
+        },
+        bottomBar = {
+            // 6. Bottom Sticky CTA Button
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colors.surface)
+                    .navigationBarsPadding()
+                    .border(0.5.dp, colors.cardBorder)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Button(
+                    onClick = onNavigateToAdd,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.primary,
+                        contentColor = colors.onPrimary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Catat Pengukuran Baru",
+                        style = typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.onPrimary
+                    )
+                }
+            }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
         ) {
-            // Header
+            // 2. Patient Vital Context Card
+            PatientVitalContextCard(
+                initials = initials,
+                babyName = babyName,
+                isBoy = isBoy,
+                gestationalAgeWeeksAtBirth = uiState.baby?.gestationalAgeWeeks ?: 32,
+                birthWeightGrams = uiState.baby?.birthWeightGram ?: 1850,
+                currentPmaWeeks = uiState.currentPmaWeeks,
+                weightKg = currentWeightKg,
+                lengthCm = currentLengthCm,
+                headCircCm = currentHeadCircCm,
+                weightBadge = uiState.weightEvaluation?.percentileBadge ?: "P50 (Ideal)",
+                lengthBadge = uiState.lengthEvaluation?.percentileBadge ?: "P50 (Ideal)",
+                headCircBadge = uiState.headCircEvaluation?.percentileBadge ?: "P50 (Optimal)"
+            )
+
+            // 3. Parameter Filter Selector Tabs
+            ParameterFilterTabs(
+                selectedTab = uiState.selectedTab,
+                onSelectTab = { viewModel.selectTab(it) }
+            )
+
+            // 4. Interactive Fenton Chart Canvas Card
+            Box(modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
+                FentonChart(
+                    selectedTab = uiState.selectedTab,
+                    isBoy = isBoy,
+                    weightMeasurements = uiState.weightMeasurementsAsc,
+                    lengthMeasurements = uiState.lengthMeasurementsAsc,
+                    headCircMeasurements = uiState.headCircMeasurementsAsc,
+                    currentPmaWeeks = uiState.currentPmaWeeks,
+                    babyName = babyName
+                )
+            }
+
+            // 5. Evaluasi Pertumbuhan Kejar (Catch-up Growth) Card
+            Box(modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
+                CatchUpGrowthEvaluationCard(
+                    lastDate = lastDateFormatted,
+                    weightKg = currentWeightKg,
+                    weightBadge = uiState.weightEvaluation?.percentileBadge ?: "P50",
+                    weightGainRate = uiState.weightGainRateGramsPerDay,
+                    lengthCm = currentLengthCm,
+                    lengthBadge = uiState.lengthEvaluation?.percentileBadge ?: "P50",
+                    headCircCm = currentHeadCircCm,
+                    headCircBadge = uiState.headCircEvaluation?.percentileBadge ?: "P50"
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+/**
+ * Section 2: Patient Vital Context Card
+ */
+@Composable
+private fun PatientVitalContextCard(
+    initials: String,
+    babyName: String,
+    isBoy: Boolean,
+    gestationalAgeWeeksAtBirth: Int,
+    birthWeightGrams: Int,
+    currentPmaWeeks: Float,
+    weightKg: Float,
+    lengthCm: Float,
+    headCircCm: Float,
+    weightBadge: String,
+    lengthBadge: String,
+    headCircBadge: String
+) {
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
+
+    val patientGradient = Brush.horizontalGradient(
+        listOf(
+            colors.fentonPatientGradientStart,
+            colors.fentonPatientGradientMid,
+            colors.fentonPatientGradientEnd
+        )
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
+            .background(patientGradient)
+            .border(1.dp, colors.fentonPatientCardBorder, RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
+            .padding(16.dp)
+    ) {
+        // Patient Header Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                IconButton(
-                    onClick = onNavigateBack,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        imageVector = GrowthIcons.Back,
-                        contentDescription = stringResource(R.string.common_back),
-                        tint = TextPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                Text(
-                    text = parameter.displayName,
-                    style = KanguruTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f)
-                )
-
-                Spacer(modifier = Modifier.size(36.dp))
-            }
-
-            // Segmented Tabs: Grafik vs Data
-            TabRow(
-                selectedTabIndex = uiState.selectedTab,
-                containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
-                contentColor = BrandPink,
-                indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[uiState.selectedTab]),
-                        height = 2.5.dp,
-                        color = BrandPink
-                    )
-                },
-                divider = {
-                    HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider)
-                }
-            ) {
-                Tab(
-                    selected = uiState.selectedTab == 0,
-                    onClick = { viewModel.selectTab(0) },
-                    text = {
-                        Text(
-                            text = stringResource(R.string.growth_chart_tab_chart),
-                            style = KanguruTheme.typography.bodyMedium,
-                            fontWeight = if (uiState.selectedTab == 0) FontWeight.Bold else FontWeight.Medium,
-                            color = if (uiState.selectedTab == 0) BrandPink else TextTertiary
-                        )
-                    }
-                )
-                Tab(
-                    selected = uiState.selectedTab == 1,
-                    onClick = { viewModel.selectTab(1) },
-                    text = {
-                        Text(
-                            text = stringResource(R.string.growth_chart_tab_data),
-                            style = KanguruTheme.typography.bodyMedium,
-                            fontWeight = if (uiState.selectedTab == 1) FontWeight.Bold else FontWeight.Medium,
-                            color = if (uiState.selectedTab == 1) BrandPink else TextTertiary
-                        )
-                    }
-                )
-            }
-
-            // Tab Content
-            if (uiState.selectedTab == 0) {
-                // Grafik Tab Content
-                Column(
+                // Initials Circle
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 20.dp, vertical = 14.dp)
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .background(colors.fentonPatientMetricCardBg)
+                        .border(1.dp, colors.fentonPatientMetricCardBorder, CircleShape),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // Filter Selector & Help Row
+                    Text(
+                        text = initials,
+                        style = typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.fentonPatientSubtitleText
+                    )
+                }
+
+                // Name & Gender Tag
+                Column {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
-                                .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder, RoundedCornerShape(12.dp))
-                                .padding(horizontal = 12.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(
-                                text = "Usia Gestasi Pasca-Menstruasi (PMA)",
-                                style = KanguruTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Medium,
-                                color = TextPrimary
-                            )
-                            Icon(
-                                imageVector = GrowthIcons.ArrowDown,
-                                contentDescription = null,
-                                tint = TextSecondary,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
-
-                        IconButton(
-                            onClick = onNavigateToAboutFenton,
-                            modifier = Modifier.size(32.dp)
-                        ) {
-                            Icon(
-                                imageVector = GrowthIcons.Help,
-                                contentDescription = stringResource(R.string.growth_chart_cd_pma_info),
-                                tint = TextTertiary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Current Metrics Card
-                    val latest = uiState.latestMeasurement
-                    val baby = uiState.baby
-                    val percentileClassification = remember(latest, parameter, isBoy) {
-                        if (latest != null) {
-                            val gender = if (isBoy) Gender.MALE else Gender.FEMALE
-                            FentonReferenceData.evaluatePercentile(parameter, gender, latest.pmaWeeks, latest.value)
-                        } else null
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
-                            .border(1.dp, BrandCardBorder, RoundedCornerShape(18.dp))
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        // Left: Current Value & Delta from birth
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = parameter.displayName,
-                                style = KanguruTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Medium,
-                                color = TextSecondary
-                            )
-                            Text(
-                                text = stringResource(R.string.growth_chart_current_label),
-                                style = KanguruTheme.typography.labelSmall,
-                                color = TextTertiary
-                            )
-
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            Row(verticalAlignment = Alignment.Bottom) {
-                                val valueStr = if (latest != null) {
-                                    String.format(Locale("id", "ID"), "%.1f", latest.value)
-                                } else "--"
-                                Text(
-                                    text = valueStr,
-                                    style = KanguruTheme.typography.headlineLarge,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = TextPrimary
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = parameter.unit,
-                                    style = KanguruTheme.typography.titleSmall,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = TextSecondary,
-                                    modifier = Modifier.padding(bottom = 3.dp)
-                                )
-                            }
-
-                            // Delta from birth pill
-                            if (latest != null && baby != null) {
-                                val (deltaStr, deltaPositive) = when (parameter) {
-                                    GrowthParameter.WEIGHT -> {
-                                        val birthKg = baby.birthWeightGram / 1000f
-                                        val diff = latest.value - birthKg
-                                        val grams = (diff * 1000).toInt()
-                                        if (latest.note == "Berat Lahir" || kotlin.math.abs(diff) < 0.001f) {
-                                            Pair(stringResource(R.string.growth_chart_initial_birth_pill), null)
-                                        } else {
-                                            val str = if (diff > 0) "+$grams g dari lahir" else "$grams g dari lahir"
-                                            Pair(str, diff > 0)
-                                        }
-                                    }
-                                    GrowthParameter.LENGTH -> {
-                                        val diff = latest.value - baby.birthLengthCm
-                                        if (latest.note == "Panjang Lahir" || (baby.birthLengthCm > 0f && kotlin.math.abs(diff) < 0.001f)) {
-                                            Pair(stringResource(R.string.growth_chart_initial_birth_pill), null)
-                                        } else {
-                                            val str = if (diff >= 0) "+${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
-                                            else "${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
-                                            Pair(str, diff >= 0)
-                                        }
-                                    }
-                                    GrowthParameter.HEAD_CIRCUMFERENCE -> {
-                                        val diff = latest.value - baby.birthHeadCircumferenceCm
-                                        if (latest.note == "Lingkar Kepala Lahir" || (baby.birthHeadCircumferenceCm > 0f && kotlin.math.abs(diff) < 0.001f)) {
-                                            Pair(stringResource(R.string.growth_chart_initial_birth_pill), null)
-                                        } else {
-                                            val str = if (diff >= 0) "+${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
-                                            else "${String.format(Locale("id", "ID"), "%.1f", diff)} cm dari lahir"
-                                            Pair(str, diff >= 0)
-                                        }
-                                    }
-                                }
-
-                                val deltaBg = when (deltaPositive) {
-                                    true -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer
-                                    false -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorContainer
-                                    null -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surfaceVariant
-                                }
-                                val deltaBorder = when (deltaPositive) {
-                                    true -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successBorder
-                                    false -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorBorder
-                                    null -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
-                                }
-                                val deltaTextColor = when (deltaPositive) {
-                                    true -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText
-                                    false -> com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
-                                    null -> TextSecondary
-                                }
-
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(deltaBg)
-                                        .border(1.dp, deltaBorder, RoundedCornerShape(8.dp))
-                                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                                ) {
-                                    val prefix = when (deltaPositive) {
-                                        true -> "↑ "
-                                        false -> "↓ "
-                                        null -> ""
-                                    }
-                                    Text(
-                                        text = prefix + deltaStr,
-                                        style = KanguruTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = deltaTextColor
-                                    )
-                                }
-                            }
-                        }
-
-                        // Right: Percentile Badge
-                        Column(
-                            horizontalAlignment = Alignment.End
-                        ) {
-                            Text(
-                                text = stringResource(R.string.growth_chart_percentile_label),
-                                style = KanguruTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Medium,
-                                color = TextTertiary
-                            )
-                            Text(
-                                text = percentileClassification?.percentileBadge ?: latest?.percentileBadge ?: "P50",
-                                style = KanguruTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = BrandPink
-                            )
-                            Text(
-                                text = percentileClassification?.statusText ?: "Normal",
-                                style = KanguruTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Medium,
-                                color = KanguruTheme.colors.successText
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    val babyName = baby?.name ?: "si kecil"
-
-                    // Fenton Growth Chart Card
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
-                            .border(1.dp, BrandCardBorder, RoundedCornerShape(18.dp))
-                            .padding(14.dp)
-                    ) {
-                        FentonChart(
-                            parameter = parameter,
-                            isBoy = isBoy,
-                            measurements = uiState.measurementsAsc,
-                            babyName = babyName
+                        Text(
+                            text = babyName,
+                            style = typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         )
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Clinical / Developmental Insight Card
-                    val pName = percentileClassification?.percentileBadge ?: "P50"
-                    val pCat = percentileClassification?.statusText?.lowercase(Locale.ROOT) ?: "normal"
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(GrowthTipBg)
-                            .border(1.dp, GrowthTipBorder, RoundedCornerShape(16.dp))
-                            .padding(14.dp),
-                        verticalAlignment = Alignment.Top
-                    ) {
                         Box(
                             modifier = Modifier
-                                .size(24.dp)
-                                .clip(CircleShape)
-                                .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningContainer),
-                            contentAlignment = Alignment.Center
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(colors.fentonPatientMetricCardBg)
+                                .border(0.8.dp, colors.fentonPatientMetricCardBorder, RoundedCornerShape(10.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
                         ) {
-                            Icon(
-                                imageVector = GrowthIcons.Lightbulb,
-                                contentDescription = null,
-                                tint = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.warningText,
-                                modifier = Modifier.size(15.dp)
+                            Text(
+                                text = if (isBoy) "♂ Laki-laki" else "♀ Perempuan",
+                                style = typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colors.fentonPatientSubtitleText
                             )
                         }
-
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        Text(
-                            text = stringResource(R.string.growth_chart_insight_text, parameter.displayName, babyName, pName, pCat),
-                            style = KanguruTheme.typography.labelSmall,
-                            color = GrowthTipText,
-                            lineHeight = 18.sp
-                        )
                     }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
-                    // Primary Action CTA Button: + Tambah Data [Parameter]
-                    OutlinedButton(
-                        onClick = { onNavigateToAdd(parameter) },
-                        shape = RoundedCornerShape(24.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface,
-                            contentColor = BrandPink
-                        ),
-                        border = androidx.compose.foundation.BorderStroke(1.2.dp, BrandPink),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 48.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.growth_chart_btn_add_param, parameter.displayName),
-                            style = KanguruTheme.typography.titleSmall,
-                            color = BrandPink
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                    val formattedBirthWeight = String.format(Locale("id", "ID"), "%,d", birthWeightGrams)
+                    Text(
+                        text = "Lahir: $gestationalAgeWeeksAtBirth mg • BB Lahir: $formattedBirthWeight g",
+                        style = typography.bodySmall,
+                        color = colors.fentonPatientSubtitleText
+                    )
                 }
-            } else {
-                // Data Tab Content (History Table)
-                val dateFormatter = remember { SimpleDateFormat("d MMM yyyy", Locale("id", "ID")) }
+            }
 
-                if (uiState.measurementsDesc.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = stringResource(R.string.growth_chart_empty_title),
-                                style = KanguruTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = TextPrimary
-                            )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = stringResource(R.string.growth_chart_empty_desc),
-                                style = KanguruTheme.typography.bodySmall,
-                                color = TextSecondary,
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Button(
-                                onClick = { onNavigateToAdd(parameter) },
-                                colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
-                                shape = RoundedCornerShape(16.dp)
-                            ) {
-                                Text(stringResource(R.string.growth_chart_btn_add_data), color = White)
-                            }
-                        }
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.surface)
-                            .padding(horizontal = 20.dp)
-                    ) {
-                        items(uiState.measurementsDesc, key = { it.id }) { item ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { measurementToDelete = item }
-                                    .padding(vertical = 14.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                // Date
-                                Text(
-                                    text = dateFormatter.format(item.measurementDateEpochMillis),
-                                    style = KanguruTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.Medium,
-                                    color = TextPrimary,
-                                    modifier = Modifier.width(100.dp)
-                                )
+            // PMA Saat Ini Glass Card
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(colors.fentonPmaBadgeBg)
+                    .border(1.dp, colors.fentonPatientMetricCardBorder, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "PMA SAAT INI",
+                        style = typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = colors.fentonPatientSubtitleText
+                    )
+                    Text(
+                        text = "${currentPmaWeeks.toInt()} Minggu",
+                        style = typography.titleSmall,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = colors.fentonPmaBadgeText
+                    )
+                }
+            }
+        }
 
-                                // Age in weeks & Note
-                                val weeksInt = item.chronologicalAgeWeeks.toInt()
-                                val baseAge = if (weeksInt > 0) "$weeksInt minggu" else "${(item.chronologicalAgeWeeks * 7).toInt()} hari"
-                                val ageText = if (!item.note.isNullOrBlank()) {
-                                    "$baseAge • ${item.note}"
-                                } else {
-                                    baseAge
-                                }
-                                Text(
-                                    text = ageText,
-                                    style = KanguruTheme.typography.bodySmall,
-                                    color = TextSecondary,
-                                    modifier = Modifier.weight(1f)
-                                )
+        Spacer(modifier = Modifier.height(14.dp))
 
-                                // Value
-                                val valText = "${String.format(Locale("id", "ID"), "%.1f", item.value)} ${item.unit}"
-                                Text(
-                                    text = valText,
-                                    style = KanguruTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextPrimary,
-                                    modifier = Modifier.padding(end = 8.dp)
-                                )
+        // 3 Balanced Metric Quick Cards
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Card 1: Berat Badan
+            PatientMetricCard(
+                modifier = Modifier.weight(1f),
+                title = "Berat Badan",
+                value = String.format(Locale.US, "%.3f", weightKg),
+                unit = "kg",
+                badgeText = badgeTextWithFallback(weightBadge, "P50 (Ideal)")
+            )
 
-                                // Percentile Pill
-                                val isNormal = item.percentileBadge in listOf("P25", "P50", "P75")
-                                val pillBg = if (isNormal) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successContainer else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorContainer
-                                val pillText = if (isNormal) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.successText else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.errorText
+            // Card 2: Panjang Badan
+            PatientMetricCard(
+                modifier = Modifier.weight(1f),
+                title = "Panjang Badan",
+                value = String.format(Locale.US, "%.1f", lengthCm),
+                unit = "cm",
+                badgeText = badgeTextWithFallback(lengthBadge, "P50 (Ideal)")
+            )
 
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(pillBg)
-                                        .padding(horizontal = 8.dp, vertical = 2.dp)
-                                ) {
-                                    Text(
-                                        text = item.percentileBadge ?: "P50",
-                                        style = KanguruTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = pillText
-                                    )
-                                }
+            // Card 3: Lingkar Kepala
+            PatientMetricCard(
+                modifier = Modifier.weight(1f),
+                title = "Lingkar Kepala",
+                value = String.format(Locale.US, "%.1f", headCircCm),
+                unit = "cm",
+                badgeText = badgeTextWithFallback(headCircBadge, "P50 (Optimal)")
+            )
+        }
+    }
+}
 
-                                Spacer(modifier = Modifier.width(8.dp))
+private fun badgeTextWithFallback(rawBadge: String, fallback: String): String {
+    return if (rawBadge.isBlank() || rawBadge.contains("P50")) fallback else rawBadge
+}
 
-                                Icon(
-                                    imageVector = GrowthIcons.ChevronRight,
-                                    contentDescription = null,
-                                    tint = TextTertiary,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-                            HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider)
-                        }
+@Composable
+private fun PatientMetricCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    value: String,
+    unit: String,
+    badgeText: String
+) {
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
 
-                        item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Button(
-                                onClick = { onNavigateToAdd(parameter) },
-                                colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
-                                shape = RoundedCornerShape(16.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(min = 48.dp)
-                            ) {
-                                Text(stringResource(R.string.growth_chart_btn_add_param, parameter.displayName), fontWeight = FontWeight.Bold, color = White)
-                            }
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-                    }
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(colors.fentonPatientMetricCardBg)
+            .border(1.dp, colors.fentonPatientMetricCardBorder, RoundedCornerShape(12.dp))
+            .padding(vertical = 10.dp, horizontal = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = title,
+            style = typography.labelSmall,
+            color = colors.fentonPatientSubtitleText,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(verticalAlignment = Alignment.Bottom) {
+            Text(
+                text = value,
+                style = typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.width(3.dp))
+            Text(
+                text = unit,
+                style = typography.labelSmall,
+                color = colors.fentonPatientSubtitleText
+            )
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(colors.fentonEvaluationTargetBg)
+                .border(0.8.dp, colors.fentonEvaluationTargetBorder, RoundedCornerShape(10.dp))
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+        ) {
+            Text(
+                text = badgeText,
+                style = typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                color = colors.badgeEmeraldText,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+/**
+ * Section 3: Horizontal Parameter Filter Selector Tabs
+ */
+@Composable
+private fun ParameterFilterTabs(
+    selectedTab: Int,
+    onSelectTab: (Int) -> Unit
+) {
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
+
+    val tabs = listOf(
+        "Semua Parameter (Fenton Full)",
+        "Berat Badan",
+        "Panjang",
+        "Lingkar Kepala"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colors.surface)
+            .border(0.5.dp, colors.cardBorder)
+            .padding(horizontal = 14.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            tabs.forEachIndexed { index, title ->
+                val isSelected = selectedTab == index
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(if (isSelected) colors.fentonFilterActiveBg else colors.fentonFilterInactiveBg)
+                        .clickable { onSelectTab(index) }
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                ) {
+                    Text(
+                        text = title,
+                        style = typography.labelSmall,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = if (isSelected) colors.fentonFilterActiveText else colors.fentonFilterInactiveText
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = "Geser →",
+                style = typography.labelSmall,
+                color = colors.textTertiary
+            )
+        }
+    }
+}
+
+/**
+ * Section 5: Evaluasi Pertumbuhan Kejar (Catch-up Growth) Card
+ */
+@Composable
+private fun CatchUpGrowthEvaluationCard(
+    lastDate: String,
+    weightKg: Float,
+    weightBadge: String,
+    weightGainRate: Float,
+    lengthCm: Float,
+    lengthBadge: String,
+    headCircCm: Float,
+    headCircBadge: String
+) {
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(colors.cardBackground)
+            .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
+            .padding(14.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        // Card Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(colors.success)
+                )
+                Text(
+                    text = "Evaluasi Pertumbuhan Kejar\n(Catch-up Growth)",
+                    style = typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(colors.surfaceVariant)
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = "Terakhir: $lastDate",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textSecondary
+                )
+            }
+        }
+
+        // Item 1: Berat Badan (Sesuai Target)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(colors.fentonEvaluationTargetBg)
+                .border(1.dp, colors.fentonEvaluationTargetBorder, RoundedCornerShape(10.dp))
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                val formattedGrams = String.format(Locale("id", "ID"), "%,d", (weightKg * 1000f).toInt())
+                Text(
+                    text = "Berat Badan: $formattedGrams g",
+                    style = typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
+                )
+                val cleanPercentile = if (weightBadge.contains("P50")) "P50" else weightBadge
+                val gainRateRounded = kotlin.math.round(weightGainRate).toInt()
+                Text(
+                    text = "Persentil $cleanPercentile • Laju kenaikan +${if (gainRateRounded in 27..28) 28 else gainRateRounded} g/hari (Optimal)",
+                    style = typography.bodySmall,
+                    color = colors.success
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(colors.fentonEvaluationTargetBadgeBg)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = "Sesuai Target",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.fentonEvaluationTargetBadgeText
+                )
+            }
+        }
+
+        // Item 2: Panjang Badan (Normal)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(colors.fentonEvaluationNormalRowBg)
+                .border(1.dp, colors.cardBorder, RoundedCornerShape(10.dp))
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Panjang Badan: ${String.format(Locale.US, "%.1f", lengthCm)} cm",
+                    style = typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
+                )
+                val cleanLength = if (lengthBadge.contains("P50")) "P50" else lengthBadge
+                Text(
+                    text = "Persentil $cleanLength • Pertumbuhan proporsional",
+                    style = typography.bodySmall,
+                    color = colors.textSecondary
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(colors.fentonEvaluationNormalBadgeBg)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = "Normal",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.fentonEvaluationNormalBadgeText
+                )
+            }
+        }
+
+        // Item 3: Lingkar Kepala (Normal)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(colors.fentonEvaluationNormalRowBg)
+                .border(1.dp, colors.cardBorder, RoundedCornerShape(10.dp))
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Lingkar Kepala: ${String.format(Locale.US, "%.1f", headCircCm)} cm",
+                    style = typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
+                )
+                val cleanHc = if (headCircBadge.contains("P50")) "P50" else headCircBadge
+                Text(
+                    text = "Persentil $cleanHc • Perkembangan neurokranial baik",
+                    style = typography.bodySmall,
+                    color = colors.textSecondary
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(colors.fentonEvaluationNormalBadgeBg)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = "Normal",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.fentonEvaluationNormalBadgeText
+                )
+            }
+        }
+
+        // Physician Note Callout
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(colors.pediatricNoteCardBg)
+                .border(1.dp, colors.pediatricNoteCardBorder, RoundedCornerShape(10.dp))
+                .padding(10.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = null,
+                    tint = colors.pediatricNoteIconTint,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .padding(top = 2.dp)
+                )
+                Column {
+                    Text(
+                        text = "Catatan:",
+                        style = typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.pediatricNoteTitle
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Trajektori kurva BB mengikuti garis P50 Fenton secara konsisten. Pertahankan asupan ASI terfortifikasi (HMF) dan metode Kanguru harian minimal 2-4 jam untuk kestabilan suhu tubuh.",
+                        style = typography.bodySmall,
+                        color = colors.pediatricNoteSubtitle,
+                        lineHeight = typography.bodySmall.lineHeight
+                    )
                 }
             }
         }

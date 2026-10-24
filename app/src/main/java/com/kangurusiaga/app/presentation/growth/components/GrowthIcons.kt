@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Scale
 import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object GrowthIcons {
@@ -30,4 +32,6 @@ object GrowthIcons {
     val Head = Icons.Default.Face
     val Trending = Icons.AutoMirrored.Filled.TrendingUp
     val Reminder = Icons.Default.Notifications
+    val Delete = Icons.Default.DeleteOutline
+    val Warning = Icons.Default.Warning
 }

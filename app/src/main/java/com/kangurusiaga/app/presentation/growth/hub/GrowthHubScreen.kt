@@ -69,6 +69,7 @@ fun GrowthHubScreen(
     onNavigateBack: () -> Unit,
     onNavigateToChart: (GrowthParameter) -> Unit,
     onNavigateToAdd: (GrowthParameter) -> Unit,
+    onNavigateToBatchAdd: () -> Unit = {},
     onNavigateToSummary: () -> Unit,
     onNavigateToAboutFenton: () -> Unit,
     successMessage: String? = null,
@@ -238,7 +239,7 @@ fun GrowthHubScreen(
 
             // Primary CTA: + Tambah Data Pertumbuhan
             Button(
-                onClick = { showSelectSheet = true },
+                onClick = onNavigateToBatchAdd,
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
                 modifier = Modifier

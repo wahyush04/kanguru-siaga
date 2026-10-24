@@ -1,6 +1,7 @@
 package com.kangurusiaga.app.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
+import com.kangurusiaga.app.data.local.dao.BabyDao
 import com.kangurusiaga.app.data.local.dao.BabyProfileDao
 import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
@@ -20,6 +21,7 @@ class EnsureInitialGrowthDataUseCaseTest {
     private val growthRepository: GrowthRepository = mockk(relaxed = true)
     private val fentonGrowthRepository: FentonGrowthRepository = mockk(relaxed = true)
     private val babyProfileDao: BabyProfileDao = mockk(relaxed = true)
+    private val babyDao: BabyDao = mockk(relaxed = true)
 
     private lateinit var useCase: EnsureInitialGrowthDataUseCase
 
@@ -28,9 +30,11 @@ class EnsureInitialGrowthDataUseCaseTest {
         useCase = EnsureInitialGrowthDataUseCase(
             growthRepository = growthRepository,
             fentonGrowthRepository = fentonGrowthRepository,
-            babyProfileDao = babyProfileDao
+            babyProfileDao = babyProfileDao,
+            babyDao = babyDao
         )
     }
+
 
     @Test
     fun invoke_whenBirthWeightIsZero_skipsAndReturnsSuccess() = runTest {

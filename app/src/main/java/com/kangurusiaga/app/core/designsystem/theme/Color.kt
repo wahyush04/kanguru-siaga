@@ -342,4 +342,51 @@ val GrowthHeadBorder: Color
     @ReadOnlyComposable
     get() = KanguruTheme.colors.growthHeadBorder
 
+// Fenton Batch Input Screen Convenience Tokens
+val GrowthBabyBannerBg: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthBabyBannerBg
+
+val GrowthBabyAvatarBg: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthBabyAvatarBg
+
+val GrowthBabyAvatarBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthBabyAvatarBorder
+
+val GrowthBabyGenderBadgeBg: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthBabyGenderBadgeBg
+
+val GrowthBabyGenderBadgeText: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthBabyGenderBadgeText
+
+val GrowthPmaHighlight: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthPmaHighlight
+
+val GrowthTableDashedBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthTableDashedBorder
+
+val GrowthTableDashedBg: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthTableDashedBg
+
+val GrowthTableDashedText: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = KanguruTheme.colors.growthTableDashedText
+
+
 

@@ -21,8 +21,11 @@ interface BabyDao {
     @Query("SELECT * FROM babies LIMIT 1")
     suspend fun getFirstBaby(): BabyEntity?
 
-    @Query("SELECT * FROM babies WHERE id = :id LIMIT 1")
-    suspend fun getBabyById(id: Long): BabyEntity?
+    @Query("SELECT * FROM babies WHERE name LIKE :nameQuery LIMIT 1")
+    suspend fun getBabyByName(nameQuery: String): BabyEntity?
+
+    @Query("UPDATE babies SET isActive = 0")
+    suspend fun deactivateAllBabies()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBaby(baby: BabyEntity): Long

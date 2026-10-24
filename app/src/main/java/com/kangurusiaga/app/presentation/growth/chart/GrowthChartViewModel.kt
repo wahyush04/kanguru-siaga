@@ -3,6 +3,8 @@ package com.kangurusiaga.app.presentation.growth.chart
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
+import com.kangurusiaga.app.data.local.fenton.GrowthPercentileEvaluation
 import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
@@ -15,14 +17,30 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class GrowthChartUiState(
     val parameter: GrowthParameter = GrowthParameter.WEIGHT,
-    val selectedTab: Int = 0, // 0 = Grafik, 1 = Data
+    val selectedTab: Int = 0, // 0 = Semua Parameter (Fenton Full), 1 = Berat Badan, 2 = Panjang, 3 = Lingkar Kepala
     val baby: Baby? = null,
+    val currentPmaWeeks: Float = 35f,
+    // All 3 parameter measurements in ascending order for chart plotting
+    val weightMeasurementsAsc: List<GrowthMeasurement> = emptyList(),
+    val lengthMeasurementsAsc: List<GrowthMeasurement> = emptyList(),
+    val headCircMeasurementsAsc: List<GrowthMeasurement> = emptyList(),
+    // Latest measurements for each metric
+    val latestWeight: GrowthMeasurement? = null,
+    val latestLength: GrowthMeasurement? = null,
+    val latestHeadCirc: GrowthMeasurement? = null,
+    // LMS evaluations
+    val weightEvaluation: GrowthPercentileEvaluation? = null,
+    val lengthEvaluation: GrowthPercentileEvaluation? = null,
+    val headCircEvaluation: GrowthPercentileEvaluation? = null,
+    val weightGainRateGramsPerDay: Float = 28f,
+    // For legacy single-parameter list views
     val measurementsAsc: List<GrowthMeasurement> = emptyList(),
     val measurementsDesc: List<GrowthMeasurement> = emptyList(),
     val latestMeasurement: GrowthMeasurement? = null,
@@ -38,13 +56,23 @@ class GrowthChartViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val parameterName: String = savedStateHandle.get<String>("parameter") ?: GrowthParameter.WEIGHT.name
-    val parameter: GrowthParameter = GrowthParameter.fromName(parameterName)
-    private val initialTab: Int = savedStateHandle.get<Int>("tab") ?: 0
+    private val parameterName: String = savedStateHandle.get<String>("parameter") ?: "FULL"
+    private val initialTab: Int = savedStateHandle.get<Int>("tab") ?: when (parameterName.uppercase()) {
+        "WEIGHT" -> 1
+        "LENGTH" -> 2
+        "HEAD_CIRCUMFERENCE" -> 3
+        else -> 0
+    }
+
+    private val initialParam: GrowthParameter = when (parameterName.uppercase()) {
+        "LENGTH" -> GrowthParameter.LENGTH
+        "HEAD_CIRCUMFERENCE" -> GrowthParameter.HEAD_CIRCUMFERENCE
+        else -> GrowthParameter.WEIGHT
+    }
 
     private val _uiState = MutableStateFlow(
         GrowthChartUiState(
-            parameter = parameter,
+            parameter = initialParam,
             selectedTab = initialTab
         )
     )
@@ -55,33 +83,128 @@ class GrowthChartViewModel @Inject constructor(
     }
 
     fun selectTab(index: Int) {
-        _uiState.update { it.copy(selectedTab = index) }
+        val targetParam = when (index) {
+            1 -> GrowthParameter.WEIGHT
+            2 -> GrowthParameter.LENGTH
+            3 -> GrowthParameter.HEAD_CIRCUMFERENCE
+            else -> GrowthParameter.WEIGHT
+        }
+        _uiState.update { current ->
+            val activeAsc = when (index) {
+                1 -> current.weightMeasurementsAsc
+                2 -> current.lengthMeasurementsAsc
+                3 -> current.headCircMeasurementsAsc
+                else -> current.weightMeasurementsAsc
+            }
+            current.copy(
+                selectedTab = index,
+                parameter = targetParam,
+                measurementsAsc = activeAsc,
+                measurementsDesc = activeAsc.asReversed(),
+                latestMeasurement = activeAsc.lastOrNull()
+            )
+        }
     }
 
     private fun loadData() {
         viewModelScope.launch {
+            try {
+                ensureInitialGrowthDataUseCase.ensureArkaNarendraSampleData()
+            } catch (_: Exception) {
+            }
+
             babyRepository.getActiveBaby().collectLatest { baby ->
-                _uiState.update { it.copy(baby = baby, isLoading = false) }
-                if (baby != null) {
-                    launch {
-                        try {
-                            ensureInitialGrowthDataUseCase(baby)
-                        } catch (_: Exception) {
-                        }
+                if (baby == null) {
+                    _uiState.update { it.copy(isLoading = false) }
+                    return@collectLatest
+                }
+
+                // Compute real PMA (35 weeks for Arka)
+                val chronoWeeks = ((System.currentTimeMillis() - baby.birthDateEpochMillis) / (7.0 * 24 * 60 * 60 * 1000.0)).toFloat()
+                val calculatedPma = (baby.gestationalAgeWeeks.toFloat() + chronoWeeks).coerceIn(22f, 50f)
+
+                _uiState.update { it.copy(baby = baby, currentPmaWeeks = calculatedPma, isLoading = false) }
+
+                launch {
+                    try {
+                        ensureInitialGrowthDataUseCase(baby)
+                    } catch (_: Exception) {
                     }
-                    launch {
-                        growthRepository.getMeasurementsAsc(baby.id, parameter).collectLatest { list ->
-                            _uiState.update { it.copy(measurementsAsc = list) }
+                }
+
+                // Combine flows for all 3 parameters
+                launch {
+                    combine(
+                        growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.WEIGHT),
+                        growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.LENGTH),
+                        growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE)
+                    ) { weights, lengths, headCircs ->
+                        Triple(weights, lengths, headCircs)
+                    }.collectLatest { (weights, lengths, headCircs) ->
+                        val latestW = weights.lastOrNull()
+                        val latestL = lengths.lastOrNull()
+                        val latestHc = headCircs.lastOrNull()
+
+                        val evalW = if (latestW != null) {
+                            FentonReferenceData.evaluatePercentile(
+                                parameter = GrowthParameter.WEIGHT,
+                                gender = baby.gender,
+                                pmaWeeks = latestW.pmaWeeks,
+                                value = latestW.value
+                            )
+                        } else null
+
+                        val evalL = if (latestL != null) {
+                            FentonReferenceData.evaluatePercentile(
+                                parameter = GrowthParameter.LENGTH,
+                                gender = baby.gender,
+                                pmaWeeks = latestL.pmaWeeks,
+                                value = latestL.value
+                            )
+                        } else null
+
+                        val evalHc = if (latestHc != null) {
+                            FentonReferenceData.evaluatePercentile(
+                                parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
+                                gender = baby.gender,
+                                pmaWeeks = latestHc.pmaWeeks,
+                                value = latestHc.value
+                            )
+                        } else null
+
+                        // Calculate rate of weight gain in grams/day if >= 2 measurements exist
+                        val weightGainRate = if (weights.size >= 2) {
+                            val prev = weights[weights.size - 2]
+                            val curr = weights.last()
+                            val days = ((curr.measurementDateEpochMillis - prev.measurementDateEpochMillis) / (1000.0 * 60 * 60 * 24)).coerceAtLeast(1.0)
+                            val gainGrams = (curr.value - prev.value) * 1000f
+                            (gainGrams / days).toFloat().coerceIn(0f, 100f)
+                        } else {
+                            28f // Standard clinically targetted catch-up rate (+28 g/hari)
                         }
-                    }
-                    launch {
-                        growthRepository.getMeasurementsDesc(baby.id, parameter).collectLatest { list ->
-                            _uiState.update {
-                                it.copy(
-                                    measurementsDesc = list,
-                                    latestMeasurement = list.firstOrNull()
-                                )
+
+                        _uiState.update { current ->
+                            val activeAsc = when (current.selectedTab) {
+                                1 -> weights
+                                2 -> lengths
+                                3 -> headCircs
+                                else -> weights
                             }
+                            current.copy(
+                                weightMeasurementsAsc = weights,
+                                lengthMeasurementsAsc = lengths,
+                                headCircMeasurementsAsc = headCircs,
+                                latestWeight = latestW,
+                                latestLength = latestL,
+                                latestHeadCirc = latestHc,
+                                weightEvaluation = evalW,
+                                lengthEvaluation = evalL,
+                                headCircEvaluation = evalHc,
+                                weightGainRateGramsPerDay = weightGainRate,
+                                measurementsAsc = activeAsc,
+                                measurementsDesc = activeAsc.asReversed(),
+                                latestMeasurement = activeAsc.lastOrNull()
+                            )
                         }
                     }
                 }
@@ -96,3 +219,4 @@ class GrowthChartViewModel @Inject constructor(
         }
     }
 }
+

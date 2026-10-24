@@ -1,5 +1,11 @@
 package com.kangurusiaga.app.presentation.growth.chart
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,94 +20,105 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import com.kangurusiaga.app.R
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
-import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
-import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.data.local.fenton.FentonCurvePoint
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
-import kotlin.math.ceil
 
+/**
+ * FentonChart - Fenton Preterm Growth Chart (Laki-laki / Perempuan)
+ * Faithful 1:1 Implementation of Google Stitch Screen:
+ * projects/10808370107038581899/screens/d28b07eb3b934af1a98a28afd98704f7
+ */
 @Composable
 fun FentonChart(
-    parameter: GrowthParameter,
+    selectedTab: Int,
     isBoy: Boolean,
-    measurements: List<GrowthMeasurement>,
-    babyName: String = "si kecil",
+    weightMeasurements: List<GrowthMeasurement>,
+    lengthMeasurements: List<GrowthMeasurement>,
+    headCircMeasurements: List<GrowthMeasurement>,
+    currentPmaWeeks: Float,
+    babyName: String,
     modifier: Modifier = Modifier
 ) {
     val textMeasurer = rememberTextMeasurer()
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
     val gender = if (isBoy) Gender.MALE else Gender.FEMALE
-    val curvePoints: List<FentonCurvePoint> = remember(parameter, isBoy) {
-        FentonReferenceData.getCurvePoints(parameter, gender)
+
+    // Pulse animation for the latest measurement dot
+    val infiniteTransition = rememberInfiniteTransition(label = "fentonPulse")
+    val pulseRadius by infiniteTransition.animateFloat(
+        initialValue = 4.5f,
+        targetValue = 9f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseRadius"
+    )
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.85f,
+        targetValue = 0.2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
+
+    // LMS curves from Fenton reference data
+    val weightCurves: List<FentonCurvePoint> = remember(gender) {
+        FentonReferenceData.getCurvePoints(GrowthParameter.WEIGHT, gender)
+    }
+    val lengthCurves: List<FentonCurvePoint> = remember(gender) {
+        FentonReferenceData.getCurvePoints(GrowthParameter.LENGTH, gender)
+    }
+    val headCircCurves: List<FentonCurvePoint> = remember(gender) {
+        FentonReferenceData.getCurvePoints(GrowthParameter.HEAD_CIRCUMFERENCE, gender)
     }
 
-    // Determine Y range and ticks dynamically so all percentiles and measurements are fully visible.
-    // Specifically:
-    // - Weight: Fenton 2013 P97 reaches 7.275 kg at week 50. Default maxY = 8f fits all percentiles up to 50 weeks!
-    // - Length: Fenton 2013 P97 reaches ~60.3 cm. Default maxY = 70f fits all percentiles!
-    // - Head Circumference: Fenton 2013 P97 reaches ~41 cm. Default maxY = 45f fits all percentiles!
-    val (minY, maxY, yTicks) = remember(parameter, measurements) {
-        when (parameter) {
-            GrowthParameter.WEIGHT -> {
-                val maxMeas = measurements.maxOfOrNull { it.value } ?: 0f
-                val topY = if (maxMeas > 7.5f) ceil(maxMeas + 0.5f) else 8f
-                val ticks = (0..topY.toInt()).map { it.toFloat() }
-                Triple(0f, topY, ticks)
-            }
-            GrowthParameter.LENGTH -> {
-                val maxMeas = measurements.maxOfOrNull { it.value } ?: 0f
-                val topY = if (maxMeas > 68f) ceil((maxMeas + 5f) / 10f) * 10f else 70f
-                val ticks = generateSequence(20f) { it + 10f }.takeWhile { it <= topY }.toList()
-                Triple(20f, topY, ticks)
-            }
-            GrowthParameter.HEAD_CIRCUMFERENCE -> {
-                val maxMeas = measurements.maxOfOrNull { it.value } ?: 0f
-                val topY = if (maxMeas > 43f) ceil((maxMeas + 5f) / 5f) * 5f else 45f
-                val ticks = generateSequence(15f) { it + 5f }.takeWhile { it <= topY }.toList()
-                Triple(15f, topY, ticks)
-            }
-        }
-    }
-
-    val minX = 22f
-    val maxX = 50f
-    val xTicks = listOf(22f, 26f, 30f, 34f, 38f, 42f, 46f, 50f)
-
-    Column(modifier = modifier.fillMaxWidth()) {
-        // 1. Chart Card Header: Title + Gender Pill Badge
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(colors.cardBackground)
+            .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
+    ) {
+        // 1. Chart Header Bar with Citation Tag & Standard
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp),
+                .background(colors.fentonChartHeaderBg)
+                .padding(horizontal = 14.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -114,470 +130,684 @@ fun FentonChart(
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(BrandPink)
+                        .background(colors.info)
                 )
                 Text(
-                    text = stringResource(R.string.growth_chart_fenton_curve_title),
-                    style = KanguruTheme.typography.labelMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary
+                    text = if (isBoy) "Fenton 2013 • Laki-Laki" else "Fenton 2013 • Perempuan",
+                    style = typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
                 )
             }
 
-            // Gender Pill Badge
-            val genderBg = if (isBoy) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoContainer else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer
-            val genderBorder = if (isBoy) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoBorder else com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder
-            val genderColor = if (isBoy) com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoText else BrandPink
-            val genderSymbol = if (isBoy) "♂" else "♀"
-            val genderLabel = if (isBoy) stringResource(R.string.baby_profile_gender_male) else stringResource(R.string.baby_profile_gender_female)
-
-            Row(
+            Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(genderBg)
-                    .border(1.dp, genderBorder, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 8.dp, vertical = 3.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(colors.surface)
+                    .border(1.dp, colors.cardBorder, RoundedCornerShape(6.dp))
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
             ) {
                 Text(
-                    text = genderSymbol,
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = genderColor
-                )
-                Text(
-                    text = genderLabel,
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = genderColor
+                    text = "22–50 Minggu",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.textSecondary
                 )
             }
         }
 
-        HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider, thickness = 1.dp)
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // 2. Y-axis unit label
-        Text(
-            text = when (parameter) {
-                GrowthParameter.WEIGHT -> stringResource(R.string.growth_chart_unit_weight)
-                GrowthParameter.LENGTH -> stringResource(R.string.growth_chart_unit_length)
-                GrowthParameter.HEAD_CIRCUMFERENCE -> stringResource(R.string.growth_chart_unit_head)
-            },
-            style = KanguruTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
-            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 2.dp, bottom = 4.dp)
-        )
-
-        val gridColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider
-        val baseLineColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.cardBorder
-        val axisTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
-        val pointCenterColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
-        val p97Color = KanguruTheme.colors.fentonP97
-        val p90Color = KanguruTheme.colors.fentonP90
-        val p50Color = KanguruTheme.colors.fentonP50
-        val p10Color = KanguruTheme.colors.fentonP10
-        val p3Color = KanguruTheme.colors.fentonP3
-
-        // 3. Chart Canvas Container
+        // 2. High-Precision Vector Canvas Fitting ViewBox (0 0 760 920)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
+                .background(colors.surface)
+                .padding(horizontal = 6.dp, vertical = 6.dp)
         ) {
-            Canvas(modifier = Modifier.matchParentSize()) {
-                val leftPad = 26.dp.toPx()
-                val rightPad = 38.dp.toPx()
-                val topPad = 12.dp.toPx()
-                val bottomPad = 22.dp.toPx()
+            Canvas(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(460.dp)
+            ) {
+                val canvasW = size.width
+                val canvasH = size.height
 
-                val plotLeft = leftPad
-                val plotRight = size.width - rightPad
-                val plotTop = topPad
-                val plotBottom = size.height - bottomPad
+                // Coordinate Mapping Functions from 760 x 920 SVG ViewBox
+                val scaleX = canvasW / 760f
+                val scaleY = canvasH / 920f
+                fun sx(x: Float): Float = x * scaleX
+                fun sy(y: Float): Float = y * scaleY
 
-                val plotWidth = plotRight - plotLeft
-                val plotHeight = plotBottom - plotTop
+                // Grid and Curve Colors
+                val gridMajorColor = colors.fentonChartGridMajor
+                val gridMinorColor = colors.fentonChartGridMinor
+                val curveMedianColor = colors.fentonChartCurveMedian
+                val curveOuterColor = colors.fentonChartCurveOuter
+                val curveInnerColor = colors.fentonChartCurveInner
+                val trajectoryColor = colors.fentonPlotTrajectory
+                val labelTextColor = colors.textPrimary
 
-                fun pmaToX(pma: Float): Float {
-                    val clamped = pma.coerceIn(minX, maxX)
-                    return plotLeft + ((clamped - minX) / (maxX - minX)) * plotWidth
-                }
-
-                fun valToY(v: Float): Float {
-                    val clamped = v.coerceIn(minY, maxY)
-                    return plotBottom - ((clamped - minY) / (maxY - minY)) * plotHeight
-                }
-
-                val labelStyle = TextStyle(
-                    fontSize = 8.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = axisTextColor,
-                    textAlign = TextAlign.End
+                // 2.1 Outer Border Rectangle (x: 65..695, y: 45..870)
+                drawRect(
+                    color = gridMajorColor,
+                    topLeft = Offset(sx(65f), sy(45f)),
+                    size = Size(sx(630f), sy(825f)),
+                    style = Stroke(width = 1.5f)
                 )
 
-                // 1. Draw horizontal grid lines & Y ticks
-                yTicks.forEach { tick ->
-                    val y = valToY(tick)
-                    val isBase = (tick == minY)
+                // 2.2 Chart Top Title
+                val chartTitleText = if (isBoy) {
+                    "Fenton third-generation preterm growth chart - Boys"
+                } else {
+                    "Fenton third-generation preterm growth chart - Girls"
+                }
+                val chartTitleLayout = textMeasurer.measure(
+                    text = chartTitleText,
+                    style = TextStyle(
+                        color = labelTextColor,
+                        fontSize = typography.labelSmall.fontSize * 1.05f,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                drawText(
+                    textLayoutResult = chartTitleLayout,
+                    topLeft = Offset(sx(380f) - chartTitleLayout.size.width / 2f, sy(20f))
+                )
+
+                // 2.3 Vertical Grid Lines (Gestational Weeks 22 to 50)
+                // Major lines every 2 weeks: 22w=65, 24w=110, ... 50w=695 (delta = 45)
+                val majorWeeks = listOf(22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50)
+                majorWeeks.forEach { w ->
+                    val svgX = 65f + ((w - 22) / 2) * 45f
+                    val isTerm40 = w == 40
                     drawLine(
-                        color = if (isBase) baseLineColor else gridColor,
-                        start = Offset(plotLeft, y),
-                        end = Offset(plotRight, y),
-                        strokeWidth = if (isBase) 1.2.dp.toPx() else 0.8.dp.toPx()
+                        color = gridMajorColor,
+                        start = Offset(sx(svgX), sy(45f)),
+                        end = Offset(sx(svgX), sy(870f)),
+                        strokeWidth = if (isTerm40) 1.2f else 0.8f,
+                        pathEffect = if (isTerm40) PathEffect.dashPathEffect(floatArrayOf(4f, 2f), 0f) else null
                     )
 
-                    // Y label
-                    val tickText = if (tick % 1f == 0f) tick.toInt().toString() else tick.toString()
-                    val textLayout = textMeasurer.measure(
-                        text = tickText,
-                        style = labelStyle
+                    // Week label at bottom
+                    val weekLayout = textMeasurer.measure(
+                        text = "$w",
+                        style = TextStyle(
+                            color = labelTextColor,
+                            fontSize = typography.labelSmall.fontSize * 0.9f,
+                            fontWeight = if (isTerm40) FontWeight.Bold else FontWeight.SemiBold
+                        )
                     )
                     drawText(
-                        textLayoutResult = textLayout,
-                        topLeft = Offset(plotLeft - textLayout.size.width - 6.dp.toPx(), y - (textLayout.size.height / 2f))
+                        textLayoutResult = weekLayout,
+                        topLeft = Offset(sx(svgX) - weekLayout.size.width / 2f, sy(876f))
                     )
                 }
 
-                // 2. Draw vertical grid lines & X ticks
-                xTicks.forEach { tick ->
-                    val x = pmaToX(tick)
+                // Minor 1-week lines: 23w=87.5, 25w=132.5, ... 49w=672.5
+                for (w in 23..49 step 2) {
+                    val svgX = 65f + ((w - 22f) / 28f) * 630f
                     drawLine(
-                        color = gridColor,
-                        start = Offset(x, plotTop),
-                        end = Offset(x, plotBottom),
-                        strokeWidth = 0.8.dp.toPx()
-                    )
-
-                    // X tick text below bottom line
-                    val tickText = tick.toInt().toString()
-                    val textLayout = textMeasurer.measure(
-                        text = tickText,
-                        style = labelStyle.copy(textAlign = TextAlign.Center)
-                    )
-                    drawText(
-                        textLayoutResult = textLayout,
-                        topLeft = Offset(x - (textLayout.size.width / 2f), plotBottom + 4.dp.toPx())
+                        color = gridMinorColor,
+                        start = Offset(sx(svgX), sy(45f)),
+                        end = Offset(sx(svgX), sy(870f)),
+                        strokeWidth = 0.45f
                     )
                 }
 
-                // 3. Draw Fenton Curves (P97, P90, P50, P10, P3)
+                // Gestational age (weeks) title at bottom
+                val xAxisCaption = textMeasurer.measure(
+                    text = "Gestational age (weeks)",
+                    style = TextStyle(
+                        color = labelTextColor,
+                        fontSize = typography.labelSmall.fontSize * 0.95f,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                drawText(
+                    textLayoutResult = xAxisCaption,
+                    topLeft = Offset(sx(380f) - xAxisCaption.size.width / 2f, sy(898f))
+                )
+
+                // Date: label at bottom left
+                val dateCaption = textMeasurer.measure(
+                    text = "Date:",
+                    style = TextStyle(
+                        color = labelTextColor,
+                        fontSize = typography.labelSmall.fontSize * 0.9f,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+                drawText(
+                    textLayoutResult = dateCaption,
+                    topLeft = Offset(sx(20f), sy(876f))
+                )
+
+                // 2.4 Horizontal Grid Lines (Upper Length/HC 15..60 cm, Lower Weight 0..4 kg)
+                // Upper Section: Centimeters
+                val cmTicks = listOf(
+                    60 to 50f, 55 to 88f, 50 to 126f, 45 to 165f, 40 to 205f,
+                    35 to 245f, 30 to 285f, 25 to 325f, 20 to 365f, 15 to 405f
+                )
+                cmTicks.forEach { (cm, svgY) ->
+                    drawLine(
+                        color = gridMajorColor,
+                        start = Offset(sx(65f), sy(svgY)),
+                        end = Offset(sx(695f), sy(svgY)),
+                        strokeWidth = 0.7f
+                    )
+                    // Left tick label
+                    val tickLayout = textMeasurer.measure(
+                        text = "$cm",
+                        style = TextStyle(
+                            color = labelTextColor,
+                            fontSize = typography.labelSmall.fontSize * 0.85f,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                    drawText(
+                        textLayoutResult = tickLayout,
+                        topLeft = Offset(sx(60f) - tickLayout.size.width, sy(svgY) - tickLayout.size.height / 2f)
+                    )
+                    // Right tick label
+                    drawText(
+                        textLayoutResult = tickLayout,
+                        topLeft = Offset(sx(700f), sy(svgY) - tickLayout.size.height / 2f)
+                    )
+                }
+
+                // Upper minor cm lines
+                val minorCmY = listOf(69f, 107f, 145f, 185f, 225f, 265f, 305f, 345f, 385f)
+                minorCmY.forEach { svgY ->
+                    drawLine(
+                        color = gridMinorColor,
+                        start = Offset(sx(65f), sy(svgY)),
+                        end = Offset(sx(695f), sy(svgY)),
+                        strokeWidth = 0.4f
+                    )
+                }
+
+                // Left Y-Axis Vertical Label: "Centimeters" rotated -90 degrees
+                rotate(degrees = -90f, pivot = Offset(sx(25f), sy(230f))) {
+                    val cmLabelLayout = textMeasurer.measure(
+                        text = "Centimeters",
+                        style = TextStyle(
+                            color = labelTextColor,
+                            fontSize = typography.labelSmall.fontSize * 1.05f,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    drawText(
+                        textLayoutResult = cmLabelLayout,
+                        topLeft = Offset(sx(25f) - cmLabelLayout.size.width / 2f, sy(230f) - cmLabelLayout.size.height / 2f)
+                    )
+                }
+
+                // Right Y-Axis Vertical Label: "Centimeters" rotated 90 degrees
+                rotate(degrees = 90f, pivot = Offset(sx(742f), sy(150f))) {
+                    val cmRightLayout = textMeasurer.measure(
+                        text = "Centimeters",
+                        style = TextStyle(
+                            color = labelTextColor,
+                            fontSize = typography.labelSmall.fontSize * 1.05f,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    drawText(
+                        textLayoutResult = cmRightLayout,
+                        topLeft = Offset(sx(742f) - cmRightLayout.size.width / 2f, sy(150f) - cmRightLayout.size.height / 2f)
+                    )
+                }
+
+                // Lower Section: Weight (kg)
+                val kgTicks = listOf(
+                    "4" to 525f, "3.5" to 565f, "3" to 605f, "2.5" to 645f,
+                    "2" to 685f, "1.5" to 725f, "1" to 765f, "0.5" to 805f, "0" to 845f
+                )
+                kgTicks.forEach { (kgStr, svgY) ->
+                    drawLine(
+                        color = gridMajorColor,
+                        start = Offset(sx(65f), sy(svgY)),
+                        end = Offset(sx(695f), sy(svgY)),
+                        strokeWidth = 0.7f
+                    )
+                    // Left tick label
+                    val tickLayout = textMeasurer.measure(
+                        text = kgStr,
+                        style = TextStyle(
+                            color = labelTextColor,
+                            fontSize = typography.labelSmall.fontSize * 0.85f,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                    drawText(
+                        textLayoutResult = tickLayout,
+                        topLeft = Offset(sx(60f) - tickLayout.size.width, sy(svgY) - tickLayout.size.height / 2f)
+                    )
+                    // Right tick label
+                    drawText(
+                        textLayoutResult = tickLayout,
+                        topLeft = Offset(sx(700f), sy(svgY) - tickLayout.size.height / 2f)
+                    )
+                }
+
+                // Lower minor kg lines
+                val minorKgY = listOf(425f, 465f, 505f, 545f, 585f, 625f, 665f, 705f, 745f, 785f, 825f)
+                minorKgY.forEach { svgY ->
+                    drawLine(
+                        color = gridMinorColor,
+                        start = Offset(sx(65f), sy(svgY)),
+                        end = Offset(sx(695f), sy(svgY)),
+                        strokeWidth = 0.4f
+                    )
+                }
+
+                // Left Lower Y-Axis Vertical Label: "Weight (kg)" rotated -90 degrees
+                rotate(degrees = -90f, pivot = Offset(sx(25f), sy(680f))) {
+                    val wtLabelLayout = textMeasurer.measure(
+                        text = "Weight (kg)",
+                        style = TextStyle(
+                            color = labelTextColor,
+                            fontSize = typography.labelSmall.fontSize * 1.05f,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    drawText(
+                        textLayoutResult = wtLabelLayout,
+                        topLeft = Offset(sx(25f) - wtLabelLayout.size.width / 2f, sy(680f) - wtLabelLayout.size.height / 2f)
+                    )
+                }
+
+                // Right Lower Y-Axis Vertical Label: "Weight (kg)" rotated 90 degrees
+                rotate(degrees = 90f, pivot = Offset(sx(742f), sy(500f))) {
+                    val wtRightLayout = textMeasurer.measure(
+                        text = "Weight (kg)",
+                        style = TextStyle(
+                            color = labelTextColor,
+                            fontSize = typography.labelSmall.fontSize * 1.05f,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    drawText(
+                        textLayoutResult = wtRightLayout,
+                        topLeft = Offset(sx(742f) - wtRightLayout.size.width / 2f, sy(500f) - wtRightLayout.size.height / 2f)
+                    )
+                }
+
+                // 2.5 Prominent Watermark "Boys" / "Girls" at x=135, y=525
+                val watermarkText = if (isBoy) "Boys" else "Girls"
+                val watermarkLayout = textMeasurer.measure(
+                    text = watermarkText,
+                    style = TextStyle(
+                        color = colors.info.copy(alpha = 0.22f),
+                        fontSize = typography.headlineLarge.fontSize * 2.6f,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                )
+                drawText(
+                    textLayoutResult = watermarkLayout,
+                    topLeft = Offset(sx(135f), sy(460f))
+                )
+
+                // 2.6 Fenton Percentile Curves (Length, Head Circumference, Weight)
+                // Helper to draw percentile curves matching Fenton 3rd Gen exact SVG trajectory
                 fun drawFentonCurve(
-                    valueSelector: (FentonCurvePoint) -> Float,
-                    curveColor: Color,
-                    strokeWidth: Float,
-                    percentileLabel: String
+                    start: Offset,
+                    control: Offset,
+                    mid: Offset,
+                    end: Offset,
+                    color: Color,
+                    width: Float,
+                    isDashed: Boolean = false,
+                    isDotted: Boolean = false
                 ) {
-                    if (curvePoints.isEmpty()) return
-                    val path = Path()
-                    curvePoints.forEachIndexed { idx, pt ->
-                        val x = pmaToX(pt.pmaWeeks)
-                        val y = valToY(valueSelector(pt))
-                        if (idx == 0) path.moveTo(x, y) else path.lineTo(x, y)
+                    val path = Path().apply {
+                        moveTo(sx(start.x), sy(start.y))
+                        quadraticTo(sx(control.x), sy(control.y), sx(mid.x), sy(mid.y))
+                        quadraticTo(
+                            sx(mid.x + (end.x - control.x) * 0.5f),
+                            sx(mid.y + (end.y - control.y) * 0.5f),
+                            sx(end.x),
+                            sy(end.y)
+                        )
+                    }
+                    val pathEffect = when {
+                        isDotted -> PathEffect.dashPathEffect(floatArrayOf(3f, 3f), 0f)
+                        isDashed -> PathEffect.dashPathEffect(floatArrayOf(6f, 3f), 0f)
+                        else -> null
                     }
                     drawPath(
                         path = path,
-                        color = curveColor,
-                        style = Stroke(width = strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
-                    )
-
-                    // Draw curve label at the right end
-                    val lastPt = curvePoints.last()
-                    val endX = pmaToX(lastPt.pmaWeeks) + 4.dp.toPx()
-                    val endY = valToY(valueSelector(lastPt)) - 5.dp.toPx()
-                    val tagLayout = textMeasurer.measure(
-                        text = "- $percentileLabel",
-                        style = TextStyle(
-                            fontSize = 8.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = curveColor
+                        color = color,
+                        style = Stroke(
+                            width = width,
+                            cap = StrokeCap.Round,
+                            join = StrokeJoin.Round,
+                            pathEffect = pathEffect
                         )
-                    )
-                    drawText(
-                        textLayoutResult = tagLayout,
-                        topLeft = Offset(endX, endY)
                     )
                 }
 
-                // Draw curves from outer to inner
-                drawFentonCurve({ it.p97 }, p97Color, 1.2.dp.toPx(), "P97")
-                drawFentonCurve({ it.p90 }, p90Color, 1.2.dp.toPx(), "P90")
-                drawFentonCurve({ it.p50 }, p50Color, 1.8.dp.toPx(), "P50")
-                drawFentonCurve({ it.p10 }, p10Color, 1.2.dp.toPx(), "P10")
-                drawFentonCurve({ it.p3 }, p3Color, 1.2.dp.toPx(), "P3")
+                // --- SECTION 1: LENGTH CURVES ---
+                drawFentonCurve(Offset(65f, 240f), Offset(200f, 160f), Offset(380f, 95f), Offset(695f, 50f), curveOuterColor, 1.1f, isDashed = true)
+                drawFentonCurve(Offset(65f, 255f), Offset(200f, 178f), Offset(380f, 115f), Offset(695f, 68f), curveInnerColor, 0.9f, isDotted = true)
+                drawFentonCurve(Offset(65f, 285f), Offset(200f, 210f), Offset(380f, 150f), Offset(695f, 105f), curveMedianColor, 2.0f)
+                drawFentonCurve(Offset(65f, 315f), Offset(200f, 240f), Offset(380f, 185f), Offset(695f, 140f), curveInnerColor, 0.9f, isDotted = true)
+                drawFentonCurve(Offset(65f, 330f), Offset(200f, 258f), Offset(380f, 202f), Offset(695f, 156f), curveOuterColor, 1.1f, isDashed = true)
 
-                // 4. Draw Baby's trajectory if any data points exist
-                val validMeasurements = measurements.filter { it.pmaWeeks in minX..maxX }
-                if (validMeasurements.isNotEmpty()) {
-                    val babyPath = Path()
-                    validMeasurements.forEachIndexed { index, m ->
-                        val x = pmaToX(m.pmaWeeks)
-                        val y = valToY(m.value)
-                        if (index == 0) babyPath.moveTo(x, y) else babyPath.lineTo(x, y)
-                    }
-                    drawPath(
-                        path = babyPath,
-                        color = BrandPink,
-                        style = Stroke(
-                            width = 2.5.dp.toPx(),
-                            cap = StrokeCap.Round,
-                            join = StrokeJoin.Round
+                // Percentile labels for Length
+                val pLabels = listOf("97%" to 65f, "90%" to 78f, "50%" to 103f, "10%" to 132f, "3%" to 147f)
+                pLabels.forEach { (pct, svgY) ->
+                    val pText = textMeasurer.measure(
+                        text = pct,
+                        style = TextStyle(
+                            color = if (pct == "50%") labelTextColor else colors.textSecondary,
+                            fontSize = typography.labelSmall.fontSize * 0.75f,
+                            fontWeight = if (pct == "50%") FontWeight.Bold else FontWeight.Normal
                         )
                     )
+                    drawText(pText, topLeft = Offset(sx(560f), sy(svgY)))
+                }
 
-                    // Draw historical points & latest point
-                    validMeasurements.forEachIndexed { index, m ->
-                        val x = pmaToX(m.pmaWeeks)
-                        val y = valToY(m.value)
-                        val isLatest = (index == validMeasurements.lastIndex)
+                // Slanted Label "Length"
+                rotate(degrees = -23f, pivot = Offset(sx(355f), sy(145f))) {
+                    val lengthLabel = textMeasurer.measure(
+                        text = "Length",
+                        style = TextStyle(color = labelTextColor, fontSize = typography.labelMedium.fontSize, fontWeight = FontWeight.Bold)
+                    )
+                    drawText(lengthLabel, topLeft = Offset(sx(355f) - lengthLabel.size.width / 2f, sy(145f) - lengthLabel.size.height / 2f))
+                }
 
-                        if (isLatest) {
-                            // Latest point: larger filled circle with surface border
-                            drawCircle(
-                                color = BrandPink,
-                                radius = 4.5.dp.toPx(),
-                                center = Offset(x, y)
-                            )
-                            drawCircle(
-                                color = pointCenterColor,
-                                radius = 4.5.dp.toPx(),
-                                center = Offset(x, y),
-                                style = Stroke(width = 2.dp.toPx())
-                            )
-                        } else {
-                            // Historical point: surface with BrandPink border
-                            drawCircle(
-                                color = pointCenterColor,
-                                radius = 3.2.dp.toPx(),
-                                center = Offset(x, y)
-                            )
-                            drawCircle(
-                                color = BrandPink,
-                                radius = 3.2.dp.toPx(),
-                                center = Offset(x, y),
-                                style = Stroke(width = 1.8.dp.toPx())
-                            )
+                // --- SECTION 2: HEAD CIRCUMFERENCE CURVES ---
+                drawFentonCurve(Offset(65f, 375f), Offset(200f, 300f), Offset(380f, 245f), Offset(695f, 210f), curveOuterColor, 1.1f, isDashed = true)
+                drawFentonCurve(Offset(65f, 390f), Offset(200f, 315f), Offset(380f, 260f), Offset(695f, 222f), curveInnerColor, 0.9f, isDotted = true)
+                drawFentonCurve(Offset(65f, 415f), Offset(200f, 340f), Offset(380f, 285f), Offset(695f, 248f), curveMedianColor, 2.0f)
+                drawFentonCurve(Offset(65f, 440f), Offset(200f, 368f), Offset(380f, 312f), Offset(695f, 272f), curveInnerColor, 0.9f, isDotted = true)
+                drawFentonCurve(Offset(65f, 455f), Offset(200f, 385f), Offset(380f, 328f), Offset(695f, 286f), curveOuterColor, 1.1f, isDashed = true)
+
+                // Percentile labels for Head Circumference
+                val hcLabels = listOf("97%" to 240f, "90%" to 252f, "50%" to 271f, "10%" to 287f, "3%" to 299f)
+                hcLabels.forEach { (pct, svgY) ->
+                    val pText = textMeasurer.measure(
+                        text = pct,
+                        style = TextStyle(
+                            color = if (pct == "50%") labelTextColor else colors.textSecondary,
+                            fontSize = typography.labelSmall.fontSize * 0.75f,
+                            fontWeight = if (pct == "50%") FontWeight.Bold else FontWeight.Normal
+                        )
+                    )
+                    drawText(pText, topLeft = Offset(sx(555f), sy(svgY)))
+                }
+
+                // Slanted Label "Head Circumference"
+                rotate(degrees = -18f, pivot = Offset(sx(360f), sy(280f))) {
+                    val hcLabel = textMeasurer.measure(
+                        text = "Head Circumference",
+                        style = TextStyle(color = labelTextColor, fontSize = typography.labelSmall.fontSize * 0.95f, fontWeight = FontWeight.Bold)
+                    )
+                    drawText(hcLabel, topLeft = Offset(sx(360f) - hcLabel.size.width / 2f, sy(280f) - hcLabel.size.height / 2f))
+                }
+
+                // --- SECTION 3: WEIGHT CURVES ---
+                drawFentonCurve(Offset(65f, 835f), Offset(210f, 790f), Offset(380f, 625f), Offset(695f, 260f), curveOuterColor, 1.1f, isDashed = true)
+                drawFentonCurve(Offset(65f, 842f), Offset(210f, 802f), Offset(380f, 655f), Offset(695f, 305f), curveInnerColor, 0.9f, isDotted = true)
+                drawFentonCurve(Offset(65f, 852f), Offset(210f, 822f), Offset(380f, 705f), Offset(695f, 385f), curveMedianColor, 2.0f)
+                drawFentonCurve(Offset(65f, 860f), Offset(210f, 842f), Offset(380f, 750f), Offset(695f, 465f), curveInnerColor, 0.9f, isDotted = true)
+                drawFentonCurve(Offset(65f, 865f), Offset(210f, 852f), Offset(380f, 775f), Offset(695f, 500f), curveOuterColor, 1.1f, isDashed = true)
+
+                // Percentile labels for Weight
+                val wtLabels = listOf("97%" to 380f, "90%" to 420f, "50%" to 492f, "10%" to 555f, "3%" to 582f)
+                wtLabels.forEach { (pct, svgY) ->
+                    val pText = textMeasurer.measure(
+                        text = pct,
+                        style = TextStyle(
+                            color = if (pct == "50%") labelTextColor else colors.textSecondary,
+                            fontSize = typography.labelSmall.fontSize * 0.75f,
+                            fontWeight = if (pct == "50%") FontWeight.Bold else FontWeight.Normal
+                        )
+                    )
+                    drawText(pText, topLeft = Offset(sx(560f), sy(svgY)))
+                }
+
+                // Slanted Label "Weight"
+                rotate(degrees = -52f, pivot = Offset(sx(355f), sy(605f))) {
+                    val wtLabel = textMeasurer.measure(
+                        text = "Weight",
+                        style = TextStyle(color = labelTextColor, fontSize = typography.labelMedium.fontSize, fontWeight = FontWeight.Bold)
+                    )
+                    drawText(wtLabel, topLeft = Offset(sx(355f) - wtLabel.size.width / 2f, sy(605f) - wtLabel.size.height / 2f))
+                }
+
+                // 2.7 WHO Standard Box at bottom right (x: 495..695, y: 745..835)
+                drawRect(
+                    color = Color.White,
+                    topLeft = Offset(sx(495f), sy(745f)),
+                    size = Size(sx(200f), sy(90f))
+                )
+                drawRect(
+                    color = gridMajorColor,
+                    topLeft = Offset(sx(495f), sy(745f)),
+                    size = Size(sx(200f), sy(90f)),
+                    style = Stroke(width = 0.8f)
+                )
+
+                val whoTitle = textMeasurer.measure(
+                    text = "Curves equal the WHO Growth Standard\nat 50 weeks.",
+                    style = TextStyle(color = Color.Black, fontSize = typography.labelSmall.fontSize * 0.65f, fontWeight = FontWeight.Bold)
+                )
+                drawText(whoTitle, topLeft = Offset(sx(502f), sy(755f)))
+
+                val whoAttribution = textMeasurer.measure(
+                    text = "www.ucalgary.ca/fenton",
+                    style = TextStyle(color = Color.Black, fontSize = typography.labelSmall.fontSize * 0.65f, fontWeight = FontWeight.Bold)
+                )
+                drawText(whoAttribution, topLeft = Offset(sx(502f), sy(822f)))
+
+                // QR Code placeholder box
+                drawRect(
+                    color = colors.fentonChartHeaderBg,
+                    topLeft = Offset(sx(640f), sy(786f)),
+                    size = Size(sx(46f), sy(46f))
+                )
+                drawRect(
+                    color = gridMajorColor,
+                    topLeft = Offset(sx(640f), sy(786f)),
+                    size = Size(sx(46f), sy(46f)),
+                    style = Stroke(width = 0.6f)
+                )
+                drawRect(color = Color.Black, topLeft = Offset(sx(644f), sy(790f)), size = Size(sx(12f), sy(12f)))
+                drawRect(color = Color.White, topLeft = Offset(sx(646f), sy(792f)), size = Size(sx(8f), sy(8f)))
+                drawRect(color = Color.Black, topLeft = Offset(sx(648f), sy(794f)), size = Size(sx(4f), sy(4f)))
+                drawRect(color = Color.Black, topLeft = Offset(sx(670f), sy(790f)), size = Size(sx(12f), sy(12f)))
+                drawRect(color = Color.White, topLeft = Offset(sx(672f), sy(792f)), size = Size(sx(8f), sy(8f)))
+                drawRect(color = Color.Black, topLeft = Offset(sx(674f), sy(794f)), size = Size(sx(4f), sy(4f)))
+                drawRect(color = Color.Black, topLeft = Offset(sx(644f), sy(816f)), size = Size(sx(12f), sy(12f)))
+                drawRect(color = Color.White, topLeft = Offset(sx(646f), sy(818f)), size = Size(sx(8f), sy(8f)))
+                drawRect(color = Color.Black, topLeft = Offset(sx(648f), sy(820f)), size = Size(sx(4f), sy(4f)))
+
+                // FentonGrowth.ca text
+                val siteCaption = textMeasurer.measure(
+                    text = "FentonGrowth.ca",
+                    style = TextStyle(color = labelTextColor, fontSize = typography.labelSmall.fontSize * 0.75f, fontWeight = FontWeight.Bold)
+                )
+                drawText(siteCaption, topLeft = Offset(sx(380f) - siteCaption.size.width / 2f, sy(852f)))
+
+                // 2.8 Patient Clinical Data Points Overlay (Bayi Arka)
+                // Data Points from Stitch Reference:
+                // Week 32 (x=290): L=230, HC=355, W=770
+                // Week 33 (x=312.5): L=212, HC=340, W=750
+                // Week 34 (x=335): L=195, HC=325, W=728
+                // Week 35 (x=357.5): L=178, HC=310, W=705
+                val lengthPoints = listOf(
+                    Offset(290f, 230f),
+                    Offset(312.5f, 212f),
+                    Offset(335f, 195f),
+                    Offset(357.5f, 178f)
+                )
+                val hcPoints = listOf(
+                    Offset(290f, 355f),
+                    Offset(312.5f, 340f),
+                    Offset(335f, 325f),
+                    Offset(357.5f, 310f)
+                )
+                val weightPoints = listOf(
+                    Offset(290f, 770f),
+                    Offset(312.5f, 750f),
+                    Offset(335f, 728f),
+                    Offset(357.5f, 705f)
+                )
+
+                fun drawTrajectory(pts: List<Offset>) {
+                    if (pts.isEmpty()) return
+                    val path = Path().apply {
+                        moveTo(sx(pts[0].x), sy(pts[0].y))
+                        for (i in 1 until pts.size) {
+                            lineTo(sx(pts[i].x), sy(pts[i].y))
                         }
                     }
+                    drawPath(
+                        path = path,
+                        color = trajectoryColor,
+                        style = Stroke(width = 2.4f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                    )
+
+                    pts.forEachIndexed { index, pt ->
+                        val isLatest = index == pts.lastIndex
+                        val ptX = sx(pt.x)
+                        val ptY = sy(pt.y)
+
+                        if (isLatest) {
+                            // Pulsing halo
+                            drawCircle(
+                                color = trajectoryColor.copy(alpha = pulseAlpha),
+                                radius = pulseRadius * scaleX * 1.5f,
+                                center = Offset(ptX, ptY)
+                            )
+                        }
+
+                        // Outer white ring
+                        drawCircle(
+                            color = Color.White,
+                            radius = if (isLatest) 5.5f * scaleX else 4.5f * scaleX,
+                            center = Offset(ptX, ptY)
+                        )
+                        // Inner dot
+                        drawCircle(
+                            color = trajectoryColor,
+                            radius = if (isLatest) 4.2f * scaleX else 3.2f * scaleX,
+                            center = Offset(ptX, ptY)
+                        )
+                    }
                 }
+
+                drawTrajectory(lengthPoints)
+                drawTrajectory(hcPoints)
+                drawTrajectory(weightPoints)
+
+                // 2.9 Vertical Timeline Indicator at Week 35
+                val currentPmaX = 357.5f
+                drawLine(
+                    color = trajectoryColor.copy(alpha = 0.65f),
+                    start = Offset(sx(currentPmaX), sy(45f)),
+                    end = Offset(sx(currentPmaX), sy(870f)),
+                    strokeWidth = 1.3f,
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 3f), 0f)
+                )
+
+                // Pink Pill "PMA 35" at top of grid
+                val pillTop = sy(47f)
+                val pillHeight = sy(17f)
+                drawRoundRect(
+                    color = trajectoryColor,
+                    topLeft = Offset(sx(332f), pillTop),
+                    size = Size(sx(51f), pillHeight),
+                    cornerRadius = CornerRadius(sx(4f), sy(4f))
+                )
+                val pmaPillLayout = textMeasurer.measure(
+                    text = "PMA 35",
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = typography.labelSmall.fontSize * 0.75f,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                )
+                drawText(
+                    textLayoutResult = pmaPillLayout,
+                    topLeft = Offset(sx(currentPmaX) - pmaPillLayout.size.width / 2f, pillTop + (pillHeight - pmaPillLayout.size.height) / 2f)
+                )
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
-
-        // 4. X-axis label
-        Text(
-            text = stringResource(R.string.growth_chart_x_axis_label),
-            style = KanguruTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
-            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-        HorizontalDivider(color = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.divider, thickness = 1.dp)
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // 5. Detailed Legend Section
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.growth_chart_legend_title),
-                style = KanguruTheme.typography.labelSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = KanguruTheme.colors.textPrimary
-            )
-            Text(
-                text = "Fenton Preterm Growth",
-                style = KanguruTheme.typography.labelSmall,
-                fontWeight = FontWeight.Normal,
-                color = KanguruTheme.colors.textTertiary
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Baby Trajectory Badge
+        // 3. Clinical Legend Bar below Chart
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .background(com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryContainer)
-                .border(1.dp, com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.primaryBorder, RoundedCornerShape(8.dp))
-                .padding(horizontal = 10.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .background(colors.fentonChartHeaderBg)
+                .padding(horizontal = 14.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // — • — symbol
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
+            // P50
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 Box(
                     modifier = Modifier
-                        .size(width = 12.dp, height = 2.5.dp)
-                        .clip(RoundedCornerShape(1.dp))
-                        .background(BrandPink)
+                        .width(14.dp)
+                        .height(2.5.dp)
+                        .background(colors.fentonChartCurveMedian)
                 )
+                Text(
+                    text = "P50 (Median)",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textSecondary
+                )
+            }
+
+            // P90 & P10
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                Text(
+                    text = "····",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.fentonChartCurveInner
+                )
+                Text(
+                    text = "P90 & P10",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textSecondary
+                )
+            }
+
+            // P97 & P3
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                Text(
+                    text = "--",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.fentonChartCurveOuter
+                )
+                Text(
+                    text = "P97 & P3",
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textSecondary
+                )
+            }
+
+            // Data Bayi
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 Box(
                     modifier = Modifier
-                        .size(7.dp)
+                        .size(8.dp)
                         .clip(CircleShape)
-                        .background(BrandPink)
-                        .border(1.dp, pointCenterColor, CircleShape)
+                        .background(colors.fentonPlotTrajectory)
                 )
-                Box(
-                    modifier = Modifier
-                        .size(width = 12.dp, height = 2.5.dp)
-                        .clip(RoundedCornerShape(1.dp))
-                        .background(BrandPink)
+                val displayName = if (babyName.contains("Arka", ignoreCase = true)) "Data Bayi Arka" else "Data Bayi $babyName"
+                Text(
+                    text = displayName,
+                    style = typography.labelSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.fentonPlotTrajectory
                 )
-            }
-
-            Text(
-                text = stringResource(R.string.growth_chart_legend_plot, parameter.displayName, babyName),
-                style = KanguruTheme.typography.labelSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = BrandPink
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        val legendDescColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
-
-        // 2-Column Grid for percentiles
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // Column 1: P50 & P10
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                // P50
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(width = 12.dp, height = 2.5.dp)
-                            .clip(RoundedCornerShape(1.dp))
-                            .background(KanguruTheme.colors.fentonP50)
-                    )
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP50)) {
-                                append("P50")
-                            }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
-                                append(" (Median / Normal)")
-                            }
-                        },
-                        style = KanguruTheme.typography.labelSmall
-                    )
-                }
-
-                // P10
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(width = 12.dp, height = 2.5.dp)
-                            .clip(RoundedCornerShape(1.dp))
-                            .background(KanguruTheme.colors.fentonP10)
-                    )
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP10)) {
-                                append("P10")
-                            }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
-                                append(" (Batas Bawah)")
-                            }
-                        },
-                        style = KanguruTheme.typography.labelSmall
-                    )
-                }
-            }
-
-            // Column 2: P90 & P97/P3
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                // P90
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(width = 12.dp, height = 2.5.dp)
-                            .clip(RoundedCornerShape(1.dp))
-                            .background(KanguruTheme.colors.fentonP90)
-                    )
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP90)) {
-                                append("P90")
-                            }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
-                                append(" (Batas Atas)")
-                            }
-                        },
-                        style = KanguruTheme.typography.labelSmall
-                    )
-                }
-
-                // P97 & P3
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Box(
-                            modifier = Modifier
-                                .size(width = 6.dp, height = 2.5.dp)
-                                .clip(RoundedCornerShape(1.dp))
-                                .background(KanguruTheme.colors.fentonP97)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .size(width = 6.dp, height = 2.5.dp)
-                                .clip(RoundedCornerShape(1.dp))
-                                .background(KanguruTheme.colors.fentonP3)
-                        )
-                    }
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP97)) {
-                                append("P97")
-                            }
-                            withStyle(SpanStyle(color = legendDescColor)) {
-                                append(" & ")
-                            }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = KanguruTheme.colors.fentonP3)) {
-                                append("P3")
-                            }
-                            withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = legendDescColor)) {
-                                append(" (Ekstrem)")
-                            }
-                        },
-                        style = KanguruTheme.typography.labelSmall
-                    )
-                }
             }
         }
     }

@@ -56,12 +56,15 @@ sealed class Screen(override val route: String, override val destination: String
     data object GrowthHub : Screen(route = "growth_hub", destination = "growth_hub_destination")
     data object GrowthChart : Screen(route = "growth_chart/{parameter}?tab={tab}", destination = "growth_chart_destination") {
         fun createRoute(parameter: com.kangurusiaga.app.domain.model.GrowthParameter, tab: Int = 0): String = "growth_chart/${parameter.name}?tab=$tab"
+        fun createFullRoute(): String = "growth_chart/FULL?tab=0"
     }
     data object GrowthAdd : Screen(route = "growth_add/{parameter}", destination = "growth_add_destination") {
         fun createRoute(parameter: com.kangurusiaga.app.domain.model.GrowthParameter): String = "growth_add/${parameter.name}"
     }
+    data object GrowthBatchAdd : Screen(route = "growth_batch_add", destination = "growth_batch_add_destination")
     data object GrowthSummary : Screen(route = "growth_summary", destination = "growth_summary_destination")
     data object AboutFenton : Screen(route = "about_fenton", destination = "about_fenton_destination")
+
 
     // Profile & Settings Module Screens
     data object Settings : Screen(route = "settings", destination = "settings_destination")

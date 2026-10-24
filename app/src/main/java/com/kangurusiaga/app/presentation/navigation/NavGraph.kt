@@ -40,9 +40,9 @@ import com.kangurusiaga.app.presentation.pmk.video.PmkVideoListScreen
 import com.kangurusiaga.app.presentation.pmk.video.PmkVideoScreen
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.presentation.growth.about.AboutFentonScreen
-import com.kangurusiaga.app.presentation.growth.add.AddGrowthMeasurementScreen
+import com.kangurusiaga.app.presentation.growth.batch.GrowthBatchMeasurementScreen
 import com.kangurusiaga.app.presentation.growth.chart.GrowthChartScreen
-import com.kangurusiaga.app.presentation.growth.hub.GrowthHubScreen
+
 import com.kangurusiaga.app.presentation.growth.summary.GrowthSummaryScreen
 import com.kangurusiaga.app.presentation.profile.BabyProfileRoute
 import com.kangurusiaga.app.presentation.settings.SettingsRoute
@@ -136,7 +136,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToGrowth = {
-                    navController.navigate(Screen.GrowthHub.route)
+                    navController.navigate(Screen.GrowthChart.createFullRoute())
                 },
                 onNavigateToProfile = {
                     navController.navigate(Screen.BabyProfile.route) {
@@ -803,55 +803,31 @@ fun KanguruNavGraph(
             )
         }
 
-        // Growth Module Screens
-        composable(route = Screen.GrowthHub.route) { backStackEntry ->
-            val savedStateHandle = backStackEntry.savedStateHandle
-            val successMessage = savedStateHandle.get<String>("growth_saved_message")
-            GrowthHubScreen(
+        // Growth Module Screens - Alur baru: Langsung ke Grafik Fenton Full & Catat Pengukuran Versi Batch
+        composable(route = Screen.GrowthHub.route) {
+            GrowthChartScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigateToChart = { param ->
-                    navController.navigate(Screen.GrowthChart.createRoute(param, tab = 0))
-                },
-                onNavigateToAdd = { param ->
-                    navController.navigate(Screen.GrowthAdd.createRoute(param))
-                },
-                onNavigateToSummary = {
-                    navController.navigate(Screen.GrowthSummary.route)
+                onNavigateToAdd = {
+                    navController.navigate(Screen.GrowthBatchAdd.route)
                 },
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
-                },
-                successMessage = successMessage,
-                onMessageShown = {
-                    savedStateHandle.remove<String>("growth_saved_message")
                 }
             )
         }
 
-        composable(route = Screen.Growth.route) { backStackEntry ->
-            val savedStateHandle = backStackEntry.savedStateHandle
-            val successMessage = savedStateHandle.get<String>("growth_saved_message")
-            GrowthHubScreen(
+        composable(route = Screen.Growth.route) {
+            GrowthChartScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigateToChart = { param ->
-                    navController.navigate(Screen.GrowthChart.createRoute(param, tab = 0))
-                },
-                onNavigateToAdd = { param ->
-                    navController.navigate(Screen.GrowthAdd.createRoute(param))
-                },
-                onNavigateToSummary = {
-                    navController.navigate(Screen.GrowthSummary.route)
+                onNavigateToAdd = {
+                    navController.navigate(Screen.GrowthBatchAdd.route)
                 },
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
-                },
-                successMessage = successMessage,
-                onMessageShown = {
-                    savedStateHandle.remove<String>("growth_saved_message")
                 }
             )
         }
@@ -859,7 +835,10 @@ fun KanguruNavGraph(
         composable(
             route = Screen.GrowthChart.route,
             arguments = listOf(
-                navArgument("parameter") { type = NavType.StringType },
+                navArgument("parameter") {
+                    type = NavType.StringType
+                    defaultValue = "FULL"
+                },
                 navArgument("tab") {
                     type = NavType.IntType
                     defaultValue = 0
@@ -870,8 +849,8 @@ fun KanguruNavGraph(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigateToAdd = { param ->
-                    navController.navigate(Screen.GrowthAdd.createRoute(param))
+                onNavigateToAdd = {
+                    navController.navigate(Screen.GrowthBatchAdd.route)
                 },
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
@@ -885,18 +864,33 @@ fun KanguruNavGraph(
                 navArgument("parameter") { type = NavType.StringType }
             )
         ) {
-            AddGrowthMeasurementScreen(
+            GrowthBatchMeasurementScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onSavedSuccessfully = { paramTitle ->
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("growth_saved_message", "Data ${paramTitle.lowercase()} berhasil disimpan")
+                onNavigateToAboutFenton = {
+                    navController.navigate(Screen.AboutFenton.route)
+                },
+                onSavedSuccessfully = {
                     navController.popBackStack()
                 }
             )
         }
+
+        composable(route = Screen.GrowthBatchAdd.route) {
+            GrowthBatchMeasurementScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToAboutFenton = {
+                    navController.navigate(Screen.AboutFenton.route)
+                },
+                onSavedSuccessfully = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
 
         composable(route = Screen.GrowthSummary.route) {
             GrowthSummaryScreen(
@@ -1049,8 +1043,8 @@ fun KanguruNavGraph(
                 onNavigateToFeeding = {
                     navController.navigate(Screen.Feeding.route)
                 },
-                onNavigateToGrowthAdd = { parameter ->
-                    navController.navigate(Screen.GrowthAdd.createRoute(parameter))
+                onNavigateToGrowthAdd = { _ ->
+                    navController.navigate(Screen.GrowthBatchAdd.route)
                 }
             )
         }

@@ -69,11 +69,13 @@ Dokumentasi lengkap mengenai seluruh layar (*screens*) yang ada di dalam aplikas
 
 | Layar / Nama Screen | Class / Composable | Route Navigation | File Path | Deskripsi Singkat |
 | :--- | :--- | :--- | :--- | :--- |
-| **Growth Hub Screen** | `GrowthHubScreen` | `Screen.GrowthHub`<br>(`growth_hub` / `growth`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/hub/GrowthHubScreen.kt` | Hub utama pertumbuhan bayi prematur dengan indikator status terkini (Berat Badan, Panjang Badan, Lingkar Kepala). |
-| **Growth Chart Screen** | `GrowthChartScreen` | `Screen.GrowthChart`<br>(`growth_chart/{parameter}?tab={tab}`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/chart/GrowthChartScreen.kt` | Kurva pertumbuhan interaktif Fenton 2013 Preterm Growth Chart dengan persentil (P3, P10, P50, P90, P97) berbasis Usia Koreksi. |
-| **Add Growth Measurement Screen** | `AddGrowthMeasurementScreen` | `Screen.GrowthAdd`<br>(`growth_add/{parameter}`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/add/AddGrowthMeasurementScreen.kt` | Form pencatatan pengukuran fisik baru (BB gram/kg, PB cm, LK cm) beserta tanggal pengukuran. |
+| **Growth Chart Screen (Fenton Full)** | `GrowthChartScreen` | `Screen.GrowthChart`<br>(`growth_chart/{parameter}?tab={tab}`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/chart/GrowthChartScreen.kt` | **Layar Utama Pertumbuhan Bayi.** Menampilkan Kurva Pertumbuhan Fenton 2013 Preterm Growth Chart multi-persentil (P3, P10, P50, P90, P97) berbasis PMA 22–50 minggu untuk BB, PB, dan LK dengan tab navigasi dan tombol CTA langsung ke catat pengukuran batch. |
+| **Batch Growth Measurement Screen** | `GrowthBatchMeasurementScreen` | `Screen.GrowthBatchAdd`<br>(`growth_batch_add`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/batch/GrowthBatchMeasurementScreen.kt` | **Form Input Pengukuran Utama.** Form pencatatan pengukuran multi-baris batch kurva pertumbuhan Fenton (PMA 22–50 minggu) mencakup baris dinamis GA, BB (g), LK (cm), PB (cm), pengingat rutin, dan catatan klinis / observasi (1:1 Google Stitch). |
+| **Growth Hub Screen** *(Dinonaktifkan)* | `GrowthHubScreen` | `Screen.GrowthHub`<br>(`growth_hub` / `growth`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/hub/GrowthHubScreen.kt` | *(Sementara tidak digunakan)* Dialihkan langsung ke `GrowthChartScreen` (Grafik Fenton Full). |
+| **Add Growth Measurement Screen** *(Dinonaktifkan)* | `AddGrowthMeasurementScreen` | `Screen.GrowthAdd`<br>(`growth_add/{parameter}`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/add/AddGrowthMeasurementScreen.kt` | *(Sementara tidak digunakan)* Dialihkan ke `GrowthBatchMeasurementScreen`. |
 | **Growth Summary Screen** | `GrowthSummaryScreen` | `Screen.GrowthSummary`<br>(`growth_summary`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/summary/GrowthSummaryScreen.kt` | Ringkasan rekapitulasi riwayat pertumbuhan bayi dari waktu ke waktu beserta kalkulasi rata-rata kenaikan BB harian. |
 | **About Fenton Screen** | `AboutFentonScreen` | `Screen.AboutFenton`<br>(`about_fenton`) | `app/src/main/java/com/kangurusiaga/app/presentation/growth/about/AboutFentonScreen.kt` | Penjelasan edukasi mengenai metodologi Kurva Pertumbuhan Fenton 2013 dan konsep Usia Koreksi bayi prematur. |
+
 
 ---
 
