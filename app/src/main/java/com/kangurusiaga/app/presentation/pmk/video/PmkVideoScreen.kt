@@ -125,6 +125,7 @@ import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import kotlinx.coroutines.delay
 import java.util.Locale
+import androidx.core.net.toUri
 
 /**
  * Controller class managing the lifecycle and playback of Android MediaPlayer.
@@ -188,7 +189,7 @@ class VideoPlayerState(
                 mp.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
                 afd.close()
             } else {
-                val uri = Uri.parse("android.resource://${context.packageName}/$videoRes")
+                val uri = "android.resource://${context.packageName}/$videoRes".toUri()
                 mp.setDataSource(context, uri)
             }
             mp.setSurface(s)

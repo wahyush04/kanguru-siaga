@@ -335,7 +335,7 @@ private fun HomeContent(
             onNavigateToPmkVideo = onNavigateToPmkVideo,
             onNavigateToBblrCare = onNavigateToBblrCare,
             onOpenEmergency = onNavigateToBblrEmergency,
-            onNavigateToPmkTimer = onNavigateToTimer,
+            onNavigateToPmkTimer = onNavigateToPmk,
             onNavigateToBathingVideo = onNavigateToBathingVideo,
             onNavigateToAsiAlarm = onNavigateToAlarm
         )

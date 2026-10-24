@@ -33,14 +33,14 @@ data class PmkVideoItem(
     val nextLessonId: Int? = null,
     val keyPoints: List<String> = clinicalPoints.map { "${it.title}: ${it.description}" }
 ) {
-    val badgeText: String get() = "Video Edukasi #$id"
+    val badgeText: String get() = "Video Edukasi"
 }
 
 object PmkVideoDataSource {
     val videos: List<PmkVideoItem> = listOf(
         PmkVideoItem(
             id = 1,
-            title = "1. Pengertian PMK",
+            title = "Pengertian PMK",
             category = "Perawatan Metode Kanguru",
             duration = "00:27",
             durationSeconds = 27,
@@ -79,7 +79,7 @@ object PmkVideoDataSource {
         ),
         PmkVideoItem(
             id = 2,
-            title = "2. Manfaat PMK untuk Bayi Berat Lahir Rendah",
+            title = "Manfaat PMK untuk Bayi Berat Lahir Rendah",
             category = "Perawatan Metode Kanguru",
             duration = "01:05",
             durationSeconds = 65,
@@ -118,7 +118,7 @@ object PmkVideoDataSource {
         ),
         PmkVideoItem(
             id = 3,
-            title = "3. Persiapan sebelum PMK",
+            title = "Persiapan sebelum PMK",
             category = "Perawatan Metode Kanguru",
             duration = "01:29",
             durationSeconds = 89,
@@ -157,7 +157,7 @@ object PmkVideoDataSource {
         ),
         PmkVideoItem(
             id = 4,
-            title = "4. Cara Perawatan Bayi Berat Lahir Rendah",
+            title = "Cara Perawatan Bayi Berat Lahir Rendah",
             category = "Perawatan Bayi Berat Lahir Rendah",
             duration = "00:39",
             durationSeconds = 39,
@@ -196,7 +196,7 @@ object PmkVideoDataSource {
         ),
         PmkVideoItem(
             id = 5,
-            title = "5. Tanda Kegawatan Bayi Berat Lahir Rendah",
+            title = "Tanda Kegawatan Bayi Berat Lahir Rendah",
             category = "Tanda Kegawatan Bayi Berat Lahir Rendah",
             duration = "00:54",
             durationSeconds = 54,
@@ -236,7 +236,7 @@ object PmkVideoDataSource {
 
         PmkVideoItem(
             id = 6,
-            title = "6. Cara Memandikan Bayi",
+            title = "Cara Memandikan Bayi",
             category = "Perawatan Bayi BBLR",
             duration = "01:07",
             durationSeconds = 67,

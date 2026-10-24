@@ -15,32 +15,32 @@ class PmkVideoTest {
 
         // Verify module 1
         assertEquals(1, videos[0].id)
-        assertEquals("1. Pengertian PMK", videos[0].title)
+        assertEquals("Pengertian PMK", videos[0].title)
         assertEquals("00:27", videos[0].duration)
 
         // Verify module 2
         assertEquals(2, videos[1].id)
-        assertEquals("2. Manfaat PMK untuk Bayi Berat Lahir Rendah", videos[1].title)
+        assertEquals("Manfaat PMK untuk Bayi Berat Lahir Rendah", videos[1].title)
         assertEquals("01:05", videos[1].duration)
 
         // Verify module 3
         assertEquals(3, videos[2].id)
-        assertEquals("3. Persiapan sebelum PMK", videos[2].title)
+        assertEquals("Persiapan sebelum PMK", videos[2].title)
         assertEquals("01:29", videos[2].duration)
 
         // Verify module 4
         assertEquals(4, videos[3].id)
-        assertEquals("4. Cara Perawatan Bayi Berat Lahir Rendah", videos[3].title)
+        assertEquals("Cara Perawatan Bayi Berat Lahir Rendah", videos[3].title)
         assertEquals("00:39", videos[3].duration)
 
         // Verify module 5
         assertEquals(5, videos[4].id)
-        assertEquals("5. Tanda Kegawatan Bayi Berat Lahir Rendah", videos[4].title)
+        assertEquals("Tanda Kegawatan Bayi Berat Lahir Rendah", videos[4].title)
         assertEquals("00:54", videos[4].duration)
 
         // Verify module 6
         assertEquals(6, videos[5].id)
-        assertEquals("6. Cara Memandikan Bayi", videos[5].title)
+        assertEquals("Cara Memandikan Bayi", videos[5].title)
         assertEquals("01:07", videos[5].duration)
     }
 
@@ -58,11 +58,11 @@ class PmkVideoTest {
     fun `getVideoById returns corresponding video or fallback`() {
         val video4 = PmkVideoDataSource.getVideoById(4)
         assertEquals(4, video4.id)
-        assertEquals("4. Cara Perawatan Bayi Berat Lahir Rendah", video4.title)
+        assertEquals("Cara Perawatan Bayi Berat Lahir Rendah", video4.title)
 
         val video1 = PmkVideoDataSource.getVideoById(1)
         assertEquals(1, video1.id)
-        assertEquals("1. Pengertian PMK", video1.title)
+        assertEquals("Pengertian PMK", video1.title)
 
         // Fallback for non-existent ID
         val fallback = PmkVideoDataSource.getVideoById(999)

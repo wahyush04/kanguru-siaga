@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -39,6 +38,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -54,10 +54,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,14 +70,13 @@ import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsUiState
 import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsViewModel
 
 /**
- * Screen ID: 9970837237722903241
- * Title: Kanguru Siaga - Riwayat PMK (Rekap Harian Expandable)
+ * Stitch Screen: Kanguru Siaga - Riwayat PMK (Rekap Harian Expandable)
+ * Screen ID: 16310608036692633685
  */
 @Composable
 fun PmkHistoryRoute(
     onNavigateBack: () -> Unit,
     onNavigateToDetail: () -> Unit,
-    onNavigateToDailyDetail: (String) -> Unit,
     onNavigateToManualLog: () -> Unit,
     onNavigateToHome: () -> Unit = {},
     onNavigateToEducation: () -> Unit = {},
@@ -95,7 +97,6 @@ fun PmkHistoryRoute(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onNavigateToDetail = onNavigateToDetail,
-        onNavigateToDailyDetail = onNavigateToDailyDetail,
         onNavigateToManualLog = onNavigateToManualLog,
         onNavigateToHome = onNavigateToHome,
         onNavigateToEducation = onNavigateToEducation,
@@ -109,7 +110,6 @@ fun PmkHistoryScreen(
     uiState: PmkStatisticsUiState,
     onNavigateBack: () -> Unit,
     onNavigateToDetail: () -> Unit,
-    onNavigateToDailyDetail: (String) -> Unit,
     onNavigateToManualLog: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToEducation: () -> Unit,
@@ -361,12 +361,7 @@ fun PmkHistoryScreen(
                 }
             } else {
                 items(dailyGroups, key = { it.dateKey }) { dailyGroup ->
-                    DailyRecordCard(
-                        dailyGroup = dailyGroup,
-                        onClick = {
-                            onNavigateToDailyDetail(dailyGroup.dateKey)
-                        }
-                    )
+                    DailyRecordCard(dailyGroup = dailyGroup)
                 }
             }
 
@@ -428,12 +423,12 @@ fun PmkHistoryScreen(
 
 /**
  * Stitch Screen: Kanguru Siaga - Riwayat PMK (Rekap Harian Expandable)
- * Screen ID: 9970837237722903241
+ * Screen ID: 16310608036692633685
  */
 @Composable
 private fun DailyRecordCard(
     dailyGroup: DailyGroup,
-    onClick: () -> Unit
+    modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
     val timeline = dailyGroup.timeline
@@ -446,9 +441,7 @@ private fun DailyRecordCard(
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
         border = BorderStroke(1.dp, colors.cardBorder),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Header Top Row: Day Label + Date + Badge
@@ -561,7 +554,7 @@ private fun DailyRecordCard(
                                         .padding(horizontal = 6.dp, vertical = 2.dp)
                                 ) {
                                     Text(
-                                        text = "≤ 8 Jam ($percentOf8h%)",
+                                        text = "< 8 Jam ($percentOf8h%)",
                                         style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.SemiBold,
                                         color = colors.pmkCaregiverPendamping
@@ -576,15 +569,18 @@ private fun DailyRecordCard(
                             style = KanguruTheme.typography.labelSmall,
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold,
-                            color = colors.textPrimary
+                            color = if (isTargetMet) colors.pmkTargetMetMarker else colors.pmkCaregiverPendamping
                         )
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // Linear 24-Hour Progress Bar with 8h Target Divider (at 33.3%)
+                    // Linear 24-Hour Progress Bar with Caregiver Distribution
                     PmkDailyProgressBar(
-                        activeMinutes = timeline.totalActiveMinutes,
+                        totalActiveMinutes = timeline.totalActiveMinutes,
+                        ibuMinutes = timeline.ibuMinutes,
+                        ayahMinutes = timeline.ayahMinutes,
+                        pendampingMinutes = timeline.pendampingMinutes,
                         isTargetMet = isTargetMet
                     )
                 }
@@ -594,16 +590,20 @@ private fun DailyRecordCard(
 }
 
 /**
- * 24-Hour Linear Progress Bar with 8h Target Divider (at 33.33%) and Scale Labels
+ * 24-Hour Linear Progress Bar with multi-segment caregiver distribution,
+ * 8h Target Divider (at 33.33%), Scale Labels, and Caregiver Legend.
  */
 @Composable
 private fun PmkDailyProgressBar(
-    activeMinutes: Int,
+    totalActiveMinutes: Int,
+    ibuMinutes: Int,
+    ayahMinutes: Int,
+    pendampingMinutes: Int,
     isTargetMet: Boolean,
     modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
-    val activeFraction = (activeMinutes.toFloat() / (24 * 60f)).coerceIn(0f, 1f)
+    val activeFraction = (totalActiveMinutes.toFloat() / (24 * 60f)).coerceIn(0f, 1f)
     val target8hFraction = 8f / 24f // 0.3333f
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -616,14 +616,39 @@ private fun PmkDailyProgressBar(
         ) {
             val totalWidth = maxWidth
 
-            // Active Progress Fill
+            // Active Multi-segment Progress Fill
             if (activeFraction > 0f) {
-                Box(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth(activeFraction)
                         .fillMaxHeight()
-                        .background(if (isTargetMet) colors.pmkTargetMetMarker else colors.pmkCaregiverPendamping)
-                )
+                        .clip(RoundedCornerShape(5.dp))
+                ) {
+                    if (ibuMinutes > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(ibuMinutes.toFloat())
+                                .fillMaxHeight()
+                                .background(colors.pmkCaregiverIbu)
+                        )
+                    }
+                    if (ayahMinutes > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(ayahMinutes.toFloat())
+                                .fillMaxHeight()
+                                .background(colors.pmkCaregiverAyah)
+                        )
+                    }
+                    if (pendampingMinutes > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(pendampingMinutes.toFloat())
+                                .fillMaxHeight()
+                                .background(colors.pmkCaregiverPendamping)
+                        )
+                    }
+                }
             }
 
             // 8-Hour Target Divider Marker Line at 33.33%
@@ -631,15 +656,15 @@ private fun PmkDailyProgressBar(
             Box(
                 modifier = Modifier
                     .padding(start = (markerX - 1.dp).coerceAtLeast(0.dp))
-                .width(2.dp)
-                .fillMaxHeight()
-                .background(
-                    if (activeFraction >= target8hFraction) {
-                        colors.cardBackground.copy(alpha = 0.85f)
-                    } else {
-                        colors.pmkTargetUnmetMarker
-                    }
-                )
+                    .width(2.dp)
+                    .fillMaxHeight()
+                    .background(
+                        if (activeFraction >= target8hFraction) {
+                            colors.pmkTargetMetMarker
+                        } else {
+                            colors.cardBorder
+                        }
+                    )
             )
         }
 
@@ -686,5 +711,89 @@ private fun PmkDailyProgressBar(
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
+
+        // Caregiver Distribution Legend
+        if (totalActiveMinutes > 0) {
+            Spacer(modifier = Modifier.height(8.dp))
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 0.5.dp,
+                color = colors.cardBorder.copy(alpha = 0.7f)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (ibuMinutes > 0) {
+                    val ibuPercent = Math.round((ibuMinutes.toFloat() / totalActiveMinutes.toFloat()) * 100)
+                    val h = ibuMinutes / 60
+                    val m = ibuMinutes % 60
+                    CaregiverLegendItem(
+                        color = colors.pmkCaregiverIbu,
+                        label = "Ibu",
+                        durationText = "${h}j ${m.toString().padStart(2, '0')}m",
+                        percent = ibuPercent
+                    )
+                }
+                if (ayahMinutes > 0) {
+                    val ayahPercent = Math.round((ayahMinutes.toFloat() / totalActiveMinutes.toFloat()) * 100)
+                    val h = ayahMinutes / 60
+                    val m = ayahMinutes % 60
+                    CaregiverLegendItem(
+                        color = colors.pmkCaregiverAyah,
+                        label = "Ayah",
+                        durationText = "${h}j ${m.toString().padStart(2, '0')}m",
+                        percent = ayahPercent
+                    )
+                }
+                if (pendampingMinutes > 0) {
+                    val pendampingPercent = Math.round((pendampingMinutes.toFloat() / totalActiveMinutes.toFloat()) * 100)
+                    val h = pendampingMinutes / 60
+                    val m = pendampingMinutes % 60
+                    CaregiverLegendItem(
+                        color = colors.pmkCaregiverPendamping,
+                        label = "Pendamping",
+                        durationText = "${h}j ${m.toString().padStart(2, '0')}m",
+                        percent = pendampingPercent
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CaregiverLegendItem(
+    color: Color,
+    label: String,
+    durationText: String,
+    percent: Int,
+    modifier: Modifier = Modifier
+) {
+    val colors = KanguruTheme.colors
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = buildAnnotatedString {
+                append("$label: ")
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = colors.textPrimary)) {
+                    append(durationText)
+                }
+                append(" ($percent%)")
+            },
+            style = KanguruTheme.typography.labelSmall,
+            color = colors.textSecondary
+        )
     }
 }
