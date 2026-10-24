@@ -2,6 +2,7 @@ package com.kangurusiaga.app.presentation.growth.chart
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -9,6 +10,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculateCentroid
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,11 +29,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -38,6 +51,9 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
@@ -52,6 +68,8 @@ import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * FentonChart - Fenton Preterm Growth Chart (Laki-laki / Perempuan)
@@ -104,6 +122,19 @@ fun FentonChart(
     }
     val headCircCurves: List<FentonCurvePoint> = remember(gender) {
         FentonReferenceData.getCurvePoints(GrowthParameter.HEAD_CIRCUMFERENCE, gender)
+    }
+
+    // Zoom and pan state for image-like exploration
+    var scale by remember { mutableFloatStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    val coroutineScope = rememberCoroutineScope()
+    var animJob by remember { mutableStateOf<Job?>(null) }
+
+    LaunchedEffect(selectedTab, isBoy) {
+        animJob?.cancel()
+        animJob = null
+        scale = 1f
+        offset = Offset.Zero
     }
 
     Column(
@@ -163,11 +194,113 @@ fun FentonChart(
                 .background(colors.surface)
                 .padding(horizontal = 6.dp, vertical = 6.dp)
         ) {
-            Canvas(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(460.dp)
+                    .clipToBounds()
             ) {
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(460.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = { tapOffset ->
+                                    animJob?.cancel()
+                                    animJob = coroutineScope.launch {
+                                        val startScale = scale
+                                        val targetScale = if (scale > 1.01f) 1f else 2.5f
+                                        val startOffset = offset
+                                        val chartSize = Size(size.width.toFloat(), size.height.toFloat())
+                                        val center = Offset(chartSize.width / 2f, chartSize.height / 2f)
+                                        val targetOffset = if (targetScale <= 1f) {
+                                            Offset.Zero
+                                        } else {
+                                            clampOffset(
+                                                offset = (center - tapOffset) * targetScale,
+                                                scale = targetScale,
+                                                size = chartSize
+                                            )
+                                        }
+                                        animate(
+                                            initialValue = 0f,
+                                            targetValue = 1f,
+                                            animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing)
+                                        ) { fraction, _ ->
+                                            scale = startScale + (targetScale - startScale) * fraction
+                                            offset = Offset(
+                                                startOffset.x + (targetOffset.x - startOffset.x) * fraction,
+                                                startOffset.y + (targetOffset.y - startOffset.y) * fraction
+                                            )
+                                        }
+                                        if (targetScale <= 1f) {
+                                            scale = 1f
+                                            offset = Offset.Zero
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                        .pointerInput(Unit) {
+                            awaitEachGesture {
+                                awaitFirstDown(requireUnconsumed = false)
+                                animJob?.cancel()
+                                animJob = null
+                                do {
+                                    val event = awaitPointerEvent()
+                                    val pressedPointers = event.changes.filter { it.pressed }
+                                    val pointerCount = pressedPointers.size
+                                    val chartSize = Size(size.width.toFloat(), size.height.toFloat())
+                                    val center = Offset(chartSize.width / 2f, chartSize.height / 2f)
+
+                                    if (pointerCount >= 2) {
+                                        val zoomChange = event.calculateZoom()
+                                        val panChange = event.calculatePan()
+                                        val centroid = event.calculateCentroid(useCurrent = true)
+
+                                        val targetScale = (scale * zoomChange).coerceIn(1f, 5f)
+                                        if (targetScale <= 1.001f) {
+                                            scale = 1f
+                                            offset = Offset.Zero
+                                        } else {
+                                            val effectiveZoom = targetScale / scale
+                                            val rawOffset = (centroid - center) * (1f - effectiveZoom) + offset * effectiveZoom + panChange
+                                            offset = clampOffset(rawOffset, targetScale, chartSize)
+                                            scale = targetScale
+                                        }
+
+                                        event.changes.forEach { change ->
+                                            if (change.positionChanged()) {
+                                                change.consume()
+                                            }
+                                        }
+                                    } else if (pointerCount == 1 && scale > 1.01f) {
+                                        val panChange = event.calculatePan()
+                                        if (panChange != Offset.Zero) {
+                                            offset = clampOffset(offset + panChange, scale, chartSize)
+                                        }
+                                        event.changes.forEach { change ->
+                                            if (change.positionChanged()) {
+                                                change.consume()
+                                            }
+                                        }
+                                    }
+                                } while (event.changes.any { it.pressed })
+
+                                if (scale <= 1.01f && (scale != 1f || offset != Offset.Zero)) {
+                                    scale = 1f
+                                    offset = Offset.Zero
+                                }
+                            }
+                        }
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                            translationX = offset.x
+                            translationY = offset.y
+                        }
+                ) {
                 val canvasW = size.width
                 val canvasH = size.height
 
@@ -735,6 +868,7 @@ fun FentonChart(
                 )
             }
         }
+    }
 
         // 3. Clinical Legend Bar below Chart
         Row(
@@ -812,3 +946,18 @@ fun FentonChart(
         }
     }
 }
+
+/**
+ * Clamps the pan translation offset so the zoomed chart content does not drift
+ * outside the container bounds.
+ */
+internal fun clampOffset(offset: Offset, scale: Float, size: Size): Offset {
+    if (scale <= 1f || size.width <= 0f || size.height <= 0f) return Offset.Zero
+    val maxPanX = (scale - 1f) * size.width / 2f
+    val maxPanY = (scale - 1f) * size.height / 2f
+    return Offset(
+        x = offset.x.coerceIn(-maxPanX, maxPanX),
+        y = offset.y.coerceIn(-maxPanY, maxPanY)
+    )
+}
+
