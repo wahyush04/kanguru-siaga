@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.SyncAlt
@@ -35,6 +36,7 @@ import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -72,6 +74,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.domain.model.BabyResponseBreakdown
 import com.kangurusiaga.app.domain.model.CaregiverDistribution
 import com.kangurusiaga.app.domain.model.DailyDuration
 import com.kangurusiaga.app.domain.model.PmkStatistics
@@ -252,7 +255,15 @@ fun PmkStatisticsScreen(
                                         modifier = Modifier.size(12.dp)
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    val dateText = stats.dateRangeText.ifBlank { uiState.selectedPeriod.title }
+                                    val dateText = if (stats.dateRangeText.isNotBlank()) {
+                                        if (stats.period == StatsPeriod.THIS_WEEK || stats.period == StatsPeriod.LAST_WEEK) {
+                                            "${stats.dateRangeText} (Minggu ke-${stats.babyChronologicalWeek})"
+                                        } else {
+                                            stats.dateRangeText
+                                        }
+                                    } else {
+                                        uiState.selectedPeriod.title
+                                    }
                                     Text(
                                         text = dateText,
                                         style = KanguruTheme.typography.labelSmall,
@@ -349,134 +360,18 @@ fun PmkStatisticsScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             // =========================================================================
-            // 4 KEY PERFORMANCE INDICATORS (GRID 2x2)
+            // 3 KEY PERFORMANCE INDICATORS (ROW 3-KOLOM SESUAI GOOGLE STITCH)
             // =========================================================================
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                // Card 1: Rata-rata Harian
-                val avgDailyHours = stats.dailyAverageHours
-                val avgH = avgDailyHours.toInt()
-                val avgM = ((avgDailyHours - avgH) * 60).toInt().coerceAtLeast(0)
-                val displayDailyAvg = if (stats.totalDurationMinutes > 0) "${avgH}j ${avgM}m" else "0j 0m"
-                val isDailyTargetMet = avgDailyHours >= 18f
-                val dailyProgress = (avgDailyHours / 18f).coerceIn(0f, 1f)
-                KpiGridCard(
-                    title = "Rata-rata Harian",
-                    value = displayDailyAvg,
-                    subtitle = if (isDailyTargetMet) "Target WHO >18j terpenuhi ✓" else "Target WHO >18 jam/hari",
-                    subtitleColor = if (isDailyTargetMet) colors.success else if (stats.totalDurationMinutes > 0) colors.warning else colors.textSecondary,
-                    icon = Icons.Default.CheckCircle,
-                    iconTint = if (isDailyTargetMet) colors.success else colors.textSecondary,
-                    iconBg = if (isDailyTargetMet) colors.successContainer else colors.surfaceVariant,
-                    progress = dailyProgress,
-                    progressBarColor = if (isDailyTargetMet) colors.success else colors.primary,
-                    modifier = Modifier.weight(1f)
-                )
-
-                // Card 2: Total Minggu Ini / Periode Terpilih
-                val totalHours = stats.totalDurationMinutes / 60
-                val totalMins = stats.totalDurationMinutes % 60
-                val targetHours = stats.targetDurationMinutes / 60
-                val titlePeriod = when (uiState.selectedPeriod) {
-                    StatsPeriod.THIS_WEEK -> "Total Minggu Ini"
-                    StatsPeriod.LAST_WEEK -> "Total Minggu Lalu"
-                    StatsPeriod.THIS_MONTH -> "Total Bulan Ini"
-                    StatsPeriod.DAYS_30 -> "Total 30 Hari"
-                    StatsPeriod.ALL -> "Total Keseluruhan"
-                }
-                val subtitlePeriod = if (stats.totalDurationMinutes > 0) {
-                    "${stats.compliancePercentage}% dari ${targetHours}j target"
-                } else {
-                    "Target: ${targetHours} jam"
-                }
-                val periodProgress = (stats.compliancePercentage / 100f).coerceIn(0f, 1f)
-                KpiGridCard(
-                    title = titlePeriod,
-                    value = "${totalHours}j ${totalMins}m",
-                    subtitle = subtitlePeriod,
-                    subtitleColor = colors.textSecondary,
-                    icon = Icons.Default.Timer,
-                    iconTint = colors.primary,
-                    iconBg = colors.primaryContainer,
-                    progress = periodProgress,
-                    progressBarColor = colors.primary,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                // Card 3: Sesi Terpanjang
-                val longestH = stats.longestSessionMinutes / 60
-                val longestM = stats.longestSessionMinutes % 60
-                val longestVal = if (stats.longestSessionMinutes > 0) "${longestH}j ${longestM}m" else "0j 0m"
-                val longestSession = uiState.sessions.maxByOrNull {
-                    it.activeDurationMinutes.coerceAtLeast(it.durationMinutes)
-                }
-                val longestDateSdf = SimpleDateFormat("dd MMM", Locale("id", "ID"))
-                val longestSubtitle = if (longestSession != null && stats.longestSessionMinutes > 0) {
-                    val caregiverName = longestSession.currentCaregiver.shortName
-                    val dateStr = longestDateSdf.format(Date(longestSession.startTimeEpoch))
-                    "$caregiverName ($dateStr)"
-                } else {
-                    "Belum ada sesi"
-                }
-                val longestProgress = if (stats.longestSessionMinutes > 0) {
-                    (stats.longestSessionMinutes.toFloat() / (8 * 60f)).coerceIn(0f, 1f)
-                } else 0f
-                KpiGridCard(
-                    title = "Sesi Terpanjang",
-                    value = longestVal,
-                    subtitle = longestSubtitle,
-                    subtitleColor = colors.textSecondary,
-                    icon = Icons.Default.WorkspacePremium,
-                    iconTint = colors.warning,
-                    iconBg = colors.warningContainer,
-                    progress = longestProgress,
-                    progressBarColor = colors.warning,
-                    modifier = Modifier.weight(1f)
-                )
-
-                // Card 4: Frekuensi Sesi
-                val daysWithSessions = stats.dailyDurations.count { it.durationMinutes > 0 }.coerceAtLeast(1)
-                val avgSessionsPerDay = if (stats.totalSessions > 0) {
-                    stats.totalSessions.toFloat() / daysWithSessions
-                } else 0f
-                val freqValue = if (stats.totalSessions > 0) {
-                    String.format(Locale("id", "ID"), "%.1f Sesi/hr", avgSessionsPerDay)
-                } else {
-                    "0 Sesi"
-                }
-                val freqSubtitle = if (stats.totalSessions > 0) {
-                    "${stats.totalSessions} Total Sesi Tercatat"
-                } else {
-                    "Belum ada sesi"
-                }
-                val freqProgress = (avgSessionsPerDay / 6f).coerceIn(0f, 1f)
-                KpiGridCard(
-                    title = "Frekuensi Sesi",
-                    value = freqValue,
-                    subtitle = freqSubtitle,
-                    subtitleColor = colors.textSecondary,
-                    icon = Icons.Default.SyncAlt,
-                    iconTint = colors.caregiverAyah,
-                    iconBg = colors.caregiverAyahContainer,
-                    progress = freqProgress,
-                    progressBarColor = colors.caregiverAyah,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            SummaryThreeCardsRow(
+                stats = stats,
+                selectedPeriod = uiState.selectedPeriod,
+                modifier = Modifier.fillMaxWidth()
+            )
 
             Spacer(modifier = Modifier.height(14.dp))
 
             // =========================================================================
-            // DAILY TREND INTERACTIVE BAR CHART (7 HARI)
+            // DAILY TREND INTERACTIVE BAR CHART (7 HARI - TARGET MIN. 8J)
             // =========================================================================
             InteractiveSevenDayTrendCard(
                 dailyDurations = stats.dailyDurations,
@@ -490,6 +385,16 @@ fun PmkStatisticsScreen(
             // =========================================================================
             CaregiverRelayCard(
                 distribution = stats.caregiverDistribution,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // =========================================================================
+            // RESPON BAYI SELAMA PMK (OBSERVASI KENYAMANAN 4 KATEGORI)
+            // =========================================================================
+            BabyResponseBreakdownCard(
+                breakdown = stats.babyResponseBreakdown,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -603,93 +508,191 @@ private fun FilterPillButton(
 }
 
 @Composable
-private fun KpiGridCard(
-    title: String,
-    value: String,
-    subtitle: String,
-    subtitleColor: Color,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    iconTint: Color,
-    iconBg: Color,
-    progress: Float,
-    progressBarColor: Color,
+private fun SummaryThreeCardsRow(
+    stats: PmkStatistics,
+    selectedPeriod: StatsPeriod,
     modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
 
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
-        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
-        modifier = modifier
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+        // Card 1: Capaian PMK Selama 7 hari
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+            border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+            modifier = Modifier.weight(1f)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
             ) {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(colors.successContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = colors.success,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
                 Text(
-                    text = title,
+                    text = "Capaian PMK\n${selectedPeriod.title}",
                     style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Medium,
                     color = colors.textSecondary
                 )
 
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "${stats.targetAchievedDays} hari = sesuai target",
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.success
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                Text(
+                    text = "${stats.targetUnmetDays} hari = belum target",
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.warning
+                )
+            }
+        }
+
+        // Card 2: Total Minggu Ini
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+            border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+            modifier = Modifier.weight(1f)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
                 Box(
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
-                        .background(iconBg),
+                        .background(colors.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = icon,
+                        imageVector = Icons.Default.Schedule,
                         contentDescription = null,
-                        tint = iconTint,
+                        tint = colors.primary,
                         modifier = Modifier.size(14.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Total ${selectedPeriod.title}",
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "${stats.totalDurationMinutes / 60} Jam",
+                    style = KanguruTheme.typography.titleSmall,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Black,
+                    color = colors.textPrimary
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "${stats.consecutiveDays} hari berturut",
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textSecondary
+                )
             }
+        }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = value,
-                style = KanguruTheme.typography.titleMedium,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Black,
-                color = colors.textPrimary
-            )
-
-            Text(
-                text = subtitle,
-                style = KanguruTheme.typography.labelSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = subtitleColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Progress Bar
-            Box(
+        // Card 3: Target Mingguan
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+            border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+            modifier = Modifier.weight(1f)
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(5.dp)
-                    .clip(RoundedCornerShape(3.dp))
-                    .background(colors.cardBorder)
+                    .padding(10.dp)
             ) {
+                val isMet = stats.isWeeklyTargetMet
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(progress.coerceIn(0f, 1f))
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(progressBarColor)
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(if (isMet) colors.successContainer else colors.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (isMet) Icons.Default.CheckCircle else Icons.Default.Warning,
+                        contentDescription = null,
+                        tint = if (isMet) colors.success else colors.primary,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Target Mingguan",
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.textSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = if (isMet) "Tercapai" else "Tidak Tercapai",
+                    style = KanguruTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = if (isMet) "Sesuai Target" else "Belum Tercapai",
+                    style = KanguruTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = if (isMet) colors.success else colors.primary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -729,15 +732,15 @@ private fun InteractiveSevenDayTrendCard(
         val maxDuration = daysList.maxOfOrNull { it.durationHours } ?: 0f
         daysList.map { d ->
             val hours = d.durationHours
-            val h = hours.toInt()
-            val m = ((hours - h) * 60).toInt()
+            val h = d.durationMinutes / 60
+            val m = d.durationMinutes % 60
             ChartDayItem(
                 dayKey = d.dayEpoch.toString(),
                 dayLabel = d.dayLabel,
                 durationHours = hours,
-                durationText = if (hours > 0f) "${h} Jam ${m} Menit" else "0 Jam 0 Menit",
-                note = if (hours >= 20f) "Pencapaian rekor terbaik estafet!"
-                       else if (hours >= 18f) "Target WHO terpenuhi optimal"
+                durationText = if (d.durationMinutes > 0) "${h} Jam ${m} Menit" else "0 Jam 0 Menit",
+                note = if (hours >= 10f) "Capaian Tertinggi / Rekor!"
+                       else if (hours >= 8f) "Target minimal tercapai!"
                        else if (hours > 0f) "Belum capai target (evaluasi rehat)"
                        else "Belum ada catatan PMK pada hari ini",
                 isPeak = maxDuration > 0f && hours == maxDuration
@@ -770,7 +773,7 @@ private fun InteractiveSevenDayTrendCard(
                         color = colors.textPrimary
                     )
                     Text(
-                        text = "Evaluasi kepatuhan harian vs target WHO",
+                        text = "Evaluasi kepatuhan harian vs target minimal",
                         style = KanguruTheme.typography.labelSmall,
                         color = colors.textSecondary
                     )
@@ -791,7 +794,7 @@ private fun InteractiveSevenDayTrendCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Target 18j",
+                            text = "Target Min. 8j",
                             style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = colors.textSecondary
@@ -802,16 +805,16 @@ private fun InteractiveSevenDayTrendCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Chart area with 18h dashed line + 7 vertical columns
+            // Chart area with 8h dashed line + 7 vertical columns
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(170.dp)
             ) {
-                // Dashed Line at 18h (18/24 = 75% height from bottom -> top is 25%)
+                // Dashed Line at 8h (8/24 = 33.3% height from bottom -> top is 66.7%)
                 val guideLineColor = colors.primary.copy(alpha = 0.5f)
                 Canvas(modifier = Modifier.fillMaxSize()) {
-                    val lineY = size.height * (1f - (18f / 24f))
+                    val lineY = size.height * (1f - (8f / 24f))
                     drawLine(
                         color = guideLineColor,
                         start = Offset(0f, lineY),
@@ -821,16 +824,16 @@ private fun InteractiveSevenDayTrendCard(
                     )
                 }
 
-                // 18.0 Jam Label
+                // Target 8.0j Label
                 Box(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(top = 18.dp)
+                        .align(Alignment.CenterEnd)
+                        .padding(bottom = 24.dp)
                         .background(colors.cardBackground)
                         .padding(horizontal = 4.dp)
                 ) {
                     Text(
-                        text = "18.0 Jam",
+                        text = "Target 8.0j",
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = colors.primary
@@ -845,7 +848,7 @@ private fun InteractiveSevenDayTrendCard(
                 ) {
                     chartDays.forEach { item ->
                         val isSelected = selectedDay.dayKey == item.dayKey
-                        val isTargetMet = item.durationHours >= 18f
+                        val isTargetMet = item.durationHours >= 8f
                         val heightFraction = if (item.durationHours > 0f) {
                             (item.durationHours / 24f).coerceIn(0.04f, 1f)
                         } else {
@@ -861,7 +864,7 @@ private fun InteractiveSevenDayTrendCard(
                         ) {
                             // Value text
                             Text(
-                                text = String.format("%.1f", item.durationHours),
+                                text = String.format(Locale.US, "%.1f", item.durationHours),
                                 style = KanguruTheme.typography.labelSmall,
                                 fontWeight = if (isTargetMet) FontWeight.Bold else FontWeight.Medium,
                                 color = if (isTargetMet) colors.primary else colors.textTertiary
@@ -952,12 +955,12 @@ private fun InteractiveSevenDayTrendCard(
                     ) {
                         Text(
                             text = if (selectedDay.durationHours == 0f) "Belum Ada Sesi"
-                                   else if (selectedDay.isPeak) "Pencapaian Tertinggi"
-                                   else if (selectedDay.durationHours >= 18f) "Target WHO Terpenuhi"
-                                   else "Perlu Ditingkatkan",
+                                   else if (selectedDay.isPeak) "Capaian Tertinggi"
+                                   else if (selectedDay.durationHours >= 8f) "Target Terpenuhi"
+                                   else "Belum Capai Target",
                             style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = if (selectedDay.durationHours >= 18f) colors.primary else colors.textSecondary
+                            color = if (selectedDay.durationHours >= 8f) colors.primary else colors.textSecondary
                         )
                     }
                 }
@@ -1069,7 +1072,7 @@ private fun CaregiverRelayCard(
 
             CaregiverRowDetail(
                 name = "Ayah",
-                roleBadge = "Estafet",
+                roleBadge = "Estafet Malam",
                 badgeBg = colors.caregiverAyahContainer,
                 badgeColor = colors.caregiverAyahText,
                 duration = distribution.ayahHoursFormatted,
@@ -1081,7 +1084,7 @@ private fun CaregiverRelayCard(
 
             CaregiverRowDetail(
                 name = "Pendamping",
-                roleBadge = "Keluarga",
+                roleBadge = "Siang",
                 badgeBg = colors.caregiverPendampingContainer,
                 badgeColor = colors.caregiverPendampingText,
                 duration = distribution.pendampingHoursFormatted,
@@ -1112,8 +1115,7 @@ private fun CaregiverRelayCard(
                     Text(
                         text = "Keterlibatan Ayah dan Pendamping mengurangi beban kelelahan Ibu hingga 40% serta menjaga kontak kulit (skin-to-skin) bayi tetap kontinu 24 jam.",
                         style = KanguruTheme.typography.bodySmall,
-                        color = colors.onWarningContainer,
-                        lineHeight = 16.sp
+                        color = colors.onWarningContainer
                     )
                 }
             }
@@ -1189,6 +1191,256 @@ private fun CaregiverRowDetail(
 }
 
 @Composable
+private fun BabyResponseBreakdownCard(
+    breakdown: BabyResponseBreakdown,
+    modifier: Modifier = Modifier
+) {
+    val colors = KanguruTheme.colors
+
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+        modifier = modifier
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Header Card
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Respon Bayi Selama PMK",
+                        style = KanguruTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Observasi kenyamanan, perilaku, dan stabilitas selama kontak kulit",
+                        style = KanguruTheme.typography.labelSmall,
+                        color = colors.textSecondary
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(colors.successContainer)
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                ) {
+                    Text(
+                        text = "${breakdown.overallCalmPercentage}% Sangat Tenang",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.onSuccessContainer
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Stacked Multi-Color Progress Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(12.dp)
+                    .clip(CircleShape)
+                    .background(colors.surfaceVariant)
+            ) {
+                if (breakdown.totalSessions > 0) {
+                    if (breakdown.deepSleepPercent > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(breakdown.deepSleepPercent.toFloat())
+                                .fillMaxHeight()
+                                .background(colors.success)
+                        )
+                    }
+                    if (breakdown.activeFeedingPercent > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(breakdown.activeFeedingPercent.toFloat())
+                                .fillMaxHeight()
+                                .background(colors.primary)
+                        )
+                    }
+                    if (breakdown.alertCalmPercent > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(breakdown.alertCalmPercent.toFloat())
+                                .fillMaxHeight()
+                                .background(colors.caregiverAyah)
+                        )
+                    }
+                    if (breakdown.adjustingPercent > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(breakdown.adjustingPercent.toFloat())
+                                .fillMaxHeight()
+                                .background(colors.warning)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Rincian Kategori Respon (Grid 2 kolom)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ResponseCategoryItem(
+                    title = "Tidur Pulas",
+                    percent = "${breakdown.deepSleepPercent}%",
+                    sessionCount = "${breakdown.deepSleepSessions} sesi tercatat",
+                    description = "Irama napas teratur, tubuh rileks di dekapan dada.",
+                    indicatorColor = colors.success,
+                    percentColor = colors.success,
+                    modifier = Modifier.weight(1f)
+                )
+                ResponseCategoryItem(
+                    title = "Menyusu Aktif",
+                    percent = "${breakdown.activeFeedingPercent}%",
+                    sessionCount = "${breakdown.activeFeedingSessions} sesi tercatat",
+                    description = "Refleks hisap kuat, menyusu baik tanpa tersedak.",
+                    indicatorColor = colors.primary,
+                    percentColor = colors.primary,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ResponseCategoryItem(
+                    title = "Tenang Waspada",
+                    percent = "${breakdown.alertCalmPercent}%",
+                    sessionCount = "${breakdown.alertCalmSessions} sesi tercatat",
+                    description = "Kontak mata hangat, mendengar detak jantung.",
+                    indicatorColor = colors.caregiverAyah,
+                    percentColor = colors.caregiverAyahText,
+                    modifier = Modifier.weight(1f)
+                )
+                ResponseCategoryItem(
+                    title = "Penyesuaian",
+                    percent = "${breakdown.adjustingPercent}%",
+                    sessionCount = "${breakdown.adjustingSessions} sesi tercatat",
+                    description = "Mudah tenang kembali setelah posisi disesuaikan.",
+                    indicatorColor = colors.warning,
+                    percentColor = colors.warning,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Kotak Edukasi Klinis
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(colors.warningContainer)
+                    .padding(10.dp)
+            ) {
+                Row(verticalAlignment = Alignment.Top) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = colors.warning,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(top = 1.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Kontak kulit langsung (PMK) terbukti menurunkan stres bayi prematur, menstabilkan saturasi oksigen, serta mempercepat fase tidur lelap (deep sleep) yang krusial untuk perkembangan otak.",
+                        style = KanguruTheme.typography.bodySmall,
+                        color = colors.onWarningContainer
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ResponseCategoryItem(
+    title: String,
+    percent: String,
+    sessionCount: String,
+    description: String,
+    indicatorColor: Color,
+    percentColor: Color,
+    modifier: Modifier = Modifier
+) {
+    val colors = KanguruTheme.colors
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(colors.surfaceVariant)
+            .padding(10.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(indicatorColor)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = title,
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    )
+                }
+
+                Text(
+                    text = percent,
+                    style = KanguruTheme.typography.labelSmall,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Black,
+                    color = percentColor
+                )
+            }
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = sessionCount,
+                style = KanguruTheme.typography.labelSmall,
+                color = colors.textTertiary
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = description,
+                style = KanguruTheme.typography.labelSmall,
+                color = colors.textSecondary
+            )
+        }
+    }
+}
+
+@Composable
 private fun ClinicalImpactCard(
     statistics: PmkStatistics,
     modifier: Modifier = Modifier
@@ -1197,9 +1449,6 @@ private fun ClinicalImpactCard(
     val eval = statistics.clinicalEvaluation
     val hasTempData = eval.averageTemperature > 0.0
     val isTempNormal = hasTempData && eval.averageTemperature in 36.5..37.5
-    val hasBehaviorData = eval.calmnessPercentage > 0 || eval.feedingPercentage > 0
-    val calmPct = eval.calmnessPercentage
-    val feedingPct = eval.feedingPercentage
 
     Card(
         shape = RoundedCornerShape(20.dp),
@@ -1350,97 +1599,7 @@ private fun ClinicalImpactCard(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Respon Perilaku Bayi
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Respon Perilaku Bayi",
-                        style = KanguruTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
-                    )
-                    Text(
-                        text = if (hasBehaviorData) "${calmPct}% Tenang / Tidur" else "Belum Ada Catatan",
-                        style = KanguruTheme.typography.labelSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = colors.textSecondary
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                // Progress Bar
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                        .clip(CircleShape)
-                        .background(colors.surfaceVariant)
-                ) {
-                    if (hasBehaviorData) {
-                        if (calmPct > 0) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(calmPct.toFloat())
-                                    .fillMaxSize()
-                                    .background(colors.success)
-                            )
-                        }
-                        if (feedingPct > 0) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(feedingPct.toFloat())
-                                    .fillMaxSize()
-                                    .background(colors.caregiverAyah)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .clip(CircleShape)
-                                .background(colors.success)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (hasBehaviorData) "${calmPct}% Tenang & Tidur Pulas" else "-% Tenang",
-                            style = KanguruTheme.typography.labelSmall,
-                            color = colors.textSecondary
-                        )
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .clip(CircleShape)
-                                .background(colors.caregiverAyah)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (hasBehaviorData) "${feedingPct}% Menyusu Aktif" else "-% Menyusu",
-                            style = KanguruTheme.typography.labelSmall,
-                            color = colors.textSecondary
-                        )
-                    }
-                }
-            }
         }
     }
 }
+

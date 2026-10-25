@@ -1,13 +1,17 @@
 package com.kangurusiaga.app.domain.usecase
 
+import com.kangurusiaga.app.domain.model.BabyResponseBreakdown
 import com.kangurusiaga.app.domain.model.CaregiverDistribution
 import com.kangurusiaga.app.domain.model.ClinicalEvaluation
 import com.kangurusiaga.app.domain.model.DailyDuration
 import com.kangurusiaga.app.domain.model.PmkCaregiver
+import com.kangurusiaga.app.domain.model.PmkSegment
+import com.kangurusiaga.app.domain.model.PmkSegmentStatus
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.model.PmkStatistics
 import com.kangurusiaga.app.domain.model.StatsPeriod
 import com.kangurusiaga.app.domain.model.TimeDistribution
+import com.kangurusiaga.app.domain.model.TimerStatus
 import com.kangurusiaga.app.domain.repository.PmkRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,13 +27,14 @@ class GetPmkStatisticsUseCase @Inject constructor(
     operator fun invoke(
         babyId: Long,
         period: StatsPeriod = StatsPeriod.THIS_WEEK,
-        calendarInstance: Calendar = Calendar.getInstance()
+        calendarInstance: Calendar = Calendar.getInstance(),
+        babyBirthDateEpoch: Long? = null
     ): Flow<PmkStatistics> {
         val (startEpoch, endEpoch, dateRangeText) = calculateEpochRange(period, calendarInstance)
 
         return pmkRepository.getSessionsForBabyInRange(babyId, startEpoch, endEpoch)
             .map { sessions ->
-                computeStatistics(period, sessions, dateRangeText, calendarInstance)
+                computeStatistics(period, sessions, dateRangeText, calendarInstance, babyBirthDateEpoch)
             }
     }
 
@@ -129,14 +134,20 @@ class GetPmkStatisticsUseCase @Inject constructor(
         period: StatsPeriod,
         sessions: List<PmkSession>,
         dateRangeText: String,
-        cal: Calendar
+        cal: Calendar,
+        babyBirthDateEpoch: Long? = null
     ): PmkStatistics {
-        val totalMinutes = sessions.sumOf { it.activeDurationMinutes.coerceAtLeast(it.durationMinutes) }
+        val dailyDurations = computeDailyDurations(sessions, cal, period)
+        val totalMinutes = if (period == StatsPeriod.THIS_WEEK || period == StatsPeriod.LAST_WEEK) {
+            dailyDurations.sumOf { it.durationMinutes }
+        } else {
+            sessions.sumOf { calculateSessionActiveMinutes(it) }
+        }
         val targetMinutes = when (period) {
-            StatsPeriod.THIS_WEEK, StatsPeriod.LAST_WEEK -> 7 * 18 * 60 // 7 days * 18h = 7560m
-            StatsPeriod.THIS_MONTH -> 30 * 18 * 60
-            StatsPeriod.DAYS_30 -> 30 * 18 * 60
-            StatsPeriod.ALL -> if (totalMinutes > 0) totalMinutes else 7560
+            StatsPeriod.THIS_WEEK, StatsPeriod.LAST_WEEK -> 7 * 8 * 60 // 7 days * 8h = 3360m (56h target minimal)
+            StatsPeriod.THIS_MONTH -> 30 * 8 * 60
+            StatsPeriod.DAYS_30 -> 30 * 8 * 60
+            StatsPeriod.ALL -> if (totalMinutes > 0) totalMinutes else 3360
         }
 
         val compliancePercent = if (targetMinutes > 0) {
@@ -144,25 +155,45 @@ class GetPmkStatisticsUseCase @Inject constructor(
         } else 0
 
         val complianceBadge = when {
-            compliancePercent >= 90 -> "Sangat Baik! (Target >18j)"
-            compliancePercent >= 75 -> "Cukup Baik"
-            compliancePercent >= 50 -> "Perlu Ditingkatkan"
-            else -> "Belum Optimal"
+            compliancePercent >= 80 -> "Sangat Baik"
+            compliancePercent >= 60 -> "Baik"
+            compliancePercent >= 40 -> "Cukup"
+            else -> "Perlu Ditingkatkan"
         }
 
         val totalHours = totalMinutes / 60
         val remainingMinutes = totalMinutes % 60
         val totalDetailedFormatted = "${totalHours} Jam ${remainingMinutes} Menit"
-        val targetFormatted = "Target: >18j / hari"
+        val targetFormatted = "Target: 8j/hari"
 
         val daysInPeriod = if (period == StatsPeriod.THIS_WEEK || period == StatsPeriod.LAST_WEEK) 7 else 30
         val dailyAverageHours = (totalMinutes.toFloat() / 60f) / daysInPeriod.toFloat()
 
-        val dailyDurations = computeDailyDurations(sessions, cal, period)
-        val targetAchievedDays = dailyDurations.count { it.durationMinutes >= (18 * 60) }
+        val targetAchievedDays = dailyDurations.count { it.durationMinutes >= (8 * 60) }
+        val targetUnmetDays = (daysInPeriod - targetAchievedDays).coerceAtLeast(0)
 
-        val motivationalTip = if (compliancePercent >= 90) {
-            "Luar biasa, Ayah & Bunda! Rata-rata durasi kontak kulit harian konsisten melampaui 18 jam sesuai standar emas WHO."
+        var maxStreak = 0
+        var curStreak = 0
+        for (d in dailyDurations) {
+            if (d.durationMinutes > 0) {
+                curStreak++
+                if (curStreak > maxStreak) maxStreak = curStreak
+            } else {
+                curStreak = 0
+            }
+        }
+        val consecutiveDays = maxStreak
+        val isWeeklyTargetMet = targetAchievedDays >= 4 || totalMinutes >= targetMinutes
+
+        val babyChronologicalWeek = if (babyBirthDateEpoch != null && babyBirthDateEpoch > 0L) {
+            val diff = (cal.timeInMillis - babyBirthDateEpoch).coerceAtLeast(0L)
+            ((diff / (7 * 24 * 3600 * 1000L)) + 1).toInt()
+        } else {
+            1
+        }
+
+        val motivationalTip = if (compliancePercent >= 80) {
+            "Luar biasa, Ayah & Bunda! Rata-rata durasi kontak kulit harian konsisten memenuhi target minimal 8 jam."
         } else {
             val remainingHours = ((targetMinutes - totalMinutes) / 60.0).coerceAtLeast(0.0)
             val formattedDiff = String.format(Locale("id", "ID"), "%.1f", remainingHours)
@@ -170,7 +201,7 @@ class GetPmkStatisticsUseCase @Inject constructor(
         }
 
         val avgMinutes = if (sessions.isNotEmpty()) totalMinutes / sessions.size else 0
-        val longestMinutes = sessions.maxOfOrNull { it.activeDurationMinutes.coerceAtLeast(it.durationMinutes) } ?: 0
+        val longestMinutes = sessions.maxOfOrNull { calculateSessionActiveMinutes(it) } ?: 0
 
         // Time Distribution
         val timeDistribution = computeTimeDistribution(sessions)
@@ -178,8 +209,16 @@ class GetPmkStatisticsUseCase @Inject constructor(
         // Caregiver Distribution
         val caregiverDistribution = computeCaregiverDistribution(sessions)
 
+        // Baby Response Breakdown (Stitch Screen 5331220106580777785)
+        val babyResponseBreakdown = computeBabyResponseBreakdown(sessions)
+
         // Clinical Observations
-        val temps = sessions.mapNotNull { it.babyTemperature }.filter { it in 30.0..42.0 }
+        val temps = sessions.flatMap { session ->
+            val list = mutableListOf<Double>()
+            session.babyTemperature?.takeIf { it in 30.0..42.0 }?.let { list.add(it) }
+            session.segments.mapNotNull { it.babyTemperature }.filter { it in 30.0..42.0 }.forEach { list.add(it) }
+            list
+        }
         val avgTemp = if (temps.isNotEmpty()) {
             (temps.average() * 10).roundToInt() / 10.0
         } else 0.0
@@ -189,26 +228,23 @@ class GetPmkStatisticsUseCase @Inject constructor(
             ((normalTemps.toDouble() / temps.size) * 100).roundToInt()
         } else 0
 
-        val calmSessions = sessions.count {
-            it.babyResponse == null || it.babyResponse == "Tidur Tenang" || it.babyResponse == "Tenang" ||
-                it.babyResponse == "Tenang & Rileks" || it.babyResponse == "Tidur Pulas" ||
-                it.babyResponse == "Tenang & Hangat" || it.babyResponse == "Dekapan Nyaman"
+        val calmOverallPercent = if (babyResponseBreakdown.overallCalmPercentage > 0) {
+            babyResponseBreakdown.overallCalmPercentage
+        } else if (sessions.isNotEmpty()) {
+            val calmCount = sessions.count {
+                it.babyResponse == null || it.babyResponse?.contains("Tenang", ignoreCase = true) == true ||
+                    it.babyResponse?.contains("Tidur", ignoreCase = true) == true
+            }
+            ((calmCount.toDouble() / sessions.size) * 100).roundToInt()
+        } else {
+            0
         }
-        val feedingSessions = sessions.count {
-            it.babyResponse == "Menyusu Nyaman" || it.babyResponse == "Menyusu Aktif" || it.babyResponse == "Menyusu Teratur"
-        }
-        val calmnessPercent = if (sessions.isNotEmpty()) {
-            ((calmSessions.toDouble() / sessions.size) * 100).roundToInt()
-        } else 0
-        val feedingPercent = if (sessions.isNotEmpty()) {
-            ((feedingSessions.toDouble() / sessions.size) * 100).roundToInt()
-        } else 0
 
         val clinicalEvaluation = ClinicalEvaluation(
             averageTemperature = avgTemp,
             normalTemperaturePercentage = normalTempPercent,
-            calmnessPercentage = calmnessPercent,
-            feedingPercentage = feedingPercent,
+            calmnessPercentage = calmOverallPercent,
+            feedingPercentage = babyResponseBreakdown.activeFeedingPercent,
             summaryNote = if (sessions.isNotEmpty()) {
                 "Suhu tubuh bayi terpantau rata-rata ${if (avgTemp > 0) "${avgTemp}°C" else "-"} dengan kestabilan fisiologis yang terpantau optimal selama kontak kulit."
             } else {
@@ -227,6 +263,10 @@ class GetPmkStatisticsUseCase @Inject constructor(
             targetDurationFormatted = targetFormatted,
             dailyAverageHours = (dailyAverageHours * 10).roundToInt() / 10f,
             targetAchievedDays = targetAchievedDays,
+            targetUnmetDays = targetUnmetDays,
+            consecutiveDays = consecutiveDays,
+            isWeeklyTargetMet = isWeeklyTargetMet,
+            babyChronologicalWeek = babyChronologicalWeek,
             totalDaysInPeriod = daysInPeriod,
             motivationalTip = motivationalTip,
             averageMinutesPerSession = avgMinutes,
@@ -236,8 +276,9 @@ class GetPmkStatisticsUseCase @Inject constructor(
             timeDistribution = timeDistribution,
             caregiverDistribution = caregiverDistribution,
             clinicalEvaluation = clinicalEvaluation,
+            babyResponseBreakdown = babyResponseBreakdown,
             averageTemperature = avgTemp,
-            calmnessPercentage = calmnessPercent
+            calmnessPercentage = calmOverallPercent
         )
     }
 
@@ -300,6 +341,28 @@ class GetPmkStatisticsUseCase @Inject constructor(
         copy.set(Calendar.SECOND, 0)
         copy.set(Calendar.MILLISECOND, 0)
 
+        // Flatten all segments (same as PmkHistoryModels)
+        val allSegments = sessions.flatMap { session ->
+            if (session.segments.isNotEmpty()) {
+                session.segments
+            } else {
+                listOf(
+                    PmkSegment(
+                        id = session.id,
+                        sessionId = session.id,
+                        caregiver = session.currentCaregiver,
+                        startTimeEpoch = session.startTimeEpoch,
+                        endTimeEpoch = if (session.status == TimerStatus.RUNNING) null else session.endTimeEpoch,
+                        durationMinutes = session.activeDurationMinutes.coerceAtLeast(session.durationMinutes),
+                        status = PmkSegmentStatus.ACTIVE,
+                        babyTemperature = session.babyTemperature,
+                        babyResponse = session.babyResponse,
+                        notes = session.notes
+                    )
+                )
+            }
+        }.sortedBy { it.startTimeEpoch }
+
         val result = mutableListOf<DailyDuration>()
 
         for (i in 0..6) {
@@ -307,20 +370,85 @@ class GetPmkStatisticsUseCase @Inject constructor(
             copy.add(Calendar.DAY_OF_YEAR, 1)
             val dayEnd = copy.timeInMillis - 1
 
-            val dayMinutes = sessions.filter { it.startTimeEpoch in dayStart..dayEnd }
-                .sumOf { it.activeDurationMinutes.coerceAtLeast(it.durationMinutes) }
+            val timeline = GetDailyPmkTimelineUseCase.computeTimeline(
+                dayStartEpoch = dayStart,
+                dayEndEpoch = dayEnd,
+                dayFormatted = days[i],
+                segments = allSegments
+            )
+            val dayMinutes = timeline.totalActiveMinutes
 
             result.add(
                 DailyDuration(
                     dayLabel = days[i],
                     durationMinutes = dayMinutes,
-                    isAboveTarget = dayMinutes >= (18 * 60),
+                    isAboveTarget = dayMinutes >= (8 * 60),
                     dayEpoch = dayStart
                 )
             )
         }
 
         return result
+    }
+
+    private fun calculateSessionActiveMinutes(session: PmkSession): Int {
+        val segmentMinutes = if (session.segments.isNotEmpty()) {
+            session.segments.filter { it.status == PmkSegmentStatus.ACTIVE }.sumOf { seg ->
+                if (seg.durationMinutes > 0) seg.durationMinutes
+                else (seg.calculateDurationSeconds() / 60L).toInt().coerceAtLeast(0)
+            }
+        } else 0
+        return maxOf(segmentMinutes, session.activeDurationMinutes, session.durationMinutes)
+    }
+
+    private fun computeBabyResponseBreakdown(sessions: List<PmkSession>): BabyResponseBreakdown {
+        val responses = mutableListOf<String>()
+        for (session in sessions) {
+            val segResponses = session.segments.mapNotNull { it.babyResponse?.takeIf { r -> r.isNotBlank() } }
+            if (segResponses.isNotEmpty()) {
+                responses.addAll(segResponses)
+            } else if (!session.babyResponse.isNullOrBlank()) {
+                responses.add(session.babyResponse)
+            }
+        }
+        val totalRecorded = responses.size
+        if (totalRecorded == 0) {
+            return BabyResponseBreakdown()
+        }
+
+        var deepSleep = 0
+        var activeFeeding = 0
+        var alertCalm = 0
+        var adjusting = 0
+
+        for (resp in responses) {
+            when {
+                resp.contains("Tidur", ignoreCase = true) -> deepSleep++
+                resp.contains("Menyusu", ignoreCase = true) || resp.contains("Rooting", ignoreCase = true) -> activeFeeding++
+                resp.contains("Tenang", ignoreCase = true) || resp.contains("Rileks", ignoreCase = true) || resp.contains("Nyaman", ignoreCase = true) -> alertCalm++
+                resp.contains("Gelisah", ignoreCase = true) || resp.contains("Menangis", ignoreCase = true) || resp.contains("Rewel", ignoreCase = true) || resp.contains("Penyesuaian", ignoreCase = true) -> adjusting++
+                else -> alertCalm++
+            }
+        }
+
+        val deepSleepPct = ((deepSleep.toDouble() / totalRecorded) * 100).roundToInt()
+        val activeFeedingPct = ((activeFeeding.toDouble() / totalRecorded) * 100).roundToInt()
+        val alertCalmPct = ((alertCalm.toDouble() / totalRecorded) * 100).roundToInt()
+        val adjustingPct = (100 - deepSleepPct - activeFeedingPct - alertCalmPct).coerceAtLeast(0)
+        val calmOverall = (deepSleepPct + alertCalmPct).coerceIn(0, 100)
+
+        return BabyResponseBreakdown(
+            deepSleepCount = deepSleep,
+            deepSleepPercent = deepSleepPct,
+            activeFeedingCount = activeFeeding,
+            activeFeedingPercent = activeFeedingPct,
+            alertCalmCount = alertCalm,
+            alertCalmPercent = alertCalmPct,
+            adjustingCount = adjusting,
+            adjustingPercent = adjustingPct,
+            totalRecordedSessions = totalRecorded,
+            overallCalmPercentage = calmOverall
+        )
     }
 
     private fun computeTimeDistribution(sessions: List<PmkSession>): TimeDistribution {

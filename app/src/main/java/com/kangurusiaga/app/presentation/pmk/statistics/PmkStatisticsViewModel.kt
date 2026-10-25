@@ -48,7 +48,7 @@ class PmkStatisticsViewModel @Inject constructor(
             val babyId = baby?.id ?: 1L
             combine(
                 _selectedPeriod.flatMapLatest { period ->
-                    getPmkStatisticsUseCase(babyId, period)
+                    getPmkStatisticsUseCase(babyId, period, babyBirthDateEpoch = baby?.birthDateEpochMillis)
                 },
                 getPmkSessionsUseCase(babyId),
                 _selectedPeriod,
