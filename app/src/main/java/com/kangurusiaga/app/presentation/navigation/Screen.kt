@@ -28,6 +28,14 @@ sealed class Screen(override val route: String, override val destination: String
         fun createRoute(videoId: Int): String = "pmk_video_detail/$videoId"
     }
     data object PmkVideo : Screen(route = "pmk_video", destination = "pmk_video_destination") // legacy alias pointing to video list
+    data object ScreeningSchedule : Screen(route = "screening_schedule", destination = "screening_schedule_destination")
+    data object ScreeningInputResult : Screen(
+        route = "screening_input_result?type={type}",
+        destination = "screening_input_result_destination"
+    ) {
+        fun createRoute(type: String? = null): String =
+            if (type != null) "screening_input_result?type=$type" else "screening_input_result"
+    }
 
     // Education Module Screens
     data object EducationCenter : Screen(route = "education_center", destination = "education_center_destination")

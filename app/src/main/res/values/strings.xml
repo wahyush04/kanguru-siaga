@@ -446,6 +446,14 @@
     <string name="pmk_center_menu_reminder_sub">Atur jadwal pengingat</string>
     <string name="pmk_center_menu_history_title">Riwayat PMK</string>
     <string name="pmk_center_menu_history_sub">Lihat catatan sesi PMK</string>
+    <string name="pmk_center_menu_screening_title">Jadwal Skrining Bayi Prematur</string>
+    <string name="pmk_center_menu_screening_sub">Saat rawat jalan</string>
+
+    <!-- Premature Infant Screening Module (Jadwal & Evaluasi Penapisan) -->
+    <string name="screening_schedule_title">Jadwal &amp; Evaluasi Penapisan</string>
+    <string name="screening_schedule_subtitle">• Kanguru Siaga Rawat Jalan</string>
+    <string name="screening_tab_reminders">Jadwal &amp; Alarm (4)</string>
+    <string name="screening_tab_evaluations">Hasil &amp; Lembar Medis</string>
 
     <!-- PMK History -->
     <string name="pmk_history_title">Riwayat PMK</string>

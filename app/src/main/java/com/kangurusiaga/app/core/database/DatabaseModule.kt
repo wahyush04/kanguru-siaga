@@ -96,4 +96,10 @@ object DatabaseModule {
     fun provideInAppNotificationDao(database: KanguruDatabase): com.kangurusiaga.app.data.local.dao.InAppNotificationDao {
         return database.inAppNotificationDao()
     }
+
+    @Provides
+    @Singleton
+    fun providePrematureScreeningDao(database: KanguruDatabase): com.kangurusiaga.app.data.local.dao.PrematureScreeningDao {
+        return database.prematureScreeningDao()
+    }
 }

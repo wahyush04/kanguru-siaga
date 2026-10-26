@@ -37,6 +37,8 @@ import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsRoute
 import com.kangurusiaga.app.presentation.pmk.timer.PmkTimerRoute
 import com.kangurusiaga.app.presentation.pmk.video.PmkVideoListScreen
 import com.kangurusiaga.app.presentation.pmk.video.PmkVideoScreen
+import com.kangurusiaga.app.presentation.pmk.screening.ScreeningScheduleRoute
+import com.kangurusiaga.app.presentation.pmk.screening.ScreeningInputResultRoute
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.presentation.growth.about.AboutFentonScreen
 import com.kangurusiaga.app.presentation.growth.batch.GrowthBatchMeasurementScreen
@@ -179,6 +181,9 @@ fun KanguruNavGraph(
                 onNavigateToHistory = {
                     navController.navigate(Screen.PmkHistory.route)
                 },
+                onNavigateToScreeningSchedule = {
+                    navController.navigate(Screen.ScreeningSchedule.route)
+                },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
@@ -224,6 +229,9 @@ fun KanguruNavGraph(
                 onNavigateToHistory = {
                     navController.navigate(Screen.PmkHistory.route)
                 },
+                onNavigateToScreeningSchedule = {
+                    navController.navigate(Screen.ScreeningSchedule.route)
+                },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
@@ -247,6 +255,36 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        // Jadwal & Evaluasi Penapisan Bayi Prematur (Google Stitch)
+        composable(route = Screen.ScreeningSchedule.route) {
+            ScreeningScheduleRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToInputResult = { type ->
+                    navController.navigate(Screen.ScreeningInputResult.createRoute(type))
+                }
+            )
+        }
+
+        // Catat Hasil & Resume Medis Skrining (Google Stitch)
+        composable(
+            route = Screen.ScreeningInputResult.route,
+            arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {
+            ScreeningInputResultRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

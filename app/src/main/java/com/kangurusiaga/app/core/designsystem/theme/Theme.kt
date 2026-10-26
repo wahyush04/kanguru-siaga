@@ -487,6 +487,32 @@ abstract class KanguruColors {
         get() = if (isDark) Color(0xFF38BDF8) else Color(0xFF0369A1)
     open val growthTableBadgePmaBorder: Color
         get() = if (isDark) Color(0xFF075985) else Color(0xFFE0F2FE)
+
+    // Clinical Screening Tokens (Google Stitch)
+    open val clinicalBlueBg: Color get() = if (isDark) Color(0xFF1E293B) else Color(0xFFEFF6FF)
+    open val clinicalBlueBorder: Color get() = if (isDark) Color(0xFF334155) else Color(0xFFBFDBFE)
+    open val clinicalBlueText: Color get() = if (isDark) Color(0xFF93C5FD) else Color(0xFF1D4ED8)
+
+    open val clinicalAmberBg: Color get() = if (isDark) Color(0xFF2A2415) else Color(0xFFFEF9C3)
+    open val clinicalAmberBorder: Color get() = if (isDark) Color(0xFF4D3F1D) else Color(0xFFFDE047)
+    open val clinicalAmberText: Color get() = if (isDark) Color(0xFFFDE047) else Color(0xFFA16207)
+
+    open val clinicalRoseBg: Color get() = if (isDark) Color(0xFF2D181D) else Color(0xFFFFE4E6)
+    open val clinicalRoseBorder: Color get() = if (isDark) Color(0xFF50242E) else Color(0xFFFECDD3)
+    open val clinicalRoseText: Color get() = if (isDark) Color(0xFFFDA4AF) else Color(0xFFBE123C)
+
+    open val clinicalEmeraldBg: Color get() = if (isDark) Color(0xFF13281E) else Color(0xFFECFDF5)
+    open val clinicalEmeraldBorder: Color get() = if (isDark) Color(0xFF1E4532) else Color(0xFFA7F3D0)
+    open val clinicalEmeraldText: Color get() = if (isDark) Color(0xFF6EE7B7) else Color(0xFF047857)
+
+    open val clinicalPurpleBg: Color get() = if (isDark) Color(0xFF251A32) else Color(0xFFF3E8FF)
+    open val clinicalPurpleBorder: Color get() = if (isDark) Color(0xFF442D5A) else Color(0xFFE9D5FF)
+    open val clinicalPurpleText: Color get() = if (isDark) Color(0xFFD8B4FE) else Color(0xFF7E22CE)
+
+    open val clinicalAmberSolid: Color get() = if (isDark) Color(0xFFD97706) else Color(0xFFF59E0B)
+    open val clinicalRoseSolid: Color get() = if (isDark) Color(0xFFE11D48) else Color(0xFFF43F5E)
+    open val clinicalEmeraldSolid: Color get() = if (isDark) Color(0xFF047857) else Color(0xFF059669)
+    open val clinicalPurpleSolid: Color get() = if (isDark) Color(0xFF7E22CE) else Color(0xFF9333EA)
 }
 
 

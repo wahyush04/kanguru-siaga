@@ -66,6 +66,7 @@ fun PmkCenterScreen(
     onNavigateToTimer: () -> Unit,
     onNavigateToReminders: () -> Unit,
     onNavigateToHistory: () -> Unit,
+    onNavigateToScreeningSchedule: () -> Unit = {},
     onNavigateToHome: () -> Unit = onNavigateBack,
     onNavigateToEducation: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
@@ -216,6 +217,16 @@ fun PmkCenterScreen(
                     iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoContainer,
                     iconTintColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.infoText,
                     onClick = onNavigateToHistory
+                )
+
+                // Menu Item 5: Jadwal Skrining Bayi Prematur
+                PmkMenuItem(
+                    title = stringResource(R.string.pmk_center_menu_screening_title),
+                    subtitle = stringResource(R.string.pmk_center_menu_screening_sub),
+                    iconVector = Icons.Default.Description,
+                    iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.clinicalPurpleBg,
+                    iconTintColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.clinicalPurpleText,
+                    onClick = onNavigateToScreeningSchedule
                 )
             }
 

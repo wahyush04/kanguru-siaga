@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -516,7 +517,7 @@ private fun SummaryThreeCardsRow(
     val colors = KanguruTheme.colors
 
     Row(
-        modifier = modifier,
+        modifier = modifier.height(IntrinsicSize.Max),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Card 1: Capaian PMK Selama 7 hari
@@ -524,54 +525,59 @@ private fun SummaryThreeCardsRow(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
             border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(colors.successContainer),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = colors.success,
-                        modifier = Modifier.size(14.dp)
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(colors.successContainer),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = colors.success,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Capaian PMK\n${selectedPeriod.title}",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = colors.textSecondary
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Column(modifier = Modifier.padding(top = 6.dp)) {
+                    Text(
+                        text = "${stats.targetAchievedDays} hari = sesuai target",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.success
+                    )
 
-                Text(
-                    text = "Capaian PMK\n${selectedPeriod.title}",
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = colors.textSecondary
-                )
+                    Spacer(modifier = Modifier.height(2.dp))
 
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = "${stats.targetAchievedDays} hari = sesuai target",
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.success
-                )
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Text(
-                    text = "${stats.targetUnmetDays} hari = belum target",
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = colors.warning
-                )
+                    Text(
+                        text = "${stats.targetUnmetDays} hari = belum target",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = colors.warning
+                    )
+                }
             }
         }
 
@@ -580,57 +586,63 @@ private fun SummaryThreeCardsRow(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
             border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(colors.primaryContainer),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Schedule,
-                        contentDescription = null,
-                        tint = colors.primary,
-                        modifier = Modifier.size(14.dp)
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(colors.primaryContainer),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Schedule,
+                            contentDescription = null,
+                            tint = colors.primary,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Total ${selectedPeriod.title}",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = colors.textSecondary,
+                        minLines = 2,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Column(modifier = Modifier.padding(top = 6.dp)) {
+                    Text(
+                        text = "${stats.totalDurationMinutes / 60} Jam",
+                        style = KanguruTheme.typography.titleSmall,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Black,
+                        color = colors.textPrimary
+                    )
 
-                Text(
-                    text = "Total ${selectedPeriod.title}",
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = colors.textSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "${stats.totalDurationMinutes / 60} Jam",
-                    style = KanguruTheme.typography.titleSmall,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Black,
-                    color = colors.textPrimary
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "${stats.consecutiveDays} hari berturut",
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = colors.textSecondary
-                )
+                    Text(
+                        text = "${stats.consecutiveDays} hari berturut",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = colors.textSecondary
+                    )
+                }
             }
         }
 
@@ -639,61 +651,67 @@ private fun SummaryThreeCardsRow(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
             border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 val isMet = stats.isWeeklyTargetMet
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(if (isMet) colors.successContainer else colors.primaryContainer),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (isMet) Icons.Default.CheckCircle else Icons.Default.Warning,
-                        contentDescription = null,
-                        tint = if (isMet) colors.success else colors.primary,
-                        modifier = Modifier.size(14.dp)
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(if (isMet) colors.successContainer else colors.primaryContainer),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isMet) Icons.Default.CheckCircle else Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = if (isMet) colors.success else colors.primary,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Target Mingguan",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = colors.textSecondary,
+                        minLines = 2,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Column(modifier = Modifier.padding(top = 6.dp)) {
+                    Text(
+                        text = if (isMet) "Tercapai" else "Tidak Tercapai",
+                        style = KanguruTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
-                Text(
-                    text = "Target Mingguan",
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = colors.textSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = if (isMet) "Tercapai" else "Tidak Tercapai",
-                    style = KanguruTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = if (isMet) "Sesuai Target" else "Belum Tercapai",
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = if (isMet) colors.success else colors.primary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                    Text(
+                        text = if (isMet) "Sesuai Target" else "Belum Tercapai",
+                        style = KanguruTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isMet) colors.success else colors.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }

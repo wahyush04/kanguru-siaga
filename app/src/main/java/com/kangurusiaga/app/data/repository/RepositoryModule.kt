@@ -76,4 +76,10 @@ abstract class RepositoryModule {
     abstract fun bindNotificationRepository(
         impl: NotificationRepositoryImpl
     ): com.kangurusiaga.app.domain.repository.NotificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPrematureScreeningRepository(
+        impl: PrematureScreeningRepositoryImpl
+    ): com.kangurusiaga.app.domain.repository.PrematureScreeningRepository
 }

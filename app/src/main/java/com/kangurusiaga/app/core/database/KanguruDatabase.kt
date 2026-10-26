@@ -24,9 +24,10 @@ import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
         EducationProgressEntity::class,
         FeedingScheduleEntity::class,
         GrowthMeasurementEntity::class,
-        com.kangurusiaga.app.data.local.entity.InAppNotificationEntity::class
+        com.kangurusiaga.app.data.local.entity.InAppNotificationEntity::class,
+        com.kangurusiaga.app.data.local.entity.PrematureScreeningEntity::class
     ],
-    version = 8,
+    version = 10,
     exportSchema = false
 )
 abstract class KanguruDatabase : RoomDatabase() {
@@ -37,6 +38,7 @@ abstract class KanguruDatabase : RoomDatabase() {
     abstract fun feedingScheduleDao(): FeedingScheduleDao
     abstract fun growthMeasurementDao(): GrowthMeasurementDao
     abstract fun inAppNotificationDao(): com.kangurusiaga.app.data.local.dao.InAppNotificationDao
+    abstract fun prematureScreeningDao(): com.kangurusiaga.app.data.local.dao.PrematureScreeningDao
 
     companion object {
         const val DATABASE_NAME = "kanguru_siaga_db"

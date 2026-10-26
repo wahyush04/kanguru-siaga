@@ -29,7 +29,7 @@ class UserPreferencesDataStore @Inject constructor(
     }
 
     val isOnboardingCompleted: Flow<Boolean> = dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.IS_ONBOARDING_COMPLETED] ?: false
+        preferences[PreferencesKeys.IS_ONBOARDING_COMPLETED] ?: true
     }
 
     val hasCompletedOnboarding: Flow<Boolean> = isOnboardingCompleted
