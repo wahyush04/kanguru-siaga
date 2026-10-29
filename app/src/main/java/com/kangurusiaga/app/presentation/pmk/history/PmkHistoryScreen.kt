@@ -52,6 +52,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -199,24 +203,52 @@ fun PmkHistoryScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Rekapitulasi Kontak Kulit Harian",
-                            style = KanguruTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Medium,
-                            color = colors.textTertiary
-                        )
-                        val babyName = uiState.baby?.name ?: "Si Kecil"
-                        val birthWeight = uiState.baby?.birthWeightGram
-                        val weightText = if (birthWeight != null) " (BBLR ${birthWeight}g)" else ""
-                        Text(
-                            text = "$babyName$weightText",
-                            style = KanguruTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.textPrimary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val photoUri = uiState.baby?.photoUri
+                        if (!photoUri.isNullOrBlank()) {
+                            Box(
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .clip(CircleShape)
+                                    .background(colors.primaryContainer)
+                                    .border(1.5.dp, colors.primaryBorder, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(photoUri)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Foto ${uiState.baby?.name ?: "Si Kecil"}",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
+
+                        Column(modifier = Modifier.weight(1f, fill = false)) {
+                            Text(
+                                text = "Rekapitulasi Kontak Kulit Harian",
+                                style = KanguruTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium,
+                                color = colors.textTertiary
+                            )
+                            val babyName = uiState.baby?.name ?: "Si Kecil"
+                            val birthWeight = uiState.baby?.birthWeightGram
+                            val weightText = if (birthWeight != null) " (BBLR ${birthWeight}g)" else ""
+                            Text(
+                                text = "$babyName$weightText",
+                                style = KanguruTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
 
                     // Pulsing Fase Aktif Pill

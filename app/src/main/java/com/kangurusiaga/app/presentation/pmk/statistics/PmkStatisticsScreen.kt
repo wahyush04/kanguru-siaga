@@ -62,6 +62,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -207,6 +211,8 @@ fun PmkStatisticsScreen(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             // Avatar circle
+                            val context = LocalContext.current
+                            val photoUri = uiState.baby?.photoUri
                             Box(
                                 modifier = Modifier
                                     .size(46.dp)
@@ -215,10 +221,22 @@ fun PmkStatisticsScreen(
                                     .border(2.dp, colors.primaryBorder, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = "👶",
-                                    style = KanguruTheme.typography.titleLarge
-                                )
+                                if (!photoUri.isNullOrBlank()) {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(context)
+                                            .data(photoUri)
+                                            .crossfade(true)
+                                            .build(),
+                                        contentDescription = "Foto ${uiState.baby?.name ?: "Bayi"}",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } else {
+                                    Text(
+                                        text = "👶",
+                                        style = KanguruTheme.typography.titleLarge
+                                    )
+                                }
                             }
 
                             Spacer(modifier = Modifier.width(12.dp))

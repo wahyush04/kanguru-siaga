@@ -123,6 +123,7 @@ class GetPmkWeeklyRecapUseCaseTest {
             birthDateEpochMillis = eightWeeksAgo,
             birthWeightGram = 1800,
             gestationalAgeWeeks = 32,
+            photoUri = "content://media/photo/baby_nirmala.jpg",
             createdAt = now
         )
 
@@ -144,6 +145,7 @@ class GetPmkWeeklyRecapUseCaseTest {
         useCase().test {
             val item = awaitItem()
             assertThat(item.babyName).isEqualTo("Nirmala")
+            assertThat(item.babyPhotoUri).isEqualTo("content://media/photo/baby_nirmala.jpg")
             assertThat(item.birthWeightGram).isEqualTo(1800)
             assertThat(item.currentWeightGram).isEqualTo(3200)
             assertThat(item.pmaWeeksText).isEqualTo("40 Mgg")

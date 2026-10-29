@@ -94,6 +94,7 @@ data class GrowthCorrelationData(
 
 data class WeeklyRecapData(
     val babyName: String = "",
+    val babyPhotoUri: String? = null,
     val birthWeightGram: Int = 0,
     val currentWeightGram: Int = 0,
     val pmaWeeksText: String = "-",

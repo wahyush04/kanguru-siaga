@@ -59,6 +59,9 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -311,6 +314,7 @@ private fun BabyProfileSummaryCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val context = LocalContext.current
                 Box(
                     modifier = Modifier
                         .size(48.dp)
@@ -319,10 +323,22 @@ private fun BabyProfileSummaryCard(
                         .border(1.dp, colors.primaryBorder, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "👶",
-                        style = typography.titleMedium
-                    )
+                    if (!data.babyPhotoUri.isNullOrBlank()) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(data.babyPhotoUri)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Foto ${data.babyName}",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Text(
+                            text = "👶",
+                            style = typography.titleMedium
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))

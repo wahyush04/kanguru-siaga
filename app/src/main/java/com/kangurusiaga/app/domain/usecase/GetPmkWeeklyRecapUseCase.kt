@@ -65,6 +65,7 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
         val msPerWeek = 7L * msPerDay
 
         val babyName = baby.name
+        val babyPhotoUri = baby.photoUri
         val birthWeight = baby.birthWeightGram
 
         // Growth measurements categorized by parameter, sorted ascending by date
@@ -461,6 +462,7 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
 
         return WeeklyRecapData(
             babyName = babyName,
+            babyPhotoUri = babyPhotoUri,
             birthWeightGram = birthWeight,
             currentWeightGram = latestWeightGram,
             pmaWeeksText = pmaWeeksText,
