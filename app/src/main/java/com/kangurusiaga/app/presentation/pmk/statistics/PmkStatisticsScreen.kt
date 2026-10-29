@@ -24,7 +24,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.CalendarViewWeek
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
@@ -88,6 +90,7 @@ import java.util.Locale
 fun PmkStatisticsRoute(
     onNavigateBack: () -> Unit,
     onNavigateToManualLog: () -> Unit,
+    onNavigateToWeeklyRecap: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: PmkStatisticsViewModel = hiltViewModel()
 ) {
@@ -105,6 +108,7 @@ fun PmkStatisticsRoute(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onPeriodSelected = { viewModel.onPeriodSelected(it) },
+        onNavigateToWeeklyRecap = onNavigateToWeeklyRecap,
         snackbarHostState = snackbarHostState,
         modifier = modifier
     )
@@ -115,6 +119,7 @@ fun PmkStatisticsScreen(
     uiState: PmkStatisticsUiState,
     onNavigateBack: () -> Unit,
     onPeriodSelected: (StatsPeriod) -> Unit,
+    onNavigateToWeeklyRecap: () -> Unit = {},
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
@@ -353,6 +358,73 @@ fun PmkStatisticsScreen(
                                     color = colors.textSecondary
                                 )
                             }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Button Akses Rekap Mingguan PMK (Sesuai Google Stitch)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(colors.primaryContainer.copy(alpha = 0.5f))
+                            .border(1.dp, colors.primaryBorder.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
+                            .clickable { onNavigateToWeeklyRecap() }
+                            .padding(horizontal = 10.dp, vertical = 9.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f, fill = false)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(colors.cardBackground),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CalendarViewWeek,
+                                    contentDescription = null,
+                                    tint = colors.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    text = "Rekap Mingguan PMK",
+                                    style = KanguruTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.textPrimary
+                                )
+                                Text(
+                                    text = "Lihat riwayat perbandingan mingguan",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    color = colors.textSecondary
+                                )
+                            }
+                        }
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(1.dp)
+                        ) {
+                            Text(
+                                text = "Buka",
+                                style = KanguruTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colors.primary
+                            )
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                     }
                 }
@@ -1245,18 +1317,34 @@ private fun BabyResponseBreakdownCard(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(colors.successContainer)
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                ) {
-                    Text(
-                        text = "${breakdown.overallCalmPercentage}% Sangat Tenang",
-                        style = KanguruTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.onSuccessContainer
-                    )
+                if (breakdown.totalSessions > 0) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(colors.successContainer)
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = "${breakdown.overallCalmPercentage}% Sangat Tenang",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.onSuccessContainer
+                        )
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(colors.surfaceVariant)
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = "Belum Ada Catatan",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Medium,
+                            color = colors.textSecondary
+                        )
+                    }
                 }
             }
 

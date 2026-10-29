@@ -513,6 +513,15 @@ abstract class KanguruColors {
     open val clinicalRoseSolid: Color get() = if (isDark) Color(0xFFE11D48) else Color(0xFFF43F5E)
     open val clinicalEmeraldSolid: Color get() = if (isDark) Color(0xFF047857) else Color(0xFF059669)
     open val clinicalPurpleSolid: Color get() = if (isDark) Color(0xFF7E22CE) else Color(0xFF9333EA)
+
+    // Weekly Recap & Growth Correlation Tokens (Google Stitch aligned)
+    open val weeklyCardCreamBg: Color get() = if (isDark) Color(0xFF1E1917) else Color(0xFFFFF9F6)
+    open val weeklyTargetBorder: Color get() = if (isDark) Color(0xFF45222B) else Color(0xFFFFE4E8)
+    open val weeklyBarAmber: Color get() = if (isDark) Color(0xFFF59E0B) else Color(0xFFFBBF24)
+    open val weeklyChartArea: Color get() = if (isDark) Color(0xFF4C1D2A) else Color(0xFFFFE4E8)
+    open val weeklyChartLine: Color get() = if (isDark) Color(0xFFFF5C77) else Color(0xFFE84561)
+    open val weeklyChartLineDot: Color get() = if (isDark) Color(0xFFFF758F) else Color(0xFFCF2F4B)
+    open val weeklyChartGrid: Color get() = if (isDark) Color(0xFF475569) else Color(0xFFCBD5E1)
 }
 
 

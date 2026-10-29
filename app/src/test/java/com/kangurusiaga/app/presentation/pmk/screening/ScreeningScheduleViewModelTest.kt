@@ -6,6 +6,7 @@ import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PrematureScreening
 import com.kangurusiaga.app.domain.model.ScreeningType
 import com.kangurusiaga.app.domain.repository.BabyRepository
+import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.repository.PrematureScreeningRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,10 +31,12 @@ class ScreeningScheduleViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val babyRepository: BabyRepository = mockk(relaxed = true)
     private val screeningRepository: PrematureScreeningRepository = mockk(relaxed = true)
+    private val growthRepository: GrowthRepository = mockk(relaxed = true)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        every { growthRepository.getLatestMeasurement(any(), any()) } returns flowOf(null)
     }
 
     @After
@@ -87,7 +90,7 @@ class ScreeningScheduleViewModelTest {
         every { screeningRepository.getScreeningsForBaby(1L) } returns flowOf(screeningsList)
         coEvery { screeningRepository.ensureDefaultScreenings(any(), any(), any()) } returns Unit
 
-        val viewModel = ScreeningScheduleViewModel(babyRepository, screeningRepository)
+        val viewModel = ScreeningScheduleViewModel(babyRepository, screeningRepository, growthRepository)
 
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -106,7 +109,7 @@ class ScreeningScheduleViewModelTest {
     @Test
     fun selectTab_switchesBetweenRemindersAndEvaluation() = runTest {
         every { babyRepository.getActiveBaby() } returns flowOf(null)
-        val viewModel = ScreeningScheduleViewModel(babyRepository, screeningRepository)
+        val viewModel = ScreeningScheduleViewModel(babyRepository, screeningRepository, growthRepository)
 
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -132,7 +135,7 @@ class ScreeningScheduleViewModelTest {
         every { babyRepository.getActiveBaby() } returns flowOf(null)
         coEvery { screeningRepository.updateScreening(any()) } returns Unit
 
-        val viewModel = ScreeningScheduleViewModel(babyRepository, screeningRepository)
+        val viewModel = ScreeningScheduleViewModel(babyRepository, screeningRepository, growthRepository)
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.openRecordModal(screening)

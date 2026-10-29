@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PrematureScreening
 import com.kangurusiaga.app.domain.model.ScreeningType
+import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
+import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.repository.PrematureScreeningRepository
 import com.kangurusiaga.app.domain.util.PmaCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -26,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ScreeningScheduleViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
-    private val screeningRepository: PrematureScreeningRepository
+    private val screeningRepository: PrematureScreeningRepository,
+    private val growthRepository: GrowthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ScreeningScheduleUiState())
@@ -40,24 +44,6 @@ class ScreeningScheduleViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
-            val initialBaby = babyRepository.getActiveBaby().firstOrNull()
-            if (initialBaby == null) {
-                val cal = Calendar.getInstance().apply {
-                    set(2024, Calendar.OCTOBER, 12, 8, 0, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-                val defaultBaby = Baby(
-                    name = "By. Ny. Arini",
-                    gender = com.kangurusiaga.app.domain.model.Gender.FEMALE,
-                    birthDateEpochMillis = cal.timeInMillis,
-                    birthWeightGram = 1450,
-                    birthLengthCm = 40.0f,
-                    birthHeadCircumferenceCm = 28.5f,
-                    gestationalAgeWeeks = 31
-                )
-                babyRepository.saveBaby(defaultBaby)
-            }
-
             babyRepository.getActiveBaby().collectLatest { baby ->
                 if (baby != null) {
                     val calc = PmaCalculator.calculate(
@@ -69,9 +55,7 @@ class ScreeningScheduleViewModel @Inject constructor(
                     val pmaWeeks = calc.pmaWeeks.toInt()
                     val pmaDays = ((calc.pmaWeeks - pmaWeeks) * 7).toInt()
                     val correctedDays = ((calc.pmaWeeks - 40f) * 7).toInt()
-                    val correctedDisplay = if (baby.name.contains("Arini", ignoreCase = true)) {
-                        "+12 Hari"
-                    } else if (correctedDays >= 0) {
+                    val correctedDisplay = if (correctedDays >= 0) {
                         "+$correctedDays Hari"
                     } else {
                         "$correctedDays Hari"
@@ -84,7 +68,13 @@ class ScreeningScheduleViewModel @Inject constructor(
                         gestationalAgeWeeks = baby.gestationalAgeWeeks
                     )
 
-                    screeningRepository.getScreeningsForBaby(baby.id).collectLatest { list ->
+                    combine(
+                        screeningRepository.getScreeningsForBaby(baby.id),
+                        growthRepository.getLatestMeasurement(baby.id, GrowthParameter.WEIGHT)
+                    ) { list, latestWeight ->
+                        val latestGrams = latestWeight?.let {
+                            if (it.value > 100f) it.value.toInt() else (it.value * 1000f).toInt()
+                        }
                         _uiState.update {
                             it.copy(
                                 baby = baby,
@@ -92,18 +82,20 @@ class ScreeningScheduleViewModel @Inject constructor(
                                 correctedAgeDisplay = correctedDisplay,
                                 birthDateDisplay = birthDisplay,
                                 screenings = list,
+                                latestWeightGram = latestGrams,
                                 isLoading = false
                             )
                         }
-                    }
+                    }.collectLatest { }
                 } else {
                     _uiState.update {
                         it.copy(
                             baby = null,
-                            babyAgeDisplay = "Prematur 31 Mgg",
-                            correctedAgeDisplay = "+12 Hari",
-                            birthDateDisplay = "12 Okt 2024",
+                            babyAgeDisplay = "-",
+                            correctedAgeDisplay = "-",
+                            birthDateDisplay = "-",
                             screenings = emptyList(),
+                            latestWeightGram = null,
                             isLoading = false
                         )
                     }
@@ -134,8 +126,8 @@ class ScreeningScheduleViewModel @Inject constructor(
                     isOpen = true,
                     screening = screening,
                     realizationDateEpoch = screening.realizationDateEpoch ?: System.currentTimeMillis(),
-                    hospitalName = screening.hospitalName ?: "Poli Anak RS Hermina",
-                    doctorName = screening.doctorName ?: "dr. Siti Nurhaliza, Sp.A(K) Neo",
+                    hospitalName = screening.hospitalName ?: "",
+                    doctorName = screening.doctorName ?: "",
                     clinicalResult = screening.clinicalResult ?: "",
                     markAsCompleted = screening.isCompleted
                 )

@@ -536,7 +536,7 @@ private fun HeroScreeningCard(
                         }
                         Column {
                             Text(
-                                text = "${uiState.baby?.name ?: "By. Ny. Arini"} (${uiState.babyAgeDisplay})",
+                                text = "${uiState.baby?.name ?: "Si Kecil"} (${uiState.babyAgeDisplay})",
                                 style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.textPrimary
@@ -619,24 +619,26 @@ private fun PatientSummaryMedicalCard(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             Text(
-                                text = uiState.baby?.name ?: "By. Ny. Arini",
+                                text = uiState.baby?.name ?: "Si Kecil",
                                 style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.textPrimary
                             )
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(colors.primaryContainer)
-                                    .border(1.dp, colors.clinicalRoseBorder, RoundedCornerShape(10.dp))
-                                    .padding(horizontal = 8.dp, vertical = 2.dp)
-                            ) {
-                                Text(
-                                    text = "${uiState.baby?.gestationalAgeWeeks ?: 31} Mgg",
-                                    style = KanguruTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = colors.primary
-                                )
+                            if (uiState.baby?.gestationalAgeWeeks != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(colors.primaryContainer)
+                                        .border(1.dp, colors.clinicalRoseBorder, RoundedCornerShape(10.dp))
+                                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "${uiState.baby.gestationalAgeWeeks} Mgg",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.primary
+                                    )
+                                }
                             }
                         }
 

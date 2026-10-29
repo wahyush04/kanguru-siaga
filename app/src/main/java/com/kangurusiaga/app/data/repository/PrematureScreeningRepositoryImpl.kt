@@ -66,15 +66,15 @@ class PrematureScreeningRepositoryImpl @Inject constructor(
                 targetDateEpoch2 = null,
                 indication = "Terutama bayi lahir < 34 minggu atau sesuai indikasi klinis (sakit berat, trauma lahir, dll). Minimal 1x selama perawatan, atau sebelum rawat jalan, atau sesuai evaluasi dokter spesialis anak.",
                 clinicalGoal = "Tujuan: Deteksi dini perdarahan intraventrikular (IVH) & leukomalasia.",
-                clinicOrLab = "Status: Selesai",
+                clinicOrLab = "Poli: Anak / Neurogenetika",
                 isAlarmActive = true,
-                isAlarm2Active = true,
-                isCompleted = true,
-                realizationDateEpoch = baseBirth + (2L * msPerDay),
-                findings = "Ventrikel lateralis simetris, tidak tampak dilatasi patologis.\nPerdarahan Intraventrikular: Grade 0 (Normal / Negatif).\nEko parenkim hemisfer serebri homogen, tidak ada leukomalasia.",
-                conclusion = "USG Kepala dalam batas normal. Kontrol berkala sesuai tumbuh kembang anak prematur.",
-                attachmentName = "Lampiran Gambar (2)",
-                attachmentCount = 2
+                isAlarm2Active = false,
+                isCompleted = false,
+                realizationDateEpoch = null,
+                findings = null,
+                conclusion = null,
+                attachmentName = null,
+                attachmentCount = 0
             ),
             PrematureScreeningEntity(
                 babyId = babyId,
@@ -88,13 +88,13 @@ class PrematureScreeningRepositoryImpl @Inject constructor(
                 clinicalGoal = "Tujuan: Deteksi dini neovaskularisasi retina & mencegah kebutaan.",
                 clinicOrLab = "Poli: Mata Anak (Pediatrik)",
                 isAlarmActive = true,
-                isAlarm2Active = true,
-                isCompleted = true,
-                realizationDateEpoch = baseBirth + (6L * msPerDay),
-                findings = "Vaskularisasi retina: Mencapai Zone III nasal & temporal (Matang).\nTanda ROP Aktif: Negatif / No Plus Disease, tidak ditemukan batas demarkasi patologis.\nMedia refraksi jernih, papil saraf optik dalam batas normal.",
-                conclusion = "Skrining ROP normal matur bilateral. Tidak memerlukan terapi laser, kontrol lanjutan sesuai jadwal tumbuh kembang.",
-                attachmentName = "Lampiran Fundus (2)",
-                attachmentCount = 2
+                isAlarm2Active = false,
+                isCompleted = false,
+                realizationDateEpoch = null,
+                findings = null,
+                conclusion = null,
+                attachmentName = null,
+                attachmentCount = 0
             ),
             PrematureScreeningEntity(
                 babyId = babyId,
@@ -110,8 +110,8 @@ class PrematureScreeningRepositoryImpl @Inject constructor(
                 isAlarmActive = true,
                 isAlarm2Active = true,
                 isCompleted = false,
-                realizationDateEpoch = baseBirth + (12L * msPerDay),
-                notes = "Pemeriksaan OAE tahap 2 & BERA dijadwalkan pada Tanggal 12 Desember 2024. Menunggu konfirmasi hasil pemeriksaan dokter."
+                realizationDateEpoch = null,
+                notes = null
             ),
             PrematureScreeningEntity(
                 babyId = babyId,
@@ -125,13 +125,13 @@ class PrematureScreeningRepositoryImpl @Inject constructor(
                 clinicalGoal = "Tujuan: Cegah hipotiroid kongenital tertunda & gangguan neurokognitif.",
                 clinicOrLab = "Pemeriksaan: Serum FT4 + TSH",
                 isAlarmActive = true,
-                isAlarm2Active = true,
-                isCompleted = true,
-                realizationDateEpoch = baseBirth + (10L * msPerDay),
-                findings = "TSH Neonatus Ulang: 2.1 µIU/mL (Nilai Rujukan Normal: 0.5 - 5.0 µIU/mL).\nFT4 (Free Thyroxine): 1.45 ng/dL (Nilai Rujukan Normal: 0.9 - 2.2 ng/dL).\nStatus Skrining Awal: TSH 4.8 µIU/mL (Lolos / Eutiroid).",
-                conclusion = "Fungsi kelenjar tiroid normal (Eutiroid). Hipotiroid kongenital tertunda tersingkirkan, tidak memerlukan terapi substitusi hormon L-tiroksin.",
-                attachmentName = "Lampiran Resume Lab (1)",
-                attachmentCount = 1
+                isAlarm2Active = false,
+                isCompleted = false,
+                realizationDateEpoch = null,
+                findings = null,
+                conclusion = null,
+                attachmentName = null,
+                attachmentCount = 0
             )
         )
 

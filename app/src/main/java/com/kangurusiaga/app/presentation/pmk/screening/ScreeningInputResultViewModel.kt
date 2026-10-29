@@ -95,7 +95,7 @@ class ScreeningInputResultViewModel @Inject constructor(
         val list = _uiState.value.availableScreenings
         val match = list.find { it.type == type }
         val notesText = match?.findings ?: match?.notes ?: ""
-        val attName = match?.attachmentName ?: "Scan_USG_Neurokranial_Arka.pdf"
+        val attName = match?.attachmentName
 
         _uiState.update {
             it.copy(
@@ -197,7 +197,7 @@ class ScreeningInputResultViewModel @Inject constructor(
         return when {
             parts.size >= 2 -> "${parts[0].first().uppercaseChar()}${parts[1].first().uppercaseChar()}"
             parts.isNotEmpty() -> parts[0].take(2).uppercase(Locale.ROOT)
-            else -> "AN"
+            else -> "SK"
         }
     }
 }

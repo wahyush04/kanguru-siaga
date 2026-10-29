@@ -33,6 +33,7 @@ import com.kangurusiaga.app.presentation.pmk.manual.PmkManualLogRoute
 import com.kangurusiaga.app.presentation.pmk.reminders.PmkReminderAddRoute
 import com.kangurusiaga.app.presentation.pmk.reminders.PmkReminderEditRoute
 import com.kangurusiaga.app.presentation.pmk.reminders.PmkRemindersRoute
+import com.kangurusiaga.app.presentation.pmk.recap.PmkWeeklyRecapRoute
 import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsRoute
 import com.kangurusiaga.app.presentation.pmk.timer.PmkTimerRoute
 import com.kangurusiaga.app.presentation.pmk.video.PmkVideoListScreen
@@ -362,6 +363,30 @@ fun KanguruNavGraph(
                 },
                 onNavigateToManualLog = {
                     navController.navigate(Screen.PmkManualLog.route)
+                },
+                onNavigateToWeeklyRecap = {
+                    navController.navigate(Screen.PmkWeeklyRecap.createRoute(0))
+                }
+            )
+        }
+
+        // Screen: Kanguru Siaga - Rekap Mingguan PMK & Detail Rekap Mingguan (Google Stitch)
+        composable(
+            route = Screen.PmkWeeklyRecap.route,
+            arguments = listOf(
+                navArgument("tab") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = "0"
+                }
+            )
+        ) {
+            PmkWeeklyRecapRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToFentonChart = {
+                    navController.navigate(Screen.GrowthChart.createFullRoute())
                 }
             )
         }

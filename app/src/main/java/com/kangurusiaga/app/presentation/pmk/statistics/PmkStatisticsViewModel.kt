@@ -45,23 +45,38 @@ class PmkStatisticsViewModel @Inject constructor(
 
     val uiState: StateFlow<PmkStatisticsUiState> = getBabyProfileUseCase()
         .flatMapLatest { baby ->
-            val babyId = baby?.id ?: 1L
-            combine(
-                _selectedPeriod.flatMapLatest { period ->
-                    getPmkStatisticsUseCase(babyId, period, babyBirthDateEpoch = baby?.birthDateEpochMillis)
-                },
-                getPmkSessionsUseCase(babyId),
-                _selectedPeriod,
-                _userMessage
-            ) { stats, sessions, period, message ->
-                PmkStatisticsUiState(
-                    isLoading = false,
-                    baby = baby,
-                    selectedPeriod = period,
-                    statistics = stats,
-                    sessions = sessions,
-                    message = message
-                )
+            if (baby == null) {
+                combine(
+                    _selectedPeriod,
+                    _userMessage
+                ) { period, message ->
+                    PmkStatisticsUiState(
+                        isLoading = false,
+                        baby = null,
+                        selectedPeriod = period,
+                        statistics = PmkStatistics(),
+                        sessions = emptyList(),
+                        message = message
+                    )
+                }
+            } else {
+                combine(
+                    _selectedPeriod.flatMapLatest { period ->
+                        getPmkStatisticsUseCase(baby.id, period, babyBirthDateEpoch = baby.birthDateEpochMillis)
+                    },
+                    getPmkSessionsUseCase(baby.id),
+                    _selectedPeriod,
+                    _userMessage
+                ) { stats, sessions, period, message ->
+                    PmkStatisticsUiState(
+                        isLoading = false,
+                        baby = baby,
+                        selectedPeriod = period,
+                        statistics = stats,
+                        sessions = sessions,
+                        message = message
+                    )
+                }
             }
         }.stateIn(
             scope = viewModelScope,
