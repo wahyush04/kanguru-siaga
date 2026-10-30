@@ -13,5 +13,14 @@ app/build
 google-services.json
 app/google-services.json
 
+# Environment & Secret files
+.env
+*.env
+.env.*
+*.properties.local
+
+# Temporary reference folder (akan dikeluarkan)
+fentongrowth/
+
 # Agent instructions & rules
 AGENTS.md

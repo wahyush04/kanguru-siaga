@@ -1,0 +1,4 @@
+## Kanguru Siaga - Local Properties Template
+## Salin berkas ini menjadi 'local.properties' di root project dan sesuaikan nilainya:
+## sdk.dir=/path/to/android/sdk
+fenton.api.key=YOUR_FENTON_API_KEY_HERE

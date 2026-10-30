@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +9,28 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
 }
+
+// Hierarchy resolusi API Key yang aman (Environment Variable -> local.properties -> .env)
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+val envProperties = Properties().apply {
+    val file = rootProject.file(".env")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+val fentonApiKey: String = System.getenv("FENTON_API_KEY")
+    ?: localProperties.getProperty("fenton.api.key")
+    ?: localProperties.getProperty("FENTON_API_KEY")
+    ?: envProperties.getProperty("FENTON_API_KEY")
+    ?: envProperties.getProperty("API_KEY")
+    ?: ""
 
 android {
     namespace = "com.kangurusiaga.app"
@@ -24,6 +48,7 @@ android {
             useSupportLibrary = true
         }
         manifestPlaceholders["appName"] = "Kanguru Siaga"
+        buildConfigField("String", "FENTON_API_KEY", "\"$fentonApiKey\"")
     }
 
     buildTypes {
