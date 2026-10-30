@@ -103,6 +103,10 @@ import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.Baby
+import com.kangurusiaga.app.presentation.growth.components.FentonInternetConfirmationDialog
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 
 @Composable
@@ -180,6 +184,7 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    var showFentonConfirmationDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.infoMessage) {
         uiState.infoMessage?.let { msg ->
@@ -233,7 +238,7 @@ fun HomeScreen(
                         onNavigateToEducationList = onNavigateToEducationList,
                         onNavigateToEmergency = onNavigateToEmergency,
                         onNavigateToAlarm = onNavigateToAlarm,
-                        onNavigateToGrowth = onNavigateToGrowth,
+                        onNavigateToGrowth = { showFentonConfirmationDialog = true },
                         onNavigateToTimer = onNavigateToTimer,
                         onNavigateToPmkVideo = onNavigateToPmkVideo,
                         onNavigateToBblrCare = onNavigateToBblrCare,
@@ -280,6 +285,19 @@ fun HomeScreen(
             onNavigateToPmk = {
                 onCloseNotification()
                 onNavigateToPmk()
+            }
+        )
+    }
+
+    // Fenton Cloud Integration & Appreciation Confirmation Pop-Up
+    if (showFentonConfirmationDialog) {
+        FentonInternetConfirmationDialog(
+            onConfirm = {
+                showFentonConfirmationDialog = false
+                onNavigateToGrowth()
+            },
+            onDismiss = {
+                showFentonConfirmationDialog = false
             }
         )
     }

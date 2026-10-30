@@ -52,6 +52,7 @@ import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.GrowthParameter
+import com.kangurusiaga.app.presentation.growth.components.FentonApiErrorDialog
 import com.kangurusiaga.app.presentation.growth.components.GrowthIcons
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -281,7 +282,13 @@ fun GrowthChartScreen(
                     lengthMeasurements = uiState.lengthMeasurementsAsc,
                     headCircMeasurements = uiState.headCircMeasurementsAsc,
                     currentPmaWeeks = uiState.currentPmaWeeks,
-                    babyName = babyName
+                    babyName = babyName,
+                    chartImageUrl = uiState.fentonChartImageUrl,
+                    chartLocalPath = uiState.fentonChartLocalPath,
+                    chartTimestamp = uiState.fentonChartTimestamp,
+                    isLoading = uiState.isFentonApiLoading,
+                    errorMessage = uiState.fentonApiErrorMessage,
+                    onRetry = viewModel::retryFetchFentonChart
                 )
             }
 
@@ -301,6 +308,15 @@ fun GrowthChartScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+
+    // Pop up dialog error bila terjadi kendala saat fetch API
+    if (uiState.fentonApiErrorMessage != null) {
+        FentonApiErrorDialog(
+            errorMessage = uiState.fentonApiErrorMessage ?: "Gagal memuat grafik dari FentonGrowth.ca",
+            onRetry = viewModel::retryFetchFentonChart,
+            onDismiss = viewModel::dismissFentonApiError
+        )
     }
 }
 

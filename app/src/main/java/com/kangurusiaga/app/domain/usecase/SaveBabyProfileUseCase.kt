@@ -5,13 +5,16 @@ import com.kangurusiaga.app.core.common.AppLogger
 import com.kangurusiaga.app.core.common.CrashlyticsLogger
 import com.kangurusiaga.app.core.common.Dispatcher
 import com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
+import com.kangurusiaga.app.data.local.entity.GrowthRecordEntity
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
+import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
 import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
+import com.kangurusiaga.app.domain.util.PmaCalculator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -24,6 +27,7 @@ class SaveBabyProfileUseCase @Inject constructor(
     private val babyFirestoreSyncManager: BabyFirestoreSyncManager,
     private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase,
     private val growthRepository: GrowthRepository,
+    private val fentonGrowthRepository: FentonGrowthRepository,
     @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke(
@@ -54,93 +58,135 @@ class SaveBabyProfileUseCase @Inject constructor(
             ensureInitialGrowthDataUseCase(savedBaby)
 
             val now = System.currentTimeMillis()
-            val diffMillis = (now - savedBaby.birthDateEpochMillis).coerceAtLeast(0)
-            val chronoWeeks = (diffMillis / (1000.0 * 60 * 60 * 24 * 7)).toFloat()
-            val currentPma = (savedBaby.gestationalAgeWeeks.toFloat() + chronoWeeks).coerceIn(22f, 50f)
+            val ageCalc = PmaCalculator.calculate(
+                birthDateEpochMillis = savedBaby.birthDateEpochMillis,
+                measurementDateEpochMillis = now,
+                gestationalAgeAtBirthWeeks = savedBaby.gestationalAgeWeeks
+            )
+            val currentPma = ageCalc.pmaWeeks.coerceIn(22f, 50f)
+            val currentPmaInt = currentPma.toInt().coerceIn(22, 50)
+            val currentPmaDays = (((currentPma - currentPmaInt) * 7).toInt()).coerceIn(0, 6)
+            val chronoWeeks = ageCalc.chronologicalWeeks
 
-            // 3. Jika berat saat ini diisi dan berbeda dari berat lahir, simpan sebagai pengukuran tambahan
-            if (currentWeightGram > 0 && currentWeightGram != savedBaby.birthWeightGram) {
-                try {
-                    val currentKg = currentWeightGram / 1000f
-                    val currentEval = FentonReferenceData.evaluatePercentile(
-                        parameter = GrowthParameter.WEIGHT,
-                        gender = savedBaby.gender,
-                        pmaWeeks = currentPma,
-                        value = currentKg
-                    )
-                    growthRepository.insertMeasurement(
-                        GrowthMeasurement(
-                            babyId = babyId,
+            val isDifferentFromBirth = currentPmaInt != savedBaby.gestationalAgeWeeks ||
+                    currentWeightGram != savedBaby.birthWeightGram ||
+                    currentLengthCm != savedBaby.birthLengthCm ||
+                    currentHeadCircumferenceCm != savedBaby.birthHeadCircumferenceCm
+
+            // 3. Simpan data pengukuran saat ini jika ada data atau terdapat selisih waktu/nilai
+            if (isDifferentFromBirth && (currentWeightGram > 0 || currentLengthCm > 0f || currentHeadCircumferenceCm > 0f)) {
+                // Simpan berat saat ini
+                if (currentWeightGram > 0) {
+                    try {
+                        val currentKg = currentWeightGram / 1000f
+                        val currentEval = FentonReferenceData.evaluatePercentile(
                             parameter = GrowthParameter.WEIGHT,
-                            measurementDateEpochMillis = now,
-                            chronologicalAgeWeeks = chronoWeeks,
+                            gender = savedBaby.gender,
                             pmaWeeks = currentPma,
-                            value = currentKg,
-                            unit = GrowthParameter.WEIGHT.unit,
-                            note = "Saat Pendaftaran",
-                            percentileBadge = currentEval.percentileBadge
+                            value = currentKg
                         )
-                    )
-                } catch (e: Exception) {
-                    AppLogger.e("SaveBabyProfileUseCase", "Gagal menyimpan berat saat ini: ${e.message}", e)
+                        growthRepository.insertMeasurement(
+                            GrowthMeasurement(
+                                babyId = babyId,
+                                parameter = GrowthParameter.WEIGHT,
+                                measurementDateEpochMillis = now,
+                                chronologicalAgeWeeks = chronoWeeks,
+                                pmaWeeks = currentPma,
+                                value = currentKg,
+                                unit = GrowthParameter.WEIGHT.unit,
+                                note = "Data Saat Ini",
+                                percentileBadge = currentEval.percentileBadge
+                            )
+                        )
+                    } catch (e: Exception) {
+                        AppLogger.e("SaveBabyProfileUseCase", "Gagal menyimpan berat saat ini: ${e.message}", e)
+                    }
                 }
-            }
 
-            // 4. Jika panjang saat ini diisi dan berbeda dari panjang lahir, simpan sebagai pengukuran tambahan
-            if (currentLengthCm > 0f && currentLengthCm != savedBaby.birthLengthCm) {
-                try {
-                    val currentEvalLength = FentonReferenceData.evaluatePercentile(
-                        parameter = GrowthParameter.LENGTH,
-                        gender = savedBaby.gender,
-                        pmaWeeks = currentPma,
-                        value = currentLengthCm
-                    )
-                    growthRepository.insertMeasurement(
-                        GrowthMeasurement(
-                            babyId = babyId,
+                // Simpan panjang saat ini
+                if (currentLengthCm > 0f) {
+                    try {
+                        val currentEvalLength = FentonReferenceData.evaluatePercentile(
                             parameter = GrowthParameter.LENGTH,
-                            measurementDateEpochMillis = now,
-                            chronologicalAgeWeeks = chronoWeeks,
+                            gender = savedBaby.gender,
                             pmaWeeks = currentPma,
-                            value = currentLengthCm,
-                            unit = GrowthParameter.LENGTH.unit,
-                            note = "Saat Pendaftaran",
-                            percentileBadge = currentEvalLength.percentileBadge
+                            value = currentLengthCm
                         )
-                    )
-                } catch (e: Exception) {
-                    AppLogger.e("SaveBabyProfileUseCase", "Gagal menyimpan panjang saat ini: ${e.message}", e)
+                        growthRepository.insertMeasurement(
+                            GrowthMeasurement(
+                                babyId = babyId,
+                                parameter = GrowthParameter.LENGTH,
+                                measurementDateEpochMillis = now,
+                                chronologicalAgeWeeks = chronoWeeks,
+                                pmaWeeks = currentPma,
+                                value = currentLengthCm,
+                                unit = GrowthParameter.LENGTH.unit,
+                                note = "Data Saat Ini",
+                                percentileBadge = currentEvalLength.percentileBadge
+                            )
+                        )
+                    } catch (e: Exception) {
+                        AppLogger.e("SaveBabyProfileUseCase", "Gagal menyimpan panjang saat ini: ${e.message}", e)
+                    }
                 }
-            }
 
-            // 5. Jika lingkar kepala saat ini diisi dan berbeda dari lingkar kepala lahir, simpan sebagai pengukuran tambahan
-            if (currentHeadCircumferenceCm > 0f && currentHeadCircumferenceCm != savedBaby.birthHeadCircumferenceCm) {
-                try {
-                    val currentEvalHc = FentonReferenceData.evaluatePercentile(
-                        parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
-                        gender = savedBaby.gender,
-                        pmaWeeks = currentPma,
-                        value = currentHeadCircumferenceCm
-                    )
-                    growthRepository.insertMeasurement(
-                        GrowthMeasurement(
-                            babyId = babyId,
+                // Simpan lingkar kepala saat ini
+                if (currentHeadCircumferenceCm > 0f) {
+                    try {
+                        val currentEvalHc = FentonReferenceData.evaluatePercentile(
                             parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
-                            measurementDateEpochMillis = now,
-                            chronologicalAgeWeeks = chronoWeeks,
+                            gender = savedBaby.gender,
                             pmaWeeks = currentPma,
-                            value = currentHeadCircumferenceCm,
-                            unit = GrowthParameter.HEAD_CIRCUMFERENCE.unit,
-                            note = "Saat Pendaftaran",
-                            percentileBadge = currentEvalHc.percentileBadge
+                            value = currentHeadCircumferenceCm
+                        )
+                        growthRepository.insertMeasurement(
+                            GrowthMeasurement(
+                                babyId = babyId,
+                                parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
+                                measurementDateEpochMillis = now,
+                                chronologicalAgeWeeks = chronoWeeks,
+                                pmaWeeks = currentPma,
+                                value = currentHeadCircumferenceCm,
+                                unit = GrowthParameter.HEAD_CIRCUMFERENCE.unit,
+                                note = "Data Saat Ini",
+                                percentileBadge = currentEvalHc.percentileBadge
+                            )
+                        )
+                    } catch (e: Exception) {
+                        AppLogger.e("SaveBabyProfileUseCase", "Gagal menyimpan lingkar kepala saat ini: ${e.message}", e)
+                    }
+                }
+
+                // Simpan juga ke baby_growth_records (Fenton Growth Record)
+                try {
+                    val weightEval = if (currentWeightGram > 0) {
+                        FentonReferenceData.evaluatePercentile(
+                            parameter = GrowthParameter.WEIGHT,
+                            gender = savedBaby.gender,
+                            pmaWeeks = currentPma,
+                            value = currentWeightGram / 1000f
+                        )
+                    } else null
+
+                    fentonGrowthRepository.saveNewRecord(
+                        GrowthRecordEntity(
+                            babyId = babyId,
+                            recordedAt = now,
+                            pmaWeeks = currentPmaInt,
+                            pmaDays = currentPmaDays,
+                            weightGrams = if (currentWeightGram > 0) currentWeightGram.toDouble() else null,
+                            lengthCm = if (currentLengthCm > 0f) currentLengthCm.toDouble() else null,
+                            headCircumferenceCm = if (currentHeadCircumferenceCm > 0f) currentHeadCircumferenceCm.toDouble() else null,
+                            calculatedWeightPercentile = weightEval?.percentileBadge,
+                            calculatedWeightZScore = weightEval?.zScore?.toDouble()
                         )
                     )
                 } catch (e: Exception) {
-                    AppLogger.e("SaveBabyProfileUseCase", "Gagal menyimpan lingkar kepala saat ini: ${e.message}", e)
+                    AppLogger.e("SaveBabyProfileUseCase", "Gagal menyimpan Fenton Growth Record saat ini: ${e.message}", e)
                 }
             }
 
-            // 6. Kirim data ke Cloud Firestore secara asinkron (non-blocking) di latar belakang
+            // 4. Kirim data ke Cloud Firestore secara asinkron (non-blocking) di latar belakang
             CoroutineScope(ioDispatcher + SupervisorJob()).launch {
                 try {
                     AppLogger.d("SaveBabyProfileUseCase", "Memulai sinkronisasi background Firestore...")

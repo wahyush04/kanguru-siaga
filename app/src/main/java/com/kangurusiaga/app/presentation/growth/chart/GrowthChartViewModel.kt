@@ -1,10 +1,12 @@
 package com.kangurusiaga.app.presentation.growth.chart
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
 import com.kangurusiaga.app.data.local.fenton.GrowthPercentileEvaluation
+import com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient
 import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
@@ -13,13 +15,17 @@ import com.kangurusiaga.app.domain.repository.BabyRepository
 import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.usecase.EnsureInitialGrowthDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 data class GrowthChartUiState(
@@ -44,7 +50,14 @@ data class GrowthChartUiState(
     val measurementsAsc: List<GrowthMeasurement> = emptyList(),
     val measurementsDesc: List<GrowthMeasurement> = emptyList(),
     val latestMeasurement: GrowthMeasurement? = null,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    // Fenton API State
+    val fentonChartImageUrl: String? = null,
+    val fentonChartLocalPath: String? = null,
+    val fentonChartTimestamp: Long = 0L,
+    val isFentonApiLoading: Boolean = false,
+    val fentonApiErrorMessage: String? = null,
+    val fentonApiSuccess: Boolean = false
 )
 
 @HiltViewModel
@@ -53,6 +66,8 @@ class GrowthChartViewModel @Inject constructor(
     private val growthRepository: GrowthRepository,
     private val fentonGrowthRepository: FentonGrowthRepository,
     private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase,
+    private val fentonGrowthApiClient: FentonGrowthApiClient,
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -123,7 +138,22 @@ class GrowthChartViewModel @Inject constructor(
                 val chronoWeeks = ((System.currentTimeMillis() - baby.birthDateEpochMillis) / (7.0 * 24 * 60 * 60 * 1000.0)).toFloat()
                 val calculatedPma = (baby.gestationalAgeWeeks.toFloat() + chronoWeeks).coerceIn(22f, 50f)
 
-                _uiState.update { it.copy(baby = baby, currentPmaWeeks = calculatedPma, isLoading = false) }
+                val cachedFile = File(context.cacheDir, "fenton_chart_${baby.id}.jpg")
+                val initialLocalPath = if (cachedFile.exists() && cachedFile.length() > 0) cachedFile.absolutePath else null
+                val initialTimestamp = if (cachedFile.exists()) cachedFile.lastModified() else 0L
+
+                _uiState.update {
+                    it.copy(
+                        baby = baby,
+                        currentPmaWeeks = calculatedPma,
+                        isLoading = false,
+                        fentonChartLocalPath = initialLocalPath,
+                        fentonChartTimestamp = initialTimestamp
+                    )
+                }
+
+                // Langsung fetch data ke API FentonGrowth.ca saat pertama kali masuk
+                fetchFentonChart(baby)
 
                 launch {
                     try {
@@ -183,6 +213,10 @@ class GrowthChartViewModel @Inject constructor(
                             28f // Standard clinically targetted catch-up rate (+28 g/hari)
                         }
 
+                        val latestChartFile = File(context.cacheDir, "fenton_chart_${baby.id}.jpg")
+                        val updatedLocalPath = if (latestChartFile.exists() && latestChartFile.length() > 0) latestChartFile.absolutePath else null
+                        val updatedTimestamp = if (latestChartFile.exists()) latestChartFile.lastModified() else 0L
+
                         _uiState.update { current ->
                             val activeAsc = when (current.selectedTab) {
                                 1 -> weights
@@ -203,13 +237,73 @@ class GrowthChartViewModel @Inject constructor(
                                 weightGainRateGramsPerDay = weightGainRate,
                                 measurementsAsc = activeAsc,
                                 measurementsDesc = activeAsc.asReversed(),
-                                latestMeasurement = activeAsc.lastOrNull()
+                                latestMeasurement = activeAsc.lastOrNull(),
+                                fentonChartLocalPath = updatedLocalPath ?: current.fentonChartLocalPath,
+                                fentonChartTimestamp = if (updatedTimestamp > 0L) updatedTimestamp else current.fentonChartTimestamp
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+    private var fentonFetchJob: Job? = null
+
+    fun fetchFentonChart(babyParam: Baby? = null) {
+        val baby = babyParam ?: _uiState.value.baby ?: return
+        fentonFetchJob?.cancel()
+        fentonFetchJob = viewModelScope.launch {
+            _uiState.update { it.copy(isFentonApiLoading = true, fentonApiErrorMessage = null) }
+            val weights = try {
+                growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.WEIGHT).first()
+            } catch (_: Exception) {
+                _uiState.value.weightMeasurementsAsc
+            }
+            val lengths = try {
+                growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.LENGTH).first()
+            } catch (_: Exception) {
+                _uiState.value.lengthMeasurementsAsc
+            }
+            val headCircs = try {
+                growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE).first()
+            } catch (_: Exception) {
+                _uiState.value.headCircMeasurementsAsc
+            }
+            val allMeasurements = weights + lengths + headCircs
+
+            val result = fentonGrowthApiClient.fetchPlotChart(baby, allMeasurements)
+            result.onSuccess { plotResult ->
+                val cacheFile = File(context.cacheDir, "fenton_chart_${baby.id}.jpg")
+                val timestamp = if (cacheFile.exists()) cacheFile.lastModified() else System.currentTimeMillis()
+                _uiState.update { current ->
+                    current.copy(
+                        isFentonApiLoading = false,
+                        fentonApiSuccess = true,
+                        fentonChartImageUrl = plotResult.contentUrl,
+                        fentonChartLocalPath = plotResult.localFilePath ?: current.fentonChartLocalPath,
+                        fentonChartTimestamp = timestamp,
+                        fentonApiErrorMessage = null
+                    )
+                }
+            }.onFailure { err ->
+                _uiState.update { current ->
+                    current.copy(
+                        isFentonApiLoading = false,
+                        fentonApiErrorMessage = err.message ?: "Gagal memproses grafik dari FentonGrowth.ca"
+                    )
+                }
+            }
+        }
+    }
+
+    fun retryFetchFentonChart() {
+        _uiState.update { it.copy(fentonApiErrorMessage = null) }
+        fetchFentonChart()
+    }
+
+    fun dismissFentonApiError() {
+        _uiState.update { it.copy(fentonApiErrorMessage = null) }
     }
 
     fun deleteMeasurement(id: Long) {

@@ -2,8 +2,12 @@ package com.kangurusiaga.app.presentation.growth.batch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kangurusiaga.app.core.common.AppLogger
+import com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient
 import com.kangurusiaga.app.domain.model.Baby
+import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
+import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.usecase.BatchRowData
 import com.kangurusiaga.app.domain.usecase.EnsureInitialGrowthDataUseCase
 import com.kangurusiaga.app.domain.usecase.SaveBatchGrowthRecordsUseCase
@@ -13,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -30,11 +35,7 @@ data class GrowthBatchRowState(
 data class GrowthBatchUiState(
     val baby: Baby? = null,
     val currentPmaWeeks: Int = 35,
-    val rows: List<GrowthBatchRowState> = listOf(
-        GrowthBatchRowState(pmaWeeks = "34", weightGrams = "1400", headCircumferenceCm = "26", lengthCm = "40"),
-        GrowthBatchRowState(pmaWeeks = "35", weightGrams = "1840", headCircumferenceCm = "27", lengthCm = "41"),
-        GrowthBatchRowState(pmaWeeks = "36", weightGrams = "", headCircumferenceCm = "", lengthCm = "")
-    ),
+    val rows: List<GrowthBatchRowState> = emptyList(),
     val measurementDateEpochMillis: Long = System.currentTimeMillis(),
     val reminderEnabled: Boolean = true,
     val clinicalNotes: String = "",
@@ -51,7 +52,9 @@ enum class BatchField {
 class GrowthBatchMeasurementViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
     private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase,
-    private val saveBatchGrowthRecordsUseCase: SaveBatchGrowthRecordsUseCase
+    private val saveBatchGrowthRecordsUseCase: SaveBatchGrowthRecordsUseCase,
+    private val fentonGrowthApiClient: FentonGrowthApiClient,
+    private val growthRepository: GrowthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GrowthBatchUiState())
@@ -64,29 +67,113 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
     private fun loadBabyData() {
         viewModelScope.launch {
             babyRepository.getActiveBaby().collectLatest { baby ->
-                if (baby != null) {
-                    val calc = PmaCalculator.calculate(
-                        birthDateEpochMillis = baby.birthDateEpochMillis,
-                        measurementDateEpochMillis = _uiState.value.measurementDateEpochMillis,
-                        gestationalAgeAtBirthWeeks = baby.gestationalAgeWeeks
+                val activeBaby = baby ?: ensureInitialGrowthDataUseCase.ensureArkaNarendraSampleData()
+                val calc = PmaCalculator.calculate(
+                    birthDateEpochMillis = activeBaby.birthDateEpochMillis,
+                    measurementDateEpochMillis = _uiState.value.measurementDateEpochMillis,
+                    gestationalAgeAtBirthWeeks = activeBaby.gestationalAgeWeeks
+                )
+                val currentPma = calc.pmaWeeks.toInt().coerceIn(22, 50)
+
+                // Muat semua riwayat pengukuran yang ada di Room DB
+                val weights = try {
+                    growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.WEIGHT).first()
+                } catch (_: Exception) {
+                    emptyList()
+                }
+                val lengths = try {
+                    growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.LENGTH).first()
+                } catch (_: Exception) {
+                    emptyList()
+                }
+                val headCircs = try {
+                    growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.HEAD_CIRCUMFERENCE).first()
+                } catch (_: Exception) {
+                    emptyList()
+                }
+
+                val rowMap = linkedMapOf<Int, GrowthBatchRowState>()
+
+                // 1. Masukkan titik lahir bayi jika ada
+                val birthPma = activeBaby.gestationalAgeWeeks.coerceIn(22, 50)
+                if (activeBaby.birthWeightGram > 0 || activeBaby.birthLengthCm > 0f || activeBaby.birthHeadCircumferenceCm > 0f) {
+                    rowMap[birthPma] = GrowthBatchRowState(
+                        pmaWeeks = birthPma.toString(),
+                        weightGrams = if (activeBaby.birthWeightGram > 0) activeBaby.birthWeightGram.toString() else "",
+                        lengthCm = if (activeBaby.birthLengthCm > 0f) formatNumber(activeBaby.birthLengthCm) else "",
+                        headCircumferenceCm = if (activeBaby.birthHeadCircumferenceCm > 0f) formatNumber(activeBaby.birthHeadCircumferenceCm) else ""
                     )
-                    _uiState.update { current ->
-                        current.copy(
-                            baby = baby,
-                            currentPmaWeeks = calc.pmaWeeks.toInt().coerceIn(22, 50)
-                        )
-                    }
-                } else {
-                    // Fallback to sample data for Bayi Arka Narendra
-                    val sample = ensureInitialGrowthDataUseCase.ensureArkaNarendraSampleData()
-                    _uiState.update { current ->
-                        current.copy(
-                            baby = sample,
-                            currentPmaWeeks = 35
-                        )
+                }
+
+                // 2. Gabungkan data berat
+                for (w in weights) {
+                    val pma = w.pmaWeeks.toInt().coerceIn(22, 50)
+                    val grams = if (w.value < 100f) (w.value * 1000f).toInt() else w.value.toInt()
+                    val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
+                    if (grams > 0) {
+                        rowMap[pma] = row.copy(weightGrams = grams.toString())
                     }
                 }
+
+                // 3. Gabungkan data panjang
+                for (l in lengths) {
+                    val pma = l.pmaWeeks.toInt().coerceIn(22, 50)
+                    val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
+                    if (l.value > 0f) {
+                        rowMap[pma] = row.copy(lengthCm = formatNumber(l.value))
+                    }
+                }
+
+                // 4. Gabungkan data lingkar kepala
+                for (hc in headCircs) {
+                    val pma = hc.pmaWeeks.toInt().coerceIn(22, 50)
+                    val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
+                    if (hc.value > 0f) {
+                        rowMap[pma] = row.copy(headCircumferenceCm = formatNumber(hc.value))
+                    }
+                }
+
+                val existingSorted = rowMap.values.sortedBy { it.pmaWeeks.toIntOrNull() ?: 0 }
+
+                // 5. Buat baris baru di bawahnya untuk input data baru
+                val lastPma = existingSorted.lastOrNull()?.pmaWeeks?.toIntOrNull() ?: currentPma
+                val nextPma = (lastPma + 1).coerceAtMost(50)
+                val newEmptyRow = GrowthBatchRowState(
+                    pmaWeeks = if (nextPma in 22..50) nextPma.toString() else "",
+                    weightGrams = "",
+                    headCircumferenceCm = "",
+                    lengthCm = ""
+                )
+
+                val combinedRows = if (existingSorted.isEmpty()) {
+                    listOf(
+                        GrowthBatchRowState(
+                            pmaWeeks = birthPma.toString(),
+                            weightGrams = "",
+                            headCircumferenceCm = "",
+                            lengthCm = ""
+                        )
+                    )
+                } else {
+                    existingSorted + newEmptyRow
+                }
+
+                _uiState.update { current ->
+                    current.copy(
+                        baby = activeBaby,
+                        currentPmaWeeks = currentPma,
+                        rows = combinedRows
+                    )
+                }
             }
+        }
+    }
+
+    private fun formatNumber(value: Float): String {
+        return if (value % 1.0f == 0f) {
+            value.toInt().toString()
+        } else {
+            java.text.DecimalFormat("#.#", java.text.DecimalFormatSymbols(java.util.Locale.US)).format(value)
         }
     }
 
@@ -221,6 +308,18 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
             )
 
             result.onSuccess {
+                // Fetch API Fenton segera dengan data terbaru dan tunggu hingga selesai
+                try {
+                    val weights = growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.WEIGHT).first()
+                    val lengths = growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.LENGTH).first()
+                    val headCircs = growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE).first()
+                    val apiResult = fentonGrowthApiClient.fetchPlotChart(baby, weights + lengths + headCircs)
+                    if (apiResult.isFailure) {
+                        AppLogger.w("GrowthBatchMeasurementViewModel", "Gagal refresh gambar Fenton via API: ${apiResult.exceptionOrNull()?.message}")
+                    }
+                } catch (e: Exception) {
+                    AppLogger.w("GrowthBatchMeasurementViewModel", "Exception saat auto-refresh Fenton: ${e.message}")
+                }
                 _uiState.update { current ->
                     current.copy(isSaving = false, isSaved = true)
                 }

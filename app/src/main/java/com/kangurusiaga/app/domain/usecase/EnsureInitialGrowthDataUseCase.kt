@@ -111,6 +111,26 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
                     )
                 )
             }
+
+            try {
+                val existingFenton = fentonGrowthRepository.getPatientRecords(activeBaby.id).first()
+                if (existingFenton.none { it.pmaWeeks == pma.toInt() }) {
+                    fentonGrowthRepository.saveNewRecord(
+                        GrowthRecordEntity(
+                            babyId = activeBaby.id,
+                            recordedAt = recordDate,
+                            pmaWeeks = pma.toInt(),
+                            pmaDays = 0,
+                            weightGrams = (weights[i] * 1000).toDouble(),
+                            lengthCm = lengths[i].toDouble(),
+                            headCircumferenceCm = headCircs[i].toDouble(),
+                            calculatedWeightPercentile = "P50"
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                AppLogger.w("EnsureInitialGrowthDataUseCase", "Gagal menyimpan record Fenton Arka week $pma: ${e.message}")
+            }
         }
 
         invoke(activeBaby)

@@ -25,6 +25,7 @@ class SaveBabyProfileUseCaseTest {
     private val babyFirestoreSyncManager: BabyFirestoreSyncManager = mockk(relaxed = true)
     private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase = mockk(relaxed = true)
     private val growthRepository: GrowthRepository = mockk(relaxed = true)
+    private val fentonGrowthRepository: com.kangurusiaga.app.data.repository.FentonGrowthRepository = mockk(relaxed = true)
 
     private val useCase = SaveBabyProfileUseCase(
         babyRepository = babyRepository,
@@ -32,6 +33,7 @@ class SaveBabyProfileUseCaseTest {
         babyFirestoreSyncManager = babyFirestoreSyncManager,
         ensureInitialGrowthDataUseCase = ensureInitialGrowthDataUseCase,
         growthRepository = growthRepository,
+        fentonGrowthRepository = fentonGrowthRepository,
         ioDispatcher = testDispatcher
     )
 
@@ -142,6 +144,11 @@ class SaveBabyProfileUseCaseTest {
         coVerify(exactly = 1) {
             growthRepository.insertMeasurement(match {
                 it.babyId == 101L && it.parameter == com.kangurusiaga.app.domain.model.GrowthParameter.HEAD_CIRCUMFERENCE && it.value == 32f
+            })
+        }
+        coVerify(exactly = 1) {
+            fentonGrowthRepository.saveNewRecord(match {
+                it.babyId == 101L && it.weightGrams == 2100.0 && it.lengthCm == 46.0 && it.headCircumferenceCm == 32.0
             })
         }
     }
