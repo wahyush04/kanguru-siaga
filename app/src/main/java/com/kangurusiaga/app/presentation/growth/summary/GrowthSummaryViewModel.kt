@@ -2,6 +2,10 @@ package com.kangurusiaga.app.presentation.growth.summary
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kangurusiaga.app.data.local.entity.GrowthRecordEntity
+import com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient
+import com.kangurusiaga.app.data.remote.fenton.FentonZScoreEntry
+import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
@@ -23,13 +27,17 @@ data class GrowthSummaryUiState(
     val latestWeight: GrowthMeasurement? = null,
     val latestLength: GrowthMeasurement? = null,
     val latestHead: GrowthMeasurement? = null,
+    val latestRecord: GrowthRecordEntity? = null,
+    val latestZScoreEntry: FentonZScoreEntry? = null,
     val isLoading: Boolean = true
 )
 
 @HiltViewModel
 class GrowthSummaryViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
-    private val growthRepository: GrowthRepository
+    private val growthRepository: GrowthRepository,
+    private val fentonGrowthRepository: FentonGrowthRepository,
+    private val fentonGrowthApiClient: FentonGrowthApiClient
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GrowthSummaryUiState())
@@ -51,10 +59,13 @@ class GrowthSummaryViewModel @Inject constructor(
                     "Usia ${calc.chronologicalWeeks.toInt()} minggu (koreksi)"
                 } else ""
 
+                val zEntry = if (baby != null) fentonGrowthApiClient.getLatestZScoreEntry(baby.id) else null
+
                 _uiState.update {
                     it.copy(
                         baby = baby,
                         chronologicalAgeDisplay = ageDisplay,
+                        latestZScoreEntry = zEntry,
                         isLoading = false
                     )
                 }
@@ -71,6 +82,12 @@ class GrowthSummaryViewModel @Inject constructor(
                     launch {
                         growthRepository.getLatestMeasurement(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE)
                             .collectLatest { m -> _uiState.update { it.copy(latestHead = m) } }
+                    }
+                    launch {
+                        fentonGrowthRepository.getLatestRecordFlow(baby.id).collectLatest { rec ->
+                            val updatedZEntry = fentonGrowthApiClient.getLatestZScoreEntry(baby.id)
+                            _uiState.update { it.copy(latestRecord = rec, latestZScoreEntry = updatedZEntry) }
+                        }
                     }
                 }
             }

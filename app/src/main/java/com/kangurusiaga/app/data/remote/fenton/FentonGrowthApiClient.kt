@@ -451,6 +451,20 @@ class FentonGrowthApiClient @Inject constructor(
     }
 
     /**
+     * Mengambil entri Z-score resmi terbaru (minggu terakhir) dari penyimpanan lokal.
+     */
+    fun getLatestZScoreEntry(babyId: Long): FentonZScoreEntry? {
+        return readLocalZScoreEntries(babyId).lastOrNull()
+    }
+
+    /**
+     * Mengambil entri Z-score resmi untuk minggu PMA tertentu.
+     */
+    fun getZScoreEntryForPma(babyId: Long, pmaWeeks: Int): FentonZScoreEntry? {
+        return readLocalZScoreEntries(babyId).find { it.gaWeeks.toInt() == pmaWeeks }
+    }
+
+    /**
      * Membangun payload multipart untuk ClientPlotPoints.
      */
     private fun buildPlotMultipartPayload(boundary: String, runMode: String, csvContent: String): ByteArray {

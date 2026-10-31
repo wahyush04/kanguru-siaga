@@ -3,6 +3,8 @@ package com.kangurusiaga.app.presentation.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
+import com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient
+import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.GrowthParameter
@@ -24,7 +26,9 @@ import javax.inject.Inject
 @HiltViewModel
 class BabyProfileViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
-    private val growthRepository: GrowthRepository
+    private val growthRepository: GrowthRepository,
+    private val fentonGrowthRepository: FentonGrowthRepository,
+    private val fentonGrowthApiClient: FentonGrowthApiClient
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BabyProfileUiState())
@@ -88,8 +92,12 @@ class BabyProfileViewModel @Inject constructor(
             combine(
                 growthRepository.getLatestMeasurement(baby.id, GrowthParameter.WEIGHT),
                 growthRepository.getLatestMeasurement(baby.id, GrowthParameter.LENGTH),
-                growthRepository.getLatestMeasurement(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE)
-            ) { latestWeight, latestLength, latestHead ->
+                growthRepository.getLatestMeasurement(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE),
+                fentonGrowthRepository.getLatestRecordFlow(baby.id)
+            ) { latestWeight, latestLength, latestHead, latestRecord ->
+                // Mengambil entri Z-score resmi Fenton terbaru (minggu terakhir)
+                val latestZScoreEntry = fentonGrowthApiClient.getLatestZScoreEntry(baby.id)
+
                 // 1. Berat Badan
                 val weightEval = if (latestWeight != null) {
                     val eval = FentonReferenceData.evaluatePercentile(
@@ -98,11 +106,25 @@ class BabyProfileViewModel @Inject constructor(
                         pmaWeeks = latestWeight.pmaWeeks,
                         value = latestWeight.value
                     )
+                    val officialPercentile = latestZScoreEntry?.weightPercentile?.let { "P$it" }
+                        ?: latestWeight.percentileBadge?.takeIf { it.isNotBlank() }
+                        ?: latestRecord?.calculatedWeightPercentile?.takeIf { it.isNotBlank() }
+                        ?: eval.percentileBadge
+
+                    val officialStatus = latestRecord?.clinicalClassification?.let {
+                        when {
+                            it.contains("AGA", ignoreCase = true) -> "Sesuai Usia Gestasi (Ideal)"
+                            it.contains("SGA", ignoreCase = true) -> "Kecil untuk Usia Gestasi (SGA)"
+                            it.contains("LGA", ignoreCase = true) -> "Besar untuk Usia Gestasi (LGA)"
+                            else -> it
+                        }
+                    } ?: eval.statusText
+
                     MetricEvaluation(
                         valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestWeight.value),
                         unit = "kg",
-                        percentileText = eval.percentileBadge,
-                        statusText = eval.statusText,
+                        percentileText = officialPercentile,
+                        statusText = officialStatus,
                         isMeasured = true
                     )
                 } else if (baby.birthWeightGram > 0) {
@@ -138,11 +160,23 @@ class BabyProfileViewModel @Inject constructor(
                         pmaWeeks = latestLength.pmaWeeks,
                         value = latestLength.value
                     )
+                    val officialPercentile = latestZScoreEntry?.lengthPercentile?.let { "P$it" }
+                        ?: latestLength.percentileBadge?.takeIf { it.isNotBlank() }
+                        ?: eval.percentileBadge
+
+                    val officialStatus = latestZScoreEntry?.lengthPercentile?.let { pct ->
+                        when {
+                            pct in 10..90 -> "Normal (P10–P90)"
+                            pct < 10 -> "Pendek (< P10)"
+                            else -> "Tinggi (> P90)"
+                        }
+                    } ?: eval.statusText
+
                     MetricEvaluation(
                         valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestLength.value),
                         unit = "cm",
-                        percentileText = eval.percentileBadge,
-                        statusText = eval.statusText,
+                        percentileText = officialPercentile,
+                        statusText = officialStatus,
                         isMeasured = true
                     )
                 } else if (baby.birthLengthCm > 0f) {
@@ -177,11 +211,23 @@ class BabyProfileViewModel @Inject constructor(
                         pmaWeeks = latestHead.pmaWeeks,
                         value = latestHead.value
                     )
+                    val officialPercentile = latestZScoreEntry?.headPercentile?.let { "P$it" }
+                        ?: latestHead.percentileBadge?.takeIf { it.isNotBlank() }
+                        ?: eval.percentileBadge
+
+                    val officialStatus = latestZScoreEntry?.headPercentile?.let { pct ->
+                        when {
+                            pct in 10..90 -> "Optimal (P10–P90)"
+                            pct < 10 -> "Kecil (< P10)"
+                            else -> "Besar (> P90)"
+                        }
+                    } ?: eval.statusText
+
                     MetricEvaluation(
                         valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestHead.value),
                         unit = "cm",
-                        percentileText = eval.percentileBadge,
-                        statusText = eval.statusText,
+                        percentileText = officialPercentile,
+                        statusText = officialStatus,
                         isMeasured = true
                     )
                 } else if (baby.birthHeadCircumferenceCm > 0f) {
@@ -208,9 +254,17 @@ class BabyProfileViewModel @Inject constructor(
                     )
                 }
 
-                // Summary status
+                // Summary status berbasis klasifikasi klinis Fenton minggu terakhir
                 val summaryStatus = when {
                     !weightEval.isMeasured && !lengthEval.isMeasured && !headEval.isMeasured -> "Belum Diukur"
+                    latestRecord?.clinicalClassification != null -> {
+                        when {
+                            latestRecord.clinicalClassification.contains("AGA", ignoreCase = true) -> "Sesuai Kurva Fenton (AGA)"
+                            latestRecord.clinicalClassification.contains("SGA", ignoreCase = true) -> "Perlu Pemantauan (SGA < P10)"
+                            latestRecord.clinicalClassification.contains("LGA", ignoreCase = true) -> "Besar untuk Usia Gestasi (LGA)"
+                            else -> latestRecord.clinicalClassification
+                        }
+                    }
                     weightEval.statusText.contains("Sesuai", ignoreCase = true) -> "Sesuai Kurva Fenton"
                     weightEval.statusText.contains("Kecil", ignoreCase = true) -> "Perlu Pemantauan (Kecil)"
                     weightEval.statusText.contains("Besar", ignoreCase = true) -> "Besar untuk Masa"

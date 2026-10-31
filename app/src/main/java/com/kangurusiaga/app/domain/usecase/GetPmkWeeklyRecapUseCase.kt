@@ -1,6 +1,7 @@
 package com.kangurusiaga.app.domain.usecase
 
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
+import com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.ClinicalResponseRow
 import com.kangurusiaga.app.domain.model.CorrelationChartPoint
@@ -38,7 +39,8 @@ import kotlin.math.roundToInt
 class GetPmkWeeklyRecapUseCase @Inject constructor(
     private val getBabyProfileUseCase: GetBabyProfileUseCase,
     private val pmkRepository: PmkRepository,
-    private val growthRepository: GrowthRepository
+    private val growthRepository: GrowthRepository,
+    private val fentonGrowthApiClient: FentonGrowthApiClient
 ) {
     operator fun invoke(): Flow<WeeklyRecapData> {
         return getBabyProfileUseCase().flatMapLatest { baby ->
@@ -67,6 +69,9 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
         val babyName = baby.name
         val babyPhotoUri = baby.photoUri
         val birthWeight = baby.birthWeightGram
+
+        // Data Z-score resmi dari server Fenton untuk bayi ini
+        val zScoreEntries = fentonGrowthApiClient.readLocalZScoreEntries(baby.id)
 
         // Growth measurements categorized by parameter, sorted ascending by date
         val weights = measurements.filter { it.parameter == GrowthParameter.WEIGHT }
@@ -259,9 +264,25 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
             val hcDeltaText = if (hcDelta >= 0) String.format(Locale("id", "ID"), "+%.1fcm", hcDelta) else String.format(Locale("id", "ID"), "%.1fcm", hcDelta)
             val hcEval = FentonReferenceData.evaluatePercentile(GrowthParameter.HEAD_CIRCUMFERENCE, baby.gender, pmaAtWeek, hcVal)
 
+            // Menggunakan nilai persentil resmi Fenton dari data Z-score lokal jika tersedia
+            val weekZScore = zScoreEntries.find { it.gaWeeks.toInt() == pmaAtWeek.toInt() }
+                ?: if (isCurrentWeek) zScoreEntries.lastOrNull() else null
+
+            val officialWPct = weekZScore?.weightPercentile?.let { "P$it" }
+                ?: measW?.percentileBadge?.takeIf { it.isNotBlank() }
+                ?: wEval.percentileBadge
+
+            val officialLPct = weekZScore?.lengthPercentile?.let { "P$it" }
+                ?: measL?.percentileBadge?.takeIf { it.isNotBlank() }
+                ?: lEval.percentileBadge
+
+            val officialHcPct = weekZScore?.headPercentile?.let { "P$it" }
+                ?: measHc?.percentileBadge?.takeIf { it.isNotBlank() }
+                ?: hcEval.percentileBadge
+
             val fentonSummary = WeeklyFentonSummary(
                 statusBadge = when (wType) {
-                    FentonStatusType.NORMAL -> "Semua Sesuai ${wEval.percentileBadge}"
+                    FentonStatusType.NORMAL -> "Semua Sesuai $officialWPct"
                     FentonStatusType.WARNING -> "Laju Pertumbuhan Melambat"
                     FentonStatusType.ALERT -> "Perhatian: Pertumbuhan Menurun (< P10)"
                 },
@@ -272,7 +293,7 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
                         label = "BB Akhir",
                         valueNumber = String.format(Locale("id", "ID"), "%,d", wGrams).replace(',', '.'),
                         unit = "g",
-                        deltaPercentileText = "$wDeltaText (${wEval.percentileBadge})",
+                        deltaPercentileText = "$wDeltaText ($officialWPct)",
                         statusText = wStatus,
                         statusType = wType
                     ),
@@ -280,7 +301,7 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
                         label = "PB Akhir",
                         valueNumber = String.format(Locale("id", "ID"), "%.1f", lVal),
                         unit = "cm",
-                        deltaPercentileText = "$lDeltaText (${lEval.percentileBadge})",
+                        deltaPercentileText = "$lDeltaText ($officialLPct)",
                         statusText = "Naik Normal",
                         statusType = FentonStatusType.NORMAL
                     ),
@@ -288,7 +309,7 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
                         label = "LK Akhir",
                         valueNumber = String.format(Locale("id", "ID"), "%.1f", hcVal),
                         unit = "cm",
-                        deltaPercentileText = "$hcDeltaText (${hcEval.percentileBadge})",
+                        deltaPercentileText = "$hcDeltaText ($officialHcPct)",
                         statusText = "Naik Normal",
                         statusType = FentonStatusType.NORMAL
                     )

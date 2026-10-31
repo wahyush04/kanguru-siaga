@@ -11,6 +11,7 @@ import com.kangurusiaga.app.domain.model.PmkSegment
 import com.kangurusiaga.app.domain.model.PmkSegmentStatus
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.model.TimerStatus
+import com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient
 import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.repository.PmkRepository
 import io.mockk.every
@@ -25,15 +26,18 @@ class GetPmkWeeklyRecapUseCaseTest {
     private val getBabyProfileUseCase: GetBabyProfileUseCase = mockk()
     private val pmkRepository: PmkRepository = mockk()
     private val growthRepository: GrowthRepository = mockk()
+    private val fentonGrowthApiClient: FentonGrowthApiClient = mockk(relaxed = true)
 
     private lateinit var useCase: GetPmkWeeklyRecapUseCase
 
     @Before
     fun setUp() {
+        every { fentonGrowthApiClient.readLocalZScoreEntries(any()) } returns emptyList()
         useCase = GetPmkWeeklyRecapUseCase(
             getBabyProfileUseCase = getBabyProfileUseCase,
             pmkRepository = pmkRepository,
-            growthRepository = growthRepository
+            growthRepository = growthRepository,
+            fentonGrowthApiClient = fentonGrowthApiClient
         )
     }
 

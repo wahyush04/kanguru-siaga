@@ -55,7 +55,7 @@ data class GrowthChartUiState(
     val fentonChartImageUrl: String? = null,
     val fentonChartLocalPath: String? = null,
     val fentonChartTimestamp: Long = 0L,
-    val isFentonApiLoading: Boolean = false,
+    val isFentonApiLoading: Boolean = true,
     val fentonApiErrorMessage: String? = null,
     val fentonApiSuccess: Boolean = false
 )
@@ -148,7 +148,8 @@ class GrowthChartViewModel @Inject constructor(
                         currentPmaWeeks = calculatedPma,
                         isLoading = false,
                         fentonChartLocalPath = initialLocalPath,
-                        fentonChartTimestamp = initialTimestamp
+                        fentonChartTimestamp = initialTimestamp,
+                        isFentonApiLoading = initialLocalPath == null
                     )
                 }
 
@@ -175,30 +176,70 @@ class GrowthChartViewModel @Inject constructor(
                         val latestL = lengths.lastOrNull()
                         val latestHc = headCircs.lastOrNull()
 
+                        // Mengambil entri Z-score resmi Fenton terbaru (minggu terakhir)
+                        val latestZScoreEntry = fentonGrowthApiClient.getLatestZScoreEntry(baby.id)
+
                         val evalW = if (latestW != null) {
-                            FentonReferenceData.evaluatePercentile(
+                            val baseEval = FentonReferenceData.evaluatePercentile(
                                 parameter = GrowthParameter.WEIGHT,
                                 gender = baby.gender,
                                 pmaWeeks = latestW.pmaWeeks,
                                 value = latestW.value
                             )
+                            val officialBadge = latestZScoreEntry?.weightPercentile?.let { pct ->
+                                "P$pct" + when {
+                                    pct in 10..90 -> " (Ideal)"
+                                    pct < 10 -> " (Kecil/SGA)"
+                                    else -> " (Besar/LGA)"
+                                }
+                            } ?: latestW.percentileBadge?.takeIf { it.isNotBlank() } ?: baseEval.percentileBadge
+
+                            val officialClass = latestZScoreEntry?.weightPercentile?.let { pct ->
+                                when {
+                                    pct < 10 -> "SGA (< P10)"
+                                    pct > 90 -> "LGA (> P90)"
+                                    else -> "AGA (P10-P90)"
+                                }
+                            } ?: baseEval.clinicalClassification
+
+                            baseEval.copy(
+                                percentileBadge = officialBadge,
+                                zScore = latestZScoreEntry?.weightZScore ?: baseEval.zScore,
+                                clinicalClassification = officialClass
+                            )
                         } else null
 
                         val evalL = if (latestL != null) {
-                            FentonReferenceData.evaluatePercentile(
+                            val baseEval = FentonReferenceData.evaluatePercentile(
                                 parameter = GrowthParameter.LENGTH,
                                 gender = baby.gender,
                                 pmaWeeks = latestL.pmaWeeks,
                                 value = latestL.value
                             )
+                            val officialBadge = latestZScoreEntry?.lengthPercentile?.let { pct ->
+                                "P$pct" + if (pct in 10..90) " (Normal)" else if (pct < 10) " (Pendek)" else " (Tinggi)"
+                            } ?: latestL.percentileBadge?.takeIf { it.isNotBlank() } ?: baseEval.percentileBadge
+
+                            baseEval.copy(
+                                percentileBadge = officialBadge,
+                                zScore = latestZScoreEntry?.lengthZScore ?: baseEval.zScore
+                            )
                         } else null
 
                         val evalHc = if (latestHc != null) {
-                            FentonReferenceData.evaluatePercentile(
+                            val baseEval = FentonReferenceData.evaluatePercentile(
                                 parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
                                 gender = baby.gender,
                                 pmaWeeks = latestHc.pmaWeeks,
                                 value = latestHc.value
+                            )
+                            val officialBadge = latestZScoreEntry?.headPercentile?.let { pct ->
+                                "P$pct" + if (pct in 10..90) " (Optimal)" else if (pct < 10) " (Kecil)" else " (Besar)"
+                            } ?: latestHc.percentileBadge?.takeIf { it.isNotBlank() } ?: baseEval.percentileBadge
+
+                            baseEval.copy(
+                                percentileBadge = officialBadge,
+                                zScore = latestZScoreEntry?.headZScore ?: baseEval.zScore
                             )
                         } else null
 

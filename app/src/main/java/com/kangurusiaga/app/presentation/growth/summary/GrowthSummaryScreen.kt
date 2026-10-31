@@ -162,8 +162,14 @@ fun GrowthSummaryScreen(
                 val weightVal = uiState.latestWeight?.value?.let {
                     String.format(Locale("id", "ID"), "%.1f", it)
                 } ?: "--"
-                val weightP = uiState.latestWeight?.percentileBadge?.let { stringResource(R.string.growth_summary_percentile_value, it) } ?: "-"
-                val weightStatus = if (uiState.latestWeight != null) stringResource(R.string.growth_summary_status_normal) else stringResource(R.string.growth_summary_status_unmeasured)
+                val weightP = uiState.latestZScoreEntry?.weightPercentile?.let { "P$it" }
+                    ?: uiState.latestWeight?.percentileBadge
+                    ?: uiState.latestRecord?.calculatedWeightPercentile
+                    ?: "-"
+                val weightStatus = if (uiState.latestWeight != null) {
+                    uiState.latestRecord?.clinicalClassification ?: stringResource(R.string.growth_summary_status_normal)
+                } else stringResource(R.string.growth_summary_status_unmeasured)
+
                 MetricSummaryCard(
                     modifier = Modifier.weight(1f),
                     title = stringResource(R.string.growth_hub_weight_title),
@@ -181,7 +187,9 @@ fun GrowthSummaryScreen(
                 val lengthVal = uiState.latestLength?.value?.let {
                     String.format(Locale("id", "ID"), "%.1f", it)
                 } ?: "--"
-                val lengthP = uiState.latestLength?.percentileBadge?.let { stringResource(R.string.growth_summary_percentile_value, it) } ?: "-"
+                val lengthP = uiState.latestZScoreEntry?.lengthPercentile?.let { "P$it" }
+                    ?: uiState.latestLength?.percentileBadge
+                    ?: "-"
                 val lengthStatus = if (uiState.latestLength != null) stringResource(R.string.growth_summary_status_normal) else stringResource(R.string.growth_summary_status_unmeasured)
                 MetricSummaryCard(
                     modifier = Modifier.weight(1f),
@@ -200,7 +208,9 @@ fun GrowthSummaryScreen(
                 val headVal = uiState.latestHead?.value?.let {
                     String.format(Locale("id", "ID"), "%.1f", it)
                 } ?: "--"
-                val headP = uiState.latestHead?.percentileBadge?.let { stringResource(R.string.growth_summary_percentile_value, it) } ?: "-"
+                val headP = uiState.latestZScoreEntry?.headPercentile?.let { "P$it" }
+                    ?: uiState.latestHead?.percentileBadge
+                    ?: "-"
                 val headStatus = if (uiState.latestHead != null) stringResource(R.string.growth_summary_status_normal) else stringResource(R.string.growth_summary_status_unmeasured)
                 MetricSummaryCard(
                     modifier = Modifier.weight(1f),
@@ -220,6 +230,15 @@ fun GrowthSummaryScreen(
 
             // Status Banner Fenton
             val babyName = baby?.name ?: "si kecil"
+            val fentonStatusSummary = uiState.latestRecord?.clinicalClassification?.let {
+                when {
+                    it.contains("AGA", ignoreCase = true) -> "Secara umum, pertumbuhan $babyName sesuai rentang ideal kurva Fenton (AGA P10–P90)."
+                    it.contains("SGA", ignoreCase = true) -> "Pertumbuhan $babyName saat ini berada di bawah persentil 10 (< P10 / SGA), perlu pemantauan nutrisi."
+                    it.contains("LGA", ignoreCase = true) -> "Pertumbuhan $babyName berada di atas persentil 90 (> P90 / LGA) kurva Fenton."
+                    else -> "Secara umum, pertumbuhan $babyName berada pada klasifikasi $it kurva Fenton."
+                }
+            } ?: stringResource(R.string.growth_summary_status_fenton, babyName)
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -237,7 +256,7 @@ fun GrowthSummaryScreen(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = stringResource(R.string.growth_summary_status_fenton, babyName),
+                    text = fentonStatusSummary,
                     style = KanguruTheme.typography.labelSmall,
                     fontWeight = FontWeight.Medium,
                     color = KanguruTheme.colors.warningText,
