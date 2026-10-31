@@ -30,12 +30,15 @@ class KanguruNotificationManager @Inject constructor(
         const val CHANNEL_PMK_NAME = "Timer PMK & Pengingat"
         const val CHANNEL_FEEDING_ID = "channel_feeding_reminder"
         const val CHANNEL_FEEDING_NAME = "Jadwal Pemberian ASI"
+        const val CHANNEL_SCREENING_ID = "channel_screening_reminder"
+        const val CHANNEL_SCREENING_NAME = "Jadwal & Evaluasi Skrining"
 
         const val NOTIFICATION_ID_PMK_REMINDER = 1001
         const val NOTIFICATION_ID_PMK_TIMER = 1002
         const val NOTIFICATION_ID_PMK_PAUSE_ALERT = 1003
         const val NOTIFICATION_ID_PMK_PERIOD_COMPLETED = 1004
         const val NOTIFICATION_ID_FEEDING_BASE = 2000
+        const val NOTIFICATION_ID_SCREENING_BASE = 3000
     }
 
     init {
@@ -68,9 +71,19 @@ class KanguruNotificationManager @Inject constructor(
                 description = "Pengingat jadwal minum ASI/OGT"
             }
 
+            val screeningChannel = NotificationChannel(
+                CHANNEL_SCREENING_ID,
+                CHANNEL_SCREENING_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Pengingat jadwal penapisan klinis bayi prematur (USG Kepala, ROP, OAE, Tiroid)"
+                enableVibration(true)
+            }
+
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(pmkChannel)
             notificationManager.createNotificationChannel(feedingChannel)
+            notificationManager.createNotificationChannel(screeningChannel)
         }
     }
 
@@ -243,6 +256,47 @@ class KanguruNotificationManager @Inject constructor(
             NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID_PMK_PERIOD_COMPLETED)
         } catch (_: SecurityException) {
             // Handled safely
+        }
+    }
+
+    fun showScreeningReminderNotification(
+        screeningId: Long,
+        title: String,
+        categoryBadge: String,
+        clinicOrLab: String,
+        alarmIndex: Int = 1
+    ) {
+        if (!areAppNotificationsEnabled) return
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigate_to", "screening_schedule")
+        }
+
+        val notificationId = (NOTIFICATION_ID_SCREENING_BASE + (screeningId * 10 + alarmIndex) % 1000).toInt()
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notifTitle = "Pengingat Skrining: $title 📋"
+        val message = "Jadwal evaluasi $categoryBadge si kecil ($clinicOrLab). Segera konfirmasi jadwal kontrol dengan dokter/faskes."
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_SCREENING_ID)
+            .setSmallIcon(R.drawable.ic_kangaroo_mascot)
+            .setContentTitle(notifTitle)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        try {
+            NotificationManagerCompat.from(context).notify(notificationId, builder.build())
+        } catch (_: SecurityException) {
+            // Handled when notification permission is not granted
         }
     }
 }

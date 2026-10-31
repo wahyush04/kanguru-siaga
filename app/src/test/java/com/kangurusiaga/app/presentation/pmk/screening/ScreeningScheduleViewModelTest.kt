@@ -2,6 +2,7 @@ package com.kangurusiaga.app.presentation.pmk.screening
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kangurusiaga.app.core.notification.ScreeningReminderScheduler
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PrematureScreening
 import com.kangurusiaga.app.domain.model.ScreeningType
@@ -12,6 +13,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +34,7 @@ class ScreeningScheduleViewModelTest {
     private val babyRepository: BabyRepository = mockk(relaxed = true)
     private val screeningRepository: PrematureScreeningRepository = mockk(relaxed = true)
     private val growthRepository: GrowthRepository = mockk(relaxed = true)
+    private val screeningReminderScheduler: ScreeningReminderScheduler = mockk(relaxed = true)
 
     @Before
     fun setUp() {
@@ -157,6 +160,43 @@ class ScreeningScheduleViewModelTest {
                         it.clinicalResult == "Normal tidak ada perdarahan" &&
                         it.isCompleted
             })
+        }
+    }
+
+    @Test
+    fun toggleAlarm_updatesScreeningAndTriggersScheduler() = runTest {
+        val screening = PrematureScreening(
+            id = 10L,
+            babyId = 1L,
+            type = ScreeningType.USG_HEAD,
+            title = "USG Kepala",
+            categoryBadge = "Neurosonografi",
+            targetTimingLabel = "Usia 2 Minggu",
+            targetDateEpoch = 1000L,
+            isAlarmActive = false,
+            indication = "",
+            clinicalGoal = "",
+            clinicOrLab = ""
+        )
+        every { babyRepository.getActiveBaby() } returns flowOf(null)
+        coEvery { screeningRepository.updateScreening(any()) } returns Unit
+
+        val viewModel = ScreeningScheduleViewModel(
+            babyRepository,
+            screeningRepository,
+            growthRepository,
+            screeningReminderScheduler
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.toggleAlarm(screening, isAlarm1 = true)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify {
+            screeningRepository.updateScreening(match { it.id == 10L && it.isAlarmActive })
+        }
+        verify {
+            screeningReminderScheduler.schedule(match { it.id == 10L && it.isAlarmActive })
         }
     }
 }

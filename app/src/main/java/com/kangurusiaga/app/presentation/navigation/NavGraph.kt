@@ -1085,6 +1085,9 @@ fun KanguruNavGraph(
                 },
                 onNavigateToGrowthAdd = { _ ->
                     navController.navigate(Screen.GrowthBatchAdd.route)
+                },
+                onNavigateToScreening = {
+                    navController.navigate(Screen.ScreeningSchedule.route)
                 }
             )
         }

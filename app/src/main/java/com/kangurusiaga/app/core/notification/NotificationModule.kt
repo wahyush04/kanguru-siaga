@@ -29,4 +29,12 @@ object NotificationModule {
     ): FeedingReminderScheduler {
         return impl
     }
+
+    @Provides
+    @Singleton
+    fun provideScreeningReminderScheduler(
+        impl: ScreeningReminderSchedulerImpl
+    ): ScreeningReminderScheduler {
+        return impl
+    }
 }

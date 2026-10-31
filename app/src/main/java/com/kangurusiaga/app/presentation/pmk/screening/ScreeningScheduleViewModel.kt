@@ -7,6 +7,7 @@ import com.kangurusiaga.app.domain.model.PrematureScreening
 import com.kangurusiaga.app.domain.model.ScreeningType
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
+import com.kangurusiaga.app.core.notification.ScreeningReminderScheduler
 import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.repository.PrematureScreeningRepository
 import com.kangurusiaga.app.domain.util.PmaCalculator
@@ -30,7 +31,8 @@ import javax.inject.Inject
 class ScreeningScheduleViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
     private val screeningRepository: PrematureScreeningRepository,
-    private val growthRepository: GrowthRepository
+    private val growthRepository: GrowthRepository,
+    private val screeningReminderScheduler: ScreeningReminderScheduler? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ScreeningScheduleUiState())
@@ -67,6 +69,8 @@ class ScreeningScheduleViewModel @Inject constructor(
                         birthDateEpoch = baby.birthDateEpochMillis,
                         gestationalAgeWeeks = baby.gestationalAgeWeeks
                     )
+
+                    screeningReminderScheduler?.rescheduleAllActive()
 
                     combine(
                         screeningRepository.getScreeningsForBaby(baby.id),
@@ -116,6 +120,7 @@ class ScreeningScheduleViewModel @Inject constructor(
                 screening.copy(isAlarm2Active = !screening.isAlarm2Active)
             }
             screeningRepository.updateScreening(updated)
+            screeningReminderScheduler?.schedule(updated)
         }
     }
 
@@ -172,6 +177,11 @@ class ScreeningScheduleViewModel @Inject constructor(
                 updatedAt = System.currentTimeMillis()
             )
             screeningRepository.updateScreening(updated)
+            if (updated.isCompleted) {
+                screeningReminderScheduler?.cancelAll(updated.id)
+            } else {
+                screeningReminderScheduler?.schedule(updated)
+            }
             _uiState.update {
                 it.copy(
                     recordModalState = it.recordModalState.copy(isOpen = false),
@@ -243,7 +253,8 @@ class ScreeningScheduleViewModel @Inject constructor(
                 isAlarmActive = true,
                 isCompleted = false
             )
-            screeningRepository.insertScreening(newScreening)
+            val newId = screeningRepository.insertScreening(newScreening)
+            screeningReminderScheduler?.schedule(newScreening.copy(id = newId))
             _uiState.update {
                 it.copy(
                     addModalState = it.addModalState.copy(isOpen = false),

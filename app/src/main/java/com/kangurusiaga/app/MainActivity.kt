@@ -81,6 +81,11 @@ class MainActivity : ComponentActivity() {
                     launchSingleTop = true
                 }
             }
+            "screening_schedule" -> {
+                navController.navigate(Screen.ScreeningSchedule.route) {
+                    launchSingleTop = true
+                }
+            }
         }
     }
 }

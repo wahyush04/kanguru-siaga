@@ -28,10 +28,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AddChart
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.PlayArrow
@@ -87,6 +89,7 @@ fun NotificationRoute(
     onNavigateToPmkTimer: () -> Unit,
     onNavigateToFeeding: () -> Unit,
     onNavigateToGrowthAdd: (GrowthParameter) -> Unit,
+    onNavigateToScreening: () -> Unit = onNavigateToAlarm,
     modifier: Modifier = Modifier,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
@@ -110,6 +113,7 @@ fun NotificationRoute(
                 NotificationCategory.GROWTH_WEIGHT -> onNavigateToGrowthAdd(GrowthParameter.WEIGHT)
                 NotificationCategory.GROWTH_LENGTH -> onNavigateToGrowthAdd(GrowthParameter.LENGTH)
                 NotificationCategory.GROWTH_HEAD -> onNavigateToGrowthAdd(GrowthParameter.HEAD_CIRCUMFERENCE)
+                NotificationCategory.SCREENING_REMINDER -> onNavigateToScreening()
             }
         },
         onPrimaryAction = { notification ->
@@ -123,6 +127,7 @@ fun NotificationRoute(
                 NotificationCategory.GROWTH_WEIGHT -> onNavigateToGrowthAdd(GrowthParameter.WEIGHT)
                 NotificationCategory.GROWTH_LENGTH -> onNavigateToGrowthAdd(GrowthParameter.LENGTH)
                 NotificationCategory.GROWTH_HEAD -> onNavigateToGrowthAdd(GrowthParameter.HEAD_CIRCUMFERENCE)
+                NotificationCategory.SCREENING_REMINDER -> onNavigateToScreening()
             }
         },
         onSecondaryAction = { notification ->
@@ -630,6 +635,7 @@ private fun CategoryIconBox(
         NotificationCategory.GROWTH_WEIGHT -> colors.primaryContainer to colors.primary
         NotificationCategory.GROWTH_LENGTH -> colors.successContainer to colors.success
         NotificationCategory.GROWTH_HEAD -> colors.infoContainer to colors.info
+        NotificationCategory.SCREENING_REMINDER -> colors.clinicalAmberBg to colors.clinicalAmberText
     }
 
     Box(
@@ -688,6 +694,14 @@ private fun CategoryIconBox(
                     modifier = Modifier.size(24.dp)
                 )
             }
+            NotificationCategory.SCREENING_REMINDER -> {
+                Icon(
+                    imageVector = Icons.Default.MedicalServices,
+                    contentDescription = null,
+                    tint = contentColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }
@@ -703,6 +717,7 @@ private fun getActionButtonColors(
         NotificationCategory.GROWTH_WEIGHT -> colors.primary to colors.onPrimary
         NotificationCategory.GROWTH_LENGTH -> colors.successContainer to colors.success
         NotificationCategory.GROWTH_HEAD -> colors.infoContainer to colors.info
+        NotificationCategory.SCREENING_REMINDER -> colors.primary to colors.onPrimary
     }
 }
 
@@ -714,6 +729,7 @@ private fun getActionIcon(category: NotificationCategory): ImageVector? {
         NotificationCategory.GROWTH_WEIGHT -> Icons.Default.AddChart
         NotificationCategory.GROWTH_LENGTH,
         NotificationCategory.GROWTH_HEAD -> Icons.Default.Edit
+        NotificationCategory.SCREENING_REMINDER -> Icons.Default.CalendarToday
     }
 }
 

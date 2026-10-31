@@ -6,7 +6,8 @@ enum class NotificationCategory {
     FEEDING_ALARM,
     GROWTH_WEIGHT,
     GROWTH_LENGTH,
-    GROWTH_HEAD
+    GROWTH_HEAD,
+    SCREENING_REMINDER
 }
 
 enum class NotificationBadgeColor {
