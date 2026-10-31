@@ -12,16 +12,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface GrowthMeasurementDao {
 
-    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId AND parameter = :parameter ORDER BY measurementDateEpochMillis ASC")
+    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId AND parameter = :parameter ORDER BY pmaWeeks ASC, measurementDateEpochMillis ASC")
     fun getMeasurementsForParameterAsc(babyId: Long, parameter: String): Flow<List<GrowthMeasurementEntity>>
 
-    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId AND parameter = :parameter ORDER BY measurementDateEpochMillis DESC")
+    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId AND parameter = :parameter ORDER BY pmaWeeks DESC, measurementDateEpochMillis DESC")
     fun getMeasurementsForParameterDesc(babyId: Long, parameter: String): Flow<List<GrowthMeasurementEntity>>
 
-    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId ORDER BY measurementDateEpochMillis DESC")
+    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId ORDER BY pmaWeeks DESC, measurementDateEpochMillis DESC")
     fun getAllMeasurementsForBaby(babyId: Long): Flow<List<GrowthMeasurementEntity>>
 
-    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId AND parameter = :parameter ORDER BY measurementDateEpochMillis DESC LIMIT 1")
+    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId AND parameter = :parameter ORDER BY pmaWeeks DESC, measurementDateEpochMillis DESC LIMIT 1")
     fun getLatestMeasurement(babyId: Long, parameter: String): Flow<GrowthMeasurementEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -38,4 +38,7 @@ interface GrowthMeasurementDao {
 
     @Query("DELETE FROM growth_measurements WHERE id = :id")
     suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM growth_measurements WHERE babyId = :babyId")
+    suspend fun deleteAllForBaby(babyId: Long)
 }

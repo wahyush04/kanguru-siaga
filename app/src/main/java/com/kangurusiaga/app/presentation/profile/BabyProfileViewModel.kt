@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -98,161 +100,133 @@ class BabyProfileViewModel @Inject constructor(
                 // Mengambil entri Z-score resmi Fenton terbaru (minggu terakhir)
                 val latestZScoreEntry = fentonGrowthApiClient.getLatestZScoreEntry(baby.id)
 
+                // Ambil nilai riil minggu terakhir dari data pertumbuhan bayi (Z-Score Fenton / Riwayat Rekor / Pengukuran)
+                val weightKg: Float? = latestZScoreEntry?.weightGrams?.let { (it / 1000.0).toFloat() }
+                    ?: latestRecord?.weightGrams?.let { (it / 1000.0).toFloat() }
+                    ?: latestWeight?.value
+                    ?: baby.birthWeightGram.takeIf { it > 0 }?.let { it / 1000f }
+
+                val lengthCm: Float? = latestZScoreEntry?.lengthCm?.toFloat()
+                    ?: latestRecord?.lengthCm?.toFloat()
+                    ?: latestLength?.value
+                    ?: baby.birthLengthCm.takeIf { it > 0f }
+
+                val headCm: Float? = latestZScoreEntry?.headCm?.toFloat()
+                    ?: latestRecord?.headCircumferenceCm?.toFloat()
+                    ?: latestHead?.value
+                    ?: baby.birthHeadCircumferenceCm.takeIf { it > 0f }
+
+                val pmaWeeksForEval: Float = latestZScoreEntry?.gaWeeks
+                    ?: latestRecord?.pmaWeeks?.toFloat()
+                    ?: latestWeight?.pmaWeeks
+                    ?: pmaAtBirth
+
+                // Format angka desimal sesuai standar Indonesia (koma sebagai pemisah desimal)
+                val weightDf = DecimalFormat("#.##", DecimalFormatSymbols(Locale("id", "ID"))).apply {
+                    minimumFractionDigits = 1
+                    maximumFractionDigits = 2
+                }
+
                 // 1. Berat Badan
-                val weightEval = if (latestWeight != null) {
-                    val eval = FentonReferenceData.evaluatePercentile(
+                val evalW = if (weightKg != null) {
+                    FentonReferenceData.evaluatePercentile(
                         parameter = GrowthParameter.WEIGHT,
                         gender = gender,
-                        pmaWeeks = latestWeight.pmaWeeks,
-                        value = latestWeight.value
-                    )
-                    val officialPercentile = latestZScoreEntry?.weightPercentile?.let { "P$it" }
-                        ?: latestWeight.percentileBadge?.takeIf { it.isNotBlank() }
-                        ?: latestRecord?.calculatedWeightPercentile?.takeIf { it.isNotBlank() }
-                        ?: eval.percentileBadge
-
-                    val officialStatus = latestRecord?.clinicalClassification?.let {
-                        when {
-                            it.contains("AGA", ignoreCase = true) -> "Sesuai Usia Gestasi (Ideal)"
-                            it.contains("SGA", ignoreCase = true) -> "Kecil untuk Usia Gestasi (SGA)"
-                            it.contains("LGA", ignoreCase = true) -> "Besar untuk Usia Gestasi (LGA)"
-                            else -> it
-                        }
-                    } ?: eval.statusText
-
-                    MetricEvaluation(
-                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestWeight.value),
-                        unit = "kg",
-                        percentileText = officialPercentile,
-                        statusText = officialStatus,
-                        isMeasured = true
-                    )
-                } else if (baby.birthWeightGram > 0) {
-                    val weightKg = baby.birthWeightGram / 1000f
-                    val eval = FentonReferenceData.evaluatePercentile(
-                        parameter = GrowthParameter.WEIGHT,
-                        gender = gender,
-                        pmaWeeks = pmaAtBirth,
+                        pmaWeeks = pmaWeeksForEval,
                         value = weightKg
                     )
-                    MetricEvaluation(
-                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", weightKg),
-                        unit = "kg",
-                        percentileText = eval.percentileBadge,
-                        statusText = eval.statusText,
-                        isMeasured = true
-                    )
-                } else {
-                    MetricEvaluation(
-                        valueFormatted = "-",
-                        unit = "kg",
-                        percentileText = "-",
-                        statusText = "Belum diukur",
-                        isMeasured = false
-                    )
-                }
+                } else null
+
+                val officialWeightPercentile = latestZScoreEntry?.weightPercentile?.let { "P$it" }
+                    ?: latestRecord?.calculatedWeightPercentile?.takeIf { it.isNotBlank() }
+                    ?: latestWeight?.percentileBadge?.takeIf { it.isNotBlank() }
+                    ?: evalW?.percentileBadge
+                    ?: "-"
+
+                val officialWeightStatus = latestRecord?.clinicalClassification?.let {
+                    when {
+                        it.contains("AGA", ignoreCase = true) -> "Sesuai Usia Gestasi (Ideal)"
+                        it.contains("SGA", ignoreCase = true) -> "Kecil untuk Usia Gestasi (SGA)"
+                        it.contains("LGA", ignoreCase = true) -> "Besar untuk Usia Gestasi (LGA)"
+                        else -> it
+                    }
+                } ?: latestZScoreEntry?.weightPercentile?.let { pct ->
+                    when {
+                        pct in 10..90 -> "Sesuai Usia Gestasi"
+                        pct < 10 -> "Kecil untuk Usia Gestasi (SGA)"
+                        else -> "Besar untuk Usia Gestasi (LGA)"
+                    }
+                } ?: evalW?.statusText ?: "Belum diukur"
+
+                val weightEval = MetricEvaluation(
+                    valueFormatted = if (weightKg != null) weightDf.format(weightKg) else "-",
+                    unit = "kg",
+                    percentileText = officialWeightPercentile,
+                    statusText = officialWeightStatus,
+                    isMeasured = weightKg != null
+                )
 
                 // 2. Panjang Badan
-                val lengthEval = if (latestLength != null) {
-                    val eval = FentonReferenceData.evaluatePercentile(
+                val evalL = if (lengthCm != null) {
+                    FentonReferenceData.evaluatePercentile(
                         parameter = GrowthParameter.LENGTH,
                         gender = gender,
-                        pmaWeeks = latestLength.pmaWeeks,
-                        value = latestLength.value
+                        pmaWeeks = pmaWeeksForEval,
+                        value = lengthCm
                     )
-                    val officialPercentile = latestZScoreEntry?.lengthPercentile?.let { "P$it" }
-                        ?: latestLength.percentileBadge?.takeIf { it.isNotBlank() }
-                        ?: eval.percentileBadge
+                } else null
 
-                    val officialStatus = latestZScoreEntry?.lengthPercentile?.let { pct ->
-                        when {
-                            pct in 10..90 -> "Normal (P10–P90)"
-                            pct < 10 -> "Pendek (< P10)"
-                            else -> "Tinggi (> P90)"
-                        }
-                    } ?: eval.statusText
+                val officialLengthPercentile = latestZScoreEntry?.lengthPercentile?.let { "P$it" }
+                    ?: latestLength?.percentileBadge?.takeIf { it.isNotBlank() }
+                    ?: evalL?.percentileBadge
+                    ?: "-"
 
-                    MetricEvaluation(
-                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestLength.value),
-                        unit = "cm",
-                        percentileText = officialPercentile,
-                        statusText = officialStatus,
-                        isMeasured = true
-                    )
-                } else if (baby.birthLengthCm > 0f) {
-                    val eval = FentonReferenceData.evaluatePercentile(
-                        parameter = GrowthParameter.LENGTH,
-                        gender = gender,
-                        pmaWeeks = pmaAtBirth,
-                        value = baby.birthLengthCm
-                    )
-                    MetricEvaluation(
-                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", baby.birthLengthCm),
-                        unit = "cm",
-                        percentileText = eval.percentileBadge,
-                        statusText = eval.statusText,
-                        isMeasured = true
-                    )
-                } else {
-                    MetricEvaluation(
-                        valueFormatted = "-",
-                        unit = "cm",
-                        percentileText = "-",
-                        statusText = "Belum diukur",
-                        isMeasured = false
-                    )
-                }
+                val officialLengthStatus = latestZScoreEntry?.lengthPercentile?.let { pct ->
+                    when {
+                        pct in 10..90 -> "Normal (P10–P90)"
+                        pct < 10 -> "Pendek (< P10)"
+                        else -> "Tinggi (> P90)"
+                    }
+                } ?: evalL?.statusText ?: "Belum diukur"
+
+                val lengthEval = MetricEvaluation(
+                    valueFormatted = if (lengthCm != null) String.format(Locale("id", "ID"), "%.1f", lengthCm) else "-",
+                    unit = "cm",
+                    percentileText = officialLengthPercentile,
+                    statusText = officialLengthStatus,
+                    isMeasured = lengthCm != null
+                )
 
                 // 3. Lingkar Kepala
-                val headEval = if (latestHead != null) {
-                    val eval = FentonReferenceData.evaluatePercentile(
+                val evalH = if (headCm != null) {
+                    FentonReferenceData.evaluatePercentile(
                         parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
                         gender = gender,
-                        pmaWeeks = latestHead.pmaWeeks,
-                        value = latestHead.value
+                        pmaWeeks = pmaWeeksForEval,
+                        value = headCm
                     )
-                    val officialPercentile = latestZScoreEntry?.headPercentile?.let { "P$it" }
-                        ?: latestHead.percentileBadge?.takeIf { it.isNotBlank() }
-                        ?: eval.percentileBadge
+                } else null
 
-                    val officialStatus = latestZScoreEntry?.headPercentile?.let { pct ->
-                        when {
-                            pct in 10..90 -> "Optimal (P10–P90)"
-                            pct < 10 -> "Kecil (< P10)"
-                            else -> "Besar (> P90)"
-                        }
-                    } ?: eval.statusText
+                val officialHeadPercentile = latestZScoreEntry?.headPercentile?.let { "P$it" }
+                    ?: latestHead?.percentileBadge?.takeIf { it.isNotBlank() }
+                    ?: evalH?.percentileBadge
+                    ?: "-"
 
-                    MetricEvaluation(
-                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", latestHead.value),
-                        unit = "cm",
-                        percentileText = officialPercentile,
-                        statusText = officialStatus,
-                        isMeasured = true
-                    )
-                } else if (baby.birthHeadCircumferenceCm > 0f) {
-                    val eval = FentonReferenceData.evaluatePercentile(
-                        parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
-                        gender = gender,
-                        pmaWeeks = pmaAtBirth,
-                        value = baby.birthHeadCircumferenceCm
-                    )
-                    MetricEvaluation(
-                        valueFormatted = String.format(Locale("id", "ID"), "%.1f", baby.birthHeadCircumferenceCm),
-                        unit = "cm",
-                        percentileText = eval.percentileBadge,
-                        statusText = eval.statusText,
-                        isMeasured = true
-                    )
-                } else {
-                    MetricEvaluation(
-                        valueFormatted = "-",
-                        unit = "cm",
-                        percentileText = "-",
-                        statusText = "Belum diukur",
-                        isMeasured = false
-                    )
-                }
+                val officialHeadStatus = latestZScoreEntry?.headPercentile?.let { pct ->
+                    when {
+                        pct in 10..90 -> "Optimal (P10–P90)"
+                        pct < 10 -> "Kecil (< P10)"
+                        else -> "Besar (> P90)"
+                    }
+                } ?: evalH?.statusText ?: "Belum diukur"
+
+                val headEval = MetricEvaluation(
+                    valueFormatted = if (headCm != null) String.format(Locale("id", "ID"), "%.1f", headCm) else "-",
+                    unit = "cm",
+                    percentileText = officialHeadPercentile,
+                    statusText = officialHeadStatus,
+                    isMeasured = headCm != null
+                )
 
                 // Summary status berbasis klasifikasi klinis Fenton minggu terakhir
                 val summaryStatus = when {
@@ -265,9 +239,14 @@ class BabyProfileViewModel @Inject constructor(
                             else -> latestRecord.clinicalClassification
                         }
                     }
-                    weightEval.statusText.contains("Sesuai", ignoreCase = true) -> "Sesuai Kurva Fenton"
-                    weightEval.statusText.contains("Kecil", ignoreCase = true) -> "Perlu Pemantauan (Kecil)"
-                    weightEval.statusText.contains("Besar", ignoreCase = true) -> "Besar untuk Masa"
+                    officialWeightPercentile.isNotEmpty() && officialWeightPercentile != "-" -> {
+                        val pctNum = officialWeightPercentile.removePrefix("P").toIntOrNull() ?: 50
+                        when {
+                            pctNum in 10..90 -> "Sesuai Kurva Fenton (AGA)"
+                            pctNum < 10 -> "Perlu Pemantauan (SGA < P10)"
+                            else -> "Besar untuk Usia Gestasi (LGA)"
+                        }
+                    }
                     else -> "Sesuai Kurva Fenton"
                 }
 

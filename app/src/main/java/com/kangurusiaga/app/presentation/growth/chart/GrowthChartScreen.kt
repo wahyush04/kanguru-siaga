@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -76,9 +76,9 @@ fun GrowthChartScreen(
     val context = LocalContext.current
 
     val isBoy = uiState.baby?.gender != Gender.FEMALE
-    val babyName = uiState.baby?.name ?: "Bayi Arka Narendra"
+    val babyName = uiState.baby?.name?.takeIf { it.isNotBlank() } ?: "Data Bayi"
 
-    // Derive avatar initials (e.g. "AN" for Arka Narendra or Bayi Arka Narendra)
+    // Derive avatar initials
     val initials = remember(babyName) {
         val cleanName = if (babyName.startsWith("Bayi ", ignoreCase = true)) {
             babyName.removePrefix("Bayi ").removePrefix("bayi ").trim()
@@ -90,17 +90,17 @@ fun GrowthChartScreen(
             parts.size >= 2 -> "${parts[0].first().uppercaseChar()}${parts[1].first().uppercaseChar()}"
             parts.size == 1 && parts[0].length >= 2 -> parts[0].take(2).uppercase()
             parts.size == 1 -> parts[0].take(1).uppercase()
-            else -> "AN"
+            else -> "BY"
         }
     }
 
-    // Latest metric values with clean fallbacks
+    // Latest metric values with clean fallbacks from real data
     val currentWeightKg = uiState.latestWeight?.value
-        ?: ((uiState.baby?.birthWeightGram ?: 1850) / 1000f)
+        ?: (uiState.baby?.birthWeightGram?.takeIf { it > 0 }?.let { it / 1000f })
     val currentLengthCm = uiState.latestLength?.value
-        ?: (if ((uiState.baby?.birthLengthCm ?: 0f) > 0f) uiState.baby!!.birthLengthCm else 46.5f)
+        ?: uiState.baby?.birthLengthCm?.takeIf { it > 0f }
     val currentHeadCircCm = uiState.latestHeadCirc?.value
-        ?: (if ((uiState.baby?.birthHeadCircumferenceCm ?: 0f) > 0f) uiState.baby!!.birthHeadCircumferenceCm else 32.8f)
+        ?: uiState.baby?.birthHeadCircumferenceCm?.takeIf { it > 0f }
 
     // Formatted last evaluation date
     val lastDateFormatted = remember(uiState.latestWeight, uiState.latestLength, uiState.latestHeadCirc) {
@@ -108,9 +108,13 @@ fun GrowthChartScreen(
             uiState.latestWeight?.measurementDateEpochMillis,
             uiState.latestLength?.measurementDateEpochMillis,
             uiState.latestHeadCirc?.measurementDateEpochMillis
-        ).maxOrNull() ?: System.currentTimeMillis()
-        val sdf = SimpleDateFormat("d MMM", Locale("id", "ID"))
-        sdf.format(Date(latestEpoch))
+        ).maxOrNull()
+        if (latestEpoch != null) {
+            val sdf = SimpleDateFormat("d MMM", Locale("id", "ID"))
+            sdf.format(Date(latestEpoch))
+        } else {
+            "-"
+        }
     }
 
     Scaffold(
@@ -256,21 +260,15 @@ fun GrowthChartScreen(
                 initials = initials,
                 babyName = babyName,
                 isBoy = isBoy,
-                gestationalAgeWeeksAtBirth = uiState.baby?.gestationalAgeWeeks ?: 32,
-                birthWeightGrams = uiState.baby?.birthWeightGram ?: 1850,
+                gestationalAgeWeeksAtBirth = uiState.baby?.gestationalAgeWeeks ?: 0,
+                birthWeightGrams = uiState.baby?.birthWeightGram ?: 0,
                 currentPmaWeeks = uiState.currentPmaWeeks,
                 weightKg = currentWeightKg,
                 lengthCm = currentLengthCm,
                 headCircCm = currentHeadCircCm,
-                weightBadge = uiState.weightEvaluation?.percentileBadge ?: "P50 (Ideal)",
-                lengthBadge = uiState.lengthEvaluation?.percentileBadge ?: "P50 (Ideal)",
-                headCircBadge = uiState.headCircEvaluation?.percentileBadge ?: "P50 (Optimal)"
-            )
-
-            // 3. Parameter Filter Selector Tabs
-            ParameterFilterTabs(
-                selectedTab = uiState.selectedTab,
-                onSelectTab = { viewModel.selectTab(it) }
+                weightBadge = uiState.weightEvaluation?.percentileBadge ?: "-",
+                lengthBadge = uiState.lengthEvaluation?.percentileBadge ?: "-",
+                headCircBadge = uiState.headCircEvaluation?.percentileBadge ?: "-"
             )
 
             // 4. Interactive Fenton Chart Canvas Card
@@ -297,12 +295,14 @@ fun GrowthChartScreen(
                 CatchUpGrowthEvaluationCard(
                     lastDate = lastDateFormatted,
                     weightKg = currentWeightKg,
-                    weightBadge = uiState.weightEvaluation?.percentileBadge ?: "P50",
+                    weightBadge = uiState.weightEvaluation?.percentileBadge ?: "-",
                     weightGainRate = uiState.weightGainRateGramsPerDay,
                     lengthCm = currentLengthCm,
-                    lengthBadge = uiState.lengthEvaluation?.percentileBadge ?: "P50",
+                    lengthBadge = uiState.lengthEvaluation?.percentileBadge ?: "-",
+                    lengthGainRate = uiState.lengthGainRateCmPerWeek,
                     headCircCm = currentHeadCircCm,
-                    headCircBadge = uiState.headCircEvaluation?.percentileBadge ?: "P50"
+                    headCircBadge = uiState.headCircEvaluation?.percentileBadge ?: "-",
+                    headCircGainRate = uiState.headCircGainRateCmPerWeek
                 )
             }
 
@@ -331,9 +331,9 @@ private fun PatientVitalContextCard(
     gestationalAgeWeeksAtBirth: Int,
     birthWeightGrams: Int,
     currentPmaWeeks: Float,
-    weightKg: Float,
-    lengthCm: Float,
-    headCircCm: Float,
+    weightKg: Float?,
+    lengthCm: Float?,
+    headCircCm: Float?,
     weightBadge: String,
     lengthBadge: String,
     headCircBadge: String
@@ -414,9 +414,14 @@ private fun PatientVitalContextCard(
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                    val formattedBirthWeight = String.format(Locale("id", "ID"), "%,d", birthWeightGrams)
+                    val formattedBirthWeight = if (birthWeightGrams > 0) String.format(Locale("id", "ID"), "%,d", birthWeightGrams) else "-"
+                    val birthSummary = if (gestationalAgeWeeksAtBirth > 0 && birthWeightGrams > 0) {
+                        "Lahir: $gestationalAgeWeeksAtBirth mg • BB Lahir: $formattedBirthWeight g"
+                    } else {
+                        "Data lahir belum dicatat"
+                    }
                     Text(
-                        text = "Lahir: $gestationalAgeWeeksAtBirth mg • BB Lahir: $formattedBirthWeight g",
+                        text = birthSummary,
                         style = typography.bodySmall,
                         color = colors.fentonPatientSubtitleText
                     )
@@ -440,7 +445,7 @@ private fun PatientVitalContextCard(
                         color = colors.fentonPatientSubtitleText
                     )
                     Text(
-                        text = "${currentPmaWeeks.toInt()} Minggu",
+                        text = if (currentPmaWeeks > 0) "${currentPmaWeeks.toInt()} Minggu" else "-",
                         style = typography.titleSmall,
                         fontWeight = FontWeight.ExtraBold,
                         color = colors.fentonPmaBadgeText
@@ -460,27 +465,27 @@ private fun PatientVitalContextCard(
             PatientMetricCard(
                 modifier = Modifier.weight(1f),
                 title = "Berat Badan",
-                value = String.format(Locale.US, "%.3f", weightKg),
-                unit = "kg",
-                badgeText = badgeTextWithFallback(weightBadge, "P50 (Ideal)")
+                value = weightKg?.let { String.format(Locale.US, "%.3f", it) } ?: "-",
+                unit = if (weightKg != null) "kg" else "",
+                badgeText = if (weightBadge.isNotBlank() && weightBadge != "-") weightBadge else "-"
             )
 
             // Card 2: Panjang Badan
             PatientMetricCard(
                 modifier = Modifier.weight(1f),
                 title = "Panjang Badan",
-                value = String.format(Locale.US, "%.1f", lengthCm),
-                unit = "cm",
-                badgeText = badgeTextWithFallback(lengthBadge, "P50 (Ideal)")
+                value = lengthCm?.let { String.format(Locale.US, "%.1f", it) } ?: "-",
+                unit = if (lengthCm != null) "cm" else "",
+                badgeText = if (lengthBadge.isNotBlank() && lengthBadge != "-") lengthBadge else "-"
             )
 
             // Card 3: Lingkar Kepala
             PatientMetricCard(
                 modifier = Modifier.weight(1f),
                 title = "Lingkar Kepala",
-                value = String.format(Locale.US, "%.1f", headCircCm),
-                unit = "cm",
-                badgeText = badgeTextWithFallback(headCircBadge, "P50 (Optimal)")
+                value = headCircCm?.let { String.format(Locale.US, "%.1f", it) } ?: "-",
+                unit = if (headCircCm != null) "cm" else "",
+                badgeText = if (headCircBadge.isNotBlank() && headCircBadge != "-") headCircBadge else "-"
             )
         }
     }
@@ -555,88 +560,48 @@ private fun PatientMetricCard(
 }
 
 /**
- * Section 3: Horizontal Parameter Filter Selector Tabs
- */
-@Composable
-private fun ParameterFilterTabs(
-    selectedTab: Int,
-    onSelectTab: (Int) -> Unit
-) {
-    val colors = KanguruTheme.colors
-    val typography = KanguruTheme.typography
-
-    val tabs = listOf(
-        "Semua Parameter (Fenton Full)",
-        "Berat Badan",
-        "Panjang",
-        "Lingkar Kepala"
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colors.surface)
-            .border(0.5.dp, colors.cardBorder)
-            .padding(horizontal = 14.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            tabs.forEachIndexed { index, title ->
-                val isSelected = selectedTab == index
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(if (isSelected) colors.fentonFilterActiveBg else colors.fentonFilterInactiveBg)
-                        .clickable { onSelectTab(index) }
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
-                ) {
-                    Text(
-                        text = title,
-                        style = typography.labelSmall,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) colors.fentonFilterActiveText else colors.fentonFilterInactiveText
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                text = "Geser →",
-                style = typography.labelSmall,
-                color = colors.textTertiary
-            )
-        }
-    }
-}
-
-/**
  * Section 5: Evaluasi Pertumbuhan Kejar (Catch-up Growth) Card
  */
 @Composable
 private fun CatchUpGrowthEvaluationCard(
     lastDate: String,
-    weightKg: Float,
+    weightKg: Float?,
     weightBadge: String,
-    weightGainRate: Float,
-    lengthCm: Float,
+    weightGainRate: Float?,
+    lengthCm: Float?,
     lengthBadge: String,
-    headCircCm: Float,
-    headCircBadge: String
+    lengthGainRate: Float?,
+    headCircCm: Float?,
+    headCircBadge: String,
+    headCircGainRate: Float?
 ) {
     val colors = KanguruTheme.colors
     val typography = KanguruTheme.typography
+
+    val summary = remember(
+        weightKg, weightBadge, weightGainRate,
+        lengthCm, lengthBadge, lengthGainRate,
+        headCircCm, headCircBadge, headCircGainRate
+    ) {
+        CatchUpGrowthEvaluator.evaluate(
+            weightKg = weightKg,
+            weightBadge = weightBadge,
+            weightGainRateGramsPerDay = weightGainRate,
+            lengthCm = lengthCm,
+            lengthBadge = lengthBadge,
+            lengthGainRateCmPerWeek = lengthGainRate,
+            headCircCm = headCircCm,
+            headCircBadge = headCircBadge,
+            headCircGainRateCmPerWeek = headCircGainRate
+        )
+    }
+
+    val indicatorColor = when (summary.overallLevel) {
+        GrowthEvaluationLevel.OPTIMAL -> colors.success
+        GrowthEvaluationLevel.NORMAL, GrowthEvaluationLevel.BASELINE -> colors.textTertiary
+        GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBadgeBg
+        GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBadgeBg
+    }
 
     Column(
         modifier = Modifier
@@ -661,7 +626,7 @@ private fun CatchUpGrowthEvaluationCard(
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(colors.success)
+                        .background(indicatorColor)
                 )
                 Text(
                     text = "Evaluasi Pertumbuhan Kejar\n(Catch-up Growth)",
@@ -686,138 +651,48 @@ private fun CatchUpGrowthEvaluationCard(
             }
         }
 
-        // Item 1: Berat Badan (Sesuai Target)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(colors.fentonEvaluationTargetBg)
-                .border(1.dp, colors.fentonEvaluationTargetBorder, RoundedCornerShape(10.dp))
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                val formattedGrams = String.format(Locale("id", "ID"), "%,d", (weightKg * 1000f).toInt())
-                Text(
-                    text = "Berat Badan: $formattedGrams g",
-                    style = typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary
-                )
-                val cleanPercentile = if (weightBadge.contains("P50")) "P50" else weightBadge
-                val gainRateRounded = kotlin.math.round(weightGainRate).toInt()
-                Text(
-                    text = "Persentil $cleanPercentile • Laju kenaikan +${if (gainRateRounded in 27..28) 28 else gainRateRounded} g/hari (Optimal)",
-                    style = typography.bodySmall,
-                    color = colors.success
-                )
-            }
+        // Item 1: Berat Badan
+        CatchUpMetricRow(item = summary.weightItem)
 
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(colors.fentonEvaluationTargetBadgeBg)
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = "Sesuai Target",
-                    style = typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.fentonEvaluationTargetBadgeText
-                )
-            }
-        }
+        // Item 2: Panjang Badan
+        CatchUpMetricRow(item = summary.lengthItem)
 
-        // Item 2: Panjang Badan (Normal)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(colors.fentonEvaluationNormalRowBg)
-                .border(1.dp, colors.cardBorder, RoundedCornerShape(10.dp))
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Panjang Badan: ${String.format(Locale.US, "%.1f", lengthCm)} cm",
-                    style = typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary
-                )
-                val cleanLength = if (lengthBadge.contains("P50")) "P50" else lengthBadge
-                Text(
-                    text = "Persentil $cleanLength • Pertumbuhan proporsional",
-                    style = typography.bodySmall,
-                    color = colors.textSecondary
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(colors.fentonEvaluationNormalBadgeBg)
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = "Normal",
-                    style = typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.fentonEvaluationNormalBadgeText
-                )
-            }
-        }
-
-        // Item 3: Lingkar Kepala (Normal)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(colors.fentonEvaluationNormalRowBg)
-                .border(1.dp, colors.cardBorder, RoundedCornerShape(10.dp))
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Lingkar Kepala: ${String.format(Locale.US, "%.1f", headCircCm)} cm",
-                    style = typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary
-                )
-                val cleanHc = if (headCircBadge.contains("P50")) "P50" else headCircBadge
-                Text(
-                    text = "Persentil $cleanHc • Perkembangan neurokranial baik",
-                    style = typography.bodySmall,
-                    color = colors.textSecondary
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(colors.fentonEvaluationNormalBadgeBg)
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = "Normal",
-                    style = typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.fentonEvaluationNormalBadgeText
-                )
-            }
-        }
+        // Item 3: Lingkar Kepala
+        CatchUpMetricRow(item = summary.headCircItem)
 
         // Physician Note Callout
+        val noteCardBg = when (summary.overallLevel) {
+            GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBg
+            GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBg
+            else -> colors.pediatricNoteCardBg
+        }
+        val noteCardBorder = when (summary.overallLevel) {
+            GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBorder
+            GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBorder
+            else -> colors.pediatricNoteCardBorder
+        }
+        val noteTitleColor = when (summary.overallLevel) {
+            GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBadgeBg
+            GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBadgeBg
+            else -> colors.pediatricNoteTitle
+        }
+        val noteIcon = if (summary.overallLevel == GrowthEvaluationLevel.DANGER || summary.overallLevel == GrowthEvaluationLevel.WARNING) {
+            Icons.Default.Warning
+        } else {
+            Icons.Default.Info
+        }
+        val noteIconTint = when (summary.overallLevel) {
+            GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBadgeBg
+            GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBadgeBg
+            else -> colors.pediatricNoteIconTint
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
-                .background(colors.pediatricNoteCardBg)
-                .border(1.dp, colors.pediatricNoteCardBorder, RoundedCornerShape(10.dp))
+                .background(noteCardBg)
+                .border(1.dp, noteCardBorder, RoundedCornerShape(10.dp))
                 .padding(10.dp)
         ) {
             Row(
@@ -825,29 +700,119 @@ private fun CatchUpGrowthEvaluationCard(
                 verticalAlignment = Alignment.Top
             ) {
                 Icon(
-                    imageVector = Icons.Default.Info,
+                    imageVector = noteIcon,
                     contentDescription = null,
-                    tint = colors.pediatricNoteIconTint,
+                    tint = noteIconTint,
                     modifier = Modifier
                         .size(16.dp)
                         .padding(top = 2.dp)
                 )
                 Column {
                     Text(
-                        text = "Catatan:",
+                        text = summary.clinicalNoteTitle,
                         style = typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = colors.pediatricNoteTitle
+                        color = noteTitleColor
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Trajektori kurva BB mengikuti garis P50 Fenton secara konsisten. Pertahankan asupan ASI terfortifikasi (HMF) dan metode Kanguru harian minimal 2-4 jam untuk kestabilan suhu tubuh.",
+                        text = summary.clinicalNoteMessage,
                         style = typography.bodySmall,
                         color = colors.pediatricNoteSubtitle,
                         lineHeight = typography.bodySmall.lineHeight
                     )
                 }
             }
+        }
+    }
+}
+
+private data class MetricRowStyle(
+    val bg: Color,
+    val border: Color,
+    val badgeBg: Color,
+    val badgeText: Color,
+    val subtitleColor: Color
+)
+
+@Composable
+private fun CatchUpMetricRow(
+    item: MetricEvaluationItem
+) {
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
+
+    val style = when (item.level) {
+        GrowthEvaluationLevel.OPTIMAL -> MetricRowStyle(
+            bg = colors.fentonEvaluationTargetBg,
+            border = colors.fentonEvaluationTargetBorder,
+            badgeBg = colors.fentonEvaluationTargetBadgeBg,
+            badgeText = colors.fentonEvaluationTargetBadgeText,
+            subtitleColor = colors.fentonEvaluationTargetBadgeBg
+        )
+        GrowthEvaluationLevel.WARNING -> MetricRowStyle(
+            bg = colors.fentonEvaluationWarningBg,
+            border = colors.fentonEvaluationWarningBorder,
+            badgeBg = colors.fentonEvaluationWarningBadgeBg,
+            badgeText = colors.fentonEvaluationWarningBadgeText,
+            subtitleColor = colors.fentonEvaluationWarningBadgeBg
+        )
+        GrowthEvaluationLevel.DANGER -> MetricRowStyle(
+            bg = colors.fentonEvaluationDangerBg,
+            border = colors.fentonEvaluationDangerBorder,
+            badgeBg = colors.fentonEvaluationDangerBadgeBg,
+            badgeText = colors.fentonEvaluationDangerBadgeText,
+            subtitleColor = colors.fentonEvaluationDangerBadgeBg
+        )
+        GrowthEvaluationLevel.NORMAL,
+        GrowthEvaluationLevel.BASELINE -> MetricRowStyle(
+            bg = colors.fentonEvaluationNormalRowBg,
+            border = colors.cardBorder,
+            badgeBg = colors.fentonEvaluationNormalBadgeBg,
+            badgeText = colors.fentonEvaluationNormalBadgeText,
+            subtitleColor = colors.textSecondary
+        )
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(style.bg)
+            .border(1.dp, style.border, RoundedCornerShape(10.dp))
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = item.title,
+                style = typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = colors.textPrimary
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = item.subtitle,
+                style = typography.bodySmall,
+                color = style.subtitleColor
+            )
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .background(style.badgeBg)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Text(
+                text = item.badgeText,
+                style = typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                color = style.badgeText
+            )
         }
     }
 }

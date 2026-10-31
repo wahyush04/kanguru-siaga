@@ -34,7 +34,7 @@ data class GrowthBatchRowState(
 
 data class GrowthBatchUiState(
     val baby: Baby? = null,
-    val currentPmaWeeks: Int = 35,
+    val currentPmaWeeks: Int = 0,
     val rows: List<GrowthBatchRowState> = emptyList(),
     val measurementDateEpochMillis: Long = System.currentTimeMillis(),
     val reminderEnabled: Boolean = true,
@@ -67,27 +67,31 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
     private fun loadBabyData() {
         viewModelScope.launch {
             babyRepository.getActiveBaby().collectLatest { baby ->
-                val activeBaby = baby ?: ensureInitialGrowthDataUseCase.ensureArkaNarendraSampleData()
+                if (baby == null) {
+                    _uiState.update { it.copy(baby = null, rows = emptyList()) }
+                    return@collectLatest
+                }
+
                 val calc = PmaCalculator.calculate(
-                    birthDateEpochMillis = activeBaby.birthDateEpochMillis,
+                    birthDateEpochMillis = baby.birthDateEpochMillis,
                     measurementDateEpochMillis = _uiState.value.measurementDateEpochMillis,
-                    gestationalAgeAtBirthWeeks = activeBaby.gestationalAgeWeeks
+                    gestationalAgeAtBirthWeeks = baby.gestationalAgeWeeks
                 )
                 val currentPma = calc.pmaWeeks.toInt().coerceIn(22, 50)
 
                 // Muat semua riwayat pengukuran yang ada di Room DB
                 val weights = try {
-                    growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.WEIGHT).first()
+                    growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.WEIGHT).first()
                 } catch (_: Exception) {
                     emptyList()
                 }
                 val lengths = try {
-                    growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.LENGTH).first()
+                    growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.LENGTH).first()
                 } catch (_: Exception) {
                     emptyList()
                 }
                 val headCircs = try {
-                    growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.HEAD_CIRCUMFERENCE).first()
+                    growthRepository.getMeasurementsAsc(baby.id, GrowthParameter.HEAD_CIRCUMFERENCE).first()
                 } catch (_: Exception) {
                     emptyList()
                 }
@@ -95,13 +99,13 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                 val rowMap = linkedMapOf<Int, GrowthBatchRowState>()
 
                 // 1. Masukkan titik lahir bayi jika ada
-                val birthPma = activeBaby.gestationalAgeWeeks.coerceIn(22, 50)
-                if (activeBaby.birthWeightGram > 0 || activeBaby.birthLengthCm > 0f || activeBaby.birthHeadCircumferenceCm > 0f) {
+                val birthPma = baby.gestationalAgeWeeks.coerceIn(22, 50)
+                if (baby.birthWeightGram > 0 || baby.birthLengthCm > 0f || baby.birthHeadCircumferenceCm > 0f) {
                     rowMap[birthPma] = GrowthBatchRowState(
                         pmaWeeks = birthPma.toString(),
-                        weightGrams = if (activeBaby.birthWeightGram > 0) activeBaby.birthWeightGram.toString() else "",
-                        lengthCm = if (activeBaby.birthLengthCm > 0f) formatNumber(activeBaby.birthLengthCm) else "",
-                        headCircumferenceCm = if (activeBaby.birthHeadCircumferenceCm > 0f) formatNumber(activeBaby.birthHeadCircumferenceCm) else ""
+                        weightGrams = if (baby.birthWeightGram > 0) baby.birthWeightGram.toString() else "",
+                        lengthCm = if (baby.birthLengthCm > 0f) formatNumber(baby.birthLengthCm) else "",
+                        headCircumferenceCm = if (baby.birthHeadCircumferenceCm > 0f) formatNumber(baby.birthHeadCircumferenceCm) else ""
                     )
                 }
 
@@ -160,7 +164,7 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
 
                 _uiState.update { current ->
                     current.copy(
-                        baby = activeBaby,
+                        baby = baby,
                         currentPmaWeeks = currentPma,
                         rows = combinedRows
                     )

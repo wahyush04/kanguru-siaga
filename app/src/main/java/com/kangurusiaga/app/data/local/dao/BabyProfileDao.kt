@@ -21,4 +21,7 @@ interface BabyProfileDao {
 
     @Query("SELECT * FROM baby_profiles ORDER BY babyId DESC LIMIT 1")
     suspend fun getActiveBabyProfile(): BabyProfileEntity?
+
+    @Query("DELETE FROM baby_profiles WHERE babyId = :babyId")
+    suspend fun deleteProfileByBabyId(babyId: Long)
 }

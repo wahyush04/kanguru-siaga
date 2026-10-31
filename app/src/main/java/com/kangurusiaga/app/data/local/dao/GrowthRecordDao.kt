@@ -28,4 +28,7 @@ interface GrowthRecordDao {
 
     @Query("DELETE FROM baby_growth_records WHERE recordId = :recordId")
     suspend fun deleteRecordById(recordId: Long)
+
+    @Query("DELETE FROM baby_growth_records WHERE babyId = :babyId")
+    suspend fun deleteAllForBaby(babyId: Long)
 }

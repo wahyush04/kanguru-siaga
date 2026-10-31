@@ -364,7 +364,7 @@
     <string name="growth_batch_col_head_sub">(cm)</string>
     <string name="growth_batch_col_length">Panjang\nBadan</string>
     <string name="growth_batch_col_length_sub">(cm)</string>
-    <string name="growth_batch_btn_add_row">+ Tambah Baris Pengukuran Baru</string>
+    <string name="growth_batch_btn_add_row">Tambah Baris Pengukuran Baru</string>
     <string name="growth_batch_cd_delete_row">Hapus Baris</string>
     <string name="growth_batch_label_entry_date">Tanggal Pengukuran Terakhir / Entri Data</string>
     <string name="growth_batch_label_reminder">Ingatkan pengukuran rutin 1 minggu lagi</string>
@@ -374,7 +374,7 @@
     <string name="growth_batch_placeholder_notes">Contoh: Asupan ASI terfortifikasi (HMF), metode KMC 2 jam/hari, toleransi minum baik...</string>
     <string name="growth_batch_guidance_title">Standar Akurasi Pengukuran Fenton</string>
     <string name="growth_batch_guidance_desc">Gunakan data pengukuran terverifikasi dari fasilitas kesehatan (timbangan digital bayi akurasi ±5g, pita ukur non-elastis, dan infantometer) untuk menjaga presisi pemetaan kurva pertumbuhan Fenton 2025.</string>
-    <string name="growth_batch_btn_save">+ Simpan &amp; Plot ke Grafik Fenton</string>
+    <string name="growth_batch_btn_save">   Simpan &amp; Plot ke Grafik Fenton</string>
     <string name="growth_batch_btn_cancel">Batal</string>
     <string name="growth_batch_error_empty">Harap isi minimal satu baris data pengukuran</string>
     <string name="growth_batch_error_pma">Usia gestasi (GA) harus antara 22 hingga 50 minggu</string>

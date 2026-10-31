@@ -1,7 +1,11 @@
 package com.kangurusiaga.app.domain.usecase
 
+import android.content.Context
 import com.kangurusiaga.app.core.common.AppLogger
+import com.kangurusiaga.app.data.local.dao.BabyDao
 import com.kangurusiaga.app.data.local.dao.BabyProfileDao
+import com.kangurusiaga.app.data.local.dao.GrowthMeasurementDao
+import com.kangurusiaga.app.data.local.dao.GrowthRecordDao
 import com.kangurusiaga.app.data.local.entity.BabyProfileEntity
 import com.kangurusiaga.app.data.local.entity.GrowthRecordEntity
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
@@ -11,131 +15,54 @@ import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.GrowthRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.File
 import javax.inject.Inject
-
-import com.kangurusiaga.app.data.local.dao.BabyDao
-import com.kangurusiaga.app.data.local.entity.BabyEntity
-import com.kangurusiaga.app.data.mapper.toDomain
-import kotlinx.coroutines.flow.first
 
 class EnsureInitialGrowthDataUseCase @Inject constructor(
     private val growthRepository: GrowthRepository,
     private val fentonGrowthRepository: FentonGrowthRepository,
     private val babyProfileDao: BabyProfileDao,
-    private val babyDao: BabyDao
+    private val babyDao: BabyDao,
+    private val growthMeasurementDao: GrowthMeasurementDao,
+    private val growthRecordDao: GrowthRecordDao,
+    @ApplicationContext private val context: Context
 ) {
-    suspend fun ensureArkaNarendraSampleData(): Baby {
-        val existing = babyDao.getBabyByName("%Arka%")
-        val calendar = java.util.Calendar.getInstance()
-        calendar.set(2026, java.util.Calendar.OCTOBER, 23, 10, 0, 0)
-        val w35Date = calendar.timeInMillis
-        val oneWeek = 7 * 24 * 60 * 60 * 1000L
-        val birthEpoch = w35Date - (3 * oneWeek)
+    /**
+     * Membersihkan data mock/sample bayi lama (misal "Bayi Arka Narendra" dummy) yang sebelumnya
+     * di-generate otomatis saat proses pengembangan, agar Room DB dan cache bersih untuk produksi.
+     */
+    suspend fun purgeMockDataIfPresent() {
+        try {
+            val allBabies = babyDao.getAllBabies()
+            val mockBabies = allBabies.filter { it.name.contains("Arka Narendra", ignoreCase = true) }
+            val realBabies = allBabies.filterNot { it.name.contains("Arka Narendra", ignoreCase = true) }
 
-        if (existing == null || existing.birthDateEpochMillis != birthEpoch) {
-            babyDao.deactivateAllBabies()
-            val arka = BabyEntity(
-                id = existing?.id ?: 0,
-                name = "Bayi Arka Narendra",
-                gender = "MALE",
-                birthDateEpochMillis = birthEpoch,
-                gestationalAgeWeeks = 32,
-                birthWeightGram = 1850,
-                birthLengthCm = 42.0f,
-                birthHeadCircumferenceCm = 29.5f,
-                isActive = true
-            )
-            babyDao.insertBaby(arka)
+            for (mockBaby in mockBabies) {
+                AppLogger.i("EnsureInitialGrowthDataUseCase", "Membersihkan mock baby: ${mockBaby.name} (id=${mockBaby.id})")
+                growthMeasurementDao.deleteAllForBaby(mockBaby.id)
+                growthRecordDao.deleteAllForBaby(mockBaby.id)
+                babyProfileDao.deleteProfileByBabyId(mockBaby.id)
+                babyDao.deleteBabyById(mockBaby.id)
+
+                // Hapus file cache grafik & zscore CSV mock
+                try {
+                    File(context.cacheDir, "fenton_chart_${mockBaby.id}.jpg").delete()
+                    File(context.filesDir, "fenton_zscore_${mockBaby.id}.csv").delete()
+                } catch (_: Exception) {}
+            }
+
+            // Jika ada bayi riil yang tersimpan, pastikan salah satunya aktif
+            if (realBabies.isNotEmpty() && realBabies.none { it.isActive }) {
+                val toActivate = realBabies.first()
+                babyDao.updateBaby(toActivate.copy(isActive = true))
+                AppLogger.i("EnsureInitialGrowthDataUseCase", "Mengaktifkan profil bayi riil: ${toActivate.name} (id=${toActivate.id})")
+            }
+        } catch (e: Exception) {
+            AppLogger.e("EnsureInitialGrowthDataUseCase", "Gagal membersihkan data mock: ${e.message}", e)
         }
-
-        val activeEntity = babyDao.getActiveBabyOnce() ?: babyDao.getFirstBaby()!!
-        val activeBaby = activeEntity.toDomain()
-
-        val pmaWeeksList = listOf(32f, 33f, 34f, 35f)
-        val weights = listOf(1.850f, 2.000f, 2.160f, 2.350f)
-        val lengths = listOf(42.0f, 43.5f, 45.0f, 46.5f)
-        val headCircs = listOf(29.5f, 30.6f, 31.8f, 32.8f)
-
-        val currentW = growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.WEIGHT).first()
-        val currentL = growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.LENGTH).first()
-        val currentHc = growthRepository.getMeasurementsAsc(activeBaby.id, GrowthParameter.HEAD_CIRCUMFERENCE).first()
-
-        for (i in pmaWeeksList.indices) {
-            val pma = pmaWeeksList[i]
-            val recordDate = birthEpoch + (i * oneWeek)
-
-            if (currentW.none { it.pmaWeeks == pma }) {
-                growthRepository.insertMeasurement(
-                    GrowthMeasurement(
-                        babyId = activeBaby.id,
-                        parameter = GrowthParameter.WEIGHT,
-                        measurementDateEpochMillis = recordDate,
-                        chronologicalAgeWeeks = i.toFloat(),
-                        pmaWeeks = pma,
-                        value = weights[i],
-                        unit = "kg",
-                        note = if (i == 0) "Berat Lahir" else "Evaluasi Minggu $i",
-                        percentileBadge = "P50 (Ideal)"
-                    )
-                )
-            }
-
-            if (currentL.none { it.pmaWeeks == pma }) {
-                growthRepository.insertMeasurement(
-                    GrowthMeasurement(
-                        babyId = activeBaby.id,
-                        parameter = GrowthParameter.LENGTH,
-                        measurementDateEpochMillis = recordDate,
-                        chronologicalAgeWeeks = i.toFloat(),
-                        pmaWeeks = pma,
-                        value = lengths[i],
-                        unit = "cm",
-                        note = if (i == 0) "Panjang Lahir" else "Evaluasi Minggu $i",
-                        percentileBadge = "P50 (Ideal)"
-                    )
-                )
-            }
-
-            if (currentHc.none { it.pmaWeeks == pma }) {
-                growthRepository.insertMeasurement(
-                    GrowthMeasurement(
-                        babyId = activeBaby.id,
-                        parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
-                        measurementDateEpochMillis = recordDate,
-                        chronologicalAgeWeeks = i.toFloat(),
-                        pmaWeeks = pma,
-                        value = headCircs[i],
-                        unit = "cm",
-                        note = if (i == 0) "Lingkar Kepala Lahir" else "Evaluasi Minggu $i",
-                        percentileBadge = "P50 (Optimal)"
-                    )
-                )
-            }
-
-            try {
-                val existingFenton = fentonGrowthRepository.getPatientRecords(activeBaby.id).first()
-                if (existingFenton.none { it.pmaWeeks == pma.toInt() }) {
-                    fentonGrowthRepository.saveNewRecord(
-                        GrowthRecordEntity(
-                            babyId = activeBaby.id,
-                            recordedAt = recordDate,
-                            pmaWeeks = pma.toInt(),
-                            pmaDays = 0,
-                            weightGrams = (weights[i] * 1000).toDouble(),
-                            lengthCm = lengths[i].toDouble(),
-                            headCircumferenceCm = headCircs[i].toDouble(),
-                            calculatedWeightPercentile = "P50"
-                        )
-                    )
-                }
-            } catch (e: Exception) {
-                AppLogger.w("EnsureInitialGrowthDataUseCase", "Gagal menyimpan record Fenton Arka week $pma: ${e.message}")
-            }
-        }
-
-        invoke(activeBaby)
-        return activeBaby
     }
+
     suspend operator fun invoke(baby: Baby): Result<Unit> {
         if (baby.birthWeightGram <= 0) {
             return Result.success(Unit)

@@ -32,7 +32,7 @@ data class GrowthChartUiState(
     val parameter: GrowthParameter = GrowthParameter.WEIGHT,
     val selectedTab: Int = 0, // 0 = Semua Parameter (Fenton Full), 1 = Berat Badan, 2 = Panjang, 3 = Lingkar Kepala
     val baby: Baby? = null,
-    val currentPmaWeeks: Float = 35f,
+    val currentPmaWeeks: Float = 0f,
     // All 3 parameter measurements in ascending order for chart plotting
     val weightMeasurementsAsc: List<GrowthMeasurement> = emptyList(),
     val lengthMeasurementsAsc: List<GrowthMeasurement> = emptyList(),
@@ -45,7 +45,9 @@ data class GrowthChartUiState(
     val weightEvaluation: GrowthPercentileEvaluation? = null,
     val lengthEvaluation: GrowthPercentileEvaluation? = null,
     val headCircEvaluation: GrowthPercentileEvaluation? = null,
-    val weightGainRateGramsPerDay: Float = 28f,
+    val weightGainRateGramsPerDay: Float? = null,
+    val lengthGainRateCmPerWeek: Float? = null,
+    val headCircGainRateCmPerWeek: Float? = null,
     // For legacy single-parameter list views
     val measurementsAsc: List<GrowthMeasurement> = emptyList(),
     val measurementsDesc: List<GrowthMeasurement> = emptyList(),
@@ -124,17 +126,17 @@ class GrowthChartViewModel @Inject constructor(
     private fun loadData() {
         viewModelScope.launch {
             try {
-                ensureInitialGrowthDataUseCase.ensureArkaNarendraSampleData()
+                ensureInitialGrowthDataUseCase.purgeMockDataIfPresent()
             } catch (_: Exception) {
             }
 
             babyRepository.getActiveBaby().collectLatest { baby ->
                 if (baby == null) {
-                    _uiState.update { it.copy(isLoading = false) }
+                    _uiState.update { it.copy(isLoading = false, baby = null, isFentonApiLoading = false) }
                     return@collectLatest
                 }
 
-                // Compute real PMA (35 weeks for Arka)
+                // Compute real PMA based on baby's actual birth date and gestational age
                 val chronoWeeks = ((System.currentTimeMillis() - baby.birthDateEpochMillis) / (7.0 * 24 * 60 * 60 * 1000.0)).toFloat()
                 val calculatedPma = (baby.gestationalAgeWeeks.toFloat() + chronoWeeks).coerceIn(22f, 50f)
 
@@ -153,7 +155,7 @@ class GrowthChartViewModel @Inject constructor(
                     )
                 }
 
-                // Langsung fetch data ke API FentonGrowth.ca saat pertama kali masuk
+                // Langsung fetch data ke API FentonGrowth.ca saat pertama kali masuk dengan data riil
                 fetchFentonChart(baby)
 
                 launch {
@@ -243,15 +245,61 @@ class GrowthChartViewModel @Inject constructor(
                             )
                         } else null
 
-                        // Calculate rate of weight gain in grams/day if >= 2 measurements exist
-                        val weightGainRate = if (weights.size >= 2) {
+                        // Calculate rate of weight gain in grams/day if >= 2 measurements exist or >= 1 measurement with birth weight
+                        val weightGainRate: Float? = if (weights.size >= 2) {
                             val prev = weights[weights.size - 2]
                             val curr = weights.last()
                             val days = ((curr.measurementDateEpochMillis - prev.measurementDateEpochMillis) / (1000.0 * 60 * 60 * 24)).coerceAtLeast(1.0)
                             val gainGrams = (curr.value - prev.value) * 1000f
-                            (gainGrams / days).toFloat().coerceIn(0f, 100f)
+                            (gainGrams / days).toFloat()
+                        } else if (weights.size == 1 && baby.birthWeightGram > 0) {
+                            val curr = weights.first()
+                            val birthWeightKg = baby.birthWeightGram / 1000f
+                            val days = ((curr.measurementDateEpochMillis - baby.birthDateEpochMillis) / (1000.0 * 60 * 60 * 24)).coerceAtLeast(1.0)
+                            if (days > 1.0 && curr.value != birthWeightKg) {
+                                val gainGrams = (curr.value - birthWeightKg) * 1000f
+                                (gainGrams / days).toFloat()
+                            } else null
                         } else {
-                            28f // Standard clinically targetted catch-up rate (+28 g/hari)
+                            null
+                        }
+
+                        val lengthGainRate: Float? = if (lengths.size >= 2) {
+                            val prev = lengths[lengths.size - 2]
+                            val curr = lengths.last()
+                            val days = ((curr.measurementDateEpochMillis - prev.measurementDateEpochMillis) / (1000.0 * 60 * 60 * 24)).coerceAtLeast(1.0)
+                            val weeks = days / 7.0
+                            val gainCm = curr.value - prev.value
+                            (gainCm / weeks).toFloat()
+                        } else if (lengths.size == 1 && baby.birthLengthCm > 0f) {
+                            val curr = lengths.first()
+                            val days = ((curr.measurementDateEpochMillis - baby.birthDateEpochMillis) / (1000.0 * 60 * 60 * 24)).coerceAtLeast(1.0)
+                            val weeks = days / 7.0
+                            if (days > 1.0 && curr.value != baby.birthLengthCm) {
+                                val gainCm = curr.value - baby.birthLengthCm
+                                (gainCm / weeks).toFloat()
+                            } else null
+                        } else {
+                            null
+                        }
+
+                        val headCircGainRate: Float? = if (headCircs.size >= 2) {
+                            val prev = headCircs[headCircs.size - 2]
+                            val curr = headCircs.last()
+                            val days = ((curr.measurementDateEpochMillis - prev.measurementDateEpochMillis) / (1000.0 * 60 * 60 * 24)).coerceAtLeast(1.0)
+                            val weeks = days / 7.0
+                            val gainCm = curr.value - prev.value
+                            (gainCm / weeks).toFloat()
+                        } else if (headCircs.size == 1 && baby.birthHeadCircumferenceCm > 0f) {
+                            val curr = headCircs.first()
+                            val days = ((curr.measurementDateEpochMillis - baby.birthDateEpochMillis) / (1000.0 * 60 * 60 * 24)).coerceAtLeast(1.0)
+                            val weeks = days / 7.0
+                            if (days > 1.0 && curr.value != baby.birthHeadCircumferenceCm) {
+                                val gainCm = curr.value - baby.birthHeadCircumferenceCm
+                                (gainCm / weeks).toFloat()
+                            } else null
+                        } else {
+                            null
                         }
 
                         val latestChartFile = File(context.cacheDir, "fenton_chart_${baby.id}.jpg")
@@ -276,6 +324,8 @@ class GrowthChartViewModel @Inject constructor(
                                 lengthEvaluation = evalL,
                                 headCircEvaluation = evalHc,
                                 weightGainRateGramsPerDay = weightGainRate,
+                                lengthGainRateCmPerWeek = lengthGainRate,
+                                headCircGainRateCmPerWeek = headCircGainRate,
                                 measurementsAsc = activeAsc,
                                 measurementsDesc = activeAsc.asReversed(),
                                 latestMeasurement = activeAsc.lastOrNull(),

@@ -37,7 +37,7 @@ class GrowthBatchMeasurementViewModelTest {
 
     private val testBaby = Baby(
         id = 1L,
-        name = "Bayi Arka Narendra",
+        name = "By. Ny. Rahma",
         gender = Gender.MALE,
         birthDateEpochMillis = System.currentTimeMillis() - 86400000L * 21,
         birthWeightGram = 1850,
@@ -50,7 +50,6 @@ class GrowthBatchMeasurementViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { babyRepository.getActiveBaby() } returns flowOf(testBaby)
-        coEvery { ensureInitialGrowthDataUseCase.ensureArkaNarendraSampleData() } returns testBaby
 
         viewModel = GrowthBatchMeasurementViewModel(
             babyRepository = babyRepository,
@@ -71,7 +70,7 @@ class GrowthBatchMeasurementViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        assertThat(state.baby?.name).isEqualTo("Bayi Arka Narendra")
+        assertThat(state.baby?.name).isEqualTo("By. Ny. Rahma")
         assertThat(state.rows).isNotEmpty()
         assertThat(state.currentPmaWeeks).isEqualTo(35)
     }

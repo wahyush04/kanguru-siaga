@@ -66,18 +66,32 @@ fun GrowthBabySummaryCard(
     currentPmaWeeks: Int,
     modifier: Modifier = Modifier
 ) {
-    val name = baby?.name ?: "Bayi Arka Narendra"
-    val initials = name.split(" ")
-        .filter { it.isNotBlank() }
-        .take(2)
-        .map { it.first().uppercaseChar() }
-        .joinToString("")
-        .ifEmpty { "AN" }
+    val name = baby?.name?.takeIf { it.isNotBlank() } ?: "Data Bayi"
+    val initials = if (baby?.name.isNullOrBlank()) {
+        "BY"
+    } else {
+        val cleanName = if (baby!!.name.startsWith("Bayi ", ignoreCase = true)) {
+            baby.name.removePrefix("Bayi ").removePrefix("bayi ").trim()
+        } else {
+            baby.name.trim()
+        }
+        val parts = cleanName.split(" ").filter { it.isNotBlank() }
+        when {
+            parts.size >= 2 -> "${parts[0].first().uppercaseChar()}${parts[1].first().uppercaseChar()}"
+            parts.size == 1 && parts[0].length >= 2 -> parts[0].take(2).uppercase()
+            parts.size == 1 -> parts[0].take(1).uppercase()
+            else -> "BY"
+        }
+    }
 
     val isMale = baby?.gender != Gender.FEMALE
-    val gaBirth = baby?.gestationalAgeWeeks ?: 32
-    val weightBirthGram = baby?.birthWeightGram ?: 1850
-    val weightFormatted = NumberFormat.getNumberInstance(Locale("id", "ID")).format(weightBirthGram)
+    val gaBirth = baby?.gestationalAgeWeeks ?: 0
+    val weightBirthGram = baby?.birthWeightGram ?: 0
+    val weightFormatted = if (weightBirthGram > 0) {
+        NumberFormat.getNumberInstance(Locale("id", "ID")).format(weightBirthGram)
+    } else {
+        "-"
+    }
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -150,8 +164,13 @@ fun GrowthBabySummaryCard(
 
                     Spacer(modifier = Modifier.height(3.dp))
 
+                    val bornText = if (gaBirth > 0 && weightBirthGram > 0) {
+                        stringResource(R.string.growth_batch_born_summary, gaBirth, weightFormatted)
+                    } else {
+                        "Data lahir belum dicatat"
+                    }
                     Text(
-                        text = stringResource(R.string.growth_batch_born_summary, gaBirth, weightFormatted),
+                        text = bornText,
                         style = KanguruTheme.typography.bodySmall,
                         color = KanguruTheme.colors.growthBabyGenderBadgeText.copy(alpha = 0.9f)
                     )
@@ -187,7 +206,7 @@ fun GrowthBabySummaryCard(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "$currentPmaWeeks",
+                            text = if (currentPmaWeeks > 0) "$currentPmaWeeks" else "-",
                             style = KanguruTheme.typography.headlineMedium,
                             fontWeight = FontWeight.ExtraBold,
                             color = KanguruTheme.colors.growthPmaHighlight

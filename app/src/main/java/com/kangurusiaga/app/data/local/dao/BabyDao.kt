@@ -24,6 +24,9 @@ interface BabyDao {
     @Query("SELECT * FROM babies WHERE name LIKE :nameQuery LIMIT 1")
     suspend fun getBabyByName(nameQuery: String): BabyEntity?
 
+    @Query("SELECT * FROM babies")
+    suspend fun getAllBabies(): List<BabyEntity>
+
     @Query("UPDATE babies SET isActive = 0")
     suspend fun deactivateAllBabies()
 
@@ -35,4 +38,7 @@ interface BabyDao {
 
     @Delete
     suspend fun deleteBaby(baby: BabyEntity)
+
+    @Query("DELETE FROM babies WHERE id = :babyId")
+    suspend fun deleteBabyById(babyId: Long)
 }

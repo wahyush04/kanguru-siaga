@@ -3,6 +3,8 @@ package com.kangurusiaga.app.domain.usecase
 import com.google.common.truth.Truth.assertThat
 import com.kangurusiaga.app.data.local.dao.BabyDao
 import com.kangurusiaga.app.data.local.dao.BabyProfileDao
+import com.kangurusiaga.app.data.local.dao.GrowthMeasurementDao
+import com.kangurusiaga.app.data.local.dao.GrowthRecordDao
 import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
@@ -15,6 +17,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import android.content.Context
 
 class EnsureInitialGrowthDataUseCaseTest {
 
@@ -22,6 +25,9 @@ class EnsureInitialGrowthDataUseCaseTest {
     private val fentonGrowthRepository: FentonGrowthRepository = mockk(relaxed = true)
     private val babyProfileDao: BabyProfileDao = mockk(relaxed = true)
     private val babyDao: BabyDao = mockk(relaxed = true)
+    private val growthMeasurementDao: GrowthMeasurementDao = mockk(relaxed = true)
+    private val growthRecordDao: GrowthRecordDao = mockk(relaxed = true)
+    private val context: Context = mockk(relaxed = true)
 
     private lateinit var useCase: EnsureInitialGrowthDataUseCase
 
@@ -31,7 +37,10 @@ class EnsureInitialGrowthDataUseCaseTest {
             growthRepository = growthRepository,
             fentonGrowthRepository = fentonGrowthRepository,
             babyProfileDao = babyProfileDao,
-            babyDao = babyDao
+            babyDao = babyDao,
+            growthMeasurementDao = growthMeasurementDao,
+            growthRecordDao = growthRecordDao,
+            context = context
         )
     }
 

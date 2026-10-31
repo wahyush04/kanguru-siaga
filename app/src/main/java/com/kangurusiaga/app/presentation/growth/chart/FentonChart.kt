@@ -72,7 +72,7 @@ import java.io.File
  */
 @Composable
 fun FentonChart(
-    selectedTab: Int,
+    selectedTab: Int = 0,
     isBoy: Boolean,
     weightMeasurements: List<GrowthMeasurement> = emptyList(),
     lengthMeasurements: List<GrowthMeasurement> = emptyList(),
@@ -415,7 +415,11 @@ fun FentonChart(
                         .clip(CircleShape)
                         .background(colors.fentonPlotTrajectory)
                 )
-                val displayName = if (babyName.contains("Arka", ignoreCase = true)) "Data Bayi Arka" else "Data Bayi $babyName"
+                val displayName = if (babyName.isNotBlank()) {
+                    if (babyName.startsWith("Bayi", ignoreCase = true)) "Data $babyName" else "Data Bayi $babyName"
+                } else {
+                    "Data Pertumbuhan Bayi"
+                }
                 Text(
                     text = displayName,
                     style = typography.labelSmall,

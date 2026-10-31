@@ -462,6 +462,24 @@ abstract class KanguruColors {
     open val fentonEvaluationNormalRowBg: Color
         get() = if (isDark) Color(0xFF1E293B) else Color(0xFFF8FAFC)
 
+    open val fentonEvaluationWarningBg: Color
+        get() = if (isDark) Color(0xFF332514) else Color(0xFFFFFBEB)
+    open val fentonEvaluationWarningBorder: Color
+        get() = if (isDark) Color(0xFF5A3E1B) else Color(0xFFFDE68A)
+    open val fentonEvaluationWarningBadgeBg: Color
+        get() = if (isDark) Color(0xFFB45309) else Color(0xFFD97706)
+    open val fentonEvaluationWarningBadgeText: Color
+        get() = Color(0xFFFFFFFF)
+
+    open val fentonEvaluationDangerBg: Color
+        get() = if (isDark) Color(0xFF3E1A22) else Color(0xFFFEF2F2)
+    open val fentonEvaluationDangerBorder: Color
+        get() = if (isDark) Color(0xFF6B2230) else Color(0xFFFECACA)
+    open val fentonEvaluationDangerBadgeBg: Color
+        get() = if (isDark) Color(0xFFDC2626) else Color(0xFFDC2626)
+    open val fentonEvaluationDangerBadgeText: Color
+        get() = Color(0xFFFFFFFF)
+
     // Fenton Batch Input Screen Tokens (Google Stitch 41abf5181c9c46e3aa16074c795fe9b7)
     open val growthBabyBannerBg: Color
         get() = if (isDark) Color(0xFF062E36) else Color(0xFF0A4A57)
