@@ -222,7 +222,8 @@ fun ScreeningInputResultScreen(
                         Text(
                             text = if (uiState.isSaving) "Menyimpan..." else "Simpan Hasil & Resume Medis",
                             style = KanguruTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = colors.onPrimary
                         )
                     }
                 }

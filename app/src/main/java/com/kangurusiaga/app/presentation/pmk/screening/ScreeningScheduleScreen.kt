@@ -247,74 +247,6 @@ fun ScreeningScheduleScreen(
                     }
                 }
             }
-        },
-        bottomBar = {
-            Surface(
-                color = colors.surface,
-                shadowElevation = 8.dp,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = onDownloadPdf,
-                        shape = RoundedCornerShape(16.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = colors.textPrimary),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Download,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Text(
-                                text = "Unduh PDF Rekap",
-                                style = KanguruTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-
-                    Button(
-                        onClick = onOpenAddModal,
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colors.primary,
-                            contentColor = colors.onPrimary
-                        ),
-                        modifier = Modifier
-                            .weight(1.1f)
-                            .height(48.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Text(
-                                text = "Tambah Jadwal",
-                                style = KanguruTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-            }
         }
     ) { innerPadding ->
         Column(
@@ -1406,13 +1338,16 @@ private fun ClinicalRecordCard(
         ScreeningType.CUSTOM -> Triple(colors.primaryContainer, colors.primary, "📋")
     }
 
-    val examinationDate = screening.realizationDateFormatted ?: when (screening.type) {
-        ScreeningType.USG_HEAD -> "14-10-2024"
-        ScreeningType.ROP_EYE -> "18-10-2024"
-        ScreeningType.HEARING_OAE -> "24-10-2024"
-        ScreeningType.THYROID_FUNCTION -> "22-10-2024"
-        else -> screening.targetDateFormatted
-    }
+    val examinationDate = screening.realizationDateFormatted?.ifBlank { null }
+        ?: screening.targetDateFormatted.ifBlank {
+            when (screening.type) {
+                ScreeningType.USG_HEAD -> "14-10-2024"
+                ScreeningType.ROP_EYE -> "18-10-2024"
+                ScreeningType.HEARING_OAE -> "24-10-2024"
+                ScreeningType.THYROID_FUNCTION -> "22-10-2024"
+                else -> ""
+            }
+        }
 
     Card(
         shape = RoundedCornerShape(20.dp),
@@ -1553,6 +1488,7 @@ private fun ClinicalRecordCard(
                         val findingsText = screening.findings ?: when (screening.type) {
                             ScreeningType.USG_HEAD -> "Ventrikel lateralis simetris, tidak tampak dilatasi patologis.\nPerdarahan Intraventrikular: Grade 0 (Normal / Negatif).\nEko parenkim hemisfer serebri homogen, tidak ada leukomalasia."
                             ScreeningType.ROP_EYE -> "Vaskularisasi retina: Mencapai Zone III nasal & temporal (Matang).\nTanda ROP Aktif: Negatif / No Plus Disease, tidak ditemukan batas demarkasi patologis.\nMedia refraksi jernih, papil saraf optik dalam batas normal."
+                            ScreeningType.HEARING_OAE -> "Skrining OAE Awal: PASS (Lolos Bilateral / Kedua Telinga).\nTelinga Kanan (AD): PASS - Emisi Koklea Positif.\nTelinga Kiri (AS): PASS - Emisi Koklea Positif.\nRespon auditori dan ambang dengar dalam batas normal (≤ 35 dB nHL)."
                             ScreeningType.THYROID_FUNCTION -> "TSH Neonatus Ulang: 2.1 µIU/mL (Nilai Rujukan Normal: 0.5 - 5.0 µIU/mL).\nFT4 (Free Thyroxine): 1.45 ng/dL (Nilai Rujukan Normal: 0.9 - 2.2 ng/dL).\nStatus Skrining Awal: TSH 4.8 µIU/mL (Lolos / Eutiroid)."
                             else -> screening.notes ?: "Hasil pemeriksaan dalam batas normal."
                         }
@@ -1560,6 +1496,8 @@ private fun ClinicalRecordCard(
                         val highlightPhrases = listOf(
                             "Grade 0 (Normal / Negatif)",
                             "Mencapai Zone III nasal & temporal (Matang)",
+                            "PASS (Lolos Bilateral / Kedua Telinga)",
+                            "PASS - Emisi Koklea Positif",
                             "2.1 µIU/mL",
                             "1.45 ng/dL"
                         )
@@ -1602,6 +1540,7 @@ private fun ClinicalRecordCard(
                 val attachmentLabel = screening.attachmentName ?: when (screening.type) {
                     ScreeningType.USG_HEAD -> "Lampiran Gambar (2)"
                     ScreeningType.ROP_EYE -> "Lampiran Fundus (2)"
+                    ScreeningType.HEARING_OAE -> "Lampiran Hasil OAE (1)"
                     ScreeningType.THYROID_FUNCTION -> "Lampiran Resume Lab (1)"
                     else -> "Lampiran Medis (1)"
                 }
@@ -1661,6 +1600,59 @@ private fun ClinicalRecordCard(
                     }
                 }
             } else {
+                val defaultPendingNote = remember(
+                    screening.type,
+                    screening.targetDateEpoch,
+                    screening.targetDateEpoch2,
+                    screening.targetDateFormatted,
+                    screening.targetDate2Formatted
+                ) {
+                    fun formatDate(epoch: Long?, formattedFallback: String): String {
+                        if (epoch != null && epoch > 0) {
+                            try {
+                                val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
+                                return sdf.format(Date(epoch))
+                            } catch (_: Exception) {}
+                        }
+                        if (formattedFallback.isNotBlank()) {
+                            try {
+                                val parseSdf = SimpleDateFormat("dd-MM-yyyy", Locale("id", "ID"))
+                                val parsed = parseSdf.parse(formattedFallback)
+                                if (parsed != null) {
+                                    val outSdf = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
+                                    return outSdf.format(parsed)
+                                }
+                            } catch (_: Exception) {}
+                            return formattedFallback
+                        }
+                        return "jadwal yang ditentukan"
+                    }
+
+                    val date1 = formatDate(screening.targetDateEpoch, screening.targetDateFormatted)
+                    val date2 = formatDate(
+                        screening.targetDateEpoch2 ?: screening.targetDateEpoch,
+                        screening.targetDate2Formatted.ifBlank { screening.targetDateFormatted }
+                    )
+
+                    when (screening.type) {
+                        ScreeningType.USG_HEAD -> {
+                            "Pemeriksaan Neurosonografi (USG Kepala) dijadwalkan pada Tanggal $date1. Evaluasi perdarahan intraventrikular (IVH) & leukomalasia periventrikular. Menunggu konfirmasi hasil pemeriksaan dokter."
+                        }
+                        ScreeningType.ROP_EYE -> {
+                            "Pemeriksaan Retinopati Prematuritas (ROP) dijadwalkan pada Tanggal $date1. Evaluasi vaskularisasi perifer retina zona I–III pencegahan ablasi retina (wajib tetes mata dilatasi pupil 30 menit sebelum tindakan). Menunggu konfirmasi hasil pemeriksaan dokter."
+                        }
+                        ScreeningType.HEARING_OAE -> {
+                            "Pemeriksaan OAE tahap 2 & BERA dijadwalkan pada Tanggal $date2. Evaluasi fungsi koklea dan respon auditori batang otak. Menunggu konfirmasi hasil pemeriksaan dokter."
+                        }
+                        ScreeningType.THYROID_FUNCTION -> {
+                            "Pemeriksaan ulang serum FT4 & TSH dijadwalkan pada Tanggal $date1 (PMA 40 Minggu). Deteksi dini hipotiroid kongenital tertunda. Menunggu hasil evaluasi laboratorium."
+                        }
+                        ScreeningType.CUSTOM -> {
+                            "Pemeriksaan penapisan lanjutan dijadwalkan pada Tanggal $date1. Menunggu konfirmasi pelaksanaan dan hasil pemeriksaan dokter."
+                        }
+                    }
+                }
+
                 // Incomplete Status: Yellow scheduled box & prominent "+ Catat Hasil Sekarang" button
                 Box(
                     modifier = Modifier
@@ -1677,13 +1669,13 @@ private fun ClinicalRecordCard(
                         Text(text = "📋", style = KanguruTheme.typography.bodyMedium)
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "STATUS BLUM ADA HASIL PEMERIKSAAN:",
+                                text = "STATUS BELUM ADA HASIL PEMERIKSAAN:",
                                 style = KanguruTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.clinicalAmberText
                             )
                             Text(
-                                text = screening.notes ?: "Pemeriksaan OAE tahap 2 & BERA dijadwalkan pada Tanggal 12 Desember 2024. Menunggu konfirmasi hasil pemeriksaan dokter.",
+                                text = if (!screening.notes.isNullOrBlank()) screening.notes else defaultPendingNote,
                                 style = KanguruTheme.typography.bodySmall,
                                 color = colors.textPrimary
                             )
@@ -1710,9 +1702,10 @@ private fun ClinicalRecordCard(
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = "+ Catat Hasil Sekarang",
+                            text = "Catat Hasil Sekarang",
                             style = KanguruTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = colors.onPrimary
                         )
                     }
                 }

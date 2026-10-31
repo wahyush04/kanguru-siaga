@@ -303,15 +303,19 @@ fun BblrEmergencyScreen(
                     }
                 }
 
-                // 3. 7 Danger Warning Modules
-                items(
-                    items = modules,
-                    key = { it.id }
-                ) { module ->
-                    EmergencyTriaseModuleCard(
-                        module = module,
-                        onClick = { onNavigateToModule(module.id) }
-                    )
+                // 3. 7 Danger Warning Modules (jarak antar item lebih rapat 8.dp)
+                item(key = "triase_modules_list") {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        modules.forEach { module ->
+                            EmergencyTriaseModuleCard(
+                                module = module,
+                                onClick = { onNavigateToModule(module.id) }
+                            )
+                        }
+                    }
                 }
 
                 // 4. Protokol Cepat Tenaga Kesehatan Card
@@ -593,7 +597,7 @@ private fun EmergencyTriaseModuleCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+                .padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Leading Icon Container

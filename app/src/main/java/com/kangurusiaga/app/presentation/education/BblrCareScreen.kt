@@ -243,16 +243,20 @@ fun BblrCareScreen(
                     }
                 }
 
-                // 3. 9 Modul BBLR Items
-                items(
-                    items = modules,
-                    key = { it.id }
-                ) { module ->
-                    EducationModuleCard(
-                        module = module,
-                        onClick = { onNavigateToModule(module.id) },
-                        onToggleBookmark = { onToggleBookmark(module.id) }
-                    )
+                // 3. 9 Modul BBLR Items (jarak antar item lebih rapat 8.dp)
+                item(key = "modules_list") {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        modules.forEach { module ->
+                            EducationModuleCard(
+                                module = module,
+                                onClick = { onNavigateToModule(module.id) },
+                                onToggleBookmark = { onToggleBookmark(module.id) }
+                            )
+                        }
+                    }
                 }
 
                 // 4. Dokter Spesialis Anak Insight Card

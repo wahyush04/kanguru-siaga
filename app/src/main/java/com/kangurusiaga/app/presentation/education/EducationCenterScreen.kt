@@ -218,25 +218,25 @@ fun EducationCenterScreen(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 // Search / Quick Action Button
-                IconButton(
-                    onClick = {
-                        isSearchActive = !isSearchActive
-                        if (!isSearchActive) searchQuery = ""
-                    },
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(KanguruTheme.colors.surface)
-                        .border(1.dp, if (isSearchActive) brandRoseSoft else slate200, RoundedCornerShape(14.dp))
-                        .shadow(2.dp, RoundedCornerShape(14.dp))
-                ) {
-                    Icon(
-                        imageVector = if (isSearchActive) Icons.Default.Close else Icons.Default.Search,
-                        contentDescription = if (isSearchActive) stringResource(R.string.edu_center_search_close_cd) else stringResource(R.string.edu_center_search_cd),
-                        tint = if (isSearchActive) brandCoral else slate600,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+//                IconButton(
+//                    onClick = {
+//                        isSearchActive = !isSearchActive
+//                        if (!isSearchActive) searchQuery = ""
+//                    },
+//                    modifier = Modifier
+//                        .size(40.dp)
+//                        .clip(RoundedCornerShape(14.dp))
+//                        .background(KanguruTheme.colors.surface)
+//                        .border(1.dp, if (isSearchActive) brandRoseSoft else slate200, RoundedCornerShape(14.dp))
+//                        .shadow(2.dp, RoundedCornerShape(14.dp))
+//                ) {
+//                    Icon(
+//                        imageVector = if (isSearchActive) Icons.Default.Close else Icons.Default.Search,
+//                        contentDescription = if (isSearchActive) stringResource(R.string.edu_center_search_close_cd) else stringResource(R.string.edu_center_search_cd),
+//                        tint = if (isSearchActive) brandCoral else slate600,
+//                        modifier = Modifier.size(20.dp)
+//                    )
+//                }
             }
 
             // Expandable Search Bar
