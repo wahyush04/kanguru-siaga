@@ -14,6 +14,9 @@ data class SettingsUiState(
     val formattedBirthDate: String = "",
     val pmkScheduleBadgeText: String = "3 Jadwal",
     val feedingAlarmBadgeText: String = "Aktif",
+    val isFeedingAlarmActive: Boolean = true,
+    val screeningReminderBadgeText: String = "Aktif",
+    val isScreeningReminderActive: Boolean = true,
 
     // BottomSheet Visibility
     val showEditProfileSheet: Boolean = false,

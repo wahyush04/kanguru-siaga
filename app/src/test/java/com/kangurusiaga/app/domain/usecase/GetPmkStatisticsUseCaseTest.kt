@@ -162,4 +162,73 @@ class GetPmkStatisticsUseCaseTest {
             awaitComplete()
         }
     }
+
+    @Test
+    fun getPmkStatistics_withFourAlignedBabyResponses_correctlyAggregatesPercentages() = runTest {
+        val sundayCal = Calendar.getInstance().apply {
+            set(2026, Calendar.OCTOBER, 25, 15, 0, 0)
+        }
+
+        val session1 = PmkSession(
+            id = 1L,
+            babyId = 1L,
+            startTimeEpoch = sundayCal.timeInMillis - (4 * 3600 * 1000L),
+            endTimeEpoch = sundayCal.timeInMillis - (3 * 3600 * 1000L),
+            durationMinutes = 60,
+            babyResponse = "Tenang"
+        )
+        val session2 = PmkSession(
+            id = 2L,
+            babyId = 1L,
+            startTimeEpoch = sundayCal.timeInMillis - (3 * 3600 * 1000L),
+            endTimeEpoch = sundayCal.timeInMillis - (2 * 3600 * 1000L),
+            durationMinutes = 60,
+            babyResponse = "Tidur"
+        )
+        val session3 = PmkSession(
+            id = 3L,
+            babyId = 1L,
+            startTimeEpoch = sundayCal.timeInMillis - (2 * 3600 * 1000L),
+            endTimeEpoch = sundayCal.timeInMillis - (3600 * 1000L),
+            durationMinutes = 60,
+            babyResponse = "Menyusu Aktif"
+        )
+        val session4 = PmkSession(
+            id = 4L,
+            babyId = 1L,
+            startTimeEpoch = sundayCal.timeInMillis - (3600 * 1000L),
+            endTimeEpoch = sundayCal.timeInMillis,
+            durationMinutes = 60,
+            babyResponse = "Gelisah / Menangis"
+        )
+
+        every {
+            pmkRepository.getSessionsForBabyInRange(1L, any(), any())
+        } returns flowOf(listOf(session1, session2, session3, session4))
+
+        useCase(
+            babyId = 1L,
+            period = StatsPeriod.THIS_WEEK,
+            calendarInstance = sundayCal
+        ).test {
+            val stats = awaitItem()
+            val breakdown = stats.babyResponseBreakdown
+
+            assertThat(breakdown.totalSessions).isEqualTo(4)
+            assertThat(breakdown.calmSessions).isEqualTo(1)
+            assertThat(breakdown.sleepSessions).isEqualTo(1)
+            assertThat(breakdown.activeFeedingSessions).isEqualTo(1)
+            assertThat(breakdown.restlessCryingSessions).isEqualTo(1)
+
+            assertThat(breakdown.calmPercent).isEqualTo(25)
+            assertThat(breakdown.sleepPercent).isEqualTo(25)
+            assertThat(breakdown.activeFeedingPercent).isEqualTo(25)
+            assertThat(breakdown.restlessCryingPercent).isEqualTo(25)
+
+            // Tenang + Tidur = 50%
+            assertThat(breakdown.overallCalmPercentage).isEqualTo(50)
+
+            awaitComplete()
+        }
+    }
 }

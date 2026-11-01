@@ -100,6 +100,7 @@ fun SettingsRoute(
     onNavigateBack: () -> Unit,
     onNavigateToPmkReminders: () -> Unit,
     onNavigateToFeedingAlarm: () -> Unit,
+    onNavigateToScreeningSchedule: () -> Unit,
     onNavigateToUserGuide: () -> Unit,
     onNavigateToAboutApp: () -> Unit,
     onNavigateToClinicalGuidelines: () -> Unit,
@@ -202,6 +203,7 @@ fun SettingsRoute(
         onNavigateBack = onNavigateBack,
         onNavigateToPmkReminders = onNavigateToPmkReminders,
         onNavigateToFeedingAlarm = onNavigateToFeedingAlarm,
+        onNavigateToScreeningSchedule = onNavigateToScreeningSchedule,
         onNavigateToUserGuide = onNavigateToUserGuide,
         onNavigateToAboutApp = onNavigateToAboutApp,
         onNavigateToClinicalGuidelines = onNavigateToClinicalGuidelines,
@@ -332,6 +334,7 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToPmkReminders: () -> Unit,
     onNavigateToFeedingAlarm: () -> Unit,
+    onNavigateToScreeningSchedule: () -> Unit = {},
     onNavigateToUserGuide: () -> Unit,
     onNavigateToAboutApp: () -> Unit,
     onNavigateToClinicalGuidelines: () -> Unit,
@@ -881,14 +884,69 @@ fun SettingsScreen(
                                     ) {
                                         Surface(
                                             shape = RoundedCornerShape(100.dp),
-                                            color = KanguruTheme.colors.successContainer,
-                                            border = BorderStroke(1.dp, KanguruTheme.colors.successBorder)
+                                            color = if (uiState.isFeedingAlarmActive) KanguruTheme.colors.successContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                            border = BorderStroke(1.dp, if (uiState.isFeedingAlarmActive) KanguruTheme.colors.successBorder else MaterialTheme.colorScheme.outlineVariant)
                                         ) {
                                             Text(
                                                 text = uiState.feedingAlarmBadgeText,
                                                 style = KanguruTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = KanguruTheme.colors.onSuccessContainer,
+                                                color = if (uiState.isFeedingAlarmActive) KanguruTheme.colors.onSuccessContainer else KanguruTheme.colors.textSecondary,
+                                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                            )
+                                        }
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                            contentDescription = null,
+                                            tint = TextTertiary,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
+
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+
+                                // Pengingat Skrining
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable(onClick = onNavigateToScreeningSchedule)
+                                        .padding(14.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(end = 8.dp)
+                                    ) {
+                                        Text(
+                                            text = "Pengingat Skrining",
+                                            style = KanguruTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = TextPrimary
+                                        )
+                                        Text(
+                                            text = "Jadwal evaluasi penapisan risiko BBLR",
+                                            style = KanguruTheme.typography.labelSmall,
+                                            color = TextSecondary,
+                                            modifier = Modifier.padding(top = 2.dp)
+                                        )
+                                    }
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Surface(
+                                            shape = RoundedCornerShape(100.dp),
+                                            color = if (uiState.isScreeningReminderActive) KanguruTheme.colors.successContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                            border = BorderStroke(1.dp, if (uiState.isScreeningReminderActive) KanguruTheme.colors.successBorder else MaterialTheme.colorScheme.outlineVariant)
+                                        ) {
+                                            Text(
+                                                text = uiState.screeningReminderBadgeText,
+                                                style = KanguruTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = if (uiState.isScreeningReminderActive) KanguruTheme.colors.onSuccessContainer else KanguruTheme.colors.textSecondary,
                                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                                             )
                                         }

@@ -30,7 +30,7 @@ data class PmkManualLogUiState(
     val startMinute: Int = 0,
     val durationMinutes: Int = 60,
     val babyTemperature: String = "36.8",
-    val babyResponse: String = "Tidur Tenang",
+    val babyResponse: String = "Tenang",
     val notes: String = "",
     val isSaving: Boolean = false,
     val errorMessage: String? = null

@@ -439,11 +439,10 @@ fun PmkCaregiverHandoverSheet(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 val responses = listOf(
-                    "Tenang & Rileks",
-                    "Tidur Pulas",
-                    "Menyusu Aktif / Rooting",
-                    "Sempat Menangis / Gelisah",
-                    "Pernapasan Teratur"
+                    "Tenang",
+                    "Tidur",
+                    "Menyusu Aktif",
+                    "Gelisah / Menangis"
                 )
 
                 FlowRow(

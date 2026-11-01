@@ -1,5 +1,8 @@
 package com.kangurusiaga.app.presentation.pmk.screening
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -36,6 +39,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudDone
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Hearing
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.UploadFile
@@ -59,12 +63,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -82,6 +89,22 @@ fun ScreeningInputResultRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            tempCameraUri?.let { viewModel.onPhotoCaptured(it) }
+        }
+    }
+
+    val documentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { viewModel.onDocumentSelected(it) }
+    }
 
     LaunchedEffect(uiState.userMessage) {
         uiState.userMessage?.let {
@@ -96,8 +119,21 @@ fun ScreeningInputResultRoute(
         onSelectScreeningType = viewModel::selectScreeningType,
         onNotesChanged = viewModel::updateClinicalNotes,
         onInsertQuickPoint = viewModel::insertQuickPoint,
-        onAddPhoto = viewModel::addPhotoAttachment,
-        onAddPdf = viewModel::addPdfAttachment,
+        onAddPhoto = {
+            try {
+                val uri = viewModel.createTempCameraUri()
+                tempCameraUri = uri
+                cameraLauncher.launch(uri)
+            } catch (_: Exception) {
+                // Ignore or handled by ViewModel
+            }
+        },
+        onAddPdf = {
+            documentLauncher.launch(arrayOf("application/pdf", "image/*"))
+        },
+        onOpenAttachment = {
+            viewModel.openCurrentAttachment(context)
+        },
         onRemoveAttachment = viewModel::removeAttachment,
         onSave = {
             viewModel.saveResult(onSuccess = onNavigateBack)
@@ -121,6 +157,7 @@ fun ScreeningInputResultScreen(
     onSave: () -> Unit,
     onSetHelpDialogVisible: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onOpenAttachment: (() -> Unit)? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val colors = KanguruTheme.colors
@@ -259,9 +296,11 @@ fun ScreeningInputResultScreen(
             MedicalAttachmentsCard(
                 attachmentName = uiState.attachmentName,
                 attachmentSize = uiState.attachmentSize,
+                isAttachmentImage = uiState.isAttachmentImage,
                 onAddPhoto = onAddPhoto,
                 onAddPdf = onAddPdf,
-                onRemoveAttachment = onRemoveAttachment
+                onRemoveAttachment = onRemoveAttachment,
+                onOpenAttachment = onOpenAttachment
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -786,9 +825,11 @@ private fun QuickInsertChip(
 private fun MedicalAttachmentsCard(
     attachmentName: String?,
     attachmentSize: String?,
+    isAttachmentImage: Boolean,
     onAddPhoto: () -> Unit,
     onAddPdf: () -> Unit,
     onRemoveAttachment: () -> Unit,
+    onOpenAttachment: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
@@ -870,6 +911,7 @@ private fun MedicalAttachmentsCard(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
                         .background(colors.surfaceVariant)
+                        .clickable(enabled = onOpenAttachment != null) { onOpenAttachment?.invoke() }
                         .padding(10.dp)
                 ) {
                     Row(
@@ -886,13 +928,13 @@ private fun MedicalAttachmentsCard(
                                 modifier = Modifier
                                     .size(36.dp)
                                     .clip(RoundedCornerShape(8.dp))
-                                    .background(colors.clinicalAmberBg),
+                                    .background(if (isAttachmentImage) colors.clinicalRoseBg else colors.clinicalAmberBg),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Description,
+                                    imageVector = if (isAttachmentImage) Icons.Default.Image else Icons.Default.Description,
                                     contentDescription = null,
-                                    tint = colors.clinicalAmberSolid,
+                                    tint = if (isAttachmentImage) colors.clinicalRoseSolid else colors.clinicalAmberSolid,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -907,7 +949,7 @@ private fun MedicalAttachmentsCard(
                                     overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
-                                    text = attachmentSize ?: "Siap disimpan",
+                                    text = "${attachmentSize ?: "Siap disimpan"} • Ketuk untuk membuka",
                                     style = KanguruTheme.typography.labelSmall,
                                     color = colors.textSecondary
                                 )

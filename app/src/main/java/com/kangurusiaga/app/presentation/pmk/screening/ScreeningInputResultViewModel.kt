@@ -1,8 +1,11 @@
 package com.kangurusiaga.app.presentation.pmk.screening
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kangurusiaga.app.core.common.ScreeningAttachmentManager
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.PrematureScreening
 import com.kangurusiaga.app.domain.model.ScreeningType
@@ -14,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -24,7 +26,8 @@ import javax.inject.Inject
 class ScreeningInputResultViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val babyRepository: BabyRepository,
-    private val screeningRepository: PrematureScreeningRepository
+    private val screeningRepository: PrematureScreeningRepository,
+    private val attachmentManager: ScreeningAttachmentManager
 ) : ViewModel() {
 
     private val initialType: ScreeningType = try {
@@ -76,13 +79,23 @@ class ScreeningInputResultViewModel @Inject constructor(
                                 current.clinicalNotes
                             }
                             val attName = currentMatch?.attachmentName ?: current.attachmentName
+                            val attUri = currentMatch?.attachmentUri ?: current.attachmentUri
+                            val attSize = if (attUri != null) {
+                                attachmentManager.getFormattedFileSize(attUri) ?: current.attachmentSize
+                            } else {
+                                current.attachmentSize
+                            }
+                            val isImg = attName?.lowercase(Locale.ROOT)?.endsWith(".pdf") != true
 
                             current.copy(
                                 availableScreenings = list,
                                 currentScreening = currentMatch,
                                 clinicalNotes = notesText,
                                 charCount = notesText.length,
-                                attachmentName = attName
+                                attachmentName = attName,
+                                attachmentUri = attUri,
+                                attachmentSize = attSize,
+                                isAttachmentImage = isImg
                             )
                         }
                     }
@@ -96,6 +109,9 @@ class ScreeningInputResultViewModel @Inject constructor(
         val match = list.find { it.type == type }
         val notesText = match?.findings ?: match?.notes ?: ""
         val attName = match?.attachmentName
+        val attUri = match?.attachmentUri
+        val attSize = attUri?.let { attachmentManager.getFormattedFileSize(it) }
+        val isImg = attName?.lowercase(Locale.ROOT)?.endsWith(".pdf") != true
 
         _uiState.update {
             it.copy(
@@ -103,7 +119,10 @@ class ScreeningInputResultViewModel @Inject constructor(
                 currentScreening = match,
                 clinicalNotes = notesText,
                 charCount = notesText.length,
-                attachmentName = attName
+                attachmentName = attName,
+                attachmentUri = attUri,
+                attachmentSize = attSize,
+                isAttachmentImage = isImg
             )
         }
     }
@@ -131,33 +150,97 @@ class ScreeningInputResultViewModel @Inject constructor(
         }
     }
 
-    fun addPhotoAttachment() {
-        _uiState.update {
-            it.copy(
-                attachmentName = "Foto_Pemeriksaan_${it.selectedType.name.lowercase(Locale.ROOT)}.jpg",
-                attachmentSize = "2.1 MB • Siap disimpan",
-                userMessage = "Foto dokumentasi klinis berhasil diambil."
-            )
+    fun createTempCameraUri(): Uri {
+        return attachmentManager.createTempCameraUri()
+    }
+
+    fun onPhotoCaptured(tempUri: Uri) {
+        val babyId = _uiState.value.baby?.id ?: return
+        val type = _uiState.value.selectedType
+        viewModelScope.launch {
+            try {
+                val result = attachmentManager.saveCapturedPhoto(tempUri, babyId, type)
+                val prevUri = _uiState.value.attachmentUri
+                if (prevUri != null && prevUri != result.fileUri) {
+                    attachmentManager.deleteAttachment(prevUri)
+                }
+                _uiState.update {
+                    it.copy(
+                        attachmentName = result.fileName,
+                        attachmentSize = "${result.formattedSize} • Siap disimpan",
+                        attachmentUri = result.fileUri,
+                        isAttachmentImage = result.isImage,
+                        userMessage = "Foto dokumentasi klinis berhasil diambil."
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(userMessage = e.message ?: "Gagal memproses foto kamera.")
+                }
+            }
         }
     }
 
-    fun addPdfAttachment() {
-        _uiState.update {
-            it.copy(
-                attachmentName = "Hasil_Pemeriksaan_${it.selectedType.name.lowercase(Locale.ROOT)}.pdf",
-                attachmentSize = "1.8 MB • Siap disimpan",
-                userMessage = "Berkas PDF berhasil dilampirkan."
-            )
+    fun onDocumentSelected(sourceUri: Uri) {
+        val babyId = _uiState.value.baby?.id ?: return
+        val type = _uiState.value.selectedType
+        viewModelScope.launch {
+            try {
+                val result = attachmentManager.saveDocument(sourceUri, babyId, type)
+                val prevUri = _uiState.value.attachmentUri
+                if (prevUri != null && prevUri != result.fileUri) {
+                    attachmentManager.deleteAttachment(prevUri)
+                }
+                _uiState.update {
+                    it.copy(
+                        attachmentName = result.fileName,
+                        attachmentSize = "${result.formattedSize} • Siap disimpan",
+                        attachmentUri = result.fileUri,
+                        isAttachmentImage = result.isImage,
+                        userMessage = "Berkas dokumen berhasil dilampirkan."
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(userMessage = e.message ?: "Gagal melampirkan berkas dokumen.")
+                }
+            }
         }
     }
 
     fun removeAttachment() {
-        _uiState.update {
-            it.copy(
-                attachmentName = null,
-                attachmentSize = null,
-                userMessage = "Lampiran dihapus."
-            )
+        val currentUri = _uiState.value.attachmentUri
+        viewModelScope.launch {
+            if (currentUri != null) {
+                attachmentManager.deleteAttachment(currentUri)
+            }
+            _uiState.update {
+                it.copy(
+                    attachmentName = null,
+                    attachmentSize = null,
+                    attachmentUri = null,
+                    isAttachmentImage = false,
+                    userMessage = "Lampiran dihapus."
+                )
+            }
+        }
+    }
+
+    fun openCurrentAttachment(context: Context) {
+        val uri = _uiState.value.attachmentUri
+        if (uri.isNullOrBlank()) {
+            _uiState.update { it.copy(userMessage = "Tidak ada lampiran untuk dibuka.") }
+            return
+        }
+        val intent = attachmentManager.getOpenAttachmentIntent(uri)
+        if (intent != null) {
+            try {
+                context.startActivity(intent)
+            } catch (_: Exception) {
+                _uiState.update { it.copy(userMessage = "Tidak ditemukan aplikasi untuk membuka berkas ini.") }
+            }
+        } else {
+            _uiState.update { it.copy(userMessage = "Berkas lampiran tidak ditemukan di penyimpanan.") }
         }
     }
 
@@ -173,6 +256,7 @@ class ScreeningInputResultViewModel @Inject constructor(
         val target = _uiState.value.currentScreening ?: return
         val notes = _uiState.value.clinicalNotes.trim()
         val attachment = _uiState.value.attachmentName
+        val attUri = _uiState.value.attachmentUri
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
@@ -180,6 +264,7 @@ class ScreeningInputResultViewModel @Inject constructor(
                 findings = if (notes.isNotEmpty()) notes else target.findings,
                 notes = if (notes.isNotEmpty()) notes else target.notes,
                 attachmentName = attachment,
+                attachmentUri = attUri,
                 attachmentCount = if (attachment != null) 1 else 0,
                 isCompleted = true,
                 realizationDateEpoch = target.realizationDateEpoch ?: System.currentTimeMillis(),

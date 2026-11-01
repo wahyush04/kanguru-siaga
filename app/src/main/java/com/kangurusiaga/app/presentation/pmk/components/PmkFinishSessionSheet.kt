@@ -79,14 +79,13 @@ fun PmkFinishSessionSheet(
 ) {
     val colors = KanguruTheme.colors
 
-    // Daftar opsi perilaku bayi sesuai Google Stitch HTML
+    // Daftar opsi perilaku bayi sesuai 4 pilihan terstandar
     val behaviorOptions = remember {
         listOf(
-            BehaviorOption("😌", "Tenang & Tidur"),
-            BehaviorOption("😴", "Tidur Pulas Nyenyak"),
-            BehaviorOption("👶", "Aktif & Nyaman"),
-            BehaviorOption("🍼", "Menyusu / Rooting"),
-            BehaviorOption("🥺", "Gelisah / Sempat Menangis Singkat", isFullWidth = true)
+            BehaviorOption("😌", "Tenang"),
+            BehaviorOption("😴", "Tidur"),
+            BehaviorOption("🍼", "Menyusu Aktif"),
+            BehaviorOption("🥺", "Gelisah / Menangis")
         )
     }
 
@@ -455,7 +454,7 @@ fun PmkFinishSessionSheet(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Grid 2 Kolom Opsi 1 & 2
+                    // Grid 2 Kolom Opsi 1 (Tenang) & 2 (Tidur)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -482,7 +481,7 @@ fun PmkFinishSessionSheet(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Grid 2 Kolom Opsi 3 & 4
+                    // Grid 2 Kolom Opsi 3 (Menyusu Aktif) & 4 (Gelisah / Menangis)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -506,19 +505,6 @@ fun PmkFinishSessionSheet(
                             modifier = Modifier.weight(1f)
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Full Width Opsi 5 (col-span 2)
-                    BehaviorChipItem(
-                        option = behaviorOptions[4],
-                        isSelected = selectedResponses.contains(behaviorOptions[4].label),
-                        onToggle = {
-                            val updated = toggleOption(selectedResponses, behaviorOptions[4].label)
-                            onResponseChange(updated)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
                 // END: BabyBehaviorSection
 

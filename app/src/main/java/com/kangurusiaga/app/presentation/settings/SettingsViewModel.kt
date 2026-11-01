@@ -9,6 +9,7 @@ import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.settings.AppTextScale
 import com.kangurusiaga.app.domain.model.settings.AppThemeMode
 import com.kangurusiaga.app.domain.repository.BabyRepository
+import com.kangurusiaga.app.domain.repository.PrematureScreeningRepository
 import com.kangurusiaga.app.domain.usecase.GetPmkRemindersUseCase
 import com.kangurusiaga.app.domain.usecase.UpdateBabyProfileUseCase
 import com.kangurusiaga.app.domain.usecase.feeding.ObserveFeedingSchedulesUseCase
@@ -38,6 +39,7 @@ class SettingsViewModel @Inject constructor(
     private val toggleNotificationsUseCase: ToggleNotificationsUseCase,
     private val getPmkRemindersUseCase: GetPmkRemindersUseCase,
     private val observeFeedingSchedulesUseCase: ObserveFeedingSchedulesUseCase,
+    private val prematureScreeningRepository: PrematureScreeningRepository,
     private val photoStorageManager: PhotoStorageManager
 ) : ViewModel() {
 
@@ -83,11 +85,42 @@ class SettingsViewModel @Inject constructor(
                 observeFeedingSchedulesUseCase().collectLatest { schedules ->
                     val isActive = schedules.any { it.isEnabled }
                     _uiState.update {
-                        it.copy(feedingAlarmBadgeText = if (isActive) "Aktif" else "Nonaktif")
+                        it.copy(
+                            feedingAlarmBadgeText = if (isActive) "Aktif" else "Nonaktif",
+                            isFeedingAlarmActive = isActive
+                        )
                     }
                 }
             } catch (e: Exception) {
                 // Fallback to default
+            }
+        }
+
+        viewModelScope.launch {
+            babyRepository.getActiveBaby().collectLatest { baby ->
+                if (baby != null) {
+                    try {
+                        prematureScreeningRepository.ensureDefaultScreenings(
+                            babyId = baby.id,
+                            birthDateEpoch = baby.birthDateEpochMillis,
+                            gestationalAgeWeeks = baby.gestationalAgeWeeks
+                        )
+                        prematureScreeningRepository.getScreeningsForBaby(baby.id).collectLatest { screenings ->
+                            val activeCount = screenings.count { screening ->
+                                !screening.isCompleted && (screening.isAlarmActive || (screening.targetDateEpoch2 != null && screening.isAlarm2Active))
+                            }
+                            val isActive = activeCount > 0
+                            _uiState.update {
+                                it.copy(
+                                    isScreeningReminderActive = isActive,
+                                    screeningReminderBadgeText = if (isActive) "Aktif" else "Nonaktif"
+                                )
+                            }
+                        }
+                    } catch (_: Exception) {
+                        // Fallback to default
+                    }
+                }
             }
         }
 

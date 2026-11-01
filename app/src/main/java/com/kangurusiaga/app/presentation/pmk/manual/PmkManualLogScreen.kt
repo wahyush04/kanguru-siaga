@@ -338,7 +338,7 @@ fun PmkManualLogScreen(
                             color = TextPrimary
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        val responses = listOf("Tidur Tenang", "Tenang", "Gelisah", "Menangis")
+                        val responses = listOf("Tenang", "Tidur", "Menyusu Aktif", "Gelisah / Menangis")
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)

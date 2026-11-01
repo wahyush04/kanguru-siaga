@@ -33,6 +33,7 @@ data class PrematureScreening(
     val findings: String? = null,
     val conclusion: String? = null,
     val attachmentName: String? = null,
+    val attachmentUri: String? = null,
     val attachmentCount: Int = 0,
     val notes: String? = null,
     val updatedAt: Long = System.currentTimeMillis()

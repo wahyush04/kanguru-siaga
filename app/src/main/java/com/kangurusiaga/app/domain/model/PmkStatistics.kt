@@ -57,22 +57,33 @@ data class ClinicalEvaluation(
 )
 
 data class BabyResponseBreakdown(
-    val deepSleepCount: Int = 0,
-    val deepSleepPercent: Int = 0,
+    val calmCount: Int = 0,
+    val calmPercent: Int = 0,
+    val sleepCount: Int = 0,
+    val sleepPercent: Int = 0,
     val activeFeedingCount: Int = 0,
     val activeFeedingPercent: Int = 0,
-    val alertCalmCount: Int = 0,
-    val alertCalmPercent: Int = 0,
-    val adjustingCount: Int = 0,
-    val adjustingPercent: Int = 0,
+    val restlessCryingCount: Int = 0,
+    val restlessCryingPercent: Int = 0,
     val totalRecordedSessions: Int = 0,
     val overallCalmPercentage: Int = 0
 ) {
     val totalSessions: Int get() = totalRecordedSessions
-    val deepSleepSessions: Int get() = deepSleepCount
+    val calmSessions: Int get() = calmCount
+    val sleepSessions: Int get() = sleepCount
     val activeFeedingSessions: Int get() = activeFeedingCount
-    val alertCalmSessions: Int get() = alertCalmCount
-    val adjustingSessions: Int get() = adjustingCount
+    val restlessCryingSessions: Int get() = restlessCryingCount
+
+    // Backward-compatibility properties
+    val alertCalmCount: Int get() = calmCount
+    val alertCalmPercent: Int get() = calmPercent
+    val alertCalmSessions: Int get() = calmCount
+    val deepSleepCount: Int get() = sleepCount
+    val deepSleepPercent: Int get() = sleepPercent
+    val deepSleepSessions: Int get() = sleepCount
+    val adjustingCount: Int get() = restlessCryingCount
+    val adjustingPercent: Int get() = restlessCryingPercent
+    val adjustingSessions: Int get() = restlessCryingCount
 }
 
 data class PmkStatistics(

@@ -21,6 +21,8 @@ data class ScreeningInputResultUiState(
     val isSaved: Boolean = false,
     val attachmentName: String? = null,
     val attachmentSize: String? = null,
+    val attachmentUri: String? = null,
+    val isAttachmentImage: Boolean = false,
     val helpDialogVisible: Boolean = false,
     val userMessage: String? = null,
     val isSaving: Boolean = false

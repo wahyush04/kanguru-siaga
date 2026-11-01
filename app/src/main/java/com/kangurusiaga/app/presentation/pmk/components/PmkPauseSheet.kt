@@ -407,11 +407,10 @@ fun PmkPauseSheet(
             Spacer(modifier = Modifier.height(6.dp))
 
             val behaviors = listOf(
-                "😌" to "Tenang & Rileks",
-                "😴" to "Tidur Pulas",
-                "🍼" to "Menyusu / Lapar",
-                "🥺" to "Gelisah / Menangis",
-                "🫁" to "Pernapasan Teratur"
+                "😌" to "Tenang",
+                "😴" to "Tidur",
+                "🍼" to "Menyusu Aktif",
+                "🥺" to "Gelisah / Menangis"
             )
 
             FlowRow(

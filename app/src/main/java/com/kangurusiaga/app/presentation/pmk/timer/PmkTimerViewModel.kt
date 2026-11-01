@@ -38,14 +38,14 @@ data class PmkTimerUiState(
     val isNightModeDim: Boolean = false,
     val handoverCaregiver: PmkCaregiver = PmkCaregiver.AYAH,
     val handoverTemperature: String = "36.8",
-    val handoverResponse: String = "Tenang & Rileks",
+    val handoverResponse: String = "Tenang",
     val handoverNotes: String = "",
     val pauseReason: PmkPauseReason = PmkPauseReason.NURSING,
     val pauseTemperature: String = "36.8",
-    val pauseBehavior: String = "Tenang & Rileks",
+    val pauseBehavior: String = "Tenang",
     val pauseNotes: String = "",
     val finishTemperature: String = "36.8",
-    val finishResponse: String = "Tidur Tenang",
+    val finishResponse: String = "Tenang",
     val finishNotes: String = ""
 )
 
@@ -75,14 +75,14 @@ class PmkTimerViewModel @Inject constructor(
         val isNightModeDim: Boolean = false,
         val handoverCaregiver: PmkCaregiver = PmkCaregiver.AYAH,
         val handoverTemperature: String = "36.8",
-        val handoverResponse: String = "Tenang & Rileks",
+        val handoverResponse: String = "Tenang",
         val handoverNotes: String = "",
         val pauseReason: PmkPauseReason = PmkPauseReason.NURSING,
         val pauseTemperature: String = "36.8",
-        val pauseBehavior: String = "Tenang & Rileks",
+        val pauseBehavior: String = "Tenang",
         val pauseNotes: String = "",
         val finishTemperature: String = "36.8",
-        val finishResponse: String = "Tidur Tenang",
+        val finishResponse: String = "Tenang",
         val finishNotes: String = ""
     )
 
@@ -157,7 +157,7 @@ class PmkTimerViewModel @Inject constructor(
                 showCaregiverHandoverSheet = true,
                 handoverCaregiver = target,
                 handoverTemperature = "36.8",
-                handoverResponse = "Tenang & Rileks",
+                handoverResponse = "Tenang",
                 handoverNotes = ""
             )
         }
@@ -203,7 +203,7 @@ class PmkTimerViewModel @Inject constructor(
                 showPauseSheet = true,
                 pauseReason = PmkPauseReason.NURSING,
                 pauseTemperature = "36.8",
-                pauseBehavior = "Tenang & Rileks",
+                pauseBehavior = "Tenang",
                 pauseNotes = ""
             )
         }

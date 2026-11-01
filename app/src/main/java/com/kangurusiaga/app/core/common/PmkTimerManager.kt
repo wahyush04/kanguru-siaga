@@ -483,7 +483,7 @@ class PmkTimerManager @Inject constructor(
         val notes = prefs.getString(KEY_NOTES, "") ?: ""
         val tempRaw = prefs.getString(KEY_BABY_TEMP, null)
         val babyTemp = tempRaw?.toDoubleOrNull()
-        val babyResponse = prefs.getString(KEY_BABY_RESPONSE, "Tidur Tenang")
+        val babyResponse = prefs.getString(KEY_BABY_RESPONSE, "Tenang")
 
         // If saved active session started on a previous day, handle midnight crossing
         if (sessionStart > 0L && !isSameDay(sessionStart, nowEpoch)) {

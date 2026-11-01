@@ -1,6 +1,11 @@
 package com.kangurusiaga.app.presentation.pmk.screening
 
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.net.Uri
+import android.webkit.MimeTypeMap
+import androidx.core.content.FileProvider
+import java.io.File
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,6 +34,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -166,6 +172,7 @@ fun ScreeningScheduleScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
+    val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     Scaffold(
@@ -352,6 +359,7 @@ private fun HeroScreeningCard(
     uiState: ScreeningScheduleUiState,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     Card(
@@ -510,6 +518,7 @@ private fun PatientSummaryMedicalCard(
     uiState: ScreeningScheduleUiState,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     Card(
@@ -732,6 +741,7 @@ private fun SegmentedScreeningTabs(
     onSelectTab: (ScreeningTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     Box(
@@ -810,6 +820,7 @@ private fun RemindersView(
     onNavigateToInputResult: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     Column(
@@ -862,6 +873,7 @@ private fun ScreeningCardItem(
     onRecordClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     val (badgeBg, badgeText, iconEmoji, btnColor, boxBg, boxBorder, boxText) = when (screening.type) {
@@ -1197,6 +1209,7 @@ private fun EvaluationMedicalSheetView(
     onNavigateToInputResult: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     Column(
@@ -1272,6 +1285,7 @@ private fun ClinicalRecordCard(
     onNavigateToInputResult: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     val (badgeBg, badgeText, iconEmoji) = when (screening.type) {
@@ -1481,20 +1495,43 @@ private fun ClinicalRecordCard(
                 }
 
                 // Action Buttons: Lampiran + Edit
-                val attachmentLabel = screening.attachmentName ?: when (screening.type) {
-                    ScreeningType.USG_HEAD -> "Lampiran Gambar (2)"
-                    ScreeningType.ROP_EYE -> "Lampiran Fundus (2)"
-                    ScreeningType.HEARING_OAE -> "Lampiran Hasil OAE (1)"
-                    ScreeningType.THYROID_FUNCTION -> "Lampiran Resume Lab (1)"
-                    else -> "Lampiran Medis (1)"
-                }
+                val hasAttachment = !screening.attachmentName.isNullOrBlank()
+                val attachmentLabel = if (hasAttachment) screening.attachmentName!! else "+ Tambah Lampiran"
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     OutlinedButton(
-                        onClick = { onNavigateToInputResult(screening.type.name) },
+                        onClick = {
+                            if (hasAttachment && !screening.attachmentUri.isNullOrBlank()) {
+                                try {
+                                    val uri = Uri.parse(screening.attachmentUri)
+                                    val file = if (uri.scheme == "file") File(uri.path ?: "") else null
+                                    if (file != null && file.exists()) {
+                                        val contentUri = FileProvider.getUriForFile(
+                                            context,
+                                            "${context.packageName}.fileprovider",
+                                            file
+                                        )
+                                        val ext = file.extension.lowercase(Locale.ROOT)
+                                        val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext) ?: "*/*"
+                                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                                            setDataAndType(contentUri, mime)
+                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        }
+                                        context.startActivity(intent)
+                                    } else {
+                                        onNavigateToInputResult(screening.type.name)
+                                    }
+                                } catch (_: Exception) {
+                                    onNavigateToInputResult(screening.type.name)
+                                }
+                            } else {
+                                onNavigateToInputResult(screening.type.name)
+                            }
+                        },
                         shape = RoundedCornerShape(12.dp),
                         border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = colors.textPrimary),
@@ -1505,15 +1542,17 @@ private fun ClinicalRecordCard(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Image,
+                                imageVector = if (hasAttachment) Icons.Default.AttachFile else Icons.Default.Image,
                                 contentDescription = null,
                                 modifier = Modifier.size(14.dp),
-                                tint = colors.textSecondary
+                                tint = if (hasAttachment) colors.clinicalPurpleSolid else colors.textSecondary
                             )
                             Text(
                                 text = attachmentLabel,
                                 style = KanguruTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -1674,8 +1713,8 @@ private fun AddScreeningDialog(
     onClinicChanged: (String) -> Unit,
     onSave: () -> Unit
 ) {
-    val colors = KanguruTheme.colors
     val context = LocalContext.current
+    val colors = KanguruTheme.colors
     val dateFormat = remember { SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID")) }
 
     AlertDialog(

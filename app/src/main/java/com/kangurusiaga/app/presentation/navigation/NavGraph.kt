@@ -607,10 +607,10 @@ fun KanguruNavGraph(
                     navController.navigate(Screen.PmkVideoList.route)
                 },
                 onNavigateToBblrEducation = {
-                    navController.navigate(Screen.EducationList.route)
+                    navController.navigate(Screen.BblrCare.route)
                 },
                 onNavigateToEmergencyWarning = {
-                    navController.navigate(Screen.EmergencyWarningList.route)
+                    navController.navigate(Screen.BblrEmergency.route)
                 },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
@@ -680,10 +680,10 @@ fun KanguruNavGraph(
                     navController.navigate(Screen.PmkVideoList.route)
                 },
                 onNavigateToBblrEducation = {
-                    navController.navigate(Screen.EducationList.route)
+                    navController.navigate(Screen.BblrCare.route)
                 },
                 onNavigateToEmergencyWarning = {
-                    navController.navigate(Screen.EmergencyWarningList.route)
+                    navController.navigate(Screen.BblrEmergency.route)
                 },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
@@ -994,6 +994,9 @@ fun KanguruNavGraph(
                 },
                 onNavigateToFeedingAlarm = {
                     navController.navigate(Screen.Feeding.route)
+                },
+                onNavigateToScreeningSchedule = {
+                    navController.navigate(Screen.ScreeningSchedule.route)
                 },
                 onNavigateToUserGuide = {
                     navController.navigate(Screen.UserGuide.route)

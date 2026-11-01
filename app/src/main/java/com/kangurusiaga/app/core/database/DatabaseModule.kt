@@ -17,6 +17,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    private val MIGRATION_10_11 = object : androidx.room.migration.Migration(10, 11) {
+        override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE premature_screenings ADD COLUMN attachment_uri TEXT DEFAULT NULL")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideKanguruDatabase(
@@ -26,7 +32,10 @@ object DatabaseModule {
             context,
             KanguruDatabase::class.java,
             KanguruDatabase.DATABASE_NAME
-        ).fallbackToDestructiveMigration().build()
+        )
+            .addMigrations(MIGRATION_10_11)
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

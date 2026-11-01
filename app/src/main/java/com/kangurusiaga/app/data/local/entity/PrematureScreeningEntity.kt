@@ -50,6 +50,8 @@ data class PrematureScreeningEntity(
     val conclusion: String? = null,
     @ColumnInfo(name = "attachment_name")
     val attachmentName: String? = null,
+    @ColumnInfo(name = "attachment_uri")
+    val attachmentUri: String? = null,
     @ColumnInfo(name = "attachment_count")
     val attachmentCount: Int = 0,
     @ColumnInfo(name = "notes")
@@ -92,6 +94,7 @@ data class PrematureScreeningEntity(
             findings = findings,
             conclusion = conclusion,
             attachmentName = attachmentName,
+            attachmentUri = attachmentUri,
             attachmentCount = attachmentCount,
             notes = notes,
             updatedAt = updatedAt
@@ -122,6 +125,7 @@ data class PrematureScreeningEntity(
                 findings = domain.findings,
                 conclusion = domain.conclusion,
                 attachmentName = domain.attachmentName,
+                attachmentUri = domain.attachmentUri,
                 attachmentCount = domain.attachmentCount,
                 notes = domain.notes,
                 updatedAt = domain.updatedAt

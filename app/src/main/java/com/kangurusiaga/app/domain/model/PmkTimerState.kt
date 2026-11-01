@@ -21,7 +21,7 @@ data class PmkTimerState(
     val currentPeriod: Int = 1, // Period 1 (0-8h), Period 2 (8-16h), Period 3 (16-24h)
     val notes: String = "",
     val babyTemperature: Double? = null,
-    val babyResponse: String? = "Tidur Tenang"
+    val babyResponse: String? = "Tenang"
 ) {
     val isRunning: Boolean get() = status == TimerStatus.RUNNING
     val isPaused: Boolean get() = status == TimerStatus.PAUSED

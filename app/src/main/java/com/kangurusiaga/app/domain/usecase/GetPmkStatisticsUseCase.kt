@@ -406,9 +406,11 @@ class GetPmkStatisticsUseCase @Inject constructor(
         for (session in sessions) {
             val segResponses = session.segments.mapNotNull { it.babyResponse?.takeIf { r -> r.isNotBlank() } }
             if (segResponses.isNotEmpty()) {
-                responses.addAll(segResponses)
+                for (sr in segResponses) {
+                    responses.addAll(sr.split(",").map { it.trim() }.filter { it.isNotEmpty() })
+                }
             } else if (!session.babyResponse.isNullOrBlank()) {
-                responses.add(session.babyResponse)
+                responses.addAll(session.babyResponse.split(",").map { it.trim() }.filter { it.isNotEmpty() })
             }
         }
         val totalRecorded = responses.size
@@ -416,36 +418,56 @@ class GetPmkStatisticsUseCase @Inject constructor(
             return BabyResponseBreakdown()
         }
 
-        var deepSleep = 0
+        var calm = 0
+        var sleep = 0
         var activeFeeding = 0
-        var alertCalm = 0
-        var adjusting = 0
+        var restlessCrying = 0
 
         for (resp in responses) {
+            val trimmed = resp.trim()
             when {
-                resp.contains("Tidur", ignoreCase = true) -> deepSleep++
-                resp.contains("Menyusu", ignoreCase = true) || resp.contains("Rooting", ignoreCase = true) -> activeFeeding++
-                resp.contains("Tenang", ignoreCase = true) || resp.contains("Rileks", ignoreCase = true) || resp.contains("Nyaman", ignoreCase = true) -> alertCalm++
-                resp.contains("Gelisah", ignoreCase = true) || resp.contains("Menangis", ignoreCase = true) || resp.contains("Rewel", ignoreCase = true) || resp.contains("Penyesuaian", ignoreCase = true) -> adjusting++
-                else -> alertCalm++
+                // 4. Gelisah / Menangis
+                trimmed.contains("Gelisah", ignoreCase = true) ||
+                    trimmed.contains("Menangis", ignoreCase = true) ||
+                    trimmed.contains("Rewel", ignoreCase = true) ||
+                    trimmed.contains("Penyesuaian", ignoreCase = true) -> restlessCrying++
+
+                // 3. Menyusu Aktif
+                trimmed.contains("Menyusu", ignoreCase = true) ||
+                    trimmed.contains("Rooting", ignoreCase = true) ||
+                    trimmed.contains("Lapar", ignoreCase = true) -> activeFeeding++
+
+                // 2. Tidur
+                trimmed.equals("Tidur", ignoreCase = true) ||
+                    trimmed.contains("Tidur Pulas", ignoreCase = true) ||
+                    trimmed.contains("Tidur Tenang", ignoreCase = true) ||
+                    trimmed.contains("Tidur", ignoreCase = true) -> sleep++
+
+                // 1. Tenang
+                trimmed.equals("Tenang", ignoreCase = true) ||
+                    trimmed.contains("Tenang", ignoreCase = true) ||
+                    trimmed.contains("Rileks", ignoreCase = true) ||
+                    trimmed.contains("Nyaman", ignoreCase = true) -> calm++
+
+                else -> calm++
             }
         }
 
-        val deepSleepPct = ((deepSleep.toDouble() / totalRecorded) * 100).roundToInt()
+        val calmPct = ((calm.toDouble() / totalRecorded) * 100).roundToInt()
+        val sleepPct = ((sleep.toDouble() / totalRecorded) * 100).roundToInt()
         val activeFeedingPct = ((activeFeeding.toDouble() / totalRecorded) * 100).roundToInt()
-        val alertCalmPct = ((alertCalm.toDouble() / totalRecorded) * 100).roundToInt()
-        val adjustingPct = (100 - deepSleepPct - activeFeedingPct - alertCalmPct).coerceAtLeast(0)
-        val calmOverall = (deepSleepPct + alertCalmPct).coerceIn(0, 100)
+        val restlessCryingPct = (100 - calmPct - sleepPct - activeFeedingPct).coerceAtLeast(0)
+        val calmOverall = (calmPct + sleepPct).coerceIn(0, 100)
 
         return BabyResponseBreakdown(
-            deepSleepCount = deepSleep,
-            deepSleepPercent = deepSleepPct,
+            calmCount = calm,
+            calmPercent = calmPct,
+            sleepCount = sleep,
+            sleepPercent = sleepPct,
             activeFeedingCount = activeFeeding,
             activeFeedingPercent = activeFeedingPct,
-            alertCalmCount = alertCalm,
-            alertCalmPercent = alertCalmPct,
-            adjustingCount = adjusting,
-            adjustingPercent = adjustingPct,
+            restlessCryingCount = restlessCrying,
+            restlessCryingPercent = restlessCryingPct,
             totalRecordedSessions = totalRecorded,
             overallCalmPercentage = calmOverall
         )

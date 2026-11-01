@@ -1377,10 +1377,18 @@ private fun BabyResponseBreakdownCard(
                     .background(colors.surfaceVariant)
             ) {
                 if (breakdown.totalSessions > 0) {
-                    if (breakdown.deepSleepPercent > 0) {
+                    if (breakdown.calmPercent > 0) {
                         Box(
                             modifier = Modifier
-                                .weight(breakdown.deepSleepPercent.toFloat())
+                                .weight(breakdown.calmPercent.toFloat())
+                                .fillMaxHeight()
+                                .background(colors.caregiverAyah)
+                        )
+                    }
+                    if (breakdown.sleepPercent > 0) {
+                        Box(
+                            modifier = Modifier
+                                .weight(breakdown.sleepPercent.toFloat())
                                 .fillMaxHeight()
                                 .background(colors.success)
                         )
@@ -1393,18 +1401,10 @@ private fun BabyResponseBreakdownCard(
                                 .background(colors.primary)
                         )
                     }
-                    if (breakdown.alertCalmPercent > 0) {
+                    if (breakdown.restlessCryingPercent > 0) {
                         Box(
                             modifier = Modifier
-                                .weight(breakdown.alertCalmPercent.toFloat())
-                                .fillMaxHeight()
-                                .background(colors.caregiverAyah)
-                        )
-                    }
-                    if (breakdown.adjustingPercent > 0) {
-                        Box(
-                            modifier = Modifier
-                                .weight(breakdown.adjustingPercent.toFloat())
+                                .weight(breakdown.restlessCryingPercent.toFloat())
                                 .fillMaxHeight()
                                 .background(colors.warning)
                         )
@@ -1414,27 +1414,27 @@ private fun BabyResponseBreakdownCard(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Rincian Kategori Respon (Grid 2 kolom)
+            // Rincian Kategori Respon (Grid 2 kolom: 1. Tenang, 2. Tidur, 3. Menyusu Aktif, 4. Gelisah / Menangis)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ResponseCategoryItem(
-                    title = "Tidur Pulas",
-                    percent = "${breakdown.deepSleepPercent}%",
-                    sessionCount = "${breakdown.deepSleepSessions} sesi tercatat",
-                    description = "Irama napas teratur, tubuh rileks di dekapan dada.",
-                    indicatorColor = colors.success,
-                    percentColor = colors.success,
+                    title = "Tenang",
+                    percent = "${breakdown.calmPercent}%",
+                    sessionCount = "${breakdown.calmSessions} sesi tercatat",
+                    description = "Tubuh rileks, kontak mata hangat, pernapasan teratur.",
+                    indicatorColor = colors.caregiverAyah,
+                    percentColor = colors.caregiverAyahText,
                     modifier = Modifier.weight(1f)
                 )
                 ResponseCategoryItem(
-                    title = "Menyusu Aktif",
-                    percent = "${breakdown.activeFeedingPercent}%",
-                    sessionCount = "${breakdown.activeFeedingSessions} sesi tercatat",
-                    description = "Refleks hisap kuat, menyusu baik tanpa tersedak.",
-                    indicatorColor = colors.primary,
-                    percentColor = colors.primary,
+                    title = "Tidur",
+                    percent = "${breakdown.sleepPercent}%",
+                    sessionCount = "${breakdown.sleepSessions} sesi tercatat",
+                    description = "Tidur lelap dan nyaman dalam dekapan dada pengasuh.",
+                    indicatorColor = colors.success,
+                    percentColor = colors.success,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -1446,19 +1446,19 @@ private fun BabyResponseBreakdownCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ResponseCategoryItem(
-                    title = "Tenang Waspada",
-                    percent = "${breakdown.alertCalmPercent}%",
-                    sessionCount = "${breakdown.alertCalmSessions} sesi tercatat",
-                    description = "Kontak mata hangat, mendengar detak jantung.",
-                    indicatorColor = colors.caregiverAyah,
-                    percentColor = colors.caregiverAyahText,
+                    title = "Menyusu Aktif",
+                    percent = "${breakdown.activeFeedingPercent}%",
+                    sessionCount = "${breakdown.activeFeedingSessions} sesi tercatat",
+                    description = "Refleks hisap kuat, menyusu baik tanpa tersedak.",
+                    indicatorColor = colors.primary,
+                    percentColor = colors.primary,
                     modifier = Modifier.weight(1f)
                 )
                 ResponseCategoryItem(
-                    title = "Penyesuaian",
-                    percent = "${breakdown.adjustingPercent}%",
-                    sessionCount = "${breakdown.adjustingSessions} sesi tercatat",
-                    description = "Mudah tenang kembali setelah posisi disesuaikan.",
+                    title = "Gelisah / Menangis",
+                    percent = "${breakdown.restlessCryingPercent}%",
+                    sessionCount = "${breakdown.restlessCryingSessions} sesi tercatat",
+                    description = "Perlu penyesuaian posisi, kenyamanan, atau ganti popok.",
                     indicatorColor = colors.warning,
                     percentColor = colors.warning,
                     modifier = Modifier.weight(1f)
