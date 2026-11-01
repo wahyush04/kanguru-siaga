@@ -372,15 +372,19 @@ fun MedicalDisclaimerScreen(
                         // Sub-item 1: Fenton
                         val fentonDesc = remember(primaryTextColor) {
                             buildAnnotatedString {
-                                append("Kalkulasi persentil berat, panjang badan, dan lingkar kepala adalah perkiraan tren pemantauan pertumbuhan berdasarkan usia Gestasi Pasca Menstruasi (PMA). Hasil ini ")
+                                append("Kalkulasi kurva, z-score, dan persentil berat, panjang badan, serta lingkar kepala dihasilkan melalui integrasi resmi standar Fenton 2025 dari Dr. Tanis Fenton (")
+                                withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = primaryTextColor)) {
+                                    append("fentongrowth.ca")
+                                }
+                                append(") berdasarkan Usia Gestasi Pasca-Menstruasi (PMA 22–50 minggu). Pemetaan ini berfungsi sebagai instrumen pemantauan pertumbuhan kejar (catch-up growth) dan ")
                                 withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = primaryTextColor)) {
                                     append("bukan diagnosis klinis definitif")
                                 }
-                                append(" atas gangguan pertumbuhan atau malnutrisi tanpa pemeriksaan langsung oleh dokter anak.")
+                                append(" atas gangguan pertumbuhan atau malnutrisi tanpa evaluasi langsung oleh dokter spesialis anak.")
                             }
                         }
                         DisclaimerFeatureItem(
-                            title = "Grafik Pertumbuhan Fenton (2013)",
+                            title = "Grafik Pertumbuhan Fenton 2025 (fentongrowth.ca)",
                             description = fentonDesc
                         )
 

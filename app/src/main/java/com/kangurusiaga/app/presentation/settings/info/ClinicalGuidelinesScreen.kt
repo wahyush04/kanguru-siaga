@@ -176,10 +176,10 @@ fun ClinicalGuidelinesScreen(
                     )
                 )
             ),
-            // 4. Fenton Growth Charts (2013)
+            // 4. Fenton Growth Charts (2025)
             GuidelineSource(
-                title = "Fenton Growth Charts (2013)",
-                badgeText = "Validasi Tanis R. Fenton & Jae H. Kim",
+                title = "Fenton Preterm Growth Charts (2025)",
+                badgeText = "Dr. Tanis Fenton & fentongrowth.ca",
                 badgeColor = colors.categoryRoseText,
                 badgeBg = colors.categoryRoseContainer,
                 icon = Icons.AutoMirrored.Filled.ShowChart,
@@ -188,11 +188,15 @@ fun ClinicalGuidelinesScreen(
                 iconBorder = colors.categoryRoseBorder,
                 content = GuidelineContent.Paragraph(
                     buildAnnotatedString {
-                        append("Grafik pertumbuhan persentil spesifik preterm untuk berat badan, panjang badan, dan lingkar kepala bayi prematur berdasarkan ")
-                        withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                            append("usia gestasi terkoreksi")
+                        append("Kurva pertumbuhan preterm generasi ketiga (Fenton 2025) karya Dr. Tanis Fenton, PhD, RD (University of Calgary) yang terintegrasi langsung via ")
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = colors.primary)) {
+                            append("fentongrowth.ca")
                         }
-                        append(" dari minggu ke-22 hingga minggu ke-50.")
+                        append(" untuk memantau berat badan, panjang badan, lingkar kepala, Z-score, dan laju pertumbuhan kejar (")
+                        withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                            append("catch-up growth")
+                        }
+                        append(") bayi prematur usia pasca-menstruasi (PMA) 22 hingga 50 minggu.")
                     }
                 )
             ),

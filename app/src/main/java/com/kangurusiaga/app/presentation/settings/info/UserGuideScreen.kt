@@ -84,6 +84,7 @@ import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.TextTertiary
 import com.kangurusiaga.app.core.designsystem.theme.White
+import androidx.core.net.toUri
 
 private data class FeatureCardData(
     val id: String,
@@ -573,14 +574,16 @@ fun UserGuideScreen(
                                     Text(
                                         text = stringResource(R.string.user_guide_support_btn_contact),
                                         style = KanguruTheme.typography.labelMedium,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.onPrimary
                                     )
                                 }
 
                                 OutlinedButton(
                                     onClick = {
                                         val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                                            data = Uri.parse("mailto:support@kangurusiaga.id?subject=Masukan%20Aplikasi%20Kanguru%20Siaga")
+                                            data =
+                                                "mailto:wahyush04@gmail.com?subject=Masukan%20Aplikasi%20Kanguru%20Siaga".toUri()
                                         }
                                         runCatching { context.startActivity(emailIntent) }
                                     },

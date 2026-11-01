@@ -140,7 +140,7 @@ fun AboutAppScreen(
             buildAnnotatedString {
                 append("Standar Pertumbuhan Prematur ")
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = primaryTextColor)) {
-                    append("Fenton Growth Charts (2013)")
+                    append("Fenton Growth Charts 2025 (Dr. Tanis Fenton & fentongrowth.ca)")
                 }
             },
             buildAnnotatedString {

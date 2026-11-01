@@ -392,7 +392,7 @@
 
     <string name="growth_chart_tab_chart">Grafik</string>
     <string name="growth_chart_tab_data">Data</string>
-    <string name="growth_chart_fenton_curve_title">Kurva Fenton 2013</string>
+    <string name="growth_chart_fenton_curve_title">Kurva Fenton 2025</string>
     <string name="growth_chart_cd_pma_info">Informasi Usia Koreksi</string>
     <string name="growth_chart_unit_weight">Berat (kg)</string>
     <string name="growth_chart_unit_length">Panjang (cm)</string>

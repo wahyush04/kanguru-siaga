@@ -1240,62 +1240,6 @@ private fun EvaluationMedicalSheetView(
             )
         }
 
-        // Doctor Endorsement & Digital Stamp
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = colors.surface),
-            border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(14.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = "Dokter Penanggung Jawab:",
-                        style = KanguruTheme.typography.labelSmall,
-                        color = colors.textSecondary
-                    )
-                    Text(
-                        text = "dr. Siti Nurhaliza, Sp.A(K) Neo",
-                        style = KanguruTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(colors.clinicalEmeraldBg)
-                        .border(1.dp, colors.clinicalEmeraldBorder, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Verified,
-                            contentDescription = null,
-                            tint = colors.clinicalEmeraldText,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Text(
-                            text = "Terverifikasi RS",
-                            style = KanguruTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.clinicalEmeraldText
-                        )
-                    }
-                }
-            }
-        }
-
         // Catatan Penting Nakes Disclaimer Box
         Card(
             shape = RoundedCornerShape(16.dp),

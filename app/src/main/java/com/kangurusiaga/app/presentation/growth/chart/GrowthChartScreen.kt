@@ -160,7 +160,7 @@ fun GrowthChartScreen(
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = "Standar Fenton 2013 (PMA 22 - 50 Minggu)",
+                            text = "Standar Fenton 2025 • fentongrowth.ca",
                             style = typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = colors.info,
