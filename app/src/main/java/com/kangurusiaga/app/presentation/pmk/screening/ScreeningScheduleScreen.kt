@@ -229,7 +229,7 @@ fun ScreeningScheduleScreen(
                             )
                             Text(
                                 text = "Kanguru Siaga Rawat Jalan",
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 color = colors.primary,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -400,14 +400,14 @@ private fun HeroScreeningCard(
                         ) {
                             Text(
                                 text = "PEDOMAN KLINIS",
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = colors.onPrimary
                             )
                         }
                         Text(
                             text = "BBLR / Prematur",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Medium,
                             color = colors.textSecondary
                         )
@@ -432,7 +432,7 @@ private fun HeroScreeningCard(
                             )
                             Text(
                                 text = "Diisi oleh Nakes",
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.clinicalEmeraldText
                             )
@@ -482,8 +482,8 @@ private fun HeroScreeningCard(
                                 color = colors.textPrimary
                             )
                             Text(
-                                text = "Koreksi: ${uiState.correctedAgeDisplay} | Lahir: ${uiState.birthDateDisplay}",
-                                style = KanguruTheme.typography.labelSmall,
+                                text = "Koreksi: ${uiState.correctedAgeDisplay} \nLahir: ${uiState.birthDateDisplay}",
+                                style = KanguruTheme.typography.labelMedium,
                                 color = colors.textSecondary
                             )
                         }
@@ -498,7 +498,7 @@ private fun HeroScreeningCard(
                     ) {
                         Text(
                             text = "Rawat Jalan Aktif",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = colors.clinicalEmeraldText
                         )
@@ -575,7 +575,7 @@ private fun PatientSummaryMedicalCard(
                                 ) {
                                     Text(
                                         text = "${uiState.baby.gestationalAgeWeeks} Mgg",
-                                        style = KanguruTheme.typography.labelSmall,
+                                        style = KanguruTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = colors.primary
                                     )
@@ -585,7 +585,7 @@ private fun PatientSummaryMedicalCard(
 
                         Text(
                             text = "Koreksi: ${uiState.correctedAgeDisplay} | Lahir: ${uiState.birthDateDisplay}",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             color = colors.textSecondary
                         )
                     }
@@ -600,7 +600,7 @@ private fun PatientSummaryMedicalCard(
                 ) {
                     Text(
                         text = "Rawat Jalan Aktif",
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = colors.clinicalEmeraldText
                     )
@@ -625,7 +625,7 @@ private fun PatientSummaryMedicalCard(
                     Column {
                         Text(
                             text = "Berat Lahir (BBLR)",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             color = colors.textSecondary
                         )
                         Spacer(modifier = Modifier.height(2.dp))
@@ -649,7 +649,7 @@ private fun PatientSummaryMedicalCard(
                     Column {
                         Text(
                             text = "Berat Terakhir (Kini)",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             color = colors.textSecondary
                         )
                         Spacer(modifier = Modifier.height(2.dp))
@@ -665,7 +665,7 @@ private fun PatientSummaryMedicalCard(
                             )
                             Text(
                                 text = uiState.weightGainDisplay,
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = colors.clinicalEmeraldSolid
                             )
@@ -693,7 +693,7 @@ private fun PatientSummaryMedicalCard(
                         )
                         Text(
                             text = "Kelengkapan Lembar Medis",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Medium,
                             color = colors.textSecondary
                         )
@@ -701,7 +701,7 @@ private fun PatientSummaryMedicalCard(
 
                     Text(
                         text = "${uiState.completedScreeningsCount} dari ${uiState.totalScreeningsCount} Selesai (${uiState.completionPercentage}%)",
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = colors.clinicalEmeraldText
                     )
@@ -772,7 +772,7 @@ private fun SegmentedScreeningTabs(
                     )
                     Text(
                         text = "Jadwal & Alarm (4)",
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = if (selectedTab == ScreeningTab.REMINDERS) FontWeight.Bold else FontWeight.Medium,
                         color = if (selectedTab == ScreeningTab.REMINDERS) colors.primary else colors.textSecondary
                     )
@@ -800,7 +800,7 @@ private fun SegmentedScreeningTabs(
                     )
                     Text(
                         text = "Hasil & Lembar Medis",
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = if (selectedTab == ScreeningTab.EVALUATION) FontWeight.Bold else FontWeight.Medium,
                         color = if (selectedTab == ScreeningTab.EVALUATION) colors.primary else colors.textSecondary
                     )
@@ -835,7 +835,7 @@ private fun RemindersView(
         ) {
             Text(
                 text = "SKRINING WAJIB BBLR",
-                style = KanguruTheme.typography.labelSmall,
+                style = KanguruTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = colors.textSecondary
             )
@@ -847,7 +847,7 @@ private fun RemindersView(
             ) {
                 Text(
                     text = "Semua Alarm Aktif",
-                    style = KanguruTheme.typography.labelSmall,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = colors.primary
                 )
@@ -940,7 +940,7 @@ private fun ScreeningCardItem(
                         ) {
                             Text(
                                 text = screening.categoryBadge.uppercase(),
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = badgeText
                             )
@@ -990,7 +990,7 @@ private fun ScreeningCardItem(
                             )
                             Text(
                                 text = "JADWAL ALARM PENDENGARAN:",
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = boxText
                             )
@@ -1014,9 +1014,9 @@ private fun ScreeningCardItem(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column {
-                                        Text(text = "Alarm 1", style = KanguruTheme.typography.labelSmall, color = colors.textSecondary)
-                                        Text(text = "2 Bln Kronologis", style = KanguruTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = colors.textPrimary)
-                                        Text(text = screening.targetDateFormatted, style = KanguruTheme.typography.labelSmall, color = boxText, fontWeight = FontWeight.SemiBold)
+                                        Text(text = "Alarm 1", style = KanguruTheme.typography.labelMedium, color = colors.textSecondary)
+                                        Text(text = "2 Bln Kronologis", style = KanguruTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = colors.textPrimary)
+                                        Text(text = screening.targetDateFormatted, style = KanguruTheme.typography.labelMedium, color = boxText, fontWeight = FontWeight.SemiBold)
                                     }
                                     Checkbox(
                                         checked = screening.isAlarmActive,
@@ -1040,9 +1040,9 @@ private fun ScreeningCardItem(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column {
-                                        Text(text = "Alarm 2 (Batas)", style = KanguruTheme.typography.labelSmall, color = colors.textSecondary)
-                                        Text(text = "3 Bln Kronologis", style = KanguruTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = colors.textPrimary)
-                                        Text(text = screening.targetDate2Formatted, style = KanguruTheme.typography.labelSmall, color = boxText, fontWeight = FontWeight.SemiBold)
+                                        Text(text = "Alarm 2 (Batas)", style = KanguruTheme.typography.labelMedium, color = colors.textSecondary)
+                                        Text(text = "3 Bln Kronologis", style = KanguruTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = colors.textPrimary)
+                                        Text(text = screening.targetDate2Formatted, style = KanguruTheme.typography.labelMedium, color = boxText, fontWeight = FontWeight.SemiBold)
                                     }
                                     Checkbox(
                                         checked = screening.isAlarm2Active,
@@ -1081,7 +1081,7 @@ private fun ScreeningCardItem(
                             Column {
                                 Text(
                                     text = "PENGINGAT WAKTU SKRINING:",
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = boxText
                                 )
@@ -1103,7 +1103,7 @@ private fun ScreeningCardItem(
                         ) {
                             Text(
                                 text = screening.targetDateFormatted,
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = boxText
                             )
@@ -1131,7 +1131,7 @@ private fun ScreeningCardItem(
                     )
                     Text(
                         text = screening.clinicalGoal,
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         color = colors.clinicalEmeraldText,
                         fontWeight = FontWeight.Medium
                     )
@@ -1153,20 +1153,20 @@ private fun ScreeningCardItem(
                 ) {
                     Text(
                         text = "Status: ",
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         color = colors.textSecondary
                     )
                     if (screening.isCompleted) {
                         Text(
                             text = "Selesai",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = colors.clinicalEmeraldText
                         )
                     } else {
                         Text(
                             text = "Belum Diperiksa",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = colors.clinicalRoseText
                         )
@@ -1189,7 +1189,7 @@ private fun ScreeningCardItem(
                     }
                     Text(
                         text = if (screening.isCompleted) "Edit Hasil" else btnTitle,
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = colors.onPrimary
                     )
@@ -1224,7 +1224,7 @@ private fun EvaluationMedicalSheetView(
         ) {
             Text(
                 text = "LEMBAR CATATAN KLINIS RESMI",
-                style = KanguruTheme.typography.labelSmall,
+                style = KanguruTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = colors.textSecondary
             )
@@ -1237,7 +1237,7 @@ private fun EvaluationMedicalSheetView(
             ) {
                 Text(
                     text = "Standard IDAI",
-                    style = KanguruTheme.typography.labelSmall,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = colors.primary
                 )
@@ -1349,7 +1349,7 @@ private fun ClinicalRecordCard(
                         ) {
                             Text(
                                 text = screening.categoryBadge.uppercase(),
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = badgeText
                             )
@@ -1386,7 +1386,7 @@ private fun ClinicalRecordCard(
                                 )
                                 Text(
                                     text = "Selesai",
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = colors.clinicalEmeraldText
                                 )
@@ -1404,10 +1404,10 @@ private fun ClinicalRecordCard(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                Text(text = "⏳", style = KanguruTheme.typography.labelSmall)
+                                Text(text = "⏳", style = KanguruTheme.typography.labelMedium)
                                 Text(
                                     text = "Belum Selesai",
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = colors.clinicalAmberText
                                 )
@@ -1418,7 +1418,7 @@ private fun ClinicalRecordCard(
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = examinationDate,
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         color = colors.textSecondary
                     )
                 }
@@ -1437,7 +1437,7 @@ private fun ClinicalRecordCard(
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
                             text = "HASIL TEMUAN & INTERPRETASI:",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,
                             color = colors.textSecondary
                         )
@@ -1480,13 +1480,13 @@ private fun ClinicalRecordCard(
                                 }
                                 Text(
                                     text = annotatedText,
-                                    style = KanguruTheme.typography.bodySmall,
+                                    style = KanguruTheme.typography.bodyMedium,
                                     color = colors.textPrimary
                                 )
                             } else {
                                 Text(
                                     text = cleanLine,
-                                    style = KanguruTheme.typography.bodySmall,
+                                    style = KanguruTheme.typography.bodyMedium,
                                     color = colors.textPrimary
                                 )
                             }
@@ -1549,7 +1549,7 @@ private fun ClinicalRecordCard(
                             )
                             Text(
                                 text = attachmentLabel,
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -1576,7 +1576,7 @@ private fun ClinicalRecordCard(
                             )
                             Text(
                                 text = "Edit",
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -1653,7 +1653,7 @@ private fun ClinicalRecordCard(
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
                                 text = "STATUS BELUM ADA HASIL PEMERIKSAAN:",
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.clinicalAmberText
                             )
@@ -1686,7 +1686,7 @@ private fun ClinicalRecordCard(
                         )
                         Text(
                             text = "Catat Hasil Sekarang",
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = colors.onPrimary
                         )
@@ -1843,7 +1843,7 @@ private fun AddScreeningDialog(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Batal", style = KanguruTheme.typography.labelSmall)
+                        Text("Batal", style = KanguruTheme.typography.labelMedium)
                     }
 
                     Button(
@@ -1853,7 +1853,7 @@ private fun AddScreeningDialog(
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
                     ) {
-                        Text("Simpan Jadwal", style = KanguruTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                        Text("Simpan Jadwal", style = KanguruTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
                     }
                 }
             }

@@ -283,7 +283,7 @@ private fun WelcomePageContent() {
         // Subtitle
         Text(
             text = stringResource(R.string.onboarding_welcome_desc),
-            style = KanguruTheme.typography.bodySmall,
+            style = KanguruTheme.typography.bodyMedium,
             color = KanguruTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -350,7 +350,7 @@ private fun ProfileIntroPageContent() {
 
         Text(
             text = stringResource(R.string.onboarding_profile_intro_desc),
-            style = KanguruTheme.typography.bodySmall,
+            style = KanguruTheme.typography.bodyMedium,
             color = KanguruTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 16.dp)

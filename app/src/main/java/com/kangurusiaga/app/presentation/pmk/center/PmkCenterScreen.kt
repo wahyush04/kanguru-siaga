@@ -37,6 +37,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +61,7 @@ import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.presentation.home.HomeBottomBar
 import com.kangurusiaga.app.presentation.home.HomeTab
+import com.kangurusiaga.app.presentation.pmk.components.PmkScreeningInfoBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +78,8 @@ fun PmkCenterScreen(
     onNavigateToProfile: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var showScreeningInfoSheet by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = BrandBackground,
@@ -226,12 +233,22 @@ fun PmkCenterScreen(
                     iconVector = Icons.Default.Description,
                     iconBgColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.clinicalPurpleBg,
                     iconTintColor = com.kangurusiaga.app.core.designsystem.theme.KanguruTheme.colors.clinicalPurpleText,
-                    onClick = onNavigateToScreeningSchedule
+                    onClick = { showScreeningInfoSheet = true }
                 )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
         }
+    }
+
+    if (showScreeningInfoSheet) {
+        PmkScreeningInfoBottomSheet(
+            onDismiss = { showScreeningInfoSheet = false },
+            onConfirm = {
+                showScreeningInfoSheet = false
+                onNavigateToScreeningSchedule()
+            }
+        )
     }
 }
 

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Kanguru Siaga</string>
     <string name="common_back">Kembali</string>
+    <string name="common_close">Tutup</string>
 
     <!-- Baby Profile Setup & Confirmation -->
     <string name="baby_profile_header_tag">IDENTITAS BAYI</string>
@@ -430,7 +431,7 @@
 
     <!-- Splash Module -->
     <string name="splash_mascot_cd">Maskot Kanguru Siaga</string>
-    <string name="splash_subtitle">Pendamping perawatan BBLR di rumah</string>
+    <string name="splash_subtitle">\"Pendamping Perawatan\" \nKhusus Bayi Kecil Dirumah </string>
     <string name="splash_btn_start">Mulai</string>
 
     <!-- PMK Module -->
@@ -448,6 +449,21 @@
     <string name="pmk_center_menu_history_sub">Lihat catatan sesi PMK</string>
     <string name="pmk_center_menu_screening_title">Jadwal Skrining Bayi Prematur</string>
     <string name="pmk_center_menu_screening_sub">Saat rawat jalan</string>
+
+    <!-- PMK Screening KIA Info Bottom Sheet (Stitch Screen: 22e36bb0724444b7a370c19a37006994) -->
+    <string name="pmk_screening_info_title">Informasi Jadwal Skrining</string>
+    <string name="pmk_screening_info_tag">Buku KIA Khusus Bayi Kecil 2021</string>
+    <string name="pmk_screening_info_callout_part1">Jadwal dan indikasi skrining bayi prematur di aplikasi </string>
+    <string name="pmk_screening_info_callout_app_name">Kanguru Siaga</string>
+    <string name="pmk_screening_info_callout_part2"> dirujuk langsung dari </string>
+    <string name="pmk_screening_info_callout_reference">Buku KIA Khusus Bayi Kecil (Kemenkes RI, 2021)</string>
+    <string name="pmk_screening_info_callout_part3"> untuk memastikan pemantauan organ vital si kecil tepat waktu saat rawat jalan.</string>
+    <string name="pmk_screening_info_section_title">Panduan Penapisan Rawat Jalan</string>
+    <string name="pmk_screening_info_badge_kemenkes">Kemenkes RI</string>
+    <string name="pmk_screening_info_image_cd">Tabel Penapisan Bayi Prematur Saat Rawat Jalan Buku KIA Khusus Bayi Kecil Kemenkes RI</string>
+    <string name="pmk_screening_info_source_caption">Sumber: Buku KIA Khusus Bayi Kecil — Kementerian Kesehatan RI &amp; IDAI</string>
+    <string name="pmk_screening_info_btn_cancel">Batal</string>
+    <string name="pmk_screening_info_btn_continue">Lanjutkan</string>
 
     <!-- Premature Infant Screening Module (Jadwal & Evaluasi Penapisan) -->
     <string name="screening_schedule_title">Jadwal &amp; Evaluasi Penapisan</string>
