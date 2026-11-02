@@ -35,10 +35,11 @@ class PmkReminderScheduler @Inject constructor(
             targetMinutes = reminder.targetMinutes,
             hour = reminder.timeHour,
             minute = reminder.timeMinute,
-            repeatDaily = reminder.repeatDaily
+            repeatDaily = reminder.repeatDaily,
+            scheduledTriggerTime = triggerTime
         )
 
-        scheduleAlarm(triggerTime, pendingIntent)
+        scheduleAlarm(triggerTime, pendingIntent, reminder.id)
     }
 
     fun scheduleNextOccurrence(
@@ -50,8 +51,16 @@ class PmkReminderScheduler @Inject constructor(
         repeatDaily: Boolean = true
     ) {
         val nextTriggerTime = computeNextTriggerTime(hour, minute, allowToday = false)
-        val pendingIntent = createPendingIntent(reminderId, label, targetMinutes, hour, minute, repeatDaily)
-        scheduleAlarm(nextTriggerTime, pendingIntent)
+        val pendingIntent = createPendingIntent(
+            reminderId = reminderId,
+            label = label,
+            targetMinutes = targetMinutes,
+            hour = hour,
+            minute = minute,
+            repeatDaily = repeatDaily,
+            scheduledTriggerTime = nextTriggerTime
+        )
+        scheduleAlarm(nextTriggerTime, pendingIntent, reminderId)
     }
 
     fun cancelReminder(reminderId: Long) {
@@ -77,35 +86,54 @@ class PmkReminderScheduler @Inject constructor(
         }
     }
 
-    private fun scheduleAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent) {
+    private fun scheduleAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent, reminderId: Long) {
         if (alarmManager == null) return
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    pendingIntent
-                )
-            } else {
-                alarmManager.setAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    pendingIntent
-                )
+        try {
+            val showIntent = Intent(context, com.kangurusiaga.app.MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra("navigate_to", "pmk_timer")
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                pendingIntent
+            val showPendingIntent = PendingIntent.getActivity(
+                context,
+                reminderId.toInt(),
+                showIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-        } else {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                pendingIntent
-            )
+            val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, showPendingIntent)
+            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+        } catch (_: SecurityException) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerAtMillis,
+                            pendingIntent
+                        )
+                    } else {
+                        alarmManager.setAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerAtMillis,
+                            pendingIntent
+                        )
+                    }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerAtMillis,
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.setExact(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerAtMillis,
+                        pendingIntent
+                    )
+                }
+            } catch (_: SecurityException) {
+                // Gracefully handle exact alarm permission rejection
+            }
         }
     }
 
@@ -131,7 +159,8 @@ class PmkReminderScheduler @Inject constructor(
         targetMinutes: Int,
         hour: Int,
         minute: Int,
-        repeatDaily: Boolean = true
+        repeatDaily: Boolean = true,
+        scheduledTriggerTime: Long = 0L
     ): PendingIntent {
         val intent = Intent(context, PmkAlarmReceiver::class.java).apply {
             putExtra(PmkAlarmReceiver.EXTRA_REMINDER_ID, reminderId)
@@ -140,6 +169,7 @@ class PmkReminderScheduler @Inject constructor(
             putExtra(PmkAlarmReceiver.EXTRA_HOUR, hour)
             putExtra(PmkAlarmReceiver.EXTRA_MINUTE, minute)
             putExtra(PmkAlarmReceiver.EXTRA_REPEAT_DAILY, repeatDaily)
+            putExtra(PmkAlarmReceiver.EXTRA_SCHEDULED_TRIGGER_TIME, scheduledTriggerTime)
         }
 
         return PendingIntent.getBroadcast(

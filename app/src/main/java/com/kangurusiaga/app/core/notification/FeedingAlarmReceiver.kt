@@ -39,50 +39,58 @@ class FeedingAlarmReceiver : BroadcastReceiver() {
         val methodDisplayName = intent.getStringExtra(EXTRA_METHOD) ?: "OGT/NGT"
         val offsetMinutes = intent.getIntExtra(EXTRA_OFFSET_MINUTES, 0)
         val repeatType = intent.getStringExtra(EXTRA_REPEAT_TYPE) ?: RepeatType.DAILY.name
+        val scheduledTriggerTime = intent.getLongExtra(EXTRA_SCHEDULED_TRIGGER_TIME, 0L)
 
-        // 1. Show system status bar notification
-        notificationManager.showFeedingReminderNotification(
-            scheduleId = scheduleId,
-            volumeMl = volumeMl,
-            methodDisplayName = methodDisplayName
-        )
+        val now = System.currentTimeMillis()
+        // If the alarm is stale (triggered > 30 minutes after scheduled time because device was off or in Doze mode),
+        // suppress status bar & in-app notifications so user is not bombarded with simultaneous obsolete reminders upon app launch.
+        val isStale = scheduledTriggerTime > 0L && (now - scheduledTriggerTime) > 30 * 60 * 1000L
 
-        // 2. Insert into In-App Notifications table so it appears in NotificationScreen
-        val pendingResult = goAsync()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val baby = babyDao.getActiveBabyOnce() ?: babyDao.getFirstBaby()
-                val babyId = baby?.id ?: 1L
-                val babyName = baby?.name ?: "si kecil"
-                val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
+        if (!isStale) {
+            // 1. Show system status bar notification
+            notificationManager.showFeedingReminderNotification(
+                scheduleId = scheduleId,
+                volumeMl = volumeMl,
+                methodDisplayName = methodDisplayName
+            )
 
-                inAppNotificationDao.insertOrUpdate(
-                    InAppNotificationEntity(
-                        id = 0L,
-                        babyId = babyId,
-                        category = NotificationCategory.FEEDING_ALARM.name,
-                        referenceId = scheduleId,
-                        title = "Waktunya Pemberian ASI (OGT/Oral)",
-                        message = "Jadwal minum ASI $volumeMl ml untuk $babyName. Pastikan posisi bayi semi-elevasi 30°–45° untuk keamanan pencernaan.",
-                        badgeLabel = "Jadwal ASI $formattedTime",
-                        badgeColor = NotificationBadgeColor.BLUE.name,
-                        timeLabel = "Baru saja",
-                        targetInfo = null,
-                        isRead = false,
-                        isToday = true,
-                        primaryActionLabel = "Konfirmasi Selesai",
-                        secondaryActionLabel = "Buka Detail",
-                        timestampEpoch = System.currentTimeMillis()
+            // 2. Insert into In-App Notifications table so it appears in NotificationScreen
+            val pendingResult = goAsync()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val baby = babyDao.getActiveBabyOnce() ?: babyDao.getFirstBaby()
+                    val babyId = baby?.id ?: 1L
+                    val babyName = baby?.name ?: "si kecil"
+                    val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
+
+                    inAppNotificationDao.insertOrUpdate(
+                        InAppNotificationEntity(
+                            id = 0L,
+                            babyId = babyId,
+                            category = NotificationCategory.FEEDING_ALARM.name,
+                            referenceId = scheduleId,
+                            title = "Waktunya Pemberian ASI (OGT/Oral)",
+                            message = "Jadwal minum ASI $volumeMl ml untuk $babyName. Pastikan posisi bayi semi-elevasi 30°–45° untuk keamanan pencernaan.",
+                            badgeLabel = "Jadwal ASI $formattedTime",
+                            badgeColor = NotificationBadgeColor.BLUE.name,
+                            timeLabel = "Baru saja",
+                            targetInfo = null,
+                            isRead = false,
+                            isToday = true,
+                            primaryActionLabel = "Konfirmasi Selesai",
+                            secondaryActionLabel = "Buka Detail",
+                            timestampEpoch = System.currentTimeMillis()
+                        )
                     )
-                )
-            } catch (_: Exception) {
-                // Silently handle error
-            } finally {
-                pendingResult.finish()
+                } catch (_: Exception) {
+                    // Silently handle error
+                } finally {
+                    pendingResult.finish()
+                }
             }
         }
 
-        // 3. Reschedule for next day if DAILY
+        // 3. Reschedule for next day if DAILY (always reschedule even if stale, ensuring tomorrow fires normally)
         if (repeatType == RepeatType.DAILY.name) {
             reminderScheduler.scheduleNextOccurrence(
                 scheduleId = scheduleId,
@@ -103,5 +111,6 @@ class FeedingAlarmReceiver : BroadcastReceiver() {
         const val EXTRA_METHOD = "extra_method"
         const val EXTRA_OFFSET_MINUTES = "extra_offset_minutes"
         const val EXTRA_REPEAT_TYPE = "extra_repeat_type"
+        const val EXTRA_SCHEDULED_TRIGGER_TIME = "extra_scheduled_trigger_time"
     }
 }

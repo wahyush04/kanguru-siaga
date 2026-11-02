@@ -1,6 +1,12 @@
 package com.kangurusiaga.app.presentation.growth.chart
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,6 +35,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -47,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
@@ -77,6 +85,18 @@ fun GrowthChartScreen(
 
     val isBoy = uiState.baby?.gender != Gender.FEMALE
     val babyName = uiState.baby?.name?.takeIf { it.isNotBlank() } ?: "Data Bayi"
+
+    val storagePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            viewModel.saveChartToGallery { success, message ->
+                Toast.makeText(context, message, if (success) Toast.LENGTH_SHORT else Toast.LENGTH_LONG).show()
+            }
+        } else {
+            Toast.makeText(context, "Izin penyimpanan dibutuhkan untuk menyimpan ke galeri", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     // Derive avatar initials
     val initials = remember(babyName) {
@@ -183,24 +203,33 @@ fun GrowthChartScreen(
 
                         IconButton(
                             onClick = {
-                                val sendIntent = Intent().apply {
-                                    action = Intent.ACTION_SEND
-                                    putExtra(
-                                        Intent.EXTRA_TEXT,
-                                        "Grafik Pertumbuhan Fenton: $babyName\nPMA: ${uiState.currentPmaWeeks.toInt()} Minggu\nBB: ${String.format(Locale.US, "%.3f", currentWeightKg)} kg\nPB: ${String.format(Locale.US, "%.1f", currentLengthCm)} cm\nLK: ${String.format(Locale.US, "%.1f", currentHeadCircCm)} cm"
-                                    )
-                                    type = "text/plain"
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ||
+                                    ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                                ) {
+                                    viewModel.saveChartToGallery { success, message ->
+                                        Toast.makeText(context, message, if (success) Toast.LENGTH_SHORT else Toast.LENGTH_LONG).show()
+                                    }
+                                } else {
+                                    storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 }
-                                context.startActivity(Intent.createChooser(sendIntent, "Bagikan Data Pertumbuhan"))
                             },
+                            enabled = !uiState.isSavingToGallery,
                             modifier = Modifier.size(34.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.FileDownload,
-                                contentDescription = "Unduh Grafik",
-                                tint = colors.textSecondary,
-                                modifier = Modifier.size(20.dp)
-                            )
+                            if (uiState.isSavingToGallery) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    strokeWidth = 2.dp,
+                                    color = colors.primary
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.FileDownload,
+                                    contentDescription = "Simpan Grafik ke Galeri",
+                                    tint = colors.textSecondary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
                         }
                     }
                 }

@@ -1,6 +1,11 @@
 package com.kangurusiaga.app.presentation.growth.chart
 
+import android.content.ContentValues
 import android.content.Context
+import android.media.MediaScannerConnection
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +21,7 @@ import com.kangurusiaga.app.domain.repository.GrowthRepository
 import com.kangurusiaga.app.domain.usecase.EnsureInitialGrowthDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +31,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 data class GrowthChartUiState(
@@ -59,7 +72,8 @@ data class GrowthChartUiState(
     val fentonChartTimestamp: Long = 0L,
     val isFentonApiLoading: Boolean = true,
     val fentonApiErrorMessage: String? = null,
-    val fentonApiSuccess: Boolean = false
+    val fentonApiSuccess: Boolean = false,
+    val isSavingToGallery: Boolean = false
 )
 
 @HiltViewModel
@@ -401,6 +415,126 @@ class GrowthChartViewModel @Inject constructor(
         viewModelScope.launch {
             growthRepository.deleteMeasurement(id)
             fentonGrowthRepository.deleteRecordById(id)
+        }
+    }
+
+    /**
+     * Menyimpan gambar grafik Fenton ke Galeri (MediaStore) perangkat.
+     */
+    fun saveChartToGallery(onComplete: (Boolean, String) -> Unit) {
+        val state = _uiState.value
+        val baby = state.baby
+        if (baby == null) {
+            onComplete(false, "Data bayi belum tersedia")
+            return
+        }
+
+        if (state.isFentonApiLoading) {
+            onComplete(false, "Grafik sedang dimuat, silakan tunggu sebentar...")
+            return
+        }
+
+        val localFile = state.fentonChartLocalPath?.let { File(it) }?.takeIf { it.exists() && it.length() > 0 }
+            ?: File(context.cacheDir, "fenton_chart_${baby.id}.jpg").takeIf { it.exists() && it.length() > 0 }
+
+        val imageUrl = state.fentonChartImageUrl
+
+        if (localFile == null && imageUrl.isNullOrBlank()) {
+            onComplete(false, "Grafik belum tersedia. Silakan muat ulang grafik terlebih dahulu.")
+            return
+        }
+
+        _uiState.update { it.copy(isSavingToGallery = true) }
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                saveImageToMediaStore(context, localFile, imageUrl, baby.name)
+            }
+            _uiState.update { it.copy(isSavingToGallery = false) }
+            result.onSuccess { message ->
+                onComplete(true, message)
+            }.onFailure { err ->
+                onComplete(false, err.message ?: "Gagal menyimpan grafik ke galeri")
+            }
+        }
+    }
+
+    private fun saveImageToMediaStore(
+        context: Context,
+        sourceFile: File?,
+        imageUrl: String?,
+        babyName: String
+    ): Result<String> {
+        return try {
+            val sanitizedName = babyName
+                .replace("[^a-zA-Z0-9_-]".toRegex(), "_")
+                .trim('_')
+                .ifBlank { "Bayi" }
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val displayName = "Grafik_Fenton_${sanitizedName}_$timeStamp.jpg"
+
+            val resolver = context.contentResolver
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, displayName)
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + "KanguruSiaga")
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+            }
+
+            val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                ?: return Result.failure(IOException("Gagal membuat entri gambar di Galeri"))
+
+            try {
+                resolver.openOutputStream(imageUri).use { outStream ->
+                    if (outStream == null) throw IOException("Gagal membuka penyimpanan galeri")
+
+                    if (sourceFile != null && sourceFile.exists() && sourceFile.length() > 0) {
+                        sourceFile.inputStream().use { inStream ->
+                            inStream.copyTo(outStream)
+                        }
+                    } else if (!imageUrl.isNullOrBlank()) {
+                        val url = URL(imageUrl)
+                        val conn = (url.openConnection() as HttpURLConnection).apply {
+                            connectTimeout = 15_000
+                            readTimeout = 15_000
+                            requestMethod = "GET"
+                        }
+                        if (conn.responseCode == HttpURLConnection.HTTP_OK) {
+                            conn.inputStream.use { inStream ->
+                                inStream.copyTo(outStream)
+                            }
+                        } else {
+                            throw IOException("Gagal mengunduh gambar grafik (${conn.responseCode})")
+                        }
+                    } else {
+                        throw IOException("File gambar grafik tidak ditemukan")
+                    }
+                    outStream.flush()
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    contentValues.clear()
+                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    resolver.update(imageUri, contentValues, null, null)
+                } else {
+                    MediaScannerConnection.scanFile(
+                        context,
+                        arrayOf(imageUri.path ?: ""),
+                        arrayOf("image/jpeg"),
+                        null
+                    )
+                }
+
+                Result.success("Grafik Fenton berhasil disimpan ke Galeri")
+            } catch (e: Exception) {
+                try {
+                    resolver.delete(imageUri, null, null)
+                } catch (_: Exception) {}
+                Result.failure(e)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

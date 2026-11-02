@@ -69,6 +69,8 @@ class KanguruNotificationManager @Inject constructor(
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Pengingat jadwal minum ASI/OGT"
+                enableVibration(true)
+                lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
             }
 
             val screeningChannel = NotificationChannel(
@@ -146,7 +148,7 @@ class KanguruNotificationManager @Inject constructor(
             putExtra("navigate_to", "feeding")
         }
 
-        val notificationId = (NOTIFICATION_ID_FEEDING_BASE + (scheduleId % 1000)).toInt()
+        val notificationId = NOTIFICATION_ID_FEEDING_BASE
         val pendingIntent = PendingIntent.getActivity(
             context,
             notificationId,
@@ -162,7 +164,9 @@ class KanguruNotificationManager @Inject constructor(
             .setContentTitle(title)
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 

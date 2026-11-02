@@ -41,44 +41,60 @@ class PmkAlarmReceiver : BroadcastReceiver() {
         val hour = intent.getIntExtra(EXTRA_HOUR, 8)
         val minute = intent.getIntExtra(EXTRA_MINUTE, 0)
         val repeatDaily = intent.getBooleanExtra(EXTRA_REPEAT_DAILY, true)
+        val scheduledTriggerTime = intent.getLongExtra(EXTRA_SCHEDULED_TRIGGER_TIME, 0L)
 
-        // Show system status bar notification
-        notificationManager.showPmkReminderNotification(label, targetMinutes)
+        val now = System.currentTimeMillis()
+        val isStale = scheduledTriggerTime > 0L && (now - scheduledTriggerTime) > 30 * 60 * 1000L
 
-        // Insert into In-App Notification database
-        val pendingResult = goAsync()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val baby = babyDao.getActiveBabyOnce() ?: babyDao.getFirstBaby()
-                val babyId = baby?.id ?: 1L
-                val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
+        if (!isStale) {
+            // Show system status bar notification
+            notificationManager.showPmkReminderNotification(label, targetMinutes)
 
-                inAppNotificationDao.insertOrUpdate(
-                    InAppNotificationEntity(
-                        id = 0L,
-                        babyId = babyId,
-                        category = NotificationCategory.PMK_REMINDER.name,
-                        referenceId = reminderId,
-                        title = "Lanjutkan PMK Kontinu Mandiri di Rumah",
-                        message = "Yuk Bunda/Ayah, mulai sesi kontak kulit ke kulit ($label) selama $targetMinutes menit untuk kenyamanan dan kehangatan si kecil.",
-                        badgeLabel = "PMK ($formattedTime)",
-                        badgeColor = NotificationBadgeColor.PINK.name,
-                        timeLabel = "Baru saja",
-                        targetInfo = null,
-                        isRead = false,
-                        isToday = true,
-                        primaryActionLabel = "Mulai PMK Kontinu",
-                        secondaryActionLabel = null,
-                        timestampEpoch = System.currentTimeMillis()
+            // Insert into In-App Notification database
+            val pendingResult = goAsync()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val baby = babyDao.getActiveBabyOnce() ?: babyDao.getFirstBaby()
+                    val babyId = baby?.id ?: 1L
+                    val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
+
+                    inAppNotificationDao.insertOrUpdate(
+                        InAppNotificationEntity(
+                            id = 0L,
+                            babyId = babyId,
+                            category = NotificationCategory.PMK_REMINDER.name,
+                            referenceId = reminderId,
+                            title = "Lanjutkan PMK Kontinu Mandiri di Rumah",
+                            message = "Yuk Bunda/Ayah, mulai sesi kontak kulit ke kulit ($label) selama $targetMinutes menit untuk kenyamanan dan kehangatan si kecil.",
+                            badgeLabel = "PMK ($formattedTime)",
+                            badgeColor = NotificationBadgeColor.PINK.name,
+                            timeLabel = "Baru saja",
+                            targetInfo = null,
+                            isRead = false,
+                            isToday = true,
+                            primaryActionLabel = "Mulai PMK Kontinu",
+                            secondaryActionLabel = null,
+                            timestampEpoch = System.currentTimeMillis()
+                        )
                     )
-                )
 
-                if (!repeatDaily) {
-                    reminderRepository.toggleReminder(reminderId, false)
+                    if (!repeatDaily) {
+                        reminderRepository.toggleReminder(reminderId, false)
+                    }
+                } catch (_: Exception) {
+                } finally {
+                    pendingResult.finish()
                 }
-            } catch (_: Exception) {
-            } finally {
-                pendingResult.finish()
+            }
+        } else if (!repeatDaily) {
+            val pendingResult = goAsync()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    reminderRepository.toggleReminder(reminderId, false)
+                } catch (_: Exception) {
+                } finally {
+                    pendingResult.finish()
+                }
             }
         }
 
@@ -95,5 +111,6 @@ class PmkAlarmReceiver : BroadcastReceiver() {
         const val EXTRA_HOUR = "extra_hour"
         const val EXTRA_MINUTE = "extra_minute"
         const val EXTRA_REPEAT_DAILY = "extra_repeat_daily"
+        const val EXTRA_SCHEDULED_TRIGGER_TIME = "extra_scheduled_trigger_time"
     }
 }

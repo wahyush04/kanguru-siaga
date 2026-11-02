@@ -54,10 +54,11 @@ class FeedingReminderSchedulerImpl @Inject constructor(
             volumeMl = schedule.volumeMl,
             methodDisplayName = schedule.method.displayName,
             offsetMinutes = offsetMinutes,
-            repeatType = schedule.repeatType.name
+            repeatType = schedule.repeatType.name,
+            scheduledTriggerTime = triggerTime
         )
 
-        scheduleAlarm(triggerTime, pendingIntent)
+        scheduleAlarm(triggerTime, pendingIntent, schedule.id)
     }
 
     override fun cancel(scheduleId: Long) {
@@ -114,45 +115,64 @@ class FeedingReminderSchedulerImpl @Inject constructor(
             volumeMl = volumeMl,
             methodDisplayName = methodDisplayName,
             offsetMinutes = 0,
-            repeatType = RepeatType.DAILY.name
+            repeatType = RepeatType.DAILY.name,
+            scheduledTriggerTime = nextTriggerTime
         )
 
-        scheduleAlarm(nextTriggerTime, pendingIntent)
+        scheduleAlarm(nextTriggerTime, pendingIntent, scheduleId)
     }
 
-    private fun scheduleAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent) {
+    private fun scheduleAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent, scheduleId: Long) {
         if (alarmManager == null) return
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (alarmManager.canScheduleExactAlarms()) {
+            // Provide a show intent that opens the feeding alarm screen when user taps the alarm clock icon in system UI
+            val showIntent = Intent(context, com.kangurusiaga.app.MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra("navigate_to", "feeding")
+            }
+            val showPendingIntent = PendingIntent.getActivity(
+                context,
+                (scheduleId % Int.MAX_VALUE).toInt(),
+                showIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, showPendingIntent)
+            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+        } catch (_: SecurityException) {
+            // Fallback for custom ROMs or environments where setAlarmClock might be restricted
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerAtMillis,
+                            pendingIntent
+                        )
+                    } else {
+                        alarmManager.setAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerAtMillis,
+                            pendingIntent
+                        )
+                    }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         triggerAtMillis,
                         pendingIntent
                     )
                 } else {
-                    alarmManager.setAndAllowWhileIdle(
+                    alarmManager.setExact(
                         AlarmManager.RTC_WAKEUP,
                         triggerAtMillis,
                         pendingIntent
                     )
                 }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    pendingIntent
-                )
-            } else {
-                alarmManager.setExact(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    pendingIntent
-                )
+            } catch (_: SecurityException) {
+                // Gracefully handle exact alarm permission rejection
             }
-        } catch (_: SecurityException) {
-            // Gracefully handle exact alarm permission rejection
         }
     }
 
@@ -187,7 +207,8 @@ class FeedingReminderSchedulerImpl @Inject constructor(
         volumeMl: Int,
         methodDisplayName: String,
         offsetMinutes: Int,
-        repeatType: String
+        repeatType: String,
+        scheduledTriggerTime: Long
     ): PendingIntent {
         val intent = Intent(context, FeedingAlarmReceiver::class.java).apply {
             putExtra(FeedingAlarmReceiver.EXTRA_SCHEDULE_ID, scheduleId)
@@ -197,6 +218,7 @@ class FeedingReminderSchedulerImpl @Inject constructor(
             putExtra(FeedingAlarmReceiver.EXTRA_METHOD, methodDisplayName)
             putExtra(FeedingAlarmReceiver.EXTRA_OFFSET_MINUTES, offsetMinutes)
             putExtra(FeedingAlarmReceiver.EXTRA_REPEAT_TYPE, repeatType)
+            putExtra(FeedingAlarmReceiver.EXTRA_SCHEDULED_TRIGGER_TIME, scheduledTriggerTime)
         }
 
         val requestCode = (scheduleId % Int.MAX_VALUE).toInt()

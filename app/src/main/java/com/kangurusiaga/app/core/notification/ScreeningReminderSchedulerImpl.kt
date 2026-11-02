@@ -38,7 +38,7 @@ class ScreeningReminderSchedulerImpl @Inject constructor(
             val triggerTime = computeTriggerTime(screening.targetDateEpoch)
             if (triggerTime != null) {
                 val pendingIntent = createPendingIntent(screening, alarmIndex = 1)
-                scheduleAlarm(triggerTime, pendingIntent)
+                scheduleAlarm(triggerTime, pendingIntent, (screening.id * 10 + 1).toInt())
             } else {
                 cancel(screening.id, alarmIndex = 1)
             }
@@ -52,7 +52,7 @@ class ScreeningReminderSchedulerImpl @Inject constructor(
                 val triggerTime2 = computeTriggerTime(screening.targetDateEpoch2)
                 if (triggerTime2 != null) {
                     val pendingIntent2 = createPendingIntent(screening, alarmIndex = 2)
-                    scheduleAlarm(triggerTime2, pendingIntent2)
+                    scheduleAlarm(triggerTime2, pendingIntent2, (screening.id * 10 + 2).toInt())
                 } else {
                     cancel(screening.id, alarmIndex = 2)
                 }
@@ -141,35 +141,54 @@ class ScreeningReminderSchedulerImpl @Inject constructor(
         return PendingIntent.getBroadcast(context, requestCode, intent, flags)
     }
 
-    private fun scheduleAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent) {
+    private fun scheduleAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent, requestCode: Int) {
         if (alarmManager == null) return
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    pendingIntent
-                )
-            } else {
-                alarmManager.setAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    pendingIntent
-                )
+        try {
+            val showIntent = Intent(context, com.kangurusiaga.app.MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra("navigate_to", "screening_schedule")
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                pendingIntent
+            val showPendingIntent = PendingIntent.getActivity(
+                context,
+                requestCode,
+                showIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-        } else {
-            alarmManager.set(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                pendingIntent
-            )
+            val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, showPendingIntent)
+            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+        } catch (_: SecurityException) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerAtMillis,
+                            pendingIntent
+                        )
+                    } else {
+                        alarmManager.setAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerAtMillis,
+                            pendingIntent
+                        )
+                    }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerAtMillis,
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.set(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerAtMillis,
+                        pendingIntent
+                    )
+                }
+            } catch (_: SecurityException) {
+                // Gracefully handle
+            }
         }
     }
 }
