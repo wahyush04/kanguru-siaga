@@ -52,11 +52,19 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
                 } catch (_: Exception) {}
             }
 
-            // Jika ada bayi riil yang tersimpan, pastikan salah satunya aktif
-            if (realBabies.isNotEmpty() && realBabies.none { it.isActive }) {
-                val toActivate = realBabies.first()
-                babyDao.updateBaby(toActivate.copy(isActive = true))
-                AppLogger.i("EnsureInitialGrowthDataUseCase", "Mengaktifkan profil bayi riil: ${toActivate.name} (id=${toActivate.id})")
+            // Memastikan hanya ada 1 profil bayi di dalam aplikasi
+            if (realBabies.isNotEmpty()) {
+                val singleBaby = realBabies.last()
+                for (other in realBabies.filter { it.id != singleBaby.id }) {
+                    growthMeasurementDao.deleteAllForBaby(other.id)
+                    growthRecordDao.deleteAllForBaby(other.id)
+                    babyProfileDao.deleteProfileByBabyId(other.id)
+                    babyDao.deleteBabyById(other.id)
+                }
+                babyDao.updateBaby(singleBaby.copy(isActive = true))
+                babyDao.deleteAllExcept(singleBaby.id)
+                babyProfileDao.deleteAllExcept(singleBaby.id)
+                AppLogger.i("EnsureInitialGrowthDataUseCase", "Memastikan satu-satunya profil bayi: ${singleBaby.name} (id=${singleBaby.id})")
             }
         } catch (e: Exception) {
             AppLogger.e("EnsureInitialGrowthDataUseCase", "Gagal membersihkan data mock: ${e.message}", e)
@@ -86,6 +94,7 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
                 birthHeadCircumferenceCm = baby.birthHeadCircumferenceCm.toDouble()
             )
             babyProfileDao.insertProfile(fentonProfile)
+            babyProfileDao.deleteAllExcept(baby.id)
 
             // 2. Evaluasi persentil berat lahir berdasarkan kurva Fenton 2013
             val eval = FentonReferenceData.evaluatePercentile(

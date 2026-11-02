@@ -267,7 +267,7 @@ fun FentonInternetConfirmationDialog(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "Lanjutkan ke Grafik Pertumbuhan",
+                                    text = "Lanjutkan Catat Pengukuran",
                                     style = typography.labelLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = colors.onPrimary

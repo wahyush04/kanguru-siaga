@@ -34,6 +34,7 @@ class GrowthBatchMeasurementViewModelTest {
     private val saveBatchGrowthRecordsUseCase: SaveBatchGrowthRecordsUseCase = mockk(relaxed = true)
     private val fentonGrowthApiClient: com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient = mockk(relaxed = true)
     private val growthRepository: com.kangurusiaga.app.domain.repository.GrowthRepository = mockk(relaxed = true)
+    private val fentonGrowthRepository: com.kangurusiaga.app.data.repository.FentonGrowthRepository = mockk(relaxed = true)
 
     private val testBaby = Baby(
         id = 1L,
@@ -50,13 +51,15 @@ class GrowthBatchMeasurementViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { babyRepository.getActiveBaby() } returns flowOf(testBaby)
+        every { fentonGrowthRepository.getPatientRecords(any()) } returns flowOf(emptyList())
 
         viewModel = GrowthBatchMeasurementViewModel(
             babyRepository = babyRepository,
             ensureInitialGrowthDataUseCase = ensureInitialGrowthDataUseCase,
             saveBatchGrowthRecordsUseCase = saveBatchGrowthRecordsUseCase,
             fentonGrowthApiClient = fentonGrowthApiClient,
-            growthRepository = growthRepository
+            growthRepository = growthRepository,
+            fentonGrowthRepository = fentonGrowthRepository
         )
     }
 
@@ -94,7 +97,8 @@ class GrowthBatchMeasurementViewModelTest {
             ensureInitialGrowthDataUseCase = ensureInitialGrowthDataUseCase,
             saveBatchGrowthRecordsUseCase = saveBatchGrowthRecordsUseCase,
             fentonGrowthApiClient = fentonGrowthApiClient,
-            growthRepository = growthRepository
+            growthRepository = growthRepository,
+            fentonGrowthRepository = fentonGrowthRepository
         )
         advanceUntilIdle()
 

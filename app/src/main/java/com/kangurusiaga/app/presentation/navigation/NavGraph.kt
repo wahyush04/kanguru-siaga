@@ -138,7 +138,7 @@ fun KanguruNavGraph(
                     }
                 },
                 onNavigateToGrowth = {
-                    navController.navigate(Screen.GrowthChart.createFullRoute())
+                    navController.navigate(Screen.GrowthBatchAdd.route)
                 },
                 onNavigateToProfile = {
                     navController.navigate(Screen.BabyProfile.route) {
@@ -843,31 +843,41 @@ fun KanguruNavGraph(
             )
         }
 
-        // Growth Module Screens - Alur baru: Langsung ke Grafik Fenton Full & Catat Pengukuran Versi Batch
+        // Growth Module Screens - Alur baru: Catat Pengukuran Baru muncul terlebih dahulu, setelah simpan ke Grafik Fenton Full
         composable(route = Screen.GrowthHub.route) {
-            GrowthChartScreen(
+            GrowthBatchMeasurementScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigateToAdd = {
-                    navController.navigate(Screen.GrowthBatchAdd.route)
-                },
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
+                },
+                onNavigateToChart = {
+                    navController.navigate(Screen.GrowthChart.createFullRoute())
+                },
+                onSavedSuccessfully = {
+                    navController.navigate(Screen.GrowthChart.createFullRoute()) {
+                        popUpTo(Screen.GrowthHub.route) { inclusive = true }
+                    }
                 }
             )
         }
 
         composable(route = Screen.Growth.route) {
-            GrowthChartScreen(
+            GrowthBatchMeasurementScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigateToAdd = {
-                    navController.navigate(Screen.GrowthBatchAdd.route)
-                },
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
+                },
+                onNavigateToChart = {
+                    navController.navigate(Screen.GrowthChart.createFullRoute())
+                },
+                onSavedSuccessfully = {
+                    navController.navigate(Screen.GrowthChart.createFullRoute()) {
+                        popUpTo(Screen.Growth.route) { inclusive = true }
+                    }
                 }
             )
         }
@@ -911,8 +921,23 @@ fun KanguruNavGraph(
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
                 },
+                onNavigateToChart = {
+                    val hasChartInBackStack = navController.previousBackStackEntry?.destination?.route?.startsWith("growth_chart") == true
+                    if (hasChartInBackStack) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(Screen.GrowthChart.createFullRoute())
+                    }
+                },
                 onSavedSuccessfully = {
-                    navController.popBackStack()
+                    val hasChartInBackStack = navController.previousBackStackEntry?.destination?.route?.startsWith("growth_chart") == true
+                    if (hasChartInBackStack) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(Screen.GrowthChart.createFullRoute()) {
+                            popUpTo(Screen.GrowthAdd.route) { inclusive = true }
+                        }
+                    }
                 }
             )
         }
@@ -925,8 +950,23 @@ fun KanguruNavGraph(
                 onNavigateToAboutFenton = {
                     navController.navigate(Screen.AboutFenton.route)
                 },
+                onNavigateToChart = {
+                    val hasChartInBackStack = navController.previousBackStackEntry?.destination?.route?.startsWith("growth_chart") == true
+                    if (hasChartInBackStack) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(Screen.GrowthChart.createFullRoute())
+                    }
+                },
                 onSavedSuccessfully = {
-                    navController.popBackStack()
+                    val hasChartInBackStack = navController.previousBackStackEntry?.destination?.route?.startsWith("growth_chart") == true
+                    if (hasChartInBackStack) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(Screen.GrowthChart.createFullRoute()) {
+                            popUpTo(Screen.GrowthBatchAdd.route) { inclusive = true }
+                        }
+                    }
                 }
             )
         }

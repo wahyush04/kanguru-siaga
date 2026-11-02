@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kangurusiaga.app.core.common.AppLogger
 import com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient
+import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
@@ -54,7 +55,8 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
     private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase,
     private val saveBatchGrowthRecordsUseCase: SaveBatchGrowthRecordsUseCase,
     private val fentonGrowthApiClient: FentonGrowthApiClient,
-    private val growthRepository: GrowthRepository
+    private val growthRepository: GrowthRepository,
+    private val fentonGrowthRepository: FentonGrowthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GrowthBatchUiState())
@@ -66,6 +68,8 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
 
     private fun loadBabyData() {
         viewModelScope.launch {
+            ensureInitialGrowthDataUseCase.purgeMockDataIfPresent()
+
             babyRepository.getActiveBaby().collectLatest { baby ->
                 if (baby == null) {
                     _uiState.update { it.copy(baby = null, rows = emptyList()) }
@@ -95,6 +99,11 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                 } catch (_: Exception) {
                     emptyList()
                 }
+                val fentonRecords = try {
+                    fentonGrowthRepository.getPatientRecords(baby.id).first()
+                } catch (_: Exception) {
+                    emptyList()
+                }
 
                 val rowMap = linkedMapOf<Int, GrowthBatchRowState>()
 
@@ -109,7 +118,24 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                     )
                 }
 
-                // 2. Gabungkan data berat
+                // 2. Gabungkan data riwayat Fenton (baby_growth_records)
+                for (record in fentonRecords) {
+                    val pma = record.pmaWeeks.coerceIn(22, 50)
+                    val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
+                    var updated = row
+                    if (record.weightGrams != null && record.weightGrams > 0) {
+                        updated = updated.copy(weightGrams = record.weightGrams.toInt().toString())
+                    }
+                    if (record.lengthCm != null && record.lengthCm > 0) {
+                        updated = updated.copy(lengthCm = formatNumber(record.lengthCm.toFloat()))
+                    }
+                    if (record.headCircumferenceCm != null && record.headCircumferenceCm > 0) {
+                        updated = updated.copy(headCircumferenceCm = formatNumber(record.headCircumferenceCm.toFloat()))
+                    }
+                    rowMap[pma] = updated
+                }
+
+                // 3. Gabungkan data berat (growth_measurements)
                 for (w in weights) {
                     val pma = w.pmaWeeks.toInt().coerceIn(22, 50)
                     val grams = if (w.value < 100f) (w.value * 1000f).toInt() else w.value.toInt()
@@ -119,7 +145,7 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                     }
                 }
 
-                // 3. Gabungkan data panjang
+                // 4. Gabungkan data panjang (growth_measurements)
                 for (l in lengths) {
                     val pma = l.pmaWeeks.toInt().coerceIn(22, 50)
                     val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
@@ -128,7 +154,7 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                     }
                 }
 
-                // 4. Gabungkan data lingkar kepala
+                // 5. Gabungkan data lingkar kepala (growth_measurements)
                 for (hc in headCircs) {
                     val pma = hc.pmaWeeks.toInt().coerceIn(22, 50)
                     val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
@@ -139,9 +165,10 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
 
                 val existingSorted = rowMap.values.sortedBy { it.pmaWeeks.toIntOrNull() ?: 0 }
 
-                // 5. Buat baris baru di bawahnya untuk input data baru
+                // 6. Buat baris baru di bawahnya untuk input data baru minggu berikutnya
                 val lastPma = existingSorted.lastOrNull()?.pmaWeeks?.toIntOrNull() ?: currentPma
                 val nextPma = (lastPma + 1).coerceAtMost(50)
+
                 val newEmptyRow = GrowthBatchRowState(
                     pmaWeeks = if (nextPma in 22..50) nextPma.toString() else "",
                     weightGrams = "",

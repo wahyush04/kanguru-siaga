@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BabyDao {
 
-    @Query("SELECT * FROM babies WHERE isActive = 1 LIMIT 1")
+    @Query("SELECT * FROM babies ORDER BY id DESC LIMIT 1")
     fun getActiveBaby(): Flow<BabyEntity?>
 
-    @Query("SELECT * FROM babies WHERE isActive = 1 LIMIT 1")
+    @Query("SELECT * FROM babies ORDER BY id DESC LIMIT 1")
     suspend fun getActiveBabyOnce(): BabyEntity?
 
-    @Query("SELECT * FROM babies LIMIT 1")
+    @Query("SELECT * FROM babies ORDER BY id DESC LIMIT 1")
     suspend fun getFirstBaby(): BabyEntity?
 
     @Query("SELECT * FROM babies WHERE name LIKE :nameQuery LIMIT 1")
@@ -29,6 +29,12 @@ interface BabyDao {
 
     @Query("UPDATE babies SET isActive = 0")
     suspend fun deactivateAllBabies()
+
+    @Query("DELETE FROM babies WHERE id != :keepId")
+    suspend fun deleteAllExcept(keepId: Long)
+
+    @Query("DELETE FROM babies")
+    suspend fun deleteAllBabies()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBaby(baby: BabyEntity): Long

@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -61,6 +62,7 @@ fun GrowthBatchMeasurementScreen(
     onNavigateBack: () -> Unit,
     onNavigateToAboutFenton: () -> Unit,
     onSavedSuccessfully: () -> Unit,
+    onNavigateToChart: (() -> Unit)? = null,
     viewModel: GrowthBatchMeasurementViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -137,16 +139,32 @@ fun GrowthBatchMeasurementScreen(
                     )
                 }
 
-                IconButton(
-                    onClick = onNavigateToAboutFenton,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        imageVector = GrowthIcons.Help,
-                        contentDescription = stringResource(R.string.growth_batch_btn_help),
-                        tint = KanguruTheme.colors.textSecondary,
-                        modifier = Modifier.size(20.dp)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    onNavigateToChart?.let { navigateToChart ->
+                        IconButton(
+                            onClick = navigateToChart,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = GrowthIcons.Trending,
+                                contentDescription = "Lihat Grafik Fenton",
+                                tint = KanguruTheme.colors.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    IconButton(
+                        onClick = onNavigateToAboutFenton,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = GrowthIcons.Help,
+                            contentDescription = stringResource(R.string.growth_batch_btn_help),
+                            tint = KanguruTheme.colors.textSecondary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         },
@@ -209,10 +227,7 @@ fun GrowthBatchMeasurementScreen(
                         containerColor = KanguruTheme.colors.surface,
                         contentColor = KanguruTheme.colors.textSecondary
                     ),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                        brush = androidx.compose.ui.graphics.SolidColor(KanguruTheme.colors.divider),
-                        width = 1.dp
-                    ),
+                    border = BorderStroke(1.dp, KanguruTheme.colors.divider),
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 46.dp)

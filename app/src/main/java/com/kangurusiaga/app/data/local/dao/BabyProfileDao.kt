@@ -24,4 +24,10 @@ interface BabyProfileDao {
 
     @Query("DELETE FROM baby_profiles WHERE babyId = :babyId")
     suspend fun deleteProfileByBabyId(babyId: Long)
+
+    @Query("DELETE FROM baby_profiles WHERE babyId != :keepBabyId")
+    suspend fun deleteAllExcept(keepBabyId: Long)
+
+    @Query("DELETE FROM baby_profiles")
+    suspend fun deleteAllProfiles()
 }
