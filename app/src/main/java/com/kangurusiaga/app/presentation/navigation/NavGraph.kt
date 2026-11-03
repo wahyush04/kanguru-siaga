@@ -451,8 +451,10 @@ fun KanguruNavGraph(
                     defaultValue = 0L
                 }
             )
-        ) {
+        ) { backStackEntry ->
+            val reminderId = backStackEntry.arguments?.getLong("reminderId") ?: 0L
             PmkReminderEditRoute(
+                reminderId = reminderId,
                 onNavigateBack = {
                     navController.popBackStack()
                 }

@@ -194,11 +194,11 @@ fun PmkScreeningInfoBottomSheet(
                     val annotatedCalloutText = buildAnnotatedString {
                         append(stringResource(R.string.pmk_screening_info_callout_part1))
                         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(stringResource(R.string.pmk_screening_info_callout_app_name))
+                            append(" "+ stringResource(R.string.pmk_screening_info_callout_app_name) + " ")
                         }
                         append(stringResource(R.string.pmk_screening_info_callout_part2))
                         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(stringResource(R.string.pmk_screening_info_callout_reference))
+                            append(" "+stringResource(R.string.pmk_screening_info_callout_reference)+ " ")
                         }
                         append(stringResource(R.string.pmk_screening_info_callout_part3))
                     }

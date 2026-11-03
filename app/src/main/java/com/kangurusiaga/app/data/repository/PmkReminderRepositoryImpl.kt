@@ -1,5 +1,7 @@
 package com.kangurusiaga.app.data.repository
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.kangurusiaga.app.core.common.AppDispatchers
 import com.kangurusiaga.app.core.common.Dispatcher
 import com.kangurusiaga.app.data.local.dao.PmkReminderDao
@@ -8,6 +10,7 @@ import com.kangurusiaga.app.data.mapper.toDomain
 import com.kangurusiaga.app.data.mapper.toEntity
 import com.kangurusiaga.app.domain.model.PmkReminder
 import com.kangurusiaga.app.domain.repository.PmkReminderRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -18,9 +21,14 @@ import javax.inject.Singleton
 
 @Singleton
 class PmkReminderRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val pmkReminderDao: PmkReminderDao,
     @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) : PmkReminderRepository {
+
+    private val prefs: SharedPreferences by lazy {
+        context.getSharedPreferences("pmk_reminder_prefs", Context.MODE_PRIVATE)
+    }
 
     override fun getRemindersForBaby(babyId: Long): Flow<List<PmkReminder>> {
         return pmkReminderDao.getRemindersForBaby(babyId)
@@ -45,7 +53,7 @@ class PmkReminderRepositoryImpl @Inject constructor(
             if (reminder.id == 0L) {
                 pmkReminderDao.insertReminder(reminder.toEntity())
             } else {
-                pmkReminderDao.updateReminder(reminder.toEntity())
+                pmkReminderDao.insertReminder(reminder.toEntity())
                 reminder.id
             }
         }
@@ -65,73 +73,62 @@ class PmkReminderRepositoryImpl @Inject constructor(
 
     override suspend fun seedDefaultRemindersIfEmpty(babyId: Long) {
         withContext(ioDispatcher) {
-            // Bersihkan jadwal legacy jika sebelumnya sempat tersimpan (jam 1, 8, 13, 19)
+            val seedKey = "pmk_seeded_relay_v4_$babyId"
+            if (prefs.getBoolean(seedKey, false)) {
+                // Inisialisasi awal hanya dilakukan sekali saja saat fresh install / profil baru.
+                // Tidak akan re-seed agar perubahan atau penghapusan jadwal oleh pengguna tersimpan permanen.
+                return@withContext
+            }
+
+            // Bersihkan jadwal lama jika sebelumnya sempat tersimpan
             pmkReminderDao.deleteRemindersByTime(1, 0)
+            pmkReminderDao.deleteRemindersByTime(6, 0)
             pmkReminderDao.deleteRemindersByTime(8, 0)
             pmkReminderDao.deleteRemindersByTime(13, 0)
+            pmkReminderDao.deleteRemindersByTime(14, 0)
             pmkReminderDao.deleteRemindersByTime(19, 0)
+            pmkReminderDao.deleteRemindersByTime(22, 0)
 
-            val existing = pmkReminderDao.getRemindersListForBaby(babyId)
-            val hasPagi = existing.any { it.timeHour == 6 && it.timeMinute == 0 }
-            val hasSiang = existing.any { it.timeHour == 14 && it.timeMinute == 0 }
-            val hasMalam = existing.any { it.timeHour == 22 && it.timeMinute == 0 }
-
-            val toInsert = mutableListOf<PmkReminderEntity>()
-            if (!hasPagi) {
-                toInsert.add(
-                    PmkReminderEntity(
-                        babyId = babyId,
-                        timeHour = 6,
-                        timeMinute = 0,
-                        label = "Estafet Sesi Pagi",
-                        targetMinutes = 480,
-                        isEnabled = true,
-                        category = "Pagi",
-                        notes = "Estafet Sesi Pagi bersama Ibu",
-                        repeatDaily = true
-                    )
+            val defaults = listOf(
+                PmkReminderEntity(
+                    babyId = babyId,
+                    timeHour = 7,
+                    timeMinute = 0,
+                    label = "Estafet Sesi Pagi",
+                    targetMinutes = 480,
+                    isEnabled = true,
+                    category = "Pagi",
+                    notes = "Estafet Sesi Pagi bersama Ibu",
+                    repeatDaily = true
+                ),
+                PmkReminderEntity(
+                    babyId = babyId,
+                    timeHour = 15,
+                    timeMinute = 0,
+                    label = "Estafet Sesi Siang",
+                    targetMinutes = 480,
+                    isEnabled = true,
+                    category = "Siang",
+                    notes = "Estafet Sesi Siang bersama Ayah",
+                    repeatDaily = true
+                ),
+                PmkReminderEntity(
+                    babyId = babyId,
+                    timeHour = 23,
+                    timeMinute = 0,
+                    label = "Estafet Sesi Malam",
+                    targetMinutes = 480,
+                    isEnabled = true,
+                    category = "Malam",
+                    notes = "Estafet Sesi Malam bersama Ibu",
+                    repeatDaily = true
                 )
-            }
-            if (!hasSiang) {
-                toInsert.add(
-                    PmkReminderEntity(
-                        babyId = babyId,
-                        timeHour = 14,
-                        timeMinute = 0,
-                        label = "Estafet Sesi Siang",
-                        targetMinutes = 480,
-                        isEnabled = true,
-                        category = "Siang",
-                        notes = "Estafet Sesi Siang bersama Ayah",
-                        repeatDaily = true
-                    )
-                )
-            }
-            if (!hasMalam) {
-                toInsert.add(
-                    PmkReminderEntity(
-                        babyId = babyId,
-                        timeHour = 22,
-                        timeMinute = 0,
-                        label = "Estafet Sesi Malam",
-                        targetMinutes = 480,
-                        isEnabled = true,
-                        category = "Malam",
-                        notes = "Estafet Sesi Malam bersama Ibu",
-                        repeatDaily = true
-                    )
-                )
-            }
+            )
 
-            if (toInsert.isNotEmpty()) {
-                pmkReminderDao.insertReminders(toInsert)
-            }
+            pmkReminderDao.insertReminders(defaults)
 
-            // Perbarui jika jam 6, 14, atau 22 sebelumnya sempat tersimpan dengan durasi lama (< 480 menit)
-            existing.filter { it.timeHour in listOf(6, 14, 22) && it.timeMinute == 0 && it.targetMinutes != 480 }
-                .forEach { legacyReminder ->
-                    pmkReminderDao.updateReminder(legacyReminder.copy(targetMinutes = 480))
-                }
+            // Tandai sudah di-seed sekali saat fresh install, sehingga tidak akan pernah di-seed ulang
+            prefs.edit().putBoolean(seedKey, true).apply()
         }
     }
 }

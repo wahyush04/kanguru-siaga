@@ -22,7 +22,7 @@ data class PmkReminderAddEditUiState(
     val isLoading: Boolean = false,
     val isEditMode: Boolean = false,
     val reminderId: Long? = null,
-    val timeHour: Int = 6,
+    val timeHour: Int = 7,
     val timeMinute: Int = 0,
     val durationHours: Int = 8,
     val category: String = "Pagi",
@@ -48,7 +48,16 @@ class PmkReminderAddEditViewModel @Inject constructor(
     private val reminderScheduler: PmkReminderScheduler
 ) : ViewModel() {
 
-    private val navReminderId: Long? = savedStateHandle.get<Long>("reminderId")?.takeIf { it > 0 }
+    private val navReminderId: Long? = run {
+        val raw = savedStateHandle.get<Any>("reminderId")
+        when (raw) {
+            is Long -> raw
+            is Int -> raw.toLong()
+            is String -> raw.toLongOrNull()
+            is Number -> raw.toLong()
+            else -> null
+        }
+    }?.takeIf { it > 0 }
 
     private val _uiState = MutableStateFlow(
         PmkReminderAddEditUiState(
@@ -64,14 +73,23 @@ class PmkReminderAddEditViewModel @Inject constructor(
         }
     }
 
+    fun initReminder(reminderId: Long) {
+        if (reminderId > 0 && (_uiState.value.reminderId == null || _uiState.value.reminderId == 0L)) {
+            _uiState.update { it.copy(isEditMode = true, reminderId = reminderId) }
+            loadReminder(reminderId)
+        }
+    }
+
     private fun loadReminder(reminderId: Long) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, reminderId = reminderId, isEditMode = true) }
             val reminder = getPmkReminderByIdUseCase(reminderId)
             if (reminder != null) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
+                        reminderId = reminder.id,
+                        isEditMode = true,
                         timeHour = reminder.timeHour,
                         timeMinute = reminder.timeMinute,
                         durationHours = reminder.targetHours,
@@ -98,12 +116,12 @@ class PmkReminderAddEditViewModel @Inject constructor(
     fun setCategory(category: String) {
         val defaultDuration = 8 // Default target 8 jam untuk semua pengingat PMK
         val suggestedHour = when {
-            category.contains("Pagi", ignoreCase = true) -> 6
-            category.contains("Siang", ignoreCase = true) -> 14
-            category.contains("Sore", ignoreCase = true) -> 18
-            category.contains("Malam", ignoreCase = true) -> 22
+            category.contains("Pagi", ignoreCase = true) -> 7
+            category.contains("Siang", ignoreCase = true) -> 15
+            category.contains("Sore", ignoreCase = true) -> 15
+            category.contains("Malam", ignoreCase = true) -> 23
             category.contains("Dini", ignoreCase = true) -> 2
-            else -> 6
+            else -> 7
         }
         _uiState.update { current ->
             val suggestedNotes = if (current.notes.isBlank() || current.notes.startsWith("Estafet Sesi")) {

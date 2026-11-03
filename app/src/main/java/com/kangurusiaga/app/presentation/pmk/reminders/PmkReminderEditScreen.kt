@@ -73,6 +73,7 @@ import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandLightPink
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
 import com.kangurusiaga.app.core.designsystem.theme.CardBorder
+import com.kangurusiaga.app.core.designsystem.theme.KanguruColors
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.core.designsystem.theme.TextPrimary
 import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
@@ -82,9 +83,16 @@ import com.kangurusiaga.app.core.designsystem.theme.White
 fun PmkReminderEditRoute(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
+    reminderId: Long = 0L,
     viewModel: PmkReminderAddEditViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(reminderId) {
+        if (reminderId > 0) {
+            viewModel.initReminder(reminderId)
+        }
+    }
 
     LaunchedEffect(uiState.isSaved, uiState.isDeleted) {
         if (uiState.isSaved || uiState.isDeleted) {
@@ -712,7 +720,8 @@ fun PmkReminderEditScreen(
                     Text(
                         text = stringResource(R.string.pmk_reminder_dialog_delete_confirm),
                         style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = KanguruTheme.colors.onPrimary
                     )
                 }
             },
