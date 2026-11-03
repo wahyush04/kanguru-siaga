@@ -424,7 +424,7 @@
     <string name="onboarding_btn_fill_baby_data">Isi Data Bayi</string>
     <string name="onboarding_welcome_img_cd">Ibu mendekap bayi baru lahir</string>
     <string name="onboarding_welcome_title">Selamat Datang\ndi KANGURU SIAGA</string>
-    <string name="onboarding_welcome_desc">Teman pendamping perawatan BBLR di rumah, untuk mendukung tumbuh kembang si kecil.</string>
+    <string name="onboarding_welcome_desc">Teman pendamping perawatan khusus bayi kecil di rumah, untuk mendukung tumbuh kembang si kecil.</string>
     <string name="onboarding_profile_intro_img_cd">Registrasi data bayi</string>
     <string name="onboarding_profile_intro_title">Yuk, Mulai dengan\nData Bayi</string>
     <string name="onboarding_profile_intro_desc">Informasi ini akan digunakan untuk menyesuaikan panduan, pengingat, dan grafik pertumbuhan.</string>
@@ -529,7 +529,7 @@
     <string name="pmk_reminder_add_title">Tambah Jadwal Pengingat</string>
     <string name="pmk_reminder_edit_title">Edit Pengingat PMK</string>
     <string name="pmk_reminder_banner_title">PMK Kontinu Mandiri di Rumah</string>
-    <string name="pmk_reminder_banner_desc">Dianjurkan kontak kulit dilakukan tanpa putus secara estafet (Ibu, Ayah &amp; Pendamping) dengan target kumulatif harian minimal 8–24 jam/hari (ideal ≥20 jam/hari) (Standar Kemenkes/WHO/IDAI).</string>
+    <string name="pmk_reminder_banner_desc">Dianjurkan kontak kulit dilakukan tanpa putus secara estafet (Ibu, Ayah &amp; Pendamping) dengan target kumulatif harian minimal 8–24 jam/hari (Standar Kemenkes/WHO/IDAI).</string>
     <string name="pmk_reminder_field_start_time">Waktu Mulai Estafet / Sesi</string>
     <string name="pmk_reminder_field_target_duration">Target Durasi Sesi</string>
     <string name="pmk_reminder_badge_min_session">Minimal per sesi 2 jam</string>
@@ -729,7 +729,7 @@
     <string name="bblr_care_btn_download_pdf">Unduh PDF</string>
     <string name="bblr_care_doctor_note_title">Catatan Dokter Spesialis Anak (Sp.A)</string>
     <string name="bblr_care_doctor_note_subtitle">Prinsip Emas Perawatan BBLR</string>
-    <string name="bblr_care_doctor_note_quote">“Kunci utama berat badan naik optimal adalah kombinasi Metode Kanguru (PMK) minimal 1-2 jam per sesi, kehangatan termal stabil 36.5°C - 37.5°C, dan pemberian ASI setiap 2 jam secara disiplin.”</string>
+    <string name="bblr_care_doctor_note_quote">“Kunci utama berat badan naik optimal adalah kombinasi Metode Kanguru (PMK) minimal 8-24 jam perhari, kehangatan termal stabil 36.5°C - 37.5°C, dan pemberian ASI setiap 2 jam secara disiplin.”</string>
 
     <!-- BBLR Emergency Screen (Stitch Screen 3) -->
     <string name="bblr_emergency_screen_title">Tanda Kegawatan Bayi Kecil (BBLR)</string>

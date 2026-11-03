@@ -22,7 +22,7 @@ data class PmkReminderAddEditUiState(
     val isLoading: Boolean = false,
     val isEditMode: Boolean = false,
     val reminderId: Long? = null,
-    val timeHour: Int = 8,
+    val timeHour: Int = 6,
     val timeMinute: Int = 0,
     val durationHours: Int = 8,
     val category: String = "Pagi",
@@ -96,20 +96,25 @@ class PmkReminderAddEditViewModel @Inject constructor(
     }
 
     fun setCategory(category: String) {
-        val defaultDuration = when {
-            category.contains("Pagi", ignoreCase = true) -> 8
-            category.contains("Siang", ignoreCase = true) -> 8
-            category.contains("Sore", ignoreCase = true) -> 4
-            category.contains("Malam", ignoreCase = true) -> 4
-            category.contains("Dini", ignoreCase = true) -> 8
-            else -> 8
+        val defaultDuration = 8 // Default target 8 jam untuk semua pengingat PMK
+        val suggestedHour = when {
+            category.contains("Pagi", ignoreCase = true) -> 6
+            category.contains("Siang", ignoreCase = true) -> 14
+            category.contains("Sore", ignoreCase = true) -> 18
+            category.contains("Malam", ignoreCase = true) -> 22
+            category.contains("Dini", ignoreCase = true) -> 2
+            else -> 6
         }
         _uiState.update { current ->
             val suggestedNotes = if (current.notes.isBlank() || current.notes.startsWith("Estafet Sesi")) {
                 "Estafet Sesi $category"
             } else current.notes
+            val hour = if (!current.isEditMode) suggestedHour else current.timeHour
+            val minute = if (!current.isEditMode) 0 else current.timeMinute
             current.copy(
                 category = category,
+                timeHour = hour,
+                timeMinute = minute,
                 durationHours = defaultDuration,
                 notes = suggestedNotes
             )

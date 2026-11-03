@@ -6,7 +6,7 @@ data class PmkReminder(
     val timeHour: Int, // 0 - 23
     val timeMinute: Int, // 0 - 59
     val label: String, // e.g. "Estafet Sesi Pagi"
-    val targetMinutes: Int = 120, // default minimal 2 jam (120 mnt)
+    val targetMinutes: Int = 480, // default target 8 jam (480 mnt)
     val daysOfWeekMask: Int = 127,
     val isEnabled: Boolean = true,
     val category: String = "Pagi", // Pagi, Siang, Sore, Malam, Dini Hari / Tidur (Estafet Pendamping)

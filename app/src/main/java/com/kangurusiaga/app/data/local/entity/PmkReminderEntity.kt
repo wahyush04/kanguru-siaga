@@ -17,7 +17,7 @@ data class PmkReminderEntity(
     @ColumnInfo(name = "label")
     val label: String, // "Estafet Sesi Pagi", etc.
     @ColumnInfo(name = "target_minutes")
-    val targetMinutes: Int = 120,
+    val targetMinutes: Int = 480,
     @ColumnInfo(name = "days_of_week_mask")
     val daysOfWeekMask: Int = 127, // Bitmask for Mon-Sun (1111111 = all days)
     @ColumnInfo(name = "is_enabled")

@@ -122,7 +122,7 @@ class PmkRemindersViewModel @Inject constructor(
         _dialogState.update { it.copy(showInfo = false) }
     }
 
-    fun addReminder(hour: Int, minute: Int, label: String, targetMinutes: Int) {
+    fun addReminder(hour: Int, minute: Int, label: String, targetMinutes: Int = 480) {
         val babyId = uiState.value.baby?.id ?: 1L
         val newReminder = PmkReminder(
             babyId = babyId,

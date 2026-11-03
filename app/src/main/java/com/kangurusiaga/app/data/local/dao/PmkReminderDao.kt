@@ -44,4 +44,7 @@ interface PmkReminderDao {
 
     @Query("SELECT COUNT(*) FROM pmk_reminders WHERE baby_id = :babyId")
     suspend fun getReminderCount(babyId: Long): Int
+
+    @Query("SELECT * FROM pmk_reminders WHERE baby_id = :babyId")
+    suspend fun getRemindersListForBaby(babyId: Long): List<PmkReminderEntity>
 }
