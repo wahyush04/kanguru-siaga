@@ -110,7 +110,7 @@ fun PmkReminderAddScreen(
     uiState: PmkReminderAddEditUiState,
     onNavigateBack: () -> Unit,
     onTimeSelected: (Int, Int) -> Unit,
-    onDurationSelected: (Int) -> Unit,
+    onDurationSelected: (Int) -> Unit = {},
     onCategorySelected: (String) -> Unit,
     onNotesChanged: (String) -> Unit,
     onToggleEnabled: (Boolean) -> Unit,
@@ -120,7 +120,6 @@ fun PmkReminderAddScreen(
 ) {
     var showTimePickerDialog by remember { mutableStateOf(false) }
 
-    val durationOptions = listOf(2, 3, 4, 6, 8)
     val categoryOptionsRow1 = listOf("Pagi", "Siang", "Sore")
 
     Scaffold(
@@ -266,13 +265,9 @@ fun PmkReminderAddScreen(
                         val guidelineText = buildAnnotatedString {
                             append("Dianjurkan kontak kulit dilakukan tanpa putus secara estafet (Ibu, Ayah & Pendamping) dengan target kumulatif harian ")
                             withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFE11D48))) {
-                                append("minimal ≥8 jam")
+                                append("minimal 8–24 jam/hari")
                             }
-                            append(" dan ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFE11D48))) {
-                                append("ideal ≥20 jam/hari")
-                            }
-                            append("(Standar Kemenkes/WHO/IDAI).")
+                            append(" (ideal ≥20 jam/hari) (Standar Kemenkes/WHO/IDAI).")
                         }
                         Text(
                             text = guidelineText,
@@ -325,86 +320,7 @@ fun PmkReminderAddScreen(
                 }
             }
 
-            // 3. Field Target Durasi Sesi
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                // Badge minimal per sesi 2 jam
-                Surface(
-                    color = KanguruTheme.colors.categoryRoseContainer,
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.pmk_reminder_badge_min_session),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = BrandPink,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
-                    )
-                }
-
-                // Input box display for duration
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, CardBorder, RoundedCornerShape(18.dp)),
-                    colors = CardDefaults.cardColors(containerColor = White),
-                    shape = RoundedCornerShape(18.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 18.dp, vertical = 14.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "${uiState.durationHours}",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary
-                        )
-
-                        Text(
-                            text = stringResource(R.string.pmk_reminder_unit_hours),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium,
-                            color = TextSecondary
-                        )
-                    }
-                }
-
-                // Quick selection chips
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    durationOptions.forEach { hours ->
-                        val isSelected = uiState.durationHours == hours
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(38.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(if (isSelected) KanguruTheme.colors.categoryRoseContainer else White)
-                                .border(
-                                    width = if (isSelected) 1.5.dp else 1.dp,
-                                    color = if (isSelected) BrandPink else CardBorder,
-                                    shape = RoundedCornerShape(14.dp)
-                                )
-                                .clickable { onDurationSelected(hours) },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "$hours Jam",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isSelected) BrandPink else TextSecondary
-                            )
-                        }
-                    }
-                }
-            }
-
-            // 4. Field Kategori Sesi / Giliran Estafet
+            // 3. Field Kategori Sesi / Giliran Estafet
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -510,7 +426,7 @@ fun PmkReminderAddScreen(
                 }
             }
 
-            // 5. Catatan / Rencana Pendamping (Opsional)
+            // 4. Catatan / Rencana Pendamping (Opsional)
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     text = stringResource(R.string.pmk_reminder_field_notes),
@@ -541,7 +457,7 @@ fun PmkReminderAddScreen(
                 )
             }
 
-            // 6. Switch: Aktifkan Pengingat Estafet
+            // 5. Switch: Aktifkan Pengingat Estafet
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -584,7 +500,7 @@ fun PmkReminderAddScreen(
                 }
             }
 
-            // 7. Ulangi Jadwal Card
+            // 6. Ulangi Jadwal Card
             var showRepeatDropdown by remember { mutableStateOf(false) }
 
             Card(

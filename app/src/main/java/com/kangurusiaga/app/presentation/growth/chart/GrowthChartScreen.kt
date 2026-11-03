@@ -7,6 +7,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,13 +30,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,7 +52,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,11 +64,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.domain.model.Gender
-import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.presentation.growth.components.FentonApiErrorDialog
 import com.kangurusiaga.app.presentation.growth.components.GrowthIcons
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 /**
@@ -111,29 +113,6 @@ fun GrowthChartScreen(
             parts.size == 1 && parts[0].length >= 2 -> parts[0].take(2).uppercase()
             parts.size == 1 -> parts[0].take(1).uppercase()
             else -> "BY"
-        }
-    }
-
-    // Latest metric values with clean fallbacks from real data
-    val currentWeightKg = uiState.latestWeight?.value
-        ?: (uiState.baby?.birthWeightGram?.takeIf { it > 0 }?.let { it / 1000f })
-    val currentLengthCm = uiState.latestLength?.value
-        ?: uiState.baby?.birthLengthCm?.takeIf { it > 0f }
-    val currentHeadCircCm = uiState.latestHeadCirc?.value
-        ?: uiState.baby?.birthHeadCircumferenceCm?.takeIf { it > 0f }
-
-    // Formatted last evaluation date
-    val lastDateFormatted = remember(uiState.latestWeight, uiState.latestLength, uiState.latestHeadCirc) {
-        val latestEpoch = listOfNotNull(
-            uiState.latestWeight?.measurementDateEpochMillis,
-            uiState.latestLength?.measurementDateEpochMillis,
-            uiState.latestHeadCirc?.measurementDateEpochMillis
-        ).maxOrNull()
-        if (latestEpoch != null) {
-            val sdf = SimpleDateFormat("d MMM", Locale("id", "ID"))
-            sdf.format(Date(latestEpoch))
-        } else {
-            "-"
         }
     }
 
@@ -291,13 +270,7 @@ fun GrowthChartScreen(
                 isBoy = isBoy,
                 gestationalAgeWeeksAtBirth = uiState.baby?.gestationalAgeWeeks ?: 0,
                 birthWeightGrams = uiState.baby?.birthWeightGram ?: 0,
-                currentPmaWeeks = uiState.currentPmaWeeks,
-                weightKg = currentWeightKg,
-                lengthCm = currentLengthCm,
-                headCircCm = currentHeadCircCm,
-                weightBadge = uiState.weightEvaluation?.percentileBadge ?: "-",
-                lengthBadge = uiState.lengthEvaluation?.percentileBadge ?: "-",
-                headCircBadge = uiState.headCircEvaluation?.percentileBadge ?: "-"
+                currentPmaWeeks = uiState.currentPmaWeeks
             )
 
             // 4. Interactive Fenton Chart Canvas Card
@@ -319,20 +292,9 @@ fun GrowthChartScreen(
                 )
             }
 
-            // 5. Evaluasi Pertumbuhan Kejar (Catch-up Growth) Card
+            // 5. Evaluasi Pertumbuhan (Buku KIA)
             Box(modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
-                CatchUpGrowthEvaluationCard(
-                    lastDate = lastDateFormatted,
-                    weightKg = currentWeightKg,
-                    weightBadge = uiState.weightEvaluation?.percentileBadge ?: "-",
-                    weightGainRate = uiState.weightGainRateGramsPerDay,
-                    lengthCm = currentLengthCm,
-                    lengthBadge = uiState.lengthEvaluation?.percentileBadge ?: "-",
-                    lengthGainRate = uiState.lengthGainRateCmPerWeek,
-                    headCircCm = currentHeadCircCm,
-                    headCircBadge = uiState.headCircEvaluation?.percentileBadge ?: "-",
-                    headCircGainRate = uiState.headCircGainRateCmPerWeek
-                )
+                KiaGrowthEvaluationCard()
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -350,7 +312,7 @@ fun GrowthChartScreen(
 }
 
 /**
- * Section 2: Patient Vital Context Card
+ * Section 2: Patient Vital Context Card (Without BB, PB, LK cards per Stitch & User specification)
  */
 @Composable
 private fun PatientVitalContextCard(
@@ -359,13 +321,7 @@ private fun PatientVitalContextCard(
     isBoy: Boolean,
     gestationalAgeWeeksAtBirth: Int,
     birthWeightGrams: Int,
-    currentPmaWeeks: Float,
-    weightKg: Float?,
-    lengthCm: Float?,
-    headCircCm: Float?,
-    weightBadge: String,
-    lengthBadge: String,
-    headCircBadge: String
+    currentPmaWeeks: Float
 ) {
     val colors = KanguruTheme.colors
     val typography = KanguruTheme.typography
@@ -394,7 +350,8 @@ private fun PatientVitalContextCard(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.weight(1f, fill = false)
             ) {
                 // Initials Circle
                 Box(
@@ -443,9 +400,16 @@ private fun PatientVitalContextCard(
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                    val formattedBirthWeight = if (birthWeightGrams > 0) String.format(Locale("id", "ID"), "%,d", birthWeightGrams) else "-"
+                    val formattedBirthWeight = if (birthWeightGrams > 0) {
+                        if (birthWeightGrams >= 1000) {
+                            val kg = birthWeightGrams / 1000f
+                            if (kg % 1f == 0f) "${kg.toInt()}" else String.format(Locale.US, "%.1f", kg)
+                        } else {
+                            "$birthWeightGrams g"
+                        }
+                    } else "-"
                     val birthSummary = if (gestationalAgeWeeksAtBirth > 0 && birthWeightGrams > 0) {
-                        "Lahir: $gestationalAgeWeeksAtBirth mg • BB Lahir: $formattedBirthWeight g"
+                        "Lahir: $gestationalAgeWeeksAtBirth mg • BB Lahir: $formattedBirthWeight"
                     } else {
                         "Data lahir belum dicatat"
                     }
@@ -456,6 +420,8 @@ private fun PatientVitalContextCard(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
 
             // PMA Saat Ini Glass Card
             Box(
@@ -482,366 +448,62 @@ private fun PatientVitalContextCard(
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        // 3 Balanced Metric Quick Cards
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // Card 1: Berat Badan
-            PatientMetricCard(
-                modifier = Modifier.weight(1f),
-                title = "Berat Badan",
-                value = weightKg?.let { String.format(Locale.US, "%.3f", it) } ?: "-",
-                unit = if (weightKg != null) "kg" else "",
-                badgeText = if (weightBadge.isNotBlank() && weightBadge != "-") weightBadge else "-"
-            )
-
-            // Card 2: Panjang Badan
-            PatientMetricCard(
-                modifier = Modifier.weight(1f),
-                title = "Panjang Badan",
-                value = lengthCm?.let { String.format(Locale.US, "%.1f", it) } ?: "-",
-                unit = if (lengthCm != null) "cm" else "",
-                badgeText = if (lengthBadge.isNotBlank() && lengthBadge != "-") lengthBadge else "-"
-            )
-
-            // Card 3: Lingkar Kepala
-            PatientMetricCard(
-                modifier = Modifier.weight(1f),
-                title = "Lingkar Kepala",
-                value = headCircCm?.let { String.format(Locale.US, "%.1f", it) } ?: "-",
-                unit = if (headCircCm != null) "cm" else "",
-                badgeText = if (headCircBadge.isNotBlank() && headCircBadge != "-") headCircBadge else "-"
-            )
-        }
-    }
-}
-
-private fun badgeTextWithFallback(rawBadge: String, fallback: String): String {
-    return if (rawBadge.isBlank() || rawBadge.contains("P50")) fallback else rawBadge
-}
-
-@Composable
-private fun PatientMetricCard(
-    modifier: Modifier = Modifier,
-    title: String,
-    value: String,
-    unit: String,
-    badgeText: String
-) {
-    val colors = KanguruTheme.colors
-    val typography = KanguruTheme.typography
-
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(colors.fentonPatientMetricCardBg)
-            .border(1.dp, colors.fentonPatientMetricCardBorder, RoundedCornerShape(12.dp))
-            .padding(vertical = 10.dp, horizontal = 6.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = title,
-            style = typography.labelSmall,
-            color = colors.fentonPatientSubtitleText,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(
-                text = value,
-                style = typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.width(3.dp))
-            Text(
-                text = unit,
-                style = typography.labelSmall,
-                color = colors.fentonPatientSubtitleText
-            )
-        }
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(10.dp))
-                .background(colors.fentonEvaluationTargetBg)
-                .border(0.8.dp, colors.fentonEvaluationTargetBorder, RoundedCornerShape(10.dp))
-                .padding(horizontal = 6.dp, vertical = 2.dp)
-        ) {
-            Text(
-                text = badgeText,
-                style = typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = colors.badgeEmeraldText,
-                textAlign = TextAlign.Center
-            )
-        }
     }
 }
 
 /**
- * Section 5: Evaluasi Pertumbuhan Kejar (Catch-up Growth) Card
+ * Section 5: Evaluasi Pertumbuhan (Buku KIA)
  */
 @Composable
-private fun CatchUpGrowthEvaluationCard(
-    lastDate: String,
-    weightKg: Float?,
-    weightBadge: String,
-    weightGainRate: Float?,
-    lengthCm: Float?,
-    lengthBadge: String,
-    lengthGainRate: Float?,
-    headCircCm: Float?,
-    headCircBadge: String,
-    headCircGainRate: Float?
+private fun KiaGrowthEvaluationCard(
+    modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
     val typography = KanguruTheme.typography
 
-    val summary = remember(
-        weightKg, weightBadge, weightGainRate,
-        lengthCm, lengthBadge, lengthGainRate,
-        headCircCm, headCircBadge, headCircGainRate
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        CatchUpGrowthEvaluator.evaluate(
-            weightKg = weightKg,
-            weightBadge = weightBadge,
-            weightGainRateGramsPerDay = weightGainRate,
-            lengthCm = lengthCm,
-            lengthBadge = lengthBadge,
-            lengthGainRateCmPerWeek = lengthGainRate,
-            headCircCm = headCircCm,
-            headCircBadge = headCircBadge,
-            headCircGainRateCmPerWeek = headCircGainRate
-        )
-    }
-
-    val indicatorColor = when (summary.overallLevel) {
-        GrowthEvaluationLevel.OPTIMAL -> colors.success
-        GrowthEvaluationLevel.NORMAL, GrowthEvaluationLevel.BASELINE -> colors.textTertiary
-        GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBadgeBg
-        GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBadgeBg
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(colors.cardBackground)
-            .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
-            .padding(14.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        // Card Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(indicatorColor)
-                )
-                Text(
-                    text = "Evaluasi Pertumbuhan Kejar\n(Catch-up Growth)",
-                    style = typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(colors.surfaceVariant)
-                    .padding(horizontal = 8.dp, vertical = 3.dp)
-            ) {
-                Text(
-                    text = "Terakhir: $lastDate",
-                    style = typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = colors.textSecondary
-                )
-            }
-        }
-
-        // Item 1: Berat Badan
-        CatchUpMetricRow(item = summary.weightItem)
-
-        // Item 2: Panjang Badan
-        CatchUpMetricRow(item = summary.lengthItem)
-
-        // Item 3: Lingkar Kepala
-        CatchUpMetricRow(item = summary.headCircItem)
-
-        // Physician Note Callout
-        val noteCardBg = when (summary.overallLevel) {
-            GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBg
-            GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBg
-            else -> colors.pediatricNoteCardBg
-        }
-        val noteCardBorder = when (summary.overallLevel) {
-            GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBorder
-            GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBorder
-            else -> colors.pediatricNoteCardBorder
-        }
-        val noteTitleColor = when (summary.overallLevel) {
-            GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBadgeBg
-            GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBadgeBg
-            else -> colors.pediatricNoteTitle
-        }
-        val noteIcon = if (summary.overallLevel == GrowthEvaluationLevel.DANGER || summary.overallLevel == GrowthEvaluationLevel.WARNING) {
-            Icons.Default.Warning
-        } else {
-            Icons.Default.Info
-        }
-        val noteIconTint = when (summary.overallLevel) {
-            GrowthEvaluationLevel.DANGER -> colors.fentonEvaluationDangerBadgeBg
-            GrowthEvaluationLevel.WARNING -> colors.fentonEvaluationWarningBadgeBg
-            else -> colors.pediatricNoteIconTint
-        }
-
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(noteCardBg)
-                .border(1.dp, noteCardBorder, RoundedCornerShape(10.dp))
-                .padding(10.dp)
+                .padding(horizontal = 12.dp, vertical = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.il_pantau_pertumbuhan_bayi),
+                contentDescription = "Pantau pertumbuhan bayi",
+                modifier = Modifier
+                    .fillMaxWidth(0.72f)
+                    .heightIn(max = 380.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                contentScale = ContentScale.Fit
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
                 Icon(
-                    imageVector = noteIcon,
+                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
                     contentDescription = null,
-                    tint = noteIconTint,
-                    modifier = Modifier
-                        .size(16.dp)
-                        .padding(top = 2.dp)
+                    tint = colors.textSecondary,
+                    modifier = Modifier.size(15.dp)
                 )
-                Column {
-                    Text(
-                        text = summary.clinicalNoteTitle,
-                        style = typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = noteTitleColor
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = summary.clinicalNoteMessage,
-                        style = typography.bodySmall,
-                        color = colors.pediatricNoteSubtitle,
-                        lineHeight = typography.bodySmall.lineHeight
-                    )
-                }
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Sumber: Buku KIA Khusus Bayi Kecil (Kemenkes RI, 2021)",
+                    style = typography.labelSmall,
+                    color = colors.textSecondary,
+                    fontWeight = FontWeight.Medium
+                )
             }
-        }
-    }
-}
-
-private data class MetricRowStyle(
-    val bg: Color,
-    val border: Color,
-    val badgeBg: Color,
-    val badgeText: Color,
-    val subtitleColor: Color
-)
-
-@Composable
-private fun CatchUpMetricRow(
-    item: MetricEvaluationItem
-) {
-    val colors = KanguruTheme.colors
-    val typography = KanguruTheme.typography
-
-    val style = when (item.level) {
-        GrowthEvaluationLevel.OPTIMAL -> MetricRowStyle(
-            bg = colors.fentonEvaluationTargetBg,
-            border = colors.fentonEvaluationTargetBorder,
-            badgeBg = colors.fentonEvaluationTargetBadgeBg,
-            badgeText = colors.fentonEvaluationTargetBadgeText,
-            subtitleColor = colors.fentonEvaluationTargetBadgeBg
-        )
-        GrowthEvaluationLevel.WARNING -> MetricRowStyle(
-            bg = colors.fentonEvaluationWarningBg,
-            border = colors.fentonEvaluationWarningBorder,
-            badgeBg = colors.fentonEvaluationWarningBadgeBg,
-            badgeText = colors.fentonEvaluationWarningBadgeText,
-            subtitleColor = colors.fentonEvaluationWarningBadgeBg
-        )
-        GrowthEvaluationLevel.DANGER -> MetricRowStyle(
-            bg = colors.fentonEvaluationDangerBg,
-            border = colors.fentonEvaluationDangerBorder,
-            badgeBg = colors.fentonEvaluationDangerBadgeBg,
-            badgeText = colors.fentonEvaluationDangerBadgeText,
-            subtitleColor = colors.fentonEvaluationDangerBadgeBg
-        )
-        GrowthEvaluationLevel.NORMAL,
-        GrowthEvaluationLevel.BASELINE -> MetricRowStyle(
-            bg = colors.fentonEvaluationNormalRowBg,
-            border = colors.cardBorder,
-            badgeBg = colors.fentonEvaluationNormalBadgeBg,
-            badgeText = colors.fentonEvaluationNormalBadgeText,
-            subtitleColor = colors.textSecondary
-        )
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .background(style.bg)
-            .border(1.dp, style.border, RoundedCornerShape(10.dp))
-            .padding(10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = item.title,
-                style = typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = colors.textPrimary
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = item.subtitle,
-                style = typography.bodySmall,
-                color = style.subtitleColor
-            )
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
-                .background(style.badgeBg)
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
-            Text(
-                text = item.badgeText,
-                style = typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = style.badgeText
-            )
         }
     }
 }

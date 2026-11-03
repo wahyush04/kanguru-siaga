@@ -276,11 +276,7 @@ fun PmkRemindersScreen(
                             val bannerText = buildAnnotatedString {
                                 append("Target minimal ")
                                 withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFE11D48))) {
-                                    append("≥ 8 Jam/hari")
-                                }
-                                append(", dengan rekomendasi ideal ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFFE11D48))) {
-                                    append("≥ 20 Jam/hari")
+                                    append("8–24 Jam/hari")
                                 }
                                 append(" (estafet bersama Ayah & Pendamping) untuk hasil optimal.")
                             }
@@ -362,7 +358,7 @@ fun PmkRemindersScreen(
 
                         Spacer(modifier = Modifier.height(14.dp))
 
-                        // Duration values and ideal percentage
+                        // Duration values and threshold indicator
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -377,31 +373,23 @@ fun PmkRemindersScreen(
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "/ 20j Ideal",
+                                    text = "/ 24j",
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Medium,
                                     color = TextSecondary
                                 )
                             }
 
-                            Column(horizontalAlignment = Alignment.End) {
-                                Text(
-                                    text = stringResource(R.string.pmk_reminders_percent_to_ideal, progressPercentIdeal),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = BrandPink
-                                )
-                                Text(
-                                    text = if (totalMinutes >= minMinutes) {
-                                        stringResource(R.string.pmk_reminders_min_surpassed)
-                                    } else {
-                                        stringResource(R.string.pmk_reminders_min_pending)
-                                    },
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = if (totalMinutes >= minMinutes) Color(0xFF059669) else TextSecondary
-                                )
-                            }
+                            Text(
+                                text = if (totalMinutes >= minMinutes) {
+                                    stringResource(R.string.pmk_reminders_min_surpassed)
+                                } else {
+                                    stringResource(R.string.pmk_reminders_min_pending)
+                                },
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = if (totalMinutes >= minMinutes) Color(0xFF059669) else TextSecondary
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(10.dp))
@@ -410,16 +398,16 @@ fun PmkRemindersScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(10.dp)
-                                .clip(RoundedCornerShape(5.dp))
+                                .height(12.dp)
+                                .clip(RoundedCornerShape(6.dp))
                                 .background(Color(0xFFF1F5F9))
                         ) {
                             // Filled progress bar
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(progressFraction24h)
-                                    .height(10.dp)
-                                    .clip(RoundedCornerShape(5.dp))
+                                    .height(12.dp)
+                                    .clip(RoundedCornerShape(6.dp))
                                     .background(BrandPink)
                             )
 
@@ -427,28 +415,28 @@ fun PmkRemindersScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.333f)
-                                    .height(10.dp),
+                                    .height(12.dp),
                                 contentAlignment = Alignment.CenterEnd
                             ) {
                                 Box(
                                     modifier = Modifier
                                         .width(2.dp)
-                                        .height(10.dp)
+                                        .height(12.dp)
                                         .background(White.copy(alpha = 0.9f))
                                 )
                             }
 
-                            // Threshold marker 20h (83.3%)
+                            // Threshold marker 16h (66.7%)
                             Box(
                                 modifier = Modifier
-                                    .fillMaxWidth(0.833f)
-                                    .height(10.dp),
+                                    .fillMaxWidth(0.667f)
+                                    .height(12.dp),
                                 contentAlignment = Alignment.CenterEnd
                             ) {
                                 Box(
                                     modifier = Modifier
                                         .width(2.dp)
-                                        .height(10.dp)
+                                        .height(12.dp)
                                         .background(White.copy(alpha = 0.9f))
                                 )
                             }
@@ -474,7 +462,7 @@ fun PmkRemindersScreen(
                                 color = TextPrimary
                             )
                             Text(
-                                text = stringResource(R.string.pmk_reminders_threshold_ideal),
+                                text = stringResource(R.string.pmk_reminders_threshold_mid),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = BrandPink
@@ -588,33 +576,55 @@ private fun ReminderCardItem(
     onToggle: () -> Unit,
     onEdit: () -> Unit
 ) {
-    val isPagi = reminder.timeHour in 4..11
-    val isSiang = reminder.timeHour in 12..17
+    val categoryName = reminder.category.ifBlank {
+        when (reminder.timeHour) {
+            in 4..11 -> "Pagi"
+            in 12..14 -> "Siang"
+            in 15..17 -> "Sore"
+            in 18..23 -> "Malam"
+            else -> "Dini Hari"
+        }
+    }
+
+    val isPagi = categoryName.equals("Pagi", ignoreCase = true)
+    val isSiang = categoryName.equals("Siang", ignoreCase = true)
+    val isSore = categoryName.equals("Sore", ignoreCase = true)
+    val isMalam = categoryName.equals("Malam", ignoreCase = true)
 
     val iconBg = when {
         isPagi -> Color(0xFFFFF0F2)
         isSiang -> Color(0xFFFEF3C7)
-        else -> Color(0xFFEEF2FF)
+        isSore -> Color(0xFFFFEDD5)
+        isMalam -> Color(0xFFEEF2FF)
+        else -> Color(0xFFF3E8FF)
     }
     val iconTint = when {
         isPagi -> BrandPink
         isSiang -> Color(0xFFD97706)
-        else -> Color(0xFF6366F1)
+        isSore -> Color(0xFFEA580C)
+        isMalam -> Color(0xFF6366F1)
+        else -> Color(0xFF9333EA)
     }
     val badgeBg = when {
         isPagi -> Color(0xFFFFF0F2)
         isSiang -> Color(0xFFFEF3C7)
-        else -> Color(0xFFEEF2FF)
+        isSore -> Color(0xFFFFEDD5)
+        isMalam -> Color(0xFFEEF2FF)
+        else -> Color(0xFFF3E8FF)
     }
     val badgeText = when {
-        isPagi -> BrandPink
+        isPagi -> Color(0xFFE11D48)
         isSiang -> Color(0xFFD97706)
-        else -> Color(0xFF4F46E5)
+        isSore -> Color(0xFFEA580C)
+        isMalam -> Color(0xFF4F46E5)
+        else -> Color(0xFF7E22CE)
     }
     val badgeLabel = when {
         isPagi -> "Pagi"
         isSiang -> "Siang"
-        else -> "Malam"
+        isSore -> "Sore"
+        isMalam -> "Malam"
+        else -> "Dini Hari"
     }
 
     Card(

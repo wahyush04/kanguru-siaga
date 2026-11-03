@@ -639,7 +639,7 @@ class PmkTimerManager @Inject constructor(
     }
 
     fun pause(
-        reason: PmkPauseReason = PmkPauseReason.NURSING,
+        reason: PmkPauseReason = PmkPauseReason.UNSTABLE_CONDITION,
         note: String? = null,
         temperature: Double? = null,
         response: String? = null

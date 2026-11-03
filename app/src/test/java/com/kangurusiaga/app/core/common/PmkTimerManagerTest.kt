@@ -146,12 +146,12 @@ class PmkTimerManagerTest {
         val manager = createManager(testDispatcher)
         manager.start(babyId = 1L, initialCaregiver = PmkCaregiver.IBU)
 
-        // Pause for diaper change
-        manager.pause(reason = PmkPauseReason.DIAPER, note = "Ganti popok basah")
+        // Pause for unstable condition
+        manager.pause(reason = PmkPauseReason.UNSTABLE_CONDITION, note = "Bayi tampak gelisah")
 
         val pausedState = manager.timerState.value
         assertThat(pausedState.status).isEqualTo(TimerStatus.PAUSED)
-        assertThat(pausedState.pauseReason).isEqualTo(PmkPauseReason.DIAPER.title)
+        assertThat(pausedState.pauseReason).isEqualTo(PmkPauseReason.UNSTABLE_CONDITION.title)
         assertThat(pausedState.todayTotalActiveSeconds).isEqualTo(0L)
 
         // Resume session

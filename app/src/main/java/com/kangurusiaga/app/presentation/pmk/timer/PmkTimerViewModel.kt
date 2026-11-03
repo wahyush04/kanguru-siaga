@@ -40,7 +40,7 @@ data class PmkTimerUiState(
     val handoverTemperature: String = "36.8",
     val handoverResponse: String = "Tenang",
     val handoverNotes: String = "",
-    val pauseReason: PmkPauseReason = PmkPauseReason.NURSING,
+    val pauseReason: PmkPauseReason = PmkPauseReason.UNSTABLE_CONDITION,
     val pauseTemperature: String = "36.8",
     val pauseBehavior: String = "Tenang",
     val pauseNotes: String = "",
@@ -77,7 +77,7 @@ class PmkTimerViewModel @Inject constructor(
         val handoverTemperature: String = "36.8",
         val handoverResponse: String = "Tenang",
         val handoverNotes: String = "",
-        val pauseReason: PmkPauseReason = PmkPauseReason.NURSING,
+        val pauseReason: PmkPauseReason = PmkPauseReason.UNSTABLE_CONDITION,
         val pauseTemperature: String = "36.8",
         val pauseBehavior: String = "Tenang",
         val pauseNotes: String = "",
@@ -201,7 +201,7 @@ class PmkTimerViewModel @Inject constructor(
         _sheetState.update {
             it.copy(
                 showPauseSheet = true,
-                pauseReason = PmkPauseReason.NURSING,
+                pauseReason = PmkPauseReason.UNSTABLE_CONDITION,
                 pauseTemperature = "36.8",
                 pauseBehavior = "Tenang",
                 pauseNotes = ""
