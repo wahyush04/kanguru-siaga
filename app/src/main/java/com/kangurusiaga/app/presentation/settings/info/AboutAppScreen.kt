@@ -483,46 +483,64 @@ fun AboutAppScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(20.dp))
                         .background(
-                            Brush.verticalGradient(
+                            Brush.linearGradient(
                                 listOf(
-                                    KanguruTheme.colors.categoryRoseContainer,
-                                    KanguruTheme.colors.surface
+                                    colors.categoryRoseContainer.copy(alpha = 0.8f),
+                                    colors.surface
                                 )
                             )
                         )
                         .border(
-                            BorderStroke(1.dp, BrandPink.copy(alpha = 0.2f)),
-                            RoundedCornerShape(16.dp)
+                            BorderStroke(1.dp, colors.clinicalRoseBorder),
+                            RoundedCornerShape(20.dp)
                         )
                         .padding(16.dp)
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.about_app_dev_team_note),
                             style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
-                            color = TextSecondary,
+                            color = colors.textSecondary,
                             textAlign = TextAlign.Center
                         )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.about_app_author_name),
+                                style = KanguruTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textPrimary,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = stringResource(R.string.about_app_author_role),
+                                style = KanguruTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Normal,
+                                color = colors.textPrimary,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                         Text(
-                            text = stringResource(R.string.about_app_dev_team_name),
-                            style = KanguruTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            text = stringResource(R.string.about_app_developer),
+                            style = KanguruTheme.typography.labelSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.primary,
                             textAlign = TextAlign.Center
                         )
                         Text(
                             text = stringResource(R.string.about_app_copyright),
                             style = KanguruTheme.typography.labelSmall,
-                            color = TextTertiary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 2.dp)
+                            color = colors.textTertiary,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }

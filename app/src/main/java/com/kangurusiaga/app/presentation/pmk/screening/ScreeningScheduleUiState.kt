@@ -29,6 +29,12 @@ data class AddScreeningModalState(
     val clinicOrLab: String = ""
 )
 
+data class RescheduleScreeningModalState(
+    val isOpen: Boolean = false,
+    val screening: PrematureScreening? = null,
+    val newDateEpoch: Long = System.currentTimeMillis()
+)
+
 data class ScreeningScheduleUiState(
     val baby: Baby? = null,
     val babyAgeDisplay: String = "",
@@ -39,6 +45,7 @@ data class ScreeningScheduleUiState(
     val latestWeightGram: Int? = null,
     val recordModalState: RecordScreeningModalState = RecordScreeningModalState(),
     val addModalState: AddScreeningModalState = AddScreeningModalState(),
+    val rescheduleModalState: RescheduleScreeningModalState = RescheduleScreeningModalState(),
     val infoDialogVisible: Boolean = false,
     val userMessage: String? = null,
     val isLoading: Boolean = true

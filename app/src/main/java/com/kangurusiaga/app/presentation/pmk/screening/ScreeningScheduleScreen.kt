@@ -35,6 +35,7 @@ import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -56,6 +57,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,7 +65,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -86,6 +87,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.domain.model.PrematureScreening
 import com.kangurusiaga.app.domain.model.ScreeningType
@@ -135,6 +137,10 @@ fun ScreeningScheduleRoute(
         onUpdateAddGoal = viewModel::updateAddGoal,
         onUpdateAddClinic = viewModel::updateAddClinic,
         onSaveAdd = viewModel::saveNewScreening,
+        onOpenRescheduleModal = viewModel::openRescheduleModal,
+        onCloseRescheduleModal = viewModel::closeRescheduleModal,
+        onUpdateRescheduleDate = viewModel::updateRescheduleDate,
+        onSaveRescheduleDate = viewModel::saveRescheduledDate,
         onSetInfoDialogVisible = viewModel::setInfoDialogVisible,
         onDownloadPdf = viewModel::downloadPdfSummary,
         modifier = modifier,
@@ -142,6 +148,7 @@ fun ScreeningScheduleRoute(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreeningScheduleScreen(
     uiState: ScreeningScheduleUiState,
@@ -167,6 +174,10 @@ fun ScreeningScheduleScreen(
     onUpdateAddGoal: (String) -> Unit,
     onUpdateAddClinic: (String) -> Unit,
     onSaveAdd: () -> Unit,
+    onOpenRescheduleModal: (PrematureScreening) -> Unit,
+    onCloseRescheduleModal: () -> Unit,
+    onUpdateRescheduleDate: (Long) -> Unit,
+    onSaveRescheduleDate: () -> Unit,
     onSetInfoDialogVisible: (Boolean) -> Unit,
     onDownloadPdf: () -> Unit,
     modifier: Modifier = Modifier,
@@ -178,7 +189,7 @@ fun ScreeningScheduleScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = colors.background,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { KanguruSnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
                 color = colors.background,
@@ -292,6 +303,7 @@ fun ScreeningScheduleScreen(
                     screenings = uiState.screenings,
                     onToggleAlarm = onToggleAlarm,
                     onNavigateToInputResult = onNavigateToInputResult,
+                    onRescheduleClick = onOpenRescheduleModal,
                     modifier = Modifier.fillMaxWidth()
                 )
             } else {
@@ -319,6 +331,17 @@ fun ScreeningScheduleScreen(
             onGoalChanged = onUpdateAddGoal,
             onClinicChanged = onUpdateAddClinic,
             onSave = onSaveAdd
+        )
+    }
+
+    // Modal / Pop-Up Atur Jadwal Ulang Skrining
+    if (uiState.rescheduleModalState.isOpen) {
+        RescheduleScreeningBottomSheet(
+            state = uiState.rescheduleModalState,
+            baby = uiState.baby,
+            onDismiss = onCloseRescheduleModal,
+            onDateSelected = onUpdateRescheduleDate,
+            onSave = onSaveRescheduleDate
         )
     }
 
@@ -818,6 +841,7 @@ private fun RemindersView(
     screenings: List<PrematureScreening>,
     onToggleAlarm: (PrematureScreening, Boolean) -> Unit,
     onNavigateToInputResult: (String) -> Unit,
+    onRescheduleClick: (PrematureScreening) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -860,6 +884,7 @@ private fun RemindersView(
                 screening = screening,
                 onToggleAlarm = { isAlarm1 -> onToggleAlarm(screening, isAlarm1) },
                 onRecordClick = { onNavigateToInputResult(screening.type.name) },
+                onRescheduleClick = { onRescheduleClick(screening) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -871,6 +896,7 @@ private fun ScreeningCardItem(
     screening: PrematureScreening,
     onToggleAlarm: (Boolean) -> Unit,
     onRecordClick: () -> Unit,
+    onRescheduleClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -1140,13 +1166,12 @@ private fun ScreeningCardItem(
 
             HorizontalDivider(color = colors.cardBorder)
 
-            // Card Footer Action: Left Status Text + Right Catat Hasil Button
-            Row(
+            // Card Footer Action: Status Text on Top, Two Buttons below
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Left Side: Status Display
+                // Status Display Row
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -1173,13 +1198,47 @@ private fun ScreeningCardItem(
                     }
                 }
 
-                // Right Side: Action Button tailored per type
-                Button(
-                    onClick = onRecordClick,
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = btnColor),
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                // Action Buttons Row: Jadwal Ulang (Outlined) + Catat Hasil (Filled)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Tombol Jadwal Ulang (Outlined)
+                    OutlinedButton(
+                        onClick = onRescheduleClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = colors.surface,
+                            contentColor = colors.textPrimary
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CalendarToday,
+                                contentDescription = null,
+                                tint = colors.textSecondary,
+                                modifier = Modifier.size(15.dp)
+                            )
+                            Text(
+                                text = "Jadwal Ulang",
+                                style = KanguruTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colors.textPrimary,
+                                maxLines = 1
+                            )
+                        }
+                    }
+
+                    // Tombol Catat Hasil (Filled)
                     val btnTitle = when (screening.type) {
                         ScreeningType.USG_HEAD -> "+ Catat Hasil USG"
                         ScreeningType.ROP_EYE -> "+ Catat Hasil Mata"
@@ -1187,12 +1246,23 @@ private fun ScreeningCardItem(
                         ScreeningType.THYROID_FUNCTION -> "+ Catat Hasil Lab"
                         ScreeningType.CUSTOM -> "+ Catat Hasil"
                     }
-                    Text(
-                        text = if (screening.isCompleted) "Edit Hasil" else btnTitle,
-                        style = KanguruTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.onPrimary
-                    )
+                    Button(
+                        onClick = onRecordClick,
+                        modifier = Modifier
+                            .weight(1.3f)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = btnColor),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                    ) {
+                        Text(
+                            text = if (screening.isCompleted) "Edit Hasil" else btnTitle,
+                            style = KanguruTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.onPrimary,
+                            maxLines = 1
+                        )
+                    }
                 }
             }
         }

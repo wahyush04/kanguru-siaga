@@ -268,6 +268,55 @@ class ScreeningScheduleViewModel @Inject constructor(
         _uiState.update { it.copy(infoDialogVisible = visible) }
     }
 
+    fun openRescheduleModal(screening: PrematureScreening) {
+        _uiState.update {
+            it.copy(
+                rescheduleModalState = RescheduleScreeningModalState(
+                    isOpen = true,
+                    screening = screening,
+                    newDateEpoch = if (screening.targetDateEpoch > 0) screening.targetDateEpoch else System.currentTimeMillis()
+                )
+            )
+        }
+    }
+
+    fun closeRescheduleModal() {
+        _uiState.update {
+            it.copy(
+                rescheduleModalState = it.rescheduleModalState.copy(isOpen = false)
+            )
+        }
+    }
+
+    fun updateRescheduleDate(epoch: Long) {
+        _uiState.update {
+            it.copy(
+                rescheduleModalState = it.rescheduleModalState.copy(newDateEpoch = epoch)
+            )
+        }
+    }
+
+    fun saveRescheduledDate() {
+        val modal = _uiState.value.rescheduleModalState
+        val target = modal.screening ?: return
+        viewModelScope.launch {
+            val formatted = birthDateFormat.format(Date(modal.newDateEpoch))
+            val updated = target.copy(
+                targetDateEpoch = modal.newDateEpoch,
+                targetDateFormatted = formatted,
+                updatedAt = System.currentTimeMillis()
+            )
+            screeningRepository.updateScreening(updated)
+            screeningReminderScheduler?.schedule(updated)
+            _uiState.update {
+                it.copy(
+                    rescheduleModalState = it.rescheduleModalState.copy(isOpen = false),
+                    userMessage = "Jadwal ${updated.title} berhasil diatur ulang ke $formatted"
+                )
+            }
+        }
+    }
+
     fun clearUserMessage() {
         _uiState.update { it.copy(userMessage = null) }
     }

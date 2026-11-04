@@ -129,6 +129,12 @@ fun ClinicalGuidelinesScreen(
                     listOf(
                         buildAnnotatedString {
                             withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = primaryTextColor)) {
+                                append("Buku KIA Khusus Bayi Kecil: ")
+                            }
+                            append("Standar pemantauan pertumbuhan, grafik kenaikan berat badan harian, serta jadwal dan evaluasi penapisan berkala bayi kecil & prematur.")
+                        },
+                        buildAnnotatedString {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = primaryTextColor)) {
                                 append("Buku Saku Pelayanan Neonatal Esensial: ")
                             }
                             append("Protokol pencegahan hipotermia dan infeksi rumah tangga.")
@@ -464,9 +470,9 @@ fun ClinicalGuidelinesScreen(
                                 buildAnnotatedString {
                                     append("Materi pada aplikasi ini ditinjau dan divalidasi berkala bersama ")
                                     withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = primaryTextColor)) {
-                                        append("Dokter Spesialis Anak (Sp.A) konsultan neonatologi")
+                                        append("Tim dokter Sp. A dan Perawat Perinatologi")
                                     }
-                                    append(" serta perawat perinatologi berpengalaman untuk menjamin ketepatan edukasi bagi orang tua di rumah.")
+                                    append(" untuk menjamin ketepatan edukasi bagi orang tua di rumah.")
                                 }
                             }
                             Text(

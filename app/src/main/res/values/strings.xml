@@ -523,7 +523,7 @@
     <string name="pmk_reminders_item_target_hours_once">Target %1$d Jam • Hanya Sekali</string>
     <string name="pmk_reminders_btn_add">Tambah Jadwal Pengingat</string>
     <string name="pmk_reminders_info_dialog_title">Pedoman Medis PMK Kontinu</string>
-    <string name="pmk_reminders_info_dialog_msg">Metode Kanguru terbukti efektif jika dilakukan secara kontinu (tanpa putus) minimal 8 jam/hari hingga 20 jam/hari secara estafet bersama Ayah dan Pendamping. Durasi kontak kulit minimal 2 jam per sesi untuk mencegah fluktuasi suhu dan kelelahan bayi.</string>
+    <string name="pmk_reminders_info_dialog_msg">Metode Kanguru terbukti efektif jika dilakukan secara kontinu (tanpa putus) minimal 8 hingga 24 jam/hari secara estafet bersama Ayah dan Pendamping. Durasi kontak kulit minimal 8 jam perhari untuk mencegah fluktuasi suhu dan kelelahan bayi.</string>
 
     <!-- PMK Reminder Add & Edit (Stitch: Tambah & Edit Jadwal Pengingat PMK) -->
     <string name="pmk_reminder_add_title">Tambah Jadwal Pengingat</string>
@@ -657,7 +657,7 @@
     <string name="clinical_guidelines_title">Sumber Informasi &amp; Klinis</string>
     <string name="clinical_guidelines_section_title">Pedoman &amp; Landasan Teori Rujukan</string>
     <string name="clinical_guidelines_medical_review_title">Ditelaah Oleh Tenaga Medis</string>
-    <string name="clinical_guidelines_medical_review_subtitle">Tim Riset &amp; Inovasi Perinatologi Indonesia</string>
+    <string name="clinical_guidelines_medical_review_subtitle">Riset &amp; Inovasi Perinatologi Indonesia</string>
     <string name="clinical_guidelines_footer_notice">Dokumen rujukan diperbarui secara berkala mengikuti konsensus klinis terbaru IDAI dan Kementerian Kesehatan RI.</string>
     <string name="clinical_guidelines_footer_version">KANGURU SIAGA • Versi 1.2.0 (Build 2026)</string>
 
@@ -670,7 +670,9 @@
     <string name="about_app_pillars_title">4 Pilar Layanan Unggulan</string>
     <string name="about_app_references_title">Rujukan &amp; Standar Medis</string>
     <string name="about_app_dev_team_note">Dikembangkan dengan dedikasi untuk para pejuang kecil</string>
-    <string name="about_app_dev_team_name">Tim Riset &amp; Inovasi Perinatologi Indonesia</string>
+    <string name="about_app_author_name">Nirmala Endang Elis N, S. Kep, Ns</string>
+    <string name="about_app_author_role">(Perawat Perinatologi)</string>
+    <string name="about_app_developer">Developed by KuliTech</string>
     <string name="about_app_copyright">© 2026 KANGURU SIAGA • Hak Cipta Dilindungi</string>
 
     <!-- Medical Disclaimer (Disclaimer Medis) -->

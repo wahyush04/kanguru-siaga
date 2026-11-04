@@ -122,7 +122,8 @@ fun KanguruSnackbar(
                 text = message,
                 style = KanguruTheme.typography.labelMedium,
                 fontWeight = FontWeight.Medium,
-                color = colors.toastText
+                color = colors.toastText,
+                modifier = Modifier.weight(1f, fill = false)
             )
         }
     }
