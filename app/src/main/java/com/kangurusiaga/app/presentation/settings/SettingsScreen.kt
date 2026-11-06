@@ -1251,7 +1251,7 @@ fun SettingsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "KANGURU SIAGA • Pendamping BBLR Mandiri",
+                            text = "KANGURU SIAGA • Pendamping Khusus Bayi Kecil",
                             style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
                             color = TextTertiary

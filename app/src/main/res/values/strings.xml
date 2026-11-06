@@ -216,7 +216,7 @@
     <string name="home_hello">Halo, %1$s</string>
     <string name="home_welcome_app">Selamat datang di KANGURU SIAGA</string>
     <string name="home_hero_baby_title">Bayi Hebat</string>
-    <string name="home_hero_baby_subtitle">Terus dekap dan pantau perkembangannya</string>
+    <string name="home_hero_baby_subtitle">Terus Dekap dan Pantau Perkembangannya</string>
     <string name="home_hero_pmk_active">PMK Aktif</string>
 
     <!-- 6 Grid Menu Items -->
@@ -424,10 +424,10 @@
     <string name="onboarding_btn_fill_baby_data">Isi Data Bayi</string>
     <string name="onboarding_welcome_img_cd">Ibu mendekap bayi baru lahir</string>
     <string name="onboarding_welcome_title">Selamat Datang\ndi KANGURU SIAGA</string>
-    <string name="onboarding_welcome_desc">Teman pendamping perawatan khusus bayi kecil di rumah, untuk mendukung tumbuh kembang si kecil.</string>
+    <string name="onboarding_welcome_desc">Teman Pendamping Perawatan Khusus Bayi Kecil di Rumah untuk Mendukung Tumbuh Kembang Si Kecil.</string>
     <string name="onboarding_profile_intro_img_cd">Registrasi data bayi</string>
     <string name="onboarding_profile_intro_title">Yuk, Mulai dengan\nData Bayi</string>
-    <string name="onboarding_profile_intro_desc">Informasi ini akan digunakan untuk menyesuaikan panduan, pengingat, dan grafik pertumbuhan.</string>
+    <string name="onboarding_profile_intro_desc">Informasi Ini Akan Digunakan untuk Menyesuaikan Panduan, Pengingat, dan Grafik Pertumbuhan.</string>
 
     <!-- Splash Module -->
     <string name="splash_mascot_cd">Maskot Kanguru Siaga</string>
@@ -663,13 +663,13 @@
 
     <!-- About App (Tentang KANGURU SIAGA) -->
     <string name="about_app_title">Tentang KANGURU SIAGA</string>
-    <string name="about_app_subtitle">Pendamping Perawatan BBLR di Rumah</string>
+    <string name="about_app_subtitle">Pendamping Perawatan Khusus Bayi Kecil di Rumah</string>
     <string name="about_app_version">Versi 1.2.0 (Build 2026)</string>
     <string name="about_app_vision_title">Visi &amp; Komitmen Kami</string>
     <string name="about_app_vision_desc">Mewujudkan setiap bayi prematur dan BBLR tumbuh optimal, hangat, dan sehat melalui pemberdayaan keluarga dengan panduan praktis berbasis bukti ilmiah klinis.</string>
     <string name="about_app_pillars_title">4 Pilar Layanan Unggulan</string>
     <string name="about_app_references_title">Rujukan &amp; Standar Medis</string>
-    <string name="about_app_dev_team_note">Dikembangkan dengan dedikasi untuk para pejuang kecil</string>
+    <string name="about_app_dev_team_note">Dikembangkan dengan Dedikasi untuk Para Pejuang Kecil</string>
     <string name="about_app_author_name">Nirmala Endang Elis N, S. Kep, Ns</string>
     <string name="about_app_author_role">(Perawat Perinatologi)</string>
     <string name="about_app_developer">Developed by KuliTech</string>

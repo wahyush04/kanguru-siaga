@@ -246,5 +246,48 @@ class GetPmkWeeklyRecapUseCaseTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun invoke_withFirstTimerSessionOnWednesday_alignsEveryWeekStartToWednesday() = runTest {
+        // Wednesday 14 Oct 2026 at 10:00
+        val wedCal = java.util.Calendar.getInstance().apply {
+            set(2026, java.util.Calendar.OCTOBER, 14, 10, 0, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val wedEpoch = wedCal.timeInMillis
+
+        val baby = Baby(
+            id = 400L,
+            name = "Arka",
+            gender = Gender.MALE,
+            birthDateEpochMillis = wedEpoch,
+            birthWeightGram = 1850,
+            gestationalAgeWeeks = 32,
+            createdAt = wedEpoch
+        )
+
+        val session = PmkSession(
+            id = 1L,
+            babyId = 400L,
+            startTimeEpoch = wedEpoch,
+            endTimeEpoch = wedEpoch + (9 * 3600 * 1000L),
+            durationMinutes = 540,
+            source = com.kangurusiaga.app.domain.model.PmkSource.TIMER,
+            status = TimerStatus.COMPLETED
+        )
+
+        every { getBabyProfileUseCase() } returns flowOf(baby)
+        every { pmkRepository.getSessionsForBaby(400L) } returns flowOf(listOf(session))
+        every { growthRepository.getAllMeasurementsDesc(400L) } returns flowOf(emptyList())
+
+        useCase().test {
+            val item = awaitItem()
+            val eval = item.weeklyEvaluations.first()
+            val dayLabels = eval.dailyActivities.map { it.dayLabel }
+            // Must start from Wednesday ("Rab") and end on Tuesday ("Sel")
+            assertThat(dayLabels).containsExactly("Rab", "Kam", "Jum", "Sab", "Min", "Sen", "Sel").inOrder()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }
 

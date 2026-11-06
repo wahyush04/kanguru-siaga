@@ -17,6 +17,7 @@ import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.model.PmkSegment
 import com.kangurusiaga.app.domain.model.PmkSegmentStatus
 import com.kangurusiaga.app.domain.model.PmkSession
+import com.kangurusiaga.app.domain.model.PmkSource
 import com.kangurusiaga.app.domain.model.TimerStatus
 import com.kangurusiaga.app.domain.model.WeeklyFentonSummary
 import com.kangurusiaga.app.domain.model.WeeklyPmkEvaluation
@@ -119,17 +120,27 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
         )
         val pmaWeeksText = "${pmaCalc.pmaWeeks.toInt()} Mgg"
 
-        // App usage start determination
-        // Evaluation begins only from when the app started being used / PMK started being recorded,
-        // rather than generating empty historical weeks since baby's birth.
-        val earliestUsageEpoch = listOfNotNull(
-            baby.createdAt.takeIf { it > 0L },
-            sessions.minOfOrNull { it.startTimeEpoch }
-        ).minOrNull() ?: now
+        // Cari hari pelaksanaan Timer PMK pertama kali (selaras dengan halaman Statistik)
+        val firstTimerSession = sessions
+            .filter { it.source == PmkSource.TIMER }
+            .minByOrNull { it.startTimeEpoch }
+            ?: sessions.minByOrNull { it.startTimeEpoch }
+        val firstPmkEpoch = firstTimerSession?.startTimeEpoch
 
-        // Truncate to start of day of first usage
+        val startDayOfWeek = if (firstPmkEpoch != null && firstPmkEpoch > 0L) {
+            val c = Calendar.getInstance().apply { timeInMillis = firstPmkEpoch }
+            c.get(Calendar.DAY_OF_WEEK)
+        } else {
+            Calendar.MONDAY
+        }
+
+        // Tentukan titik awal appUsageStartEpoch yang selaras dengan startDayOfWeek
+        val baseEpoch = firstPmkEpoch ?: baby.createdAt.takeIf { it > 0L } ?: now
         val startCal = Calendar.getInstance().apply {
-            timeInMillis = minOf(earliestUsageEpoch, now)
+            timeInMillis = minOf(baseEpoch, now)
+            val currentDayOfWeek = get(Calendar.DAY_OF_WEEK)
+            val daysDiff = (currentDayOfWeek - startDayOfWeek + 7) % 7
+            add(Calendar.DAY_OF_YEAR, -daysDiff)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
@@ -224,7 +235,7 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
 
             val achievedDays = dailyBars.count { it.isAboveTarget }
             val unmetDaysCount = (7 - achievedDays).coerceAtLeast(0)
-            val isTargetMet = achievedDays == 7 || totalWeekMinutes >= (7 * 8 * 60)
+            val isTargetMet = achievedDays >= 7
             val targetStatusBadge = if (isTargetMet) "Target Terpenuhi" else "Tidak Mencapai Target"
             val achievementText = "$achievedDays dari 7 Hari ≥8j"
 

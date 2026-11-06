@@ -76,6 +76,39 @@ class HomeViewModelTest {
             assertThat(success.babyWeightFormatted).contains("1.850")
             assertThat(success.todayProgressFraction).isGreaterThan(0.04f)
             assertThat(success.formattedTodayPmkProgress).isEqualTo("1 Jam")
+            assertThat(success.unreadNotificationsCount).isEqualTo(0)
+            assertThat(success.hasUnreadNotifications).isFalse()
+        }
+    }
+
+    @Test
+    fun unreadNotification_reflectsCountAndBadgeCorrectly() = runTest {
+        val baby = Baby(
+            id = 1L,
+            name = "Aisyah Humaira",
+            gender = Gender.FEMALE,
+            birthDateEpochMillis = System.currentTimeMillis() - (14 * 24 * 3600 * 1000L),
+            birthWeightGram = 1850,
+            birthLengthCm = 44.0f,
+            birthHeadCircumferenceCm = 31.0f
+        )
+        val unreadUseCase: com.kangurusiaga.app.domain.usecase.notification.GetUnreadNotificationCountUseCase = mockk()
+        every { getBabyProfileUseCase() } returns flowOf(baby)
+        every { getTodayPmkSessionsUseCase(1L) } returns flowOf(emptyList())
+        every { unreadUseCase(1L) } returns flowOf(3)
+
+        val viewModel = HomeViewModel(
+            getBabyProfileUseCase = getBabyProfileUseCase,
+            getTodayPmkSessionsUseCase = getTodayPmkSessionsUseCase,
+            getUnreadNotificationCountUseCase = unreadUseCase
+        )
+
+        viewModel.uiState.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            val success = awaitItem()
+            assertThat(success.unreadNotificationsCount).isEqualTo(3)
+            assertThat(success.hasUnreadNotifications).isTrue()
         }
     }
 

@@ -37,7 +37,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.SyncAlt
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WorkspacePremium
@@ -331,10 +330,10 @@ fun PmkStatisticsScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Period Filter Chips
+                    // Period Filter Chips (Minggu Ini & Minggu Lalu)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         FilterPillButton(
@@ -347,36 +346,6 @@ fun PmkStatisticsScreen(
                             isSelected = uiState.selectedPeriod == StatsPeriod.LAST_WEEK,
                             onClick = { onPeriodSelected(StatsPeriod.LAST_WEEK) }
                         )
-                        FilterPillButton(
-                            title = "Bulan Ini",
-                            isSelected = uiState.selectedPeriod == StatsPeriod.THIS_MONTH,
-                            onClick = { onPeriodSelected(StatsPeriod.THIS_MONTH) }
-                        )
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(colors.surfaceVariant)
-                                .clickable { /* Open filter */ }
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.Tune,
-                                    contentDescription = null,
-                                    tint = colors.textSecondary,
-                                    modifier = Modifier.size(12.dp)
-                                )
-                                Spacer(modifier = Modifier.width(3.dp))
-                                Text(
-                                    text = "Filter",
-                                    style = KanguruTheme.typography.labelSmall,
-                                    color = colors.textSecondary
-                                )
-                            }
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))

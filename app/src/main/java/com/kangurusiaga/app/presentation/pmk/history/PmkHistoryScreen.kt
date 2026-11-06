@@ -161,7 +161,7 @@ fun PmkHistoryScreen(
                     }
 
                     Text(
-                        text = "Riwayat PMK",
+                        text = "Riwayat PMK Harian",
                         style = KanguruTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = colors.textPrimary

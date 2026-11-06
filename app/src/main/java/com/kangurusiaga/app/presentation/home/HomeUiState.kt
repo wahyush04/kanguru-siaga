@@ -15,8 +15,11 @@ data class HomeUiState(
     val todayTargetHours: Int = 20,
     val formattedTodayPmkProgress: String = "0j / 20j target",
     val todayProgressFraction: Float = 0f,
-    val unreadNotificationsCount: Int = 1,
+    val unreadNotificationsCount: Int = 0,
     val showEmergencyDialog: Boolean = false,
     val showNotificationSheet: Boolean = false,
     val infoMessage: String? = null
-)
+) {
+    val hasUnreadNotifications: Boolean
+        get() = unreadNotificationsCount > 0
+}

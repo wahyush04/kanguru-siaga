@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class NotificationViewModel @Inject constructor(
-    getBabyProfileUseCase: GetBabyProfileUseCase,
+    private val getBabyProfileUseCase: GetBabyProfileUseCase,
     private val getNotificationsUseCase: GetNotificationsUseCase,
     private val getUnreadNotificationCountUseCase: GetUnreadNotificationCountUseCase,
     private val markAllNotificationsAsReadUseCase: MarkAllNotificationsAsReadUseCase,
@@ -68,8 +69,8 @@ class NotificationViewModel @Inject constructor(
         )
 
     fun markAllAsRead() {
-        val babyId = uiState.value.babyId ?: return
         viewModelScope.launch {
+            val babyId = uiState.value.babyId ?: getBabyProfileUseCase().firstOrNull()?.id ?: return@launch
             markAllNotificationsAsReadUseCase(babyId)
         }
     }

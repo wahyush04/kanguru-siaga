@@ -335,6 +335,7 @@ private fun HomeContent(
             babyName = baby.name,
             ageFormatted = ageFormatted,
             weightFormatted = weightFormatted,
+            hasUnreadNotifications = unreadNotificationsCount > 0,
             onOpenNotification = onOpenNotification
         )
 
@@ -383,6 +384,7 @@ private fun HomeHeaderSection(
     babyName: String,
     ageFormatted: String,
     weightFormatted: String,
+    hasUnreadNotifications: Boolean,
     onOpenNotification: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -444,14 +446,16 @@ private fun HomeHeaderSection(
             }
 
             // Red dot indicator - rendered on top, unclipped
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(11.dp)
-                    .clip(CircleShape)
-                    .background(KanguruTheme.colors.gridSubtitleRose)
-                    .border(2.dp, KanguruTheme.colors.surface, CircleShape)
-            )
+            if (hasUnreadNotifications) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(11.dp)
+                        .clip(CircleShape)
+                        .background(KanguruTheme.colors.gridSubtitleRose)
+                        .border(2.dp, KanguruTheme.colors.surface, CircleShape)
+                )
+            }
         }
     }
 }

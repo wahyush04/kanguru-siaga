@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PmkSession
+import com.kangurusiaga.app.domain.model.PmkSource
 import com.kangurusiaga.app.domain.model.PmkStatistics
 import com.kangurusiaga.app.domain.model.StatsPeriod
 import com.kangurusiaga.app.domain.usecase.DeletePmkSessionUseCase
@@ -60,22 +61,34 @@ class PmkStatisticsViewModel @Inject constructor(
                     )
                 }
             } else {
-                combine(
-                    _selectedPeriod.flatMapLatest { period ->
-                        getPmkStatisticsUseCase(baby.id, period, babyBirthDateEpoch = baby.birthDateEpochMillis)
-                    },
-                    getPmkSessionsUseCase(baby.id),
-                    _selectedPeriod,
-                    _userMessage
-                ) { stats, sessions, period, message ->
-                    PmkStatisticsUiState(
-                        isLoading = false,
-                        baby = baby,
-                        selectedPeriod = period,
-                        statistics = stats,
-                        sessions = sessions,
-                        message = message
-                    )
+                getPmkSessionsUseCase(baby.id).flatMapLatest { allSessions ->
+                    val firstTimerSession = allSessions
+                        .filter { it.source == PmkSource.TIMER }
+                        .minByOrNull { it.startTimeEpoch }
+                        ?: allSessions.minByOrNull { it.startTimeEpoch }
+                    val firstPmkEpoch = firstTimerSession?.startTimeEpoch
+
+                    combine(
+                        _selectedPeriod.flatMapLatest { period ->
+                            getPmkStatisticsUseCase(
+                                babyId = baby.id,
+                                period = period,
+                                babyBirthDateEpoch = baby.birthDateEpochMillis,
+                                firstPmkEpoch = firstPmkEpoch
+                            )
+                        },
+                        _selectedPeriod,
+                        _userMessage
+                    ) { stats, period, message ->
+                        PmkStatisticsUiState(
+                            isLoading = false,
+                            baby = baby,
+                            selectedPeriod = period,
+                            statistics = stats,
+                            sessions = allSessions,
+                            message = message
+                        )
+                    }
                 }
             }
         }.stateIn(

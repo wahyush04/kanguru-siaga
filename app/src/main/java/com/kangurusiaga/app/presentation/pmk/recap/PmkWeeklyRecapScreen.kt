@@ -117,12 +117,6 @@ fun PmkWeeklyRecapScreen(
     val data = uiState.data
     val selectedTab = uiState.selectedTab
 
-    val screenTitle = if (selectedTab == WeeklyRecapTab.REKAP_MINGGUAN) {
-        "Rekap Mingguan PMK"
-    } else {
-        "Detail Rekap Mingguan"
-    }
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = colors.background,
@@ -152,7 +146,7 @@ fun PmkWeeklyRecapScreen(
                     }
 
                     Text(
-                        text = screenTitle,
+                        text = "Rekap Mingguan PMK",
                         style = typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = colors.textPrimary
@@ -195,32 +189,15 @@ fun PmkWeeklyRecapScreen(
                 selectedTab = selectedTab
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // =========================================================================
-            // 2. SEGMENTED TAB SWITCHER (Rekap Mingguan PMK vs Korelasi Pertumbuhan)
-            // =========================================================================
-            WeeklyRecapSegmentedTabs(
-                selectedTab = selectedTab,
-                onTabSelected = onTabSelected
-            )
-
             Spacer(modifier = Modifier.height(14.dp))
 
             // =========================================================================
-            // 3. TAB CONTENT
+            // 2. DAFTAR EVALUASI MINGGUAN CONTENT
             // =========================================================================
-            if (selectedTab == WeeklyRecapTab.REKAP_MINGGUAN) {
-                WeeklyRecapTabContent(
-                    evaluations = data.weeklyEvaluations,
-                    onNavigateToFentonChart = onNavigateToFentonChart
-                )
-            } else {
-                GrowthCorrelationTabContent(
-                    data = data.correlationData,
-                    pmaWeeksText = data.pmaWeeksText
-                )
-            }
+            WeeklyRecapTabContent(
+                evaluations = data.weeklyEvaluations,
+                onNavigateToFentonChart = onNavigateToFentonChart
+            )
 
             Spacer(modifier = Modifier.height(28.dp))
         }
@@ -846,11 +823,6 @@ private fun WeeklyEvaluationCard(
 
             // 7 Vertical Micro-Bars Chart
             DailyMiniBarsRow(dailyActivities = evaluation.dailyActivities)
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Embedded Fenton Summary Subcard
-            FentonSummarySubCard(summary = evaluation.fentonSummary)
         }
     }
 }

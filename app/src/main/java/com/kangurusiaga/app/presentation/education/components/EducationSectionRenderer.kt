@@ -93,7 +93,7 @@ private fun OverviewBlock(
                     )
                     Text(
                         text = overview.title,
-                        style = KanguruTheme.typography.titleSmall,
+                        style = KanguruTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
@@ -105,9 +105,9 @@ private fun OverviewBlock(
                 if (index > 0) Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = paragraph,
-                    style = KanguruTheme.typography.bodySmall,
+                    style = KanguruTheme.typography.bodyMedium,
                     color = TextSecondary,
-                    lineHeight = 20.sp
+                    lineHeight = 22.sp
                 )
             }
         }
@@ -130,7 +130,7 @@ private fun ClassificationListBlock(
         ) {
             Text(
                 text = block.title.uppercase(),
-                style = KanguruTheme.typography.labelSmall,
+                style = KanguruTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = TextTertiary,
                 letterSpacing = 0.5.sp
@@ -142,7 +142,7 @@ private fun ClassificationListBlock(
                 ) {
                     Text(
                         text = block.standardBadge,
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = TextSecondary,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
@@ -184,7 +184,7 @@ private fun ClassificationListBlock(
                         Column {
                             Text(
                                 text = item.title,
-                                style = KanguruTheme.typography.bodySmall,
+                                style = KanguruTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
@@ -192,9 +192,9 @@ private fun ClassificationListBlock(
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = item.subtitle,
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     color = TextSecondary,
-                                    lineHeight = 15.sp
+                                    lineHeight = 17.sp
                                 )
                             }
                         }
@@ -209,7 +209,7 @@ private fun ClassificationListBlock(
                     ) {
                         Text(
                             text = item.badgeText,
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = itemPalette.primary,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -236,7 +236,7 @@ private fun IconListBlock(
         Column(modifier = Modifier.padding(18.dp)) {
             Text(
                 text = block.title,
-                style = KanguruTheme.typography.titleSmall,
+                style = KanguruTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
@@ -244,9 +244,9 @@ private fun IconListBlock(
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = block.subtitle,
-                    style = KanguruTheme.typography.labelSmall,
+                    style = KanguruTheme.typography.labelMedium,
                     color = TextSecondary,
-                    lineHeight = 16.sp
+                    lineHeight = 18.sp
                 )
             }
 
@@ -281,16 +281,16 @@ private fun IconListBlock(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = item.title,
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = TextPrimary
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = item.description,
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 color = TextSecondary,
-                                lineHeight = 16.sp
+                                lineHeight = 18.sp
                             )
                         }
                     }
@@ -312,7 +312,7 @@ private fun StepListBlock(
     ) {
         Text(
             text = block.title.uppercase(),
-            style = KanguruTheme.typography.labelSmall,
+            style = KanguruTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = TextTertiary,
             letterSpacing = 0.5.sp
@@ -341,7 +341,7 @@ private fun StepListBlock(
                     ) {
                         Text(
                             text = "${step.number}",
-                            style = KanguruTheme.typography.titleSmall,
+                            style = KanguruTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = palette.primary
                         )
@@ -352,17 +352,17 @@ private fun StepListBlock(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = step.title,
-                            style = KanguruTheme.typography.bodySmall,
+                            style = KanguruTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
-                            lineHeight = 18.sp
+                            lineHeight = 20.sp
                         )
                         Spacer(modifier = Modifier.height(3.dp))
                         Text(
                             text = step.description,
-                            style = KanguruTheme.typography.labelSmall,
+                            style = KanguruTheme.typography.labelMedium,
                             color = TextSecondary,
-                            lineHeight = 17.sp
+                            lineHeight = 18.sp
                         )
                     }
                 }
@@ -387,7 +387,7 @@ private fun ProtocolBoxBlock(
         ) {
             Text(
                 text = block.title.uppercase(),
-                style = KanguruTheme.typography.labelSmall,
+                style = KanguruTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = TextTertiary,
                 letterSpacing = 0.5.sp
@@ -400,7 +400,7 @@ private fun ProtocolBoxBlock(
                 ) {
                     Text(
                         text = block.badgeText,
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = KanguruTheme.colors.success,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
@@ -437,7 +437,7 @@ private fun ProtocolBoxBlock(
                         }
                         Text(
                             text = block.header,
-                            style = KanguruTheme.typography.titleSmall,
+                            style = KanguruTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
@@ -459,15 +459,15 @@ private fun ProtocolBoxBlock(
                             Column {
                                 Text(
                                     text = item.title,
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
                                 )
                                 Text(
                                     text = item.description,
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     color = TextSecondary,
-                                    lineHeight = 16.sp
+                                    lineHeight = 18.sp
                                 )
                             }
                         }
@@ -502,7 +502,7 @@ private fun WarningBoxBlock(
                 )
                 Text(
                     text = block.title.uppercase(),
-                    style = KanguruTheme.typography.labelSmall,
+                    style = KanguruTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = KanguruTheme.colors.warning,
                     letterSpacing = 0.5.sp
@@ -516,7 +516,7 @@ private fun WarningBoxBlock(
                     Row(verticalAlignment = Alignment.Top) {
                         Text(
                             text = "•",
-                            style = KanguruTheme.typography.bodyMedium,
+                            style = KanguruTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
                             color = KanguruTheme.colors.warning,
                             modifier = Modifier.padding(end = 8.dp)
@@ -525,16 +525,16 @@ private fun WarningBoxBlock(
                             if (item.title.isNotBlank()) {
                                 Text(
                                     text = item.title,
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
                                 )
                             }
                             Text(
                                 text = item.description,
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 color = TextSecondary,
-                                lineHeight = 16.sp
+                                lineHeight = 18.sp
                             )
                         }
                     }
@@ -583,16 +583,16 @@ private fun CalloutBoxBlock(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = block.title,
-                    style = KanguruTheme.typography.titleSmall,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = block.message,
-                    style = KanguruTheme.typography.bodySmall,
+                    style = KanguruTheme.typography.bodyMedium,
                     color = TextSecondary,
-                    lineHeight = 17.sp
+                    lineHeight = 20.sp
                 )
             }
         }
@@ -624,7 +624,7 @@ private fun ScreeningBoxBlock(
                 )
                 Text(
                     text = block.title,
-                    style = KanguruTheme.typography.titleSmall,
+                    style = KanguruTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
                 )
@@ -643,16 +643,16 @@ private fun ScreeningBoxBlock(
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(
                                 text = item.title,
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = palette.primary
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = item.description,
-                                style = KanguruTheme.typography.labelSmall,
+                                style = KanguruTheme.typography.labelMedium,
                                 color = TextSecondary,
-                                lineHeight = 16.sp
+                                lineHeight = 18.sp
                             )
                         }
                     }

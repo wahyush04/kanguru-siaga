@@ -231,4 +231,143 @@ class GetPmkStatisticsUseCaseTest {
             awaitComplete()
         }
     }
+
+    @Test
+    fun getPmkStatistics_isWeeklyTargetMet_isFalse_whenNotAllSevenDaysAchieveEightHours() = runTest {
+        // Monday 19 Oct 2026 to Sunday 25 Oct 2026
+        val sundayCal = Calendar.getInstance().apply {
+            set(2026, Calendar.OCTOBER, 25, 20, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        // Create sessions for only 5 days (Mon-Fri) with 12 hours (720 min) each -> Total 60 hours (> 56h target)
+        // Saturday and Sunday have 0 hours.
+        val sessions = (0..4).map { dayOffset ->
+            val dayCal = Calendar.getInstance().apply {
+                set(2026, Calendar.OCTOBER, 19 + dayOffset, 8, 0, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            val start = dayCal.timeInMillis
+            val end = start + (720 * 60 * 1000L)
+            PmkSession(
+                id = (dayOffset + 1).toLong(),
+                babyId = 1L,
+                startTimeEpoch = start,
+                endTimeEpoch = end,
+                durationMinutes = 720,
+                activeDurationMinutes = 720,
+                currentCaregiver = PmkCaregiver.IBU,
+                source = PmkSource.TIMER
+            )
+        }
+
+        every {
+            pmkRepository.getSessionsForBabyInRange(1L, any(), any())
+        } returns flowOf(sessions)
+
+        useCase(
+            babyId = 1L,
+            period = StatsPeriod.THIS_WEEK,
+            calendarInstance = sundayCal
+        ).test {
+            val stats = awaitItem()
+            // Even though total is 60 hours (3600 min), targetAchievedDays is only 5.
+            assertThat(stats.targetAchievedDays).isEqualTo(5)
+            assertThat(stats.totalDurationMinutes).isEqualTo(3600)
+            // MUST be false because not all 7 days achieved >= 8 hours
+            assertThat(stats.isWeeklyTargetMet).isFalse()
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun getPmkStatistics_isWeeklyTargetMet_isTrue_whenAllSevenDaysAchieveAtLeastEightHours() = runTest {
+        val sundayCal = Calendar.getInstance().apply {
+            set(2026, Calendar.OCTOBER, 25, 20, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        // Create sessions for all 7 days (Mon-Sun), each exactly 8 hours (480 min)
+        val sessions = (0..6).map { dayOffset ->
+            val dayCal = Calendar.getInstance().apply {
+                set(2026, Calendar.OCTOBER, 19 + dayOffset, 8, 0, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            val start = dayCal.timeInMillis
+            val end = start + (480 * 60 * 1000L)
+            PmkSession(
+                id = (dayOffset + 1).toLong(),
+                babyId = 1L,
+                startTimeEpoch = start,
+                endTimeEpoch = end,
+                durationMinutes = 480,
+                activeDurationMinutes = 480,
+                currentCaregiver = PmkCaregiver.IBU,
+                source = PmkSource.TIMER
+            )
+        }
+
+        every {
+            pmkRepository.getSessionsForBabyInRange(1L, any(), any())
+        } returns flowOf(sessions)
+
+        useCase(
+            babyId = 1L,
+            period = StatsPeriod.THIS_WEEK,
+            calendarInstance = sundayCal
+        ).test {
+            val stats = awaitItem()
+            assertThat(stats.targetAchievedDays).isEqualTo(7)
+            assertThat(stats.isWeeklyTargetMet).isTrue()
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun getPmkStatistics_customFirstDayOfWeek_startsTrendFromFirstTimerDay() = runTest {
+        // First timer PMK was on Wednesday 14 Oct 2026
+        val firstPmkCal = Calendar.getInstance().apply {
+            set(2026, Calendar.OCTOBER, 14, 10, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val firstPmkEpoch = firstPmkCal.timeInMillis
+
+        // Current time is Thursday 22 Oct 2026 (Next week)
+        val currentCal = Calendar.getInstance().apply {
+            set(2026, Calendar.OCTOBER, 22, 14, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        every {
+            pmkRepository.getSessionsForBabyInRange(1L, any(), any())
+        } returns flowOf(emptyList())
+
+        // 1. THIS_WEEK: should start from Wednesday 21 Oct to Tuesday 27 Oct
+        useCase(
+            babyId = 1L,
+            period = StatsPeriod.THIS_WEEK,
+            calendarInstance = currentCal,
+            firstPmkEpoch = firstPmkEpoch
+        ).test {
+            val stats = awaitItem()
+            assertThat(stats.dailyDurations).hasSize(7)
+            val dayLabels = stats.dailyDurations.map { it.dayLabel }
+            assertThat(dayLabels).containsExactly("Rab", "Kam", "Jum", "Sab", "Min", "Sen", "Sel").inOrder()
+            awaitComplete()
+        }
+
+        // 2. LAST_WEEK: should also start from Wednesday 14 Oct to Tuesday 20 Oct
+        useCase(
+            babyId = 1L,
+            period = StatsPeriod.LAST_WEEK,
+            calendarInstance = currentCal,
+            firstPmkEpoch = firstPmkEpoch
+        ).test {
+            val stats = awaitItem()
+            assertThat(stats.dailyDurations).hasSize(7)
+            val dayLabels = stats.dailyDurations.map { it.dayLabel }
+            assertThat(dayLabels).containsExactly("Rab", "Kam", "Jum", "Sab", "Min", "Sen", "Sel").inOrder()
+            awaitComplete()
+        }
+    }
 }

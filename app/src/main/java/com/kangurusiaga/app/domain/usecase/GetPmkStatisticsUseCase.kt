@@ -28,36 +28,46 @@ class GetPmkStatisticsUseCase @Inject constructor(
         babyId: Long,
         period: StatsPeriod = StatsPeriod.THIS_WEEK,
         calendarInstance: Calendar = Calendar.getInstance(),
-        babyBirthDateEpoch: Long? = null
+        babyBirthDateEpoch: Long? = null,
+        firstPmkEpoch: Long? = null
     ): Flow<PmkStatistics> {
-        val (startEpoch, endEpoch, dateRangeText) = calculateEpochRange(period, calendarInstance)
+        val startDayOfWeek = if (firstPmkEpoch != null && firstPmkEpoch > 0L) {
+            val c = Calendar.getInstance().apply { timeInMillis = firstPmkEpoch }
+            c.get(Calendar.DAY_OF_WEEK)
+        } else {
+            Calendar.MONDAY
+        }
+
+        val (startEpoch, endEpoch, dateRangeText) = calculateEpochRange(period, calendarInstance, startDayOfWeek)
 
         return pmkRepository.getSessionsForBabyInRange(babyId, startEpoch, endEpoch)
             .map { sessions ->
-                computeStatistics(period, sessions, dateRangeText, calendarInstance, babyBirthDateEpoch)
+                computeStatistics(period, sessions, dateRangeText, calendarInstance, babyBirthDateEpoch, startDayOfWeek)
             }
     }
 
     private fun calculateEpochRange(
         period: StatsPeriod,
-        cal: Calendar
+        cal: Calendar,
+        startDayOfWeek: Int = Calendar.MONDAY
     ): Triple<Long, Long, String> {
         val sdf = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
         val startSdf = SimpleDateFormat("dd MMM", Locale("id", "ID"))
         val copy = cal.clone() as Calendar
 
+        val currentDayOfWeek = copy.get(Calendar.DAY_OF_WEEK)
+        val daysDiff = (currentDayOfWeek - startDayOfWeek + 7) % 7
+
         return when (period) {
             StatsPeriod.THIS_WEEK -> {
-                // Monday to Sunday of current week
-                copy.firstDayOfWeek = Calendar.MONDAY
-                copy.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+                copy.add(Calendar.DAY_OF_YEAR, -daysDiff)
                 copy.set(Calendar.HOUR_OF_DAY, 0)
                 copy.set(Calendar.MINUTE, 0)
                 copy.set(Calendar.SECOND, 0)
                 copy.set(Calendar.MILLISECOND, 0)
                 val start = copy.timeInMillis
 
-                copy.add(Calendar.DAY_OF_WEEK, 6)
+                copy.add(Calendar.DAY_OF_YEAR, 6)
                 copy.set(Calendar.HOUR_OF_DAY, 23)
                 copy.set(Calendar.MINUTE, 59)
                 copy.set(Calendar.SECOND, 59)
@@ -68,16 +78,14 @@ class GetPmkStatisticsUseCase @Inject constructor(
                 Triple(start, end, text)
             }
             StatsPeriod.LAST_WEEK -> {
-                copy.firstDayOfWeek = Calendar.MONDAY
-                copy.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-                copy.add(Calendar.WEEK_OF_YEAR, -1)
+                copy.add(Calendar.DAY_OF_YEAR, -daysDiff - 7)
                 copy.set(Calendar.HOUR_OF_DAY, 0)
                 copy.set(Calendar.MINUTE, 0)
                 copy.set(Calendar.SECOND, 0)
                 copy.set(Calendar.MILLISECOND, 0)
                 val start = copy.timeInMillis
 
-                copy.add(Calendar.DAY_OF_WEEK, 6)
+                copy.add(Calendar.DAY_OF_YEAR, 6)
                 copy.set(Calendar.HOUR_OF_DAY, 23)
                 copy.set(Calendar.MINUTE, 59)
                 copy.set(Calendar.SECOND, 59)
@@ -135,9 +143,10 @@ class GetPmkStatisticsUseCase @Inject constructor(
         sessions: List<PmkSession>,
         dateRangeText: String,
         cal: Calendar,
-        babyBirthDateEpoch: Long? = null
+        babyBirthDateEpoch: Long? = null,
+        startDayOfWeek: Int = Calendar.MONDAY
     ): PmkStatistics {
-        val dailyDurations = computeDailyDurations(sessions, cal, period)
+        val dailyDurations = computeDailyDurations(sessions, cal, period, startDayOfWeek)
         val totalMinutes = if (period == StatsPeriod.THIS_WEEK || period == StatsPeriod.LAST_WEEK) {
             dailyDurations.sumOf { it.durationMinutes }
         } else {
@@ -183,7 +192,13 @@ class GetPmkStatisticsUseCase @Inject constructor(
             }
         }
         val consecutiveDays = maxStreak
-        val isWeeklyTargetMet = targetAchievedDays >= 4 || totalMinutes >= targetMinutes
+        // Aturan: Tercapai HANYA JIKA seluruh 7 hari dalam minggu tersebut tercapai >= 8 jam/hari (targetAchievedDays >= 7).
+        // Jika tidak tercapai (ada hari yang < 8 jam), maka isWeeklyTargetMet = false (menampilkan Tidak Tercapai).
+        val isWeeklyTargetMet = if (period == StatsPeriod.THIS_WEEK || period == StatsPeriod.LAST_WEEK) {
+            targetAchievedDays >= 7
+        } else {
+            targetAchievedDays >= daysInPeriod
+        }
 
         val babyChronologicalWeek = if (babyBirthDateEpoch != null && babyBirthDateEpoch > 0L) {
             val diff = (cal.timeInMillis - babyBirthDateEpoch).coerceAtLeast(0L)
@@ -327,15 +342,15 @@ class GetPmkStatisticsUseCase @Inject constructor(
     private fun computeDailyDurations(
         sessions: List<PmkSession>,
         cal: Calendar,
-        period: StatsPeriod
+        period: StatsPeriod,
+        startDayOfWeek: Int = Calendar.MONDAY
     ): List<DailyDuration> {
-        val days = listOf("Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min")
         val copy = cal.clone() as Calendar
-        copy.firstDayOfWeek = Calendar.MONDAY
-        copy.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        if (period == StatsPeriod.LAST_WEEK) {
-            copy.add(Calendar.WEEK_OF_YEAR, -1)
-        }
+        val currentDayOfWeek = copy.get(Calendar.DAY_OF_WEEK)
+        val daysDiff = (currentDayOfWeek - startDayOfWeek + 7) % 7
+
+        val weekOffsetDays = if (period == StatsPeriod.LAST_WEEK) -daysDiff - 7 else -daysDiff
+        copy.add(Calendar.DAY_OF_YEAR, weekOffsetDays)
         copy.set(Calendar.HOUR_OF_DAY, 0)
         copy.set(Calendar.MINUTE, 0)
         copy.set(Calendar.SECOND, 0)
@@ -367,20 +382,32 @@ class GetPmkStatisticsUseCase @Inject constructor(
 
         for (i in 0..6) {
             val dayStart = copy.timeInMillis
+            val dayOfWeekVal = copy.get(Calendar.DAY_OF_WEEK)
+            val dayLabel = when (dayOfWeekVal) {
+                Calendar.SUNDAY -> "Min"
+                Calendar.MONDAY -> "Sen"
+                Calendar.TUESDAY -> "Sel"
+                Calendar.WEDNESDAY -> "Rab"
+                Calendar.THURSDAY -> "Kam"
+                Calendar.FRIDAY -> "Jum"
+                Calendar.SATURDAY -> "Sab"
+                else -> "Sen"
+            }
+
             copy.add(Calendar.DAY_OF_YEAR, 1)
             val dayEnd = copy.timeInMillis - 1
 
             val timeline = GetDailyPmkTimelineUseCase.computeTimeline(
                 dayStartEpoch = dayStart,
                 dayEndEpoch = dayEnd,
-                dayFormatted = days[i],
+                dayFormatted = dayLabel,
                 segments = allSegments
             )
             val dayMinutes = timeline.totalActiveMinutes
 
             result.add(
                 DailyDuration(
-                    dayLabel = days[i],
+                    dayLabel = dayLabel,
                     durationMinutes = dayMinutes,
                     isAboveTarget = dayMinutes >= (8 * 60),
                     dayEpoch = dayStart

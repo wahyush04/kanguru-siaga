@@ -138,7 +138,7 @@ fun EducationDetailScreen(
 
                     Text(
                         text = uiState.module?.title ?: stringResource(R.string.edu_detail_default_title),
-                        style = KanguruTheme.typography.titleSmall,
+                        style = KanguruTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
                         textAlign = TextAlign.Center,
@@ -213,18 +213,18 @@ fun EducationDetailScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.edu_detail_module_progress, module.order),
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = palette.primary
                                 )
                                 Text(
                                     text = "•",
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     color = TextTertiary
                                 )
                                 Text(
                                     text = stringResource(R.string.edu_detail_read_time, module.readingTimeMinutes),
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     color = TextSecondary,
                                     fontWeight = FontWeight.Medium
                                 )
@@ -282,7 +282,7 @@ fun EducationDetailScreen(
                                 )
                                 Text(
                                     text = if (module.heroTag.isNotBlank()) module.heroTag else module.category,
-                                    style = KanguruTheme.typography.labelSmall,
+                                    style = KanguruTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
                                 )
@@ -352,7 +352,7 @@ fun EducationDetailScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.edu_detail_btn_next, uiState.nextModuleOrder ?: 0, uiState.nextModuleTitle.orEmpty()),
-                                    style = KanguruTheme.typography.bodySmall,
+                                    style = KanguruTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
                                 )
@@ -378,7 +378,7 @@ fun EducationDetailScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.edu_detail_btn_back_to_list),
-                                    style = KanguruTheme.typography.bodySmall,
+                                    style = KanguruTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
                                 )
