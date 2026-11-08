@@ -7,6 +7,8 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,8 +16,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,8 +54,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -452,8 +458,12 @@ private fun PatientVitalContextCard(
 }
 
 /**
- * Section 5: Evaluasi Pertumbuhan (Buku KIA)
+ * Section 5: Evaluasi Pertumbuhan (Buku KIA) - Native Implementation
  */
+private enum class KiaTrendType {
+    UPWARD, FLAT, DOWNWARD
+}
+
 @Composable
 private fun KiaGrowthEvaluationCard(
     modifier: Modifier = Modifier
@@ -465,28 +475,127 @@ private fun KiaGrowthEvaluationCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
-        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        border = BorderStroke(1.dp, colors.cardBorder),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(16.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.il_pantau_pertumbuhan_bayi),
-                contentDescription = "Pantau pertumbuhan bayi",
-                modifier = Modifier
-                    .fillMaxWidth(0.72f)
-                    .heightIn(max = 380.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Fit
+            Text(
+                text = "Pantau pertumbuhan bayi",
+                style = typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = colors.textPrimary
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Left Column: Grafik Pertumbuhan Bayi Card
+                Card(
+                    modifier = Modifier
+                        .weight(0.95f)
+                        .fillMaxHeight(),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = colors.kiaGrowthPreviewBg),
+                    border = BorderStroke(1.5.dp, colors.kiaGrowthPreviewBorder),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = CardDefaults.cardColors(containerColor = colors.surface),
+                            border = BorderStroke(0.8.dp, colors.cardBorder),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.il_grafik_pertumbuhan_preview),
+                                contentDescription = "Grafik Pertumbuhan Bayi",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(10.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Grafik",
+                            style = typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "Pertumbuhan Bayi",
+                            style = typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                    }
+                }
+
+                // Right Column: Status Cards (Baik, Hati-hati, Bahaya!)
+                Column(
+                    modifier = Modifier
+                        .weight(1.35f)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    KiaStatusCard(
+                        title = "Baik",
+                        titleColor = colors.kiaGrowthBaik,
+                        trendType = KiaTrendType.UPWARD,
+                        dotColor = colors.kiaGrowthBaik,
+                        lineColor = colors.kiaGrowthTrendLine,
+                        subtitle = null,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    KiaStatusCard(
+                        title = "Hati-hati",
+                        titleColor = colors.kiaGrowthHatiHati,
+                        trendType = KiaTrendType.FLAT,
+                        dotColor = colors.kiaGrowthHatiHati,
+                        lineColor = colors.kiaGrowthTrendLine,
+                        subtitle = "Kurva mendatar",
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    KiaStatusCard(
+                        title = "Bahaya!",
+                        titleColor = colors.kiaGrowthBahaya,
+                        trendType = KiaTrendType.DOWNWARD,
+                        dotColor = colors.kiaGrowthBahaya,
+                        lineColor = colors.kiaGrowthTrendLine,
+                        subtitle = "Kurva tidak naik",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -505,5 +614,133 @@ private fun KiaGrowthEvaluationCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun KiaStatusCard(
+    title: String,
+    titleColor: Color,
+    trendType: KiaTrendType,
+    dotColor: Color,
+    lineColor: Color,
+    subtitle: String?,
+    modifier: Modifier = Modifier
+) {
+    val colors = KanguruTheme.colors
+    val typography = KanguruTheme.typography
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+        border = BorderStroke(1.dp, colors.cardBorder),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = title,
+                style = typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = titleColor
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 1.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                KiaTrendLineCanvas(
+                    trendType = trendType,
+                    dotColor = dotColor,
+                    lineColor = lineColor,
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .height(18.dp)
+                )
+            }
+
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = typography.labelSmall,
+                    color = colors.textSecondary
+                )
+            } else {
+                Spacer(modifier = Modifier.height(14.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun KiaTrendLineCanvas(
+    trendType: KiaTrendType,
+    dotColor: Color,
+    lineColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Canvas(modifier = modifier) {
+        val w = size.width
+        val h = size.height
+
+        val (p1, p2, p3, p4) = when (trendType) {
+            KiaTrendType.UPWARD -> listOf(
+                Offset(w * 0.10f, h * 0.85f),
+                Offset(w * 0.38f, h * 0.60f),
+                Offset(w * 0.66f, h * 0.35f),
+                Offset(w * 0.90f, h * 0.15f)
+            )
+            KiaTrendType.FLAT -> listOf(
+                Offset(w * 0.10f, h * 0.50f),
+                Offset(w * 0.37f, h * 0.50f),
+                Offset(w * 0.63f, h * 0.50f),
+                Offset(w * 0.90f, h * 0.50f)
+            )
+            KiaTrendType.DOWNWARD -> listOf(
+                Offset(w * 0.10f, h * 0.40f),
+                Offset(w * 0.37f, h * 0.25f),
+                Offset(w * 0.64f, h * 0.50f),
+                Offset(w * 0.90f, h * 0.65f)
+            )
+        }
+
+        val strokeWidthPx = 1.8.dp.toPx()
+        val dotRadiusPx = 3.5.dp.toPx()
+
+        // Connecting lines
+        drawLine(
+            color = lineColor,
+            start = p1,
+            end = p2,
+            strokeWidth = strokeWidthPx,
+            cap = StrokeCap.Round
+        )
+        drawLine(
+            color = lineColor,
+            start = p2,
+            end = p3,
+            strokeWidth = strokeWidthPx,
+            cap = StrokeCap.Round
+        )
+        drawLine(
+            color = lineColor,
+            start = p3,
+            end = p4,
+            strokeWidth = strokeWidthPx,
+            cap = StrokeCap.Round
+        )
+
+        // 4 dots
+        drawCircle(color = dotColor, radius = dotRadiusPx, center = p1)
+        drawCircle(color = dotColor, radius = dotRadiusPx, center = p2)
+        drawCircle(color = dotColor, radius = dotRadiusPx, center = p3)
+        drawCircle(color = dotColor, radius = dotRadiusPx, center = p4)
     }
 }

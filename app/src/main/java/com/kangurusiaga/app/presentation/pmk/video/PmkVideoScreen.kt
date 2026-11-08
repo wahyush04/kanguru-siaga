@@ -1416,14 +1416,16 @@ private fun ClinicalKeyPointsCard(
 
                         // Title & Description
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "${point.title}:",
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = brandDark,
-                                lineHeight = 16.sp
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
+                            if (point.title.isNotBlank()) {
+                                Text(
+                                    text = if (point.title.endsWith(":")) point.title else "${point.title}:",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = brandDark,
+                                    lineHeight = 16.sp
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                            }
                             Text(
                                 text = point.description,
                                 style = MaterialTheme.typography.bodySmall,

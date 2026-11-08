@@ -94,13 +94,6 @@ class BabyProfileSetupViewModelTest {
     }
 
     @Test
-    fun updateCurrentWeight_sanitizesInput() {
-        viewModel.updateCurrentWeight("3.400")
-        assertThat(viewModel.uiState.value.currentWeightInput).isEqualTo("3400")
-        assertThat(viewModel.uiState.value.currentWeightGram).isEqualTo(3400)
-    }
-
-    @Test
     fun proceedToConfirmation_whenNameEmpty_setsErrorAndReturnsFalse() {
         viewModel.updateName("")
         val result = viewModel.proceedToConfirmation()
@@ -172,24 +165,10 @@ class BabyProfileSetupViewModelTest {
     }
 
     @Test
-    fun updateCurrentLength_sanitizesAndUpdatesState() {
-        viewModel.updateCurrentLength("50.2")
-        assertThat(viewModel.uiState.value.currentLengthInput).isEqualTo("50.2")
-        assertThat(viewModel.uiState.value.currentLengthCm).isEqualTo(50.2f)
-    }
-
-    @Test
     fun updateBirthHeadCircumference_sanitizesAndUpdatesState() {
         viewModel.updateBirthHeadCircumference("33,0")
         assertThat(viewModel.uiState.value.birthHeadCircumferenceInput).isEqualTo("33.0")
         assertThat(viewModel.uiState.value.birthHeadCircumferenceCm).isEqualTo(33.0f)
-    }
-
-    @Test
-    fun updateCurrentHeadCircumference_sanitizesAndUpdatesState() {
-        viewModel.updateCurrentHeadCircumference("34.5")
-        assertThat(viewModel.uiState.value.currentHeadCircumferenceInput).isEqualTo("34.5")
-        assertThat(viewModel.uiState.value.currentHeadCircumferenceCm).isEqualTo(34.5f)
     }
 
     @Test
@@ -200,6 +179,7 @@ class BabyProfileSetupViewModelTest {
         viewModel.updateBirthLength("45")
         viewModel.updateBirthHeadCircumference("32")
 
+        coEvery { saveBabyProfileUseCase(any()) } returns Result.success(1L)
         coEvery { saveBabyProfileUseCase(any(), any(), any(), any()) } returns Result.success(1L)
 
         viewModel.saveProfile()
@@ -210,10 +190,7 @@ class BabyProfileSetupViewModelTest {
         assertThat(viewModel.uiState.value.errorMessage).isNull()
         coVerify(exactly = 1) {
             saveBabyProfileUseCase(
-                baby = match { it.name == "Kirana" && it.birthLengthCm == 45f && it.birthHeadCircumferenceCm == 32f },
-                currentWeightGram = 2150,
-                currentLengthCm = 45f,
-                currentHeadCircumferenceCm = 32f
+                baby = match { it.name == "Kirana" && it.birthLengthCm == 45f && it.birthHeadCircumferenceCm == 32f }
             )
         }
     }
@@ -224,6 +201,7 @@ class BabyProfileSetupViewModelTest {
         viewModel.updateGender(Gender.FEMALE)
         viewModel.updateBirthWeight("2150")
 
+        coEvery { saveBabyProfileUseCase(any()) } returns Result.failure(RuntimeException("Gagal menyimpan ke basis data"))
         coEvery { saveBabyProfileUseCase(any(), any(), any(), any()) } returns Result.failure(RuntimeException("Gagal menyimpan ke basis data"))
 
         viewModel.saveProfile()

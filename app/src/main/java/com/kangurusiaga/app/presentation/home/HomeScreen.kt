@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WaterDrop
@@ -125,6 +126,7 @@ fun HomeRoute(
     onNavigateToBblrCare: () -> Unit = onNavigateToEducationList,
     onNavigateToBblrEmergency: () -> Unit = onNavigateToEmergency,
     onNavigateToBathingVideo: () -> Unit = {},
+    onNavigateToAntropometriVideo: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -146,6 +148,7 @@ fun HomeRoute(
         onNavigateToBblrCare = onNavigateToBblrCare,
         onNavigateToBblrEmergency = onNavigateToBblrEmergency,
         onNavigateToBathingVideo = onNavigateToBathingVideo,
+        onNavigateToAntropometriVideo = onNavigateToAntropometriVideo,
         onOpenEmergency = viewModel::openEmergencyDialog,
         onCloseEmergency = viewModel::closeEmergencyDialog,
         onOpenNotification = onNavigateToNotification,
@@ -174,6 +177,7 @@ fun HomeScreen(
     onNavigateToBblrCare: () -> Unit = {},
     onNavigateToBblrEmergency: () -> Unit = {},
     onNavigateToBathingVideo: () -> Unit = {},
+    onNavigateToAntropometriVideo: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     onCloseEmergency: () -> Unit = {},
     onOpenNotification: () -> Unit = {},
@@ -244,6 +248,7 @@ fun HomeScreen(
                         onNavigateToBblrCare = onNavigateToBblrCare,
                         onNavigateToBblrEmergency = onNavigateToBblrEmergency,
                         onNavigateToBathingVideo = onNavigateToBathingVideo,
+                        onNavigateToAntropometriVideo = onNavigateToAntropometriVideo,
                         onOpenEmergency = onOpenEmergency,
                         onOpenNotification = onOpenNotification,
                         onShowInfo = onShowInfo,
@@ -324,6 +329,7 @@ private fun HomeContent(
     onNavigateToBblrCare: () -> Unit = {},
     onNavigateToBblrEmergency: () -> Unit = {},
     onNavigateToBathingVideo: () -> Unit = {},
+    onNavigateToAntropometriVideo: () -> Unit = {},
     onOpenEmergency: () -> Unit,
     onOpenNotification: () -> Unit,
     onShowInfo: (String) -> Unit,
@@ -351,10 +357,10 @@ private fun HomeContent(
 
         // 3. Main Feature Menu Grid (2 Baris x 3 Kolom)
         HomeFeatureMenuGrid(
-            onNavigateToPmkVideo = onNavigateToPmkVideo,
+            onNavigateToPmkCenter = onNavigateToPmk,
             onNavigateToBblrCare = onNavigateToBblrCare,
             onOpenEmergency = onNavigateToBblrEmergency,
-            onNavigateToPmkTimer = onNavigateToPmk,
+            onNavigateToAntropometriVideo = onNavigateToAntropometriVideo,
             onNavigateToBathingVideo = onNavigateToBathingVideo,
             onNavigateToAsiAlarm = onNavigateToAlarm
         )
@@ -575,10 +581,10 @@ private fun HeroBabyStatusCard(
 
 @Composable
 private fun HomeFeatureMenuGrid(
-    onNavigateToPmkVideo: () -> Unit,
+    onNavigateToPmkCenter: () -> Unit,
     onNavigateToBblrCare: () -> Unit,
     onOpenEmergency: () -> Unit,
-    onNavigateToPmkTimer: () -> Unit,
+    onNavigateToAntropometriVideo: () -> Unit,
     onNavigateToBathingVideo: () -> Unit,
     onNavigateToAsiAlarm: () -> Unit,
     modifier: Modifier = Modifier
@@ -605,7 +611,7 @@ private fun HomeFeatureMenuGrid(
                     KanguruTheme.colors.gridIconRoseEnd
                 ),
                 icon = Icons.Default.PlayArrow,
-                onClick = onNavigateToPmkVideo,
+                onClick = onNavigateToPmkCenter,
                 modifier = Modifier.weight(1f)
             )
 
@@ -650,19 +656,19 @@ private fun HomeFeatureMenuGrid(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             HomeFeatureGridCard(
-                title = stringResource(R.string.home_grid_pmk_timer_title),
-                subtitle = stringResource(R.string.home_grid_pmk_timer_sub),
-                subtitleColor = KanguruTheme.colors.gridSubtitlePink,
+                title = stringResource(R.string.home_grid_antropometri_title),
+                subtitle = stringResource(R.string.home_grid_antropometri_sub),
+                subtitleColor = KanguruTheme.colors.gridSubtitleRose,
                 outerGradient = listOf(
-                    KanguruTheme.colors.gridIconPinkOuterStart,
-                    KanguruTheme.colors.gridIconPinkOuterEnd
+                    KanguruTheme.colors.gridIconRoseOuterStart,
+                    KanguruTheme.colors.gridIconRoseOuterEnd
                 ),
                 innerGradient = listOf(
-                    KanguruTheme.colors.gridIconPinkStart,
-                    KanguruTheme.colors.gridIconPinkEnd
+                    KanguruTheme.colors.gridIconRoseStart,
+                    KanguruTheme.colors.gridIconRoseEnd
                 ),
-                icon = Icons.Default.AccessTime,
-                onClick = onNavigateToPmkTimer,
+                icon = Icons.Default.Straighten,
+                onClick = onNavigateToAntropometriVideo,
                 modifier = Modifier.weight(1f)
             )
 

@@ -29,21 +29,15 @@
     <string name="baby_profile_unit_weeks">minggu</string>
     <string name="baby_profile_label_birth_weight">BERAT LAHIR</string>
     <string name="baby_profile_placeholder_weight_birth">Contoh: 1800</string>
-    <string name="baby_profile_label_current_weight">BERAT SEKARANG</string>
-    <string name="baby_profile_placeholder_weight_current">Contoh: 3200</string>
     <string name="baby_profile_unit_grams">gram</string>
     <string name="baby_profile_bblr_notice">Bayi dengan berat lahir kurang dari 2.500 gram dikategorikan sebagai BBLR (Bayi Berat Lahir Rendah).</string>
 
     <string name="baby_profile_label_birth_length">PANJANG LAHIR</string>
     <string name="baby_profile_placeholder_length_birth">Contoh: 42</string>
-    <string name="baby_profile_label_current_length">PANJANG SEKARANG</string>
-    <string name="baby_profile_placeholder_length_current">Contoh: 48.5</string>
     <string name="baby_profile_unit_cm">cm</string>
 
     <string name="baby_profile_label_birth_head">LINGKAR KEPALA LAHIR</string>
     <string name="baby_profile_placeholder_head_birth">Contoh: 30</string>
-    <string name="baby_profile_label_current_head">LINGKAR KEPALA SEKARANG</string>
-    <string name="baby_profile_placeholder_head_current">Contoh: 34.2</string>
 
     <string name="baby_profile_label_gender">JENIS KELAMIN</string>
     <string name="baby_profile_gender_male">Laki-laki</string>
@@ -53,11 +47,8 @@
     <string name="baby_profile_confirm_label_birth_date">Tanggal Lahir</string>
     <string name="baby_profile_confirm_label_gestational_age">Usia Gestasi</string>
     <string name="baby_profile_confirm_label_birth_weight">Berat Lahir</string>
-    <string name="baby_profile_confirm_label_current_weight">Berat Sekarang</string>
     <string name="baby_profile_confirm_label_birth_length">Panjang Lahir</string>
-    <string name="baby_profile_confirm_label_current_length">Panjang Sekarang</string>
     <string name="baby_profile_confirm_label_birth_head">Lingkar Kepala Lahir</string>
-    <string name="baby_profile_confirm_label_current_head">Lingkar Kepala Sekarang</string>
     <string name="baby_profile_confirm_label_gender">Jenis Kelamin</string>
     <string name="baby_profile_value_weeks">%1$s minggu</string>
     <string name="baby_profile_value_grams">%1$s gram</string>
@@ -221,7 +212,7 @@
 
     <!-- 6 Grid Menu Items -->
     <string name="home_grid_pmk_video_title">Perawatan Metode\nKanguru</string>
-    <string name="home_grid_pmk_video_sub">Video</string>
+    <string name="home_grid_pmk_video_sub">Video, Timer, Skrining</string>
 
     <string name="home_grid_bblr_care_title">Cara Perawatan\nBayi Kecil (BBLR)</string>
     <string name="home_grid_bblr_care_sub">Video &amp; Materi</string>
@@ -231,6 +222,10 @@
 
     <string name="home_grid_pmk_timer_title">Perawatan Metode\nKanguru</string>
     <string name="home_grid_pmk_timer_sub">Alarm &amp; Timer</string>
+
+    <string name="home_grid_antropometri_title">Cara\nPengukuran\nAntropometri</string>
+    <string name="home_grid_antropometri_sub">Khusus Nakes</string>
+    <string name="antropometri_video_list_title">Video Cara Pengukuran Antropometri</string>
 
     <string name="home_grid_bathing_title">Cara Memandikan\nBayi</string>
     <string name="home_grid_bathing_sub">Video</string>
@@ -424,14 +419,14 @@
     <string name="onboarding_btn_fill_baby_data">Isi Data Bayi</string>
     <string name="onboarding_welcome_img_cd">Ibu mendekap bayi baru lahir</string>
     <string name="onboarding_welcome_title">Selamat Datang\ndi KANGURU SIAGA</string>
-    <string name="onboarding_welcome_desc">Teman Pendamping Perawatan Khusus Bayi Kecil di Rumah untuk Mendukung Tumbuh Kembang Si Kecil.</string>
+    <string name="onboarding_welcome_desc">Teman Pendamping Perawatan Khusus Bayi Berat Lahir Rendah di Rumah untuk Mendukung Tumbuh Kembang Si Kecil.</string>
     <string name="onboarding_profile_intro_img_cd">Registrasi data bayi</string>
     <string name="onboarding_profile_intro_title">Yuk, Mulai dengan\nData Bayi</string>
     <string name="onboarding_profile_intro_desc">Informasi Ini Akan Digunakan untuk Menyesuaikan Panduan, Pengingat, dan Grafik Pertumbuhan.</string>
 
     <!-- Splash Module -->
     <string name="splash_mascot_cd">Maskot Kanguru Siaga</string>
-    <string name="splash_subtitle">\"Pendamping Perawatan\" \nKhusus Bayi Kecil Dirumah </string>
+    <string name="splash_subtitle">Pendamping Perawatan Khusus Bayi Berat Lahir Rendah di Rumah </string>
     <string name="splash_btn_start">Mulai</string>
 
     <!-- PMK Module -->

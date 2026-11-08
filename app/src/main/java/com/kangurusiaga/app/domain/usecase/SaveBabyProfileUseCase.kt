@@ -32,9 +32,9 @@ class SaveBabyProfileUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         baby: Baby,
-        currentWeightGram: Int = baby.birthWeightGram,
-        currentLengthCm: Float = baby.birthLengthCm,
-        currentHeadCircumferenceCm: Float = baby.birthHeadCircumferenceCm
+        currentWeightGram: Int? = null,
+        currentLengthCm: Float? = null,
+        currentHeadCircumferenceCm: Float? = null
     ): Result<Long> {
         if (baby.name.trim().isBlank()) {
             return Result.failure(IllegalArgumentException("Nama bayi belum diisi"))
@@ -68,15 +68,14 @@ class SaveBabyProfileUseCase @Inject constructor(
             val currentPmaDays = (((currentPma - currentPmaInt) * 7).toInt()).coerceIn(0, 6)
             val chronoWeeks = ageCalc.chronologicalWeeks
 
-            val isDifferentFromBirth = currentPmaInt != savedBaby.gestationalAgeWeeks ||
-                    currentWeightGram != savedBaby.birthWeightGram ||
-                    currentLengthCm != savedBaby.birthLengthCm ||
-                    currentHeadCircumferenceCm != savedBaby.birthHeadCircumferenceCm
+            val hasExplicitCurrentData = (currentWeightGram != null && currentWeightGram > 0 && currentWeightGram != savedBaby.birthWeightGram) ||
+                    (currentLengthCm != null && currentLengthCm > 0f && currentLengthCm != savedBaby.birthLengthCm) ||
+                    (currentHeadCircumferenceCm != null && currentHeadCircumferenceCm > 0f && currentHeadCircumferenceCm != savedBaby.birthHeadCircumferenceCm)
 
-            // 3. Simpan data pengukuran saat ini jika ada data atau terdapat selisih waktu/nilai
-            if (isDifferentFromBirth && (currentWeightGram > 0 || currentLengthCm > 0f || currentHeadCircumferenceCm > 0f)) {
+            // 3. Simpan data pengukuran saat ini HANYA jika pengguna secara eksplisit memasukkan data saat ini yang berbeda dari data lahir
+            if (hasExplicitCurrentData) {
                 // Simpan berat saat ini
-                if (currentWeightGram > 0) {
+                if (currentWeightGram != null && currentWeightGram > 0) {
                     try {
                         val currentKg = currentWeightGram / 1000f
                         val currentEval = FentonReferenceData.evaluatePercentile(
@@ -104,7 +103,7 @@ class SaveBabyProfileUseCase @Inject constructor(
                 }
 
                 // Simpan panjang saat ini
-                if (currentLengthCm > 0f) {
+                if (currentLengthCm != null && currentLengthCm > 0f) {
                     try {
                         val currentEvalLength = FentonReferenceData.evaluatePercentile(
                             parameter = GrowthParameter.LENGTH,
@@ -131,7 +130,7 @@ class SaveBabyProfileUseCase @Inject constructor(
                 }
 
                 // Simpan lingkar kepala saat ini
-                if (currentHeadCircumferenceCm > 0f) {
+                if (currentHeadCircumferenceCm != null && currentHeadCircumferenceCm > 0f) {
                     try {
                         val currentEvalHc = FentonReferenceData.evaluatePercentile(
                             parameter = GrowthParameter.HEAD_CIRCUMFERENCE,
@@ -159,7 +158,7 @@ class SaveBabyProfileUseCase @Inject constructor(
 
                 // Simpan juga ke baby_growth_records (Fenton Growth Record)
                 try {
-                    val weightEval = if (currentWeightGram > 0) {
+                    val weightEval = if (currentWeightGram != null && currentWeightGram > 0) {
                         FentonReferenceData.evaluatePercentile(
                             parameter = GrowthParameter.WEIGHT,
                             gender = savedBaby.gender,
@@ -174,9 +173,9 @@ class SaveBabyProfileUseCase @Inject constructor(
                             recordedAt = now,
                             pmaWeeks = currentPmaInt,
                             pmaDays = currentPmaDays,
-                            weightGrams = if (currentWeightGram > 0) currentWeightGram.toDouble() else null,
-                            lengthCm = if (currentLengthCm > 0f) currentLengthCm.toDouble() else null,
-                            headCircumferenceCm = if (currentHeadCircumferenceCm > 0f) currentHeadCircumferenceCm.toDouble() else null,
+                            weightGrams = if (currentWeightGram != null && currentWeightGram > 0) currentWeightGram.toDouble() else null,
+                            lengthCm = if (currentLengthCm != null && currentLengthCm > 0f) currentLengthCm.toDouble() else null,
+                            headCircumferenceCm = if (currentHeadCircumferenceCm != null && currentHeadCircumferenceCm > 0f) currentHeadCircumferenceCm.toDouble() else null,
                             calculatedWeightPercentile = weightEval?.percentileBadge,
                             calculatedWeightZScore = weightEval?.zScore?.toDouble()
                         )
@@ -192,9 +191,9 @@ class SaveBabyProfileUseCase @Inject constructor(
                     AppLogger.d("SaveBabyProfileUseCase", "Memulai sinkronisasi background Firestore...")
                     babyFirestoreSyncManager.syncOnboardingBaby(
                         baby = sanitizedBaby,
-                        currentWeightGram = currentWeightGram,
-                        currentLengthCm = currentLengthCm,
-                        currentHeadCircumferenceCm = currentHeadCircumferenceCm
+                        currentWeightGram = currentWeightGram ?: sanitizedBaby.birthWeightGram,
+                        currentLengthCm = currentLengthCm ?: sanitizedBaby.birthLengthCm,
+                        currentHeadCircumferenceCm = currentHeadCircumferenceCm ?: sanitizedBaby.birthHeadCircumferenceCm
                     )
                 } catch (e: Exception) {
                     AppLogger.e("SaveBabyProfileUseCase", "Exception pada background sync Firestore: ${e.message}", e)

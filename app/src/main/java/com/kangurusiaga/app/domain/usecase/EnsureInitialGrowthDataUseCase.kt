@@ -16,6 +16,7 @@ import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.GrowthRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import java.io.File
 import javax.inject.Inject
 
@@ -64,10 +65,59 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
                 babyDao.updateBaby(singleBaby.copy(isActive = true))
                 babyDao.deleteAllExcept(singleBaby.id)
                 babyProfileDao.deleteAllExcept(singleBaby.id)
+                cleanupDuplicateBirthMeasurements(
+                    babyId = singleBaby.id,
+                    birthPma = singleBaby.gestationalAgeWeeks,
+                    birthWeightGram = singleBaby.birthWeightGram,
+                    birthLengthCm = singleBaby.birthLengthCm,
+                    birthHeadCircumferenceCm = singleBaby.birthHeadCircumferenceCm
+                )
                 AppLogger.i("EnsureInitialGrowthDataUseCase", "Memastikan satu-satunya profil bayi: ${singleBaby.name} (id=${singleBaby.id})")
             }
         } catch (e: Exception) {
             AppLogger.e("EnsureInitialGrowthDataUseCase", "Gagal membersihkan data mock: ${e.message}", e)
+        }
+    }
+
+    /**
+     * Menghapus duplikasi pencatatan pengukuran yang bernilai identik dengan data lahir pada PMA selain PMA lahir.
+     */
+    suspend fun cleanupDuplicateBirthMeasurements(
+        babyId: Long,
+        birthPma: Int,
+        birthWeightGram: Int,
+        birthLengthCm: Float,
+        birthHeadCircumferenceCm: Float
+    ) {
+        try {
+            val allMeasurements = growthMeasurementDao.getAllMeasurementsForBaby(babyId).first()
+            for (m in allMeasurements) {
+                if (m.note == "Data Saat Ini" && m.pmaWeeks.toInt() != birthPma) {
+                    val isDuplicateWeight = m.parameter == GrowthParameter.WEIGHT.name &&
+                            (m.value == birthWeightGram / 1000f || (m.value * 1000f).toInt() == birthWeightGram)
+                    val isDuplicateLength = m.parameter == GrowthParameter.LENGTH.name && m.value == birthLengthCm
+                    val isDuplicateHead = m.parameter == GrowthParameter.HEAD_CIRCUMFERENCE.name && m.value == birthHeadCircumferenceCm
+                    if (isDuplicateWeight || isDuplicateLength || isDuplicateHead) {
+                        growthMeasurementDao.deleteById(m.id)
+                        AppLogger.d("EnsureInitialGrowthDataUseCase", "Menghapus duplikasi measurement ${m.parameter} saat ini (id=${m.id})")
+                    }
+                }
+            }
+
+            val allRecords = growthRecordDao.getAllRecordsFlow(babyId).first()
+            for (r in allRecords) {
+                if (r.pmaWeeks != birthPma) {
+                    val isDuplicate = (r.weightGrams == null || r.weightGrams.toInt() == birthWeightGram) &&
+                            (r.lengthCm == null || r.lengthCm.toFloat() == birthLengthCm) &&
+                            (r.headCircumferenceCm == null || r.headCircumferenceCm.toFloat() == birthHeadCircumferenceCm)
+                    if (isDuplicate) {
+                        growthRecordDao.deleteRecordById(r.recordId)
+                        AppLogger.d("EnsureInitialGrowthDataUseCase", "Menghapus duplikasi fenton record saat ini (recordId=${r.recordId})")
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            AppLogger.e("EnsureInitialGrowthDataUseCase", "Gagal membersihkan duplikasi data saat ini: ${e.message}", e)
         }
     }
 
@@ -77,6 +127,13 @@ class EnsureInitialGrowthDataUseCase @Inject constructor(
         }
 
         return try {
+            cleanupDuplicateBirthMeasurements(
+                babyId = baby.id,
+                birthPma = baby.gestationalAgeWeeks,
+                birthWeightGram = baby.birthWeightGram,
+                birthLengthCm = baby.birthLengthCm,
+                birthHeadCircumferenceCm = baby.birthHeadCircumferenceCm
+            )
             val birthWeightKg = baby.birthWeightGram / 1000f
             val pmaWeeks = baby.gestationalAgeWeeks.toFloat().coerceIn(22f, 50f)
             val pmaInt = baby.gestationalAgeWeeks.coerceIn(22, 50)

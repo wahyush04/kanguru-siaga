@@ -9,9 +9,9 @@ import org.junit.Test
 class PmkVideoTest {
 
     @Test
-    fun `video data source contains 6 educational modules for bblr pmk`() {
+    fun `video data source contains 9 educational modules including antropometri`() {
         val videos = PmkVideoDataSource.videos
-        assertEquals(6, videos.size)
+        assertEquals(9, videos.size)
 
         // Verify module 1
         assertEquals(1, videos[0].id)
@@ -42,6 +42,21 @@ class PmkVideoTest {
         assertEquals(6, videos[5].id)
         assertEquals("Cara Memandikan Bayi", videos[5].title)
         assertEquals("01:07", videos[5].duration)
+
+        // Verify module 7 (Antropometri Berat Badan)
+        assertEquals(7, videos[6].id)
+        assertEquals("Cara Pengukuran Berat Badan", videos[6].title)
+        assertEquals("00:39", videos[6].duration)
+
+        // Verify module 8 (Antropometri Panjang Badan)
+        assertEquals(8, videos[7].id)
+        assertEquals("Cara Pengukuran Panjang Badan", videos[7].title)
+        assertEquals("00:40", videos[7].duration)
+
+        // Verify module 9 (Antropometri Lingkar Kepala)
+        assertEquals(9, videos[8].id)
+        assertEquals("Cara Pengukuran Lingkar Kepala", videos[8].title)
+        assertEquals("00:46", videos[8].duration)
     }
 
     @Test
@@ -73,6 +88,7 @@ class PmkVideoTest {
     @Test
     fun `routes for video list and detail are correctly defined`() {
         assertEquals("pmk_video_list", Screen.PmkVideoList.route)
+        assertEquals("antropometri_video_list", Screen.AntropometriVideoList.route)
         assertEquals("pmk_video_detail/{videoId}", Screen.PmkVideoDetail.route)
         assertEquals("pmk_video_detail/4", Screen.PmkVideoDetail.createRoute(4))
     }
@@ -97,5 +113,11 @@ class PmkVideoTest {
         assertEquals(5, video4.nextLessonId)
         val video5 = PmkVideoDataSource.getVideoById(5)
         assertEquals(null, video5.nextLessonId)
+        val video7 = PmkVideoDataSource.getVideoById(7)
+        assertEquals(8, video7.nextLessonId)
+        val video8 = PmkVideoDataSource.getVideoById(8)
+        assertEquals(9, video8.nextLessonId)
+        val video9 = PmkVideoDataSource.getVideoById(9)
+        assertEquals(null, video9.nextLessonId)
     }
 }

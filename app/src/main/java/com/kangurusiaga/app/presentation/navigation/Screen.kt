@@ -72,6 +72,7 @@ sealed class Screen(override val route: String, override val destination: String
     data object GrowthBatchAdd : Screen(route = "growth_batch_add", destination = "growth_batch_add_destination")
     data object GrowthSummary : Screen(route = "growth_summary", destination = "growth_summary_destination")
     data object AboutFenton : Screen(route = "about_fenton", destination = "about_fenton_destination")
+    data object AntropometriVideoList : Screen(route = "antropometri_video_list", destination = "antropometri_video_list_destination")
 
 
     // Profile & Settings Module Screens

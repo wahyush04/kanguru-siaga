@@ -214,6 +214,14 @@ abstract class KanguruColors {
     abstract val growthHead: Color
     abstract val growthHeadBorder: Color
 
+    // Pantau Pertumbuhan Bayi (KIA) Tokens
+    abstract val kiaGrowthBaik: Color
+    abstract val kiaGrowthHatiHati: Color
+    abstract val kiaGrowthBahaya: Color
+    abstract val kiaGrowthTrendLine: Color
+    abstract val kiaGrowthPreviewBorder: Color
+    abstract val kiaGrowthPreviewBg: Color
+
     // Ambient / Illustration Tokens (Splash & Onboarding)
     abstract val ambientRosePulse: Color
     abstract val ambientAmberPulse: Color
@@ -714,6 +722,13 @@ private class LightKanguruColorsImpl : KanguruColors() {
     override val growthHead: Color = Color(0xFF3B82F6)
     override val growthHeadBorder: Color = Color(0xFFDFEEFF)
 
+    override val kiaGrowthBaik: Color = Color(0xFF10B981)
+    override val kiaGrowthHatiHati: Color = Color(0xFFF59E0B)
+    override val kiaGrowthBahaya: Color = Color(0xFFEF4444)
+    override val kiaGrowthTrendLine: Color = Color(0xFF78716C)
+    override val kiaGrowthPreviewBorder: Color = Color(0xFFFCD34D)
+    override val kiaGrowthPreviewBg: Color = Color(0xFFFFFDF5)
+
     override val ambientRosePulse: Color = Color(0xFFFFE4E6)
     override val ambientAmberPulse: Color = Color(0xFFFEF3C7)
     override val ambientWave1: Color = Color(0xFFF8E5D8)
@@ -939,6 +954,13 @@ private class DarkKanguruColorsImpl : KanguruColors() {
     override val growthLengthBorder: Color = Color(0xFF234C34)
     override val growthHead: Color = Color(0xFF60A5FA)
     override val growthHeadBorder: Color = Color(0xFF233E5E)
+
+    override val kiaGrowthBaik: Color = Color(0xFF34D399)
+    override val kiaGrowthHatiHati: Color = Color(0xFFFBBF24)
+    override val kiaGrowthBahaya: Color = Color(0xFFF87171)
+    override val kiaGrowthTrendLine: Color = Color(0xFFA8A29E)
+    override val kiaGrowthPreviewBorder: Color = Color(0xFF785B22)
+    override val kiaGrowthPreviewBg: Color = Color(0xFF262017)
 
     override val ambientRosePulse: Color = Color(0xFF3E1A22)
     override val ambientAmberPulse: Color = Color(0xFF33240F)

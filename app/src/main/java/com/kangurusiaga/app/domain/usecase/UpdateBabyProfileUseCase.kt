@@ -1,16 +1,26 @@
 package com.kangurusiaga.app.domain.usecase
 
+import com.kangurusiaga.app.core.common.AppDispatchers
+import com.kangurusiaga.app.core.common.AppLogger
+import com.kangurusiaga.app.core.common.Dispatcher
 import com.kangurusiaga.app.data.local.dao.BabyProfileDao
 import com.kangurusiaga.app.data.local.entity.BabyProfileEntity
+import com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.repository.BabyRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class UpdateBabyProfileUseCase @Inject constructor(
     private val babyRepository: BabyRepository,
     private val babyProfileDao: BabyProfileDao,
-    private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase
+    private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase,
+    private val babyFirestoreSyncManager: BabyFirestoreSyncManager,
+    @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke(baby: Baby): Result<Unit> {
         if (baby.name.trim().isBlank()) {
@@ -32,6 +42,20 @@ class UpdateBabyProfileUseCase @Inject constructor(
 
             // Synchronize initial birth growth data & Fenton profile
             ensureInitialGrowthDataUseCase(sanitizedBaby)
+
+            // Sync ke Cloud Firestore secara asinkron
+            CoroutineScope(ioDispatcher + SupervisorJob()).launch {
+                try {
+                    babyFirestoreSyncManager.syncOnboardingBaby(
+                        baby = sanitizedBaby,
+                        currentWeightGram = sanitizedBaby.birthWeightGram,
+                        currentLengthCm = sanitizedBaby.birthLengthCm,
+                        currentHeadCircumferenceCm = sanitizedBaby.birthHeadCircumferenceCm
+                    )
+                } catch (e: Exception) {
+                    AppLogger.e("UpdateBabyProfileUseCase", "Exception pada background sync Firestore: ${e.message}", e)
+                }
+            }
 
             Result.success(Unit)
         } catch (e: Exception) {

@@ -121,6 +121,13 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                 // 2. Gabungkan data riwayat Fenton (baby_growth_records)
                 for (record in fentonRecords) {
                     val pma = record.pmaWeeks.coerceIn(22, 50)
+                    // Jangan prefill baris kedua jika record di PMA berbeda ini adalah duplikasi data lahir
+                    val isDuplicateOfBirth = pma != birthPma &&
+                            (record.weightGrams == null || record.weightGrams.toInt() == baby.birthWeightGram) &&
+                            (record.lengthCm == null || record.lengthCm.toFloat() == baby.birthLengthCm) &&
+                            (record.headCircumferenceCm == null || record.headCircumferenceCm.toFloat() == baby.birthHeadCircumferenceCm)
+                    if (isDuplicateOfBirth) continue
+
                     val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
                     var updated = row
                     if (record.weightGrams != null && record.weightGrams > 0) {
@@ -139,6 +146,7 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                 for (w in weights) {
                     val pma = w.pmaWeeks.toInt().coerceIn(22, 50)
                     val grams = if (w.value < 100f) (w.value * 1000f).toInt() else w.value.toInt()
+                    if (pma != birthPma && w.note == "Data Saat Ini" && grams == baby.birthWeightGram) continue
                     val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
                     if (grams > 0) {
                         rowMap[pma] = row.copy(weightGrams = grams.toString())
@@ -148,6 +156,7 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                 // 4. Gabungkan data panjang (growth_measurements)
                 for (l in lengths) {
                     val pma = l.pmaWeeks.toInt().coerceIn(22, 50)
+                    if (pma != birthPma && l.note == "Data Saat Ini" && l.value == baby.birthLengthCm) continue
                     val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
                     if (l.value > 0f) {
                         rowMap[pma] = row.copy(lengthCm = formatNumber(l.value))
@@ -157,6 +166,7 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                 // 5. Gabungkan data lingkar kepala (growth_measurements)
                 for (hc in headCircs) {
                     val pma = hc.pmaWeeks.toInt().coerceIn(22, 50)
+                    if (pma != birthPma && hc.note == "Data Saat Ini" && hc.value == baby.birthHeadCircumferenceCm) continue
                     val row = rowMap.getOrPut(pma) { GrowthBatchRowState(pmaWeeks = pma.toString()) }
                     if (hc.value > 0f) {
                         rowMap[pma] = row.copy(headCircumferenceCm = formatNumber(hc.value))
@@ -165,12 +175,16 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
 
                 val existingSorted = rowMap.values.sortedBy { it.pmaWeeks.toIntOrNull() ?: 0 }
 
-                // 6. Buat baris baru di bawahnya untuk input data baru minggu berikutnya
+                // 6. Buat baris baru di bawahnya untuk input data baru (tanpa prefill BB, LK, PB)
                 val lastPma = existingSorted.lastOrNull()?.pmaWeeks?.toIntOrNull() ?: currentPma
-                val nextPma = (lastPma + 1).coerceAtMost(50)
+                val targetNextPma = if (existingSorted.size == 1 && currentPma > birthPma) {
+                    currentPma
+                } else {
+                    (lastPma + 1).coerceAtMost(50)
+                }
 
                 val newEmptyRow = GrowthBatchRowState(
-                    pmaWeeks = if (nextPma in 22..50) nextPma.toString() else "",
+                    pmaWeeks = if (targetNextPma in 22..50) targetNextPma.toString() else "",
                     weightGrams = "",
                     headCircumferenceCm = "",
                     lengthCm = ""

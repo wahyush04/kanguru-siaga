@@ -38,6 +38,7 @@ import com.kangurusiaga.app.presentation.pmk.statistics.PmkStatisticsRoute
 import com.kangurusiaga.app.presentation.pmk.timer.PmkTimerRoute
 import com.kangurusiaga.app.presentation.pmk.video.PmkVideoListScreen
 import com.kangurusiaga.app.presentation.pmk.video.PmkVideoScreen
+import com.kangurusiaga.app.presentation.growth.antropometri.AntropometriVideoListScreen
 import com.kangurusiaga.app.presentation.pmk.screening.ScreeningScheduleRoute
 import com.kangurusiaga.app.presentation.pmk.screening.ScreeningInputResultRoute
 import com.kangurusiaga.app.domain.model.GrowthParameter
@@ -160,6 +161,9 @@ fun KanguruNavGraph(
                 },
                 onNavigateToBathingVideo = {
                     navController.navigate(Screen.PmkVideoDetail.createRoute(6))
+                },
+                onNavigateToAntropometriVideo = {
+                    navController.navigate(Screen.AntropometriVideoList.route)
                 }
             )
         }
@@ -505,6 +509,24 @@ fun KanguruNavGraph(
                         popUpTo(Screen.Home.route) { inclusive = false }
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        // Screen: Video Cara Pengukuran Antropometri
+        composable(
+            route = Screen.AntropometriVideoList.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None }
+        ) {
+            AntropometriVideoListScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDetail = { videoId ->
+                    navController.navigate(Screen.PmkVideoDetail.createRoute(videoId))
                 }
             )
         }

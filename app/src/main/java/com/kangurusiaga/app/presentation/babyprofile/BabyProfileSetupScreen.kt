@@ -37,6 +37,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Check
@@ -213,11 +214,8 @@ fun BabyProfileSetupRoute(
                     onBirthDateChange = viewModel::updateBirthDate,
                     onGestationalAgeChange = viewModel::updateGestationalAge,
                     onBirthWeightChange = viewModel::updateBirthWeight,
-                    onCurrentWeightChange = viewModel::updateCurrentWeight,
                     onBirthLengthChange = viewModel::updateBirthLength,
-                    onCurrentLengthChange = viewModel::updateCurrentLength,
                     onBirthHeadCircumferenceChange = viewModel::updateBirthHeadCircumference,
-                    onCurrentHeadCircumferenceChange = viewModel::updateCurrentHeadCircumference,
                     onCameraClick = onCameraClick,
                     onGalleryClick = onGalleryClick,
                     onRemovePhoto = viewModel::onRemovePhoto,
@@ -269,11 +267,8 @@ fun BabyProfileFormScreen(
     onBirthDateChange: (Long) -> Unit,
     onGestationalAgeChange: (String) -> Unit,
     onBirthWeightChange: (String) -> Unit,
-    onCurrentWeightChange: (String) -> Unit,
     onBirthLengthChange: (String) -> Unit,
-    onCurrentLengthChange: (String) -> Unit,
     onBirthHeadCircumferenceChange: (String) -> Unit,
-    onCurrentHeadCircumferenceChange: (String) -> Unit,
     onCameraClick: () -> Unit,
     onGalleryClick: () -> Unit,
     onRemovePhoto: () -> Unit,
@@ -397,52 +392,74 @@ fun BabyProfileFormScreen(
                         .padding(bottom = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Avatar Preview with Camera Badge
+                    // Avatar Preview with Camera Badge & Floating Add Button
                     Box(
-                        modifier = Modifier
-                            .size(112.dp)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        KanguruTheme.colors.onboardingCardBgStart,
-                                        KanguruTheme.colors.onboardingCardBgEnd
+                        contentAlignment = Alignment.BottomEnd
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(112.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(
+                                            KanguruTheme.colors.onboardingCardBgStart,
+                                            KanguruTheme.colors.onboardingCardBgEnd
+                                        )
                                     )
                                 )
-                            )
-                            .border(2.dp, KanguruTheme.colors.avatarRingEnd, CircleShape)
-                            .clickable { onGalleryClick() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (uiState.photoUri != null) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(uiState.photoUri)
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = stringResource(R.string.baby_profile_photo_desc),
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.CameraAlt,
-                                    contentDescription = null,
-                                    tint = TextTertiary,
-                                    modifier = Modifier.size(32.dp)
+                                .border(2.dp, KanguruTheme.colors.avatarRingEnd, CircleShape)
+                                .clickable { onGalleryClick() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (uiState.photoUri != null) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(uiState.photoUri)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = stringResource(R.string.baby_profile_photo_desc),
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = stringResource(R.string.baby_profile_photo_select),
-                                    style = KanguruTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = TextTertiary
-                                )
+                            } else {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.CameraAlt,
+                                        contentDescription = null,
+                                        tint = TextTertiary,
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = stringResource(R.string.baby_profile_photo_select),
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextTertiary
+                                    )
+                                }
                             }
+                        }
+
+                        // Floating pink plus badge matching Stitch reference
+                        Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(CircleShape)
+                                .background(BrandPink)
+                                .border(2.dp, White, CircleShape)
+                                .clickable { onGalleryClick() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = White,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                     }
 
@@ -670,7 +687,7 @@ fun BabyProfileFormScreen(
                         }
                     }
 
-                    // 4. Berat Lahir & Berat Sekarang + BBLR Alert
+                    // 4. Berat Lahir Card & BBLR Alert
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -679,89 +696,49 @@ fun BabyProfileFormScreen(
                             .padding(14.dp)
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                // Berat Lahir
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(R.string.baby_profile_label_birth_weight),
-                                        style = KanguruTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextSecondary,
-                                        letterSpacing = 0.5.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    OutlinedTextField(
-                                        value = uiState.birthWeightInput,
-                                        onValueChange = onBirthWeightChange,
-                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_birth), style = KanguruTheme.typography.bodySmall, color = TextTertiary) },
-                                        trailingIcon = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_unit_grams),
-                                                style = KanguruTheme.typography.labelSmall,
-                                                fontWeight = FontWeight.Bold,
-                                                color = TextTertiary,
-                                                modifier = Modifier.padding(end = 8.dp)
-                                            )
-                                        },
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            focusedBorderColor = BrandPink,
-                                            unfocusedBorderColor = CardBorder,
-                                            focusedContainerColor = KanguruTheme.colors.surface,
-                                            unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
-                                            focusedTextColor = TextPrimary,
-                                            unfocusedTextColor = TextPrimary,
-                                            focusedPlaceholderColor = TextTertiary,
-                                            unfocusedPlaceholderColor = TextTertiary
-                                        ),
-                                        singleLine = true
-                                    )
-                                }
-
-                                // Berat Sekarang
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(R.string.baby_profile_label_current_weight),
-                                        style = KanguruTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextSecondary,
-                                        letterSpacing = 0.5.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    OutlinedTextField(
-                                        value = uiState.currentWeightInput,
-                                        onValueChange = onCurrentWeightChange,
-                                        placeholder = { Text(stringResource(R.string.baby_profile_placeholder_weight_current), style = KanguruTheme.typography.bodySmall, color = TextTertiary) },
-                                        trailingIcon = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_unit_grams),
-                                                style = KanguruTheme.typography.labelSmall,
-                                                fontWeight = FontWeight.Bold,
-                                                color = TextTertiary,
-                                                modifier = Modifier.padding(end = 8.dp)
-                                            )
-                                        },
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            focusedBorderColor = BrandPink,
-                                            unfocusedBorderColor = CardBorder,
-                                            focusedContainerColor = KanguruTheme.colors.surface,
-                                            unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
-                                            focusedTextColor = TextPrimary,
-                                            unfocusedTextColor = TextPrimary,
-                                            focusedPlaceholderColor = TextTertiary,
-                                            unfocusedPlaceholderColor = TextTertiary
-                                        ),
-                                        singleLine = true
-                                    )
-                                }
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.baby_profile_label_birth_weight),
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextSecondary,
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                OutlinedTextField(
+                                    value = uiState.birthWeightInput,
+                                    onValueChange = onBirthWeightChange,
+                                    placeholder = {
+                                        Text(
+                                            stringResource(R.string.baby_profile_placeholder_weight_birth),
+                                            style = KanguruTheme.typography.bodySmall,
+                                            color = TextTertiary
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        Text(
+                                            stringResource(R.string.baby_profile_unit_grams),
+                                            style = KanguruTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = TextTertiary,
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        )
+                                    },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = BrandPink,
+                                        unfocusedBorderColor = CardBorder,
+                                        focusedContainerColor = KanguruTheme.colors.surface,
+                                        unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
+                                        focusedTextColor = TextPrimary,
+                                        unfocusedTextColor = TextPrimary,
+                                        focusedPlaceholderColor = TextTertiary,
+                                        unfocusedPlaceholderColor = TextTertiary
+                                    ),
+                                    singleLine = true
+                                )
                             }
 
                             // Notice Edukasi BBLR Banner
@@ -780,7 +757,7 @@ fun BabyProfileFormScreen(
                                     modifier = Modifier
                                         .size(16.dp)
                                         .padding(top = 1.dp)
-                                 )
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = stringResource(R.string.baby_profile_bblr_notice),
@@ -791,7 +768,7 @@ fun BabyProfileFormScreen(
                         }
                     }
 
-                    // 5. Panjang Badan Card (Panjang Lahir & Panjang Sekarang)
+                    // 5. Panjang Lahir Card
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -799,107 +776,53 @@ fun BabyProfileFormScreen(
                             .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Row(
+                        Column {
+                            Text(
+                                text = stringResource(R.string.baby_profile_label_birth_length),
+                                style = KanguruTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = TextSecondary,
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            OutlinedTextField(
+                                value = uiState.birthLengthInput,
+                                onValueChange = onBirthLengthChange,
+                                placeholder = {
+                                    Text(
+                                        stringResource(R.string.baby_profile_placeholder_length_birth),
+                                        style = KanguruTheme.typography.bodySmall,
+                                        color = TextTertiary
+                                    )
+                                },
+                                trailingIcon = {
+                                    Text(
+                                        stringResource(R.string.baby_profile_unit_cm),
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = TextTertiary,
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                // Panjang Lahir
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(R.string.baby_profile_label_birth_length),
-                                        style = KanguruTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextSecondary,
-                                        letterSpacing = 0.5.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    OutlinedTextField(
-                                        value = uiState.birthLengthInput,
-                                        onValueChange = onBirthLengthChange,
-                                        placeholder = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_placeholder_length_birth),
-                                                style = KanguruTheme.typography.bodySmall,
-                                                color = TextTertiary
-                                            )
-                                        },
-                                        trailingIcon = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_unit_cm),
-                                                style = KanguruTheme.typography.labelSmall,
-                                                fontWeight = FontWeight.Bold,
-                                                color = TextTertiary,
-                                                modifier = Modifier.padding(end = 8.dp)
-                                            )
-                                        },
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            focusedBorderColor = BrandPink,
-                                            unfocusedBorderColor = CardBorder,
-                                            focusedContainerColor = KanguruTheme.colors.surface,
-                                            unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
-                                            focusedTextColor = TextPrimary,
-                                            unfocusedTextColor = TextPrimary,
-                                            focusedPlaceholderColor = TextTertiary,
-                                            unfocusedPlaceholderColor = TextTertiary
-                                        ),
-                                        singleLine = true
-                                    )
-                                }
-
-                                // Panjang Sekarang
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(R.string.baby_profile_label_current_length),
-                                        style = KanguruTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextSecondary,
-                                        letterSpacing = 0.5.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    OutlinedTextField(
-                                        value = uiState.currentLengthInput,
-                                        onValueChange = onCurrentLengthChange,
-                                        placeholder = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_placeholder_length_current),
-                                                style = KanguruTheme.typography.bodySmall,
-                                                color = TextTertiary
-                                            )
-                                        },
-                                        trailingIcon = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_unit_cm),
-                                                style = KanguruTheme.typography.labelSmall,
-                                                fontWeight = FontWeight.Bold,
-                                                color = TextTertiary,
-                                                modifier = Modifier.padding(end = 8.dp)
-                                            )
-                                        },
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            focusedBorderColor = BrandPink,
-                                            unfocusedBorderColor = CardBorder,
-                                            focusedContainerColor = KanguruTheme.colors.surface,
-                                            unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
-                                            focusedTextColor = TextPrimary,
-                                            unfocusedTextColor = TextPrimary,
-                                            focusedPlaceholderColor = TextTertiary,
-                                            unfocusedPlaceholderColor = TextTertiary
-                                        ),
-                                        singleLine = true
-                                    )
-                                }
-                            }
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = BrandPink,
+                                    unfocusedBorderColor = CardBorder,
+                                    focusedContainerColor = KanguruTheme.colors.surface,
+                                    unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
+                                    focusedTextColor = TextPrimary,
+                                    unfocusedTextColor = TextPrimary,
+                                    focusedPlaceholderColor = TextTertiary,
+                                    unfocusedPlaceholderColor = TextTertiary
+                                ),
+                                singleLine = true
+                            )
                         }
                     }
 
-                    // 6. Lingkar Kepala Card (Lingkar Kepala Lahir & Lingkar Kepala Sekarang)
+                    // 6. Lingkar Kepala Lahir Card
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -907,103 +830,49 @@ fun BabyProfileFormScreen(
                             .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Row(
+                        Column {
+                            Text(
+                                text = stringResource(R.string.baby_profile_label_birth_head),
+                                style = KanguruTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = TextSecondary,
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            OutlinedTextField(
+                                value = uiState.birthHeadCircumferenceInput,
+                                onValueChange = onBirthHeadCircumferenceChange,
+                                placeholder = {
+                                    Text(
+                                        stringResource(R.string.baby_profile_placeholder_head_birth),
+                                        style = KanguruTheme.typography.bodySmall,
+                                        color = TextTertiary
+                                    )
+                                },
+                                trailingIcon = {
+                                    Text(
+                                        stringResource(R.string.baby_profile_unit_cm),
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = TextTertiary,
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                // Lingkar Kepala Lahir
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(R.string.baby_profile_label_birth_head),
-                                        style = KanguruTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextSecondary,
-                                        letterSpacing = 0.5.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    OutlinedTextField(
-                                        value = uiState.birthHeadCircumferenceInput,
-                                        onValueChange = onBirthHeadCircumferenceChange,
-                                        placeholder = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_placeholder_head_birth),
-                                                style = KanguruTheme.typography.bodySmall,
-                                                color = TextTertiary
-                                            )
-                                        },
-                                        trailingIcon = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_unit_cm),
-                                                style = KanguruTheme.typography.labelSmall,
-                                                fontWeight = FontWeight.Bold,
-                                                color = TextTertiary,
-                                                modifier = Modifier.padding(end = 8.dp)
-                                            )
-                                        },
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            focusedBorderColor = BrandPink,
-                                            unfocusedBorderColor = CardBorder,
-                                            focusedContainerColor = KanguruTheme.colors.surface,
-                                            unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
-                                            focusedTextColor = TextPrimary,
-                                            unfocusedTextColor = TextPrimary,
-                                            focusedPlaceholderColor = TextTertiary,
-                                            unfocusedPlaceholderColor = TextTertiary
-                                        ),
-                                        singleLine = true
-                                    )
-                                }
-
-                                // Lingkar Kepala Sekarang
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = stringResource(R.string.baby_profile_label_current_head),
-                                        style = KanguruTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = TextSecondary,
-                                        letterSpacing = 0.5.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    OutlinedTextField(
-                                        value = uiState.currentHeadCircumferenceInput,
-                                        onValueChange = onCurrentHeadCircumferenceChange,
-                                        placeholder = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_placeholder_head_current),
-                                                style = KanguruTheme.typography.bodySmall,
-                                                color = TextTertiary
-                                            )
-                                        },
-                                        trailingIcon = {
-                                            Text(
-                                                stringResource(R.string.baby_profile_unit_cm),
-                                                style = KanguruTheme.typography.labelSmall,
-                                                fontWeight = FontWeight.Bold,
-                                                color = TextTertiary,
-                                                modifier = Modifier.padding(end = 8.dp)
-                                            )
-                                        },
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            focusedBorderColor = BrandPink,
-                                            unfocusedBorderColor = CardBorder,
-                                            focusedContainerColor = KanguruTheme.colors.surface,
-                                            unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
-                                            focusedTextColor = TextPrimary,
-                                            unfocusedTextColor = TextPrimary,
-                                            focusedPlaceholderColor = TextTertiary,
-                                            unfocusedPlaceholderColor = TextTertiary
-                                        ),
-                                        singleLine = true
-                                    )
-                                }
-                            }
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = BrandPink,
+                                    unfocusedBorderColor = CardBorder,
+                                    focusedContainerColor = KanguruTheme.colors.surface,
+                                    unfocusedContainerColor = KanguruTheme.colors.surfaceVariant,
+                                    focusedTextColor = TextPrimary,
+                                    unfocusedTextColor = TextPrimary,
+                                    focusedPlaceholderColor = TextTertiary,
+                                    unfocusedPlaceholderColor = TextTertiary
+                                ),
+                                singleLine = true
+                            )
                         }
                     }
 
@@ -1431,15 +1300,6 @@ fun BabyProfileConfirmationScreen(
                             color = CardBorder
                         )
 
-                        ConfirmationDataRow(
-                            label = stringResource(R.string.baby_profile_confirm_label_current_weight),
-                            value = stringResource(R.string.baby_profile_value_grams, formatWeightString(uiState.currentWeightInput))
-                        )
-                        HorizontalDivider(
-                            thickness = 0.8.dp,
-                            color = CardBorder
-                        )
-
                         if (uiState.birthLengthInput.isNotBlank()) {
                             ConfirmationDataRow(
                                 label = stringResource(R.string.baby_profile_confirm_label_birth_length),
@@ -1451,32 +1311,10 @@ fun BabyProfileConfirmationScreen(
                             )
                         }
 
-                        if (uiState.currentLengthInput.isNotBlank()) {
-                            ConfirmationDataRow(
-                                label = stringResource(R.string.baby_profile_confirm_label_current_length),
-                                value = stringResource(R.string.baby_profile_value_cm, uiState.currentLengthInput.trim())
-                            )
-                            HorizontalDivider(
-                                thickness = 0.8.dp,
-                                color = CardBorder
-                            )
-                        }
-
                         if (uiState.birthHeadCircumferenceInput.isNotBlank()) {
                             ConfirmationDataRow(
                                 label = stringResource(R.string.baby_profile_confirm_label_birth_head),
                                 value = stringResource(R.string.baby_profile_value_cm, uiState.birthHeadCircumferenceInput.trim())
-                            )
-                            HorizontalDivider(
-                                thickness = 0.8.dp,
-                                color = CardBorder
-                            )
-                        }
-
-                        if (uiState.currentHeadCircumferenceInput.isNotBlank()) {
-                            ConfirmationDataRow(
-                                label = stringResource(R.string.baby_profile_confirm_label_current_head),
-                                value = stringResource(R.string.baby_profile_value_cm, uiState.currentHeadCircumferenceInput.trim())
                             )
                             HorizontalDivider(
                                 thickness = 0.8.dp,

@@ -50,29 +50,14 @@ class BabyProfileSetupViewModel @Inject constructor(
         _uiState.update { it.copy(birthWeightInput = sanitized, errorMessage = null) }
     }
 
-    fun updateCurrentWeight(weight: String) {
-        val sanitized = weight.filter { it.isDigit() }
-        _uiState.update { it.copy(currentWeightInput = sanitized, errorMessage = null) }
-    }
-
     fun updateBirthLength(length: String) {
         val sanitized = length.replace(',', '.').filter { it.isDigit() || it == '.' }
         _uiState.update { it.copy(birthLengthInput = sanitized, errorMessage = null) }
     }
 
-    fun updateCurrentLength(length: String) {
-        val sanitized = length.replace(',', '.').filter { it.isDigit() || it == '.' }
-        _uiState.update { it.copy(currentLengthInput = sanitized, errorMessage = null) }
-    }
-
     fun updateBirthHeadCircumference(value: String) {
         val sanitized = value.replace(',', '.').filter { it.isDigit() || it == '.' }
         _uiState.update { it.copy(birthHeadCircumferenceInput = sanitized, errorMessage = null) }
-    }
-
-    fun updateCurrentHeadCircumference(value: String) {
-        val sanitized = value.replace(',', '.').filter { it.isDigit() || it == '.' }
-        _uiState.update { it.copy(currentHeadCircumferenceInput = sanitized, errorMessage = null) }
     }
 
     fun createTempCameraUri(): Uri {
@@ -170,14 +155,8 @@ class BabyProfileSetupViewModel @Inject constructor(
                 photoUri = state.photoUri
             )
 
-            val currentWeight = if (state.currentWeightGram > 0) state.currentWeightGram else state.birthWeightGram
-            val currentLength = if (state.currentLengthCm > 0f) state.currentLengthCm else state.birthLengthCm
-            val currentHead = if (state.currentHeadCircumferenceCm > 0f) state.currentHeadCircumferenceCm else state.birthHeadCircumferenceCm
             val result = saveBabyProfileUseCase(
-                baby = baby,
-                currentWeightGram = currentWeight,
-                currentLengthCm = currentLength,
-                currentHeadCircumferenceCm = currentHead
+                baby = baby
             )
             result.fold(
                 onSuccess = {

@@ -1,0 +1,187 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: baby_onboarding_profiles
+// Document ID: Auto-generated Firestore ID (e.g. via collection.add())
+//
+// Fields:
+//   - babyName: string (required, 1..100 characters) - Nama bayi yang didaftarkan saat onboarding
+//   - birthDateEpochMillis: number (required, > 0, <= request.time.toMillis()) - Waktu kelahiran dalam epoch milidetik
+//   - birthDateFormatted: string (required, 0..50 characters) - String tanggal lahir terformat (e.g., "12 Januari 2025" atau "")
+//   - gestationalAgeWeeks: number (required, 20..50) - Usia gestasi bayi dalam minggu saat lahir
+//   - birthWeightGram: number (required, 100..10000) - Berat badan lahir dalam gram
+//   - currentWeightGram: number (required, 100..20000) - Berat badan saat onboarding dalam gram
+//   - birthLengthCm: number (required, 0.0..100.0) - Panjang badan lahir dalam sentimeter (0.0 jika tidak diisi)
+//   - currentLengthCm: number (required, 0.0..100.0) - Panjang badan saat onboarding dalam sentimeter (0.0 jika tidak diisi)
+//   - birthHeadCircumferenceCm: number (required, 0.0..80.0) - Lingkar kepala lahir dalam sentimeter (0.0 jika tidak diisi)
+//   - currentHeadCircumferenceCm: number (required, 0.0..80.0) - Lingkar kepala saat onboarding dalam sentimeter (0.0 jika tidak diisi)
+//   - gender: string (required, allowed: ['LAKI_LAKI', 'PEREMPUAN', 'TIDAK_DIKETAHUI']) - Jenis kelamin bayi
+//   - environment: string (required, 1..30 characters, e.g. "DEBUG", "PREPRODUCTION", "RELEASE") - Environment build aplikasi
+//   - appVersion: string (required, 1..30 characters, e.g. "1.0.0") - Versi rilis aplikasi klien
+//   - syncedAtEpochMillis: number (required, > 0, <= request.time.toMillis() + 300000) - Waktu lokal sinkronisasi dibuat
+//   - createdAtServer: timestamp (required, == request.time) - Timestamp pencatatan oleh server Firestore
+//
+// Access Pattern:
+//   - Create: Publik/Unauthenticated diizinkan membuat data profil onboarding baru
+//             dengan validasi skema, tipe data CEL, dan batasan numerik/panjang yang ketat.
+//   - Read: Publik/Unauthenticated DITOLAK membaca data untuk melindungi privasi medis bayi (PII).
+//           Hanya akun administrator terautentikasi (custom claims admin: true) yang berhak membaca.
+//   - Update: Ditolak untuk klien umum guna menjaga audit trail. Hanya admin yang dapat mengedit,
+//             dan wajib mematuhi validator skema yang sama (mencegah celah Update Bypass).
+//   - Delete: Ditolak untuk klien umum. Hanya administrator yang dapat menghapus dokumen.
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Memeriksa apakah pengguna terautentikasi di Firebase Auth
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Memeriksa apakah pengguna memiliki hak akses Admin via Firebase Auth Custom Claims
+    function isAdmin() {
+      return isAuthenticated() &&
+             'admin' in request.auth.token &&
+             request.auth.token.admin == true;
+    }
+
+    // Daftar field yang wajib dan hanya boleh ada pada profil onboarding bayi
+    function allowedBabyProfileFields() {
+      return [
+        'babyName',
+        'birthDateEpochMillis',
+        'birthDateFormatted',
+        'gestationalAgeWeeks',
+        'birthWeightGram',
+        'currentWeightGram',
+        'birthLengthCm',
+        'currentLengthCm',
+        'birthHeadCircumferenceCm',
+        'currentHeadCircumferenceCm',
+        'gender',
+        'environment',
+        'appVersion',
+        'syncedAtEpochMillis',
+        'createdAtServer'
+      ];
+    }
+
+    // Memastikan dokumen hanya berisi field yang didefinisikan (mencegah schema pollution)
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Memastikan seluruh field yang didefinisikan ada dalam payload (mencegah missing field)
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // ===============================================================
+    // Domain Validator: Baby Onboarding Profile
+    // ===============================================================
+    function isValidBabyOnboardingProfile(data) {
+      return hasRequiredFields(allowedBabyProfileFields()) &&
+             hasOnlyAllowedFields(allowedBabyProfileFields()) &&
+             
+             // Identitas nama bayi (1..100 karakter, mencegah DoS / string raksasa)
+             data.babyName is string &&
+             data.babyName.size() > 0 &&
+             data.babyName.size() <= 100 &&
+             
+             // Tanggal lahir dalam epoch milidetik (positif dan tidak boleh melebihi waktu sekarang)
+             data.birthDateEpochMillis is number &&
+             data.birthDateEpochMillis > 0 &&
+             data.birthDateEpochMillis <= request.time.toMillis() &&
+             
+             // Tanggal lahir terformat (string maksimal 50 karakter)
+             data.birthDateFormatted is string &&
+             data.birthDateFormatted.size() <= 50 &&
+             
+             // Usia gestasi saat lahir (20 sampai 50 minggu)
+             data.gestationalAgeWeeks is number &&
+             data.gestationalAgeWeeks >= 20 &&
+             data.gestationalAgeWeeks <= 50 &&
+             
+             // Berat lahir dan saat ini dalam gram (rentang realistis 100g s.d. 10.000g / 20.000g)
+             data.birthWeightGram is number &&
+             data.birthWeightGram >= 100 &&
+             data.birthWeightGram <= 10000 &&
+             data.currentWeightGram is number &&
+             data.currentWeightGram >= 100 &&
+             data.currentWeightGram <= 20000 &&
+             
+             // Panjang badan dalam cm (0.0 jika tidak diisi, batas atas 100.0 cm)
+             data.birthLengthCm is number &&
+             data.birthLengthCm >= 0.0 &&
+             data.birthLengthCm <= 100.0 &&
+             data.currentLengthCm is number &&
+             data.currentLengthCm >= 0.0 &&
+             data.currentLengthCm <= 100.0 &&
+             
+             // Lingkar kepala dalam cm (0.0 jika tidak diisi, batas atas 80.0 cm)
+             data.birthHeadCircumferenceCm is number &&
+             data.birthHeadCircumferenceCm >= 0.0 &&
+             data.birthHeadCircumferenceCm <= 80.0 &&
+             data.currentHeadCircumferenceCm is number &&
+             data.currentHeadCircumferenceCm >= 0.0 &&
+             data.currentHeadCircumferenceCm <= 80.0 &&
+             
+             // Jenis kelamin (enum yang valid)
+             data.gender is string &&
+             data.gender in ['LAKI_LAKI', 'PEREMPUAN', 'TIDAK_DIKETAHUI'] &&
+             
+             // Metadata aplikasi & environment
+             data.environment is string &&
+             data.environment.size() > 0 &&
+             data.environment.size() <= 30 &&
+             data.appVersion is string &&
+             data.appVersion.size() > 0 &&
+             data.appVersion.size() <= 30 &&
+             
+             // Waktu sinkronisasi lokal (maks toleransi clock skew 5 menit di masa depan)
+             data.syncedAtEpochMillis is number &&
+             data.syncedAtEpochMillis > 0 &&
+             data.syncedAtEpochMillis <= request.time.toMillis() + 300000 &&
+             
+             // Server timestamp Firestore (wajib server timestamp asli)
+             data.createdAtServer is timestamp &&
+             data.createdAtServer == request.time;
+    }
+
+    // ===============================================================
+    // Rules Match Blocks
+    // ===============================================================
+
+    // Default deny all access across any unlisted collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Koleksi Profil Onboarding Bayi
+    match /baby_onboarding_profiles/{profileId} {
+      // READ: Ditutup untuk publik / anonymous guna melindungi PII medis bayi.
+      // Hanya admin terverifikasi yang dapat membaca / mengekspor data.
+      allow read: if isAdmin();
+
+      // CREATE: Diizinkan untuk aplikasi klien (termasuk klien onboarding publik),
+      // dengan penegakan skema ketat, limit ukuran, dan rentang klinis yang aman.
+      allow create: if isValidBabyOnboardingProfile(request.resource.data);
+
+      // UPDATE: Ditolak untuk klien publik demi menjaga riwayat data.
+      // Admin diizinkan mengedit dengan validasi skema yang sama (mencegah update bypass).
+      allow update: if isAdmin() && isValidBabyOnboardingProfile(request.resource.data);
+
+      // DELETE: Hanya administrator yang berhak menghapus data.
+      allow delete: if isAdmin();
+    }
+  }
+}

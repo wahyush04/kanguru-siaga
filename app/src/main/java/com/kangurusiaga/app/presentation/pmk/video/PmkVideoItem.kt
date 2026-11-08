@@ -31,7 +31,9 @@ data class PmkVideoItem(
     val clinicalPoints: List<ClinicalPoint> = emptyList(),
     val calloutTip: String? = "Ayah juga dapat melakukan PMK secara bergantian untuk membantu istirahat Bunda!",
     val nextLessonId: Int? = null,
-    val keyPoints: List<String> = clinicalPoints.map { "${it.title}: ${it.description}" }
+    val keyPoints: List<String> = clinicalPoints.map {
+        if (it.title.isNotBlank()) "${it.title}: ${it.description}" else it.description
+    }
 ) {
     val badgeText: String get() = "Video Edukasi"
 }
@@ -44,7 +46,7 @@ object PmkVideoDataSource {
             category = "Perawatan Metode Kanguru",
             duration = "00:27",
             durationSeconds = 27,
-            thumbnailRes = R.drawable.thumb_pmk_video_2,
+            thumbnailRes = R.drawable.il_emergency_06,
             videoRes = R.raw.video_pengertian_pmk_1,
             description = "Penjelasan dasar mengenai apa itu Perawatan Metode Kanguru (PMK / Kangaroo Mother Care), prinsip kontak kulit-ke-kulit (skin-to-skin) antara dada bayi dan dada orang tua, serta fungsinya sebagai inkubator alami yang aman bagi bayi berat lahir rendah (BBLR).",
             clinicalPoints = listOf(
@@ -83,7 +85,7 @@ object PmkVideoDataSource {
             category = "Perawatan Metode Kanguru",
             duration = "01:05",
             durationSeconds = 65,
-            thumbnailRes = R.drawable.thumb_pmk_video_2,
+            thumbnailRes = R.drawable.il_edu_module_6,
             videoRes = R.raw.video_manfaat_pmk_2,
             description = "Memahami berbagai manfaat fisiologis, neurologis, dan emosional PMK untuk bayi prematur dan Bayi Berat Lahir Rendah, mulai dari stabilitas suhu tubuh, percepatan kenaikan berat badan, hingga pematangan fungsi organ vital.",
             clinicalPoints = listOf(
@@ -122,7 +124,7 @@ object PmkVideoDataSource {
             category = "Perawatan Metode Kanguru",
             duration = "01:29",
             durationSeconds = 89,
-            thumbnailRes = R.drawable.thumb_pmk_video_3,
+            thumbnailRes = R.drawable.il_emergency_03,
             videoRes = R.raw.video_persiapan_pmk_3,
             description = "Panduan persiapan menyeluruh sebelum memulai sesi PMK demi menjaga higienitas, kenyamanan, dan keselamatan bayi maupun orang tua, mulai dari kebersihan diri, busana, hingga lingkungan sekitar.",
             clinicalPoints = listOf(
@@ -161,7 +163,7 @@ object PmkVideoDataSource {
             category = "Perawatan Bayi Berat Lahir Rendah",
             duration = "00:39",
             durationSeconds = 39,
-            thumbnailRes = R.drawable.thumb_pmk_video_4,
+            thumbnailRes = R.drawable.il_edu_module_6,
             videoRes = R.raw.video_perawatan_bblr_4,
             description = "Panduan praktis tata cara perawatan harian bagi Bayi Berat Lahir Rendah (BBLR) di rumah, meliputi pemenuhan nutrisi ASI teratur, pemeliharaan kehangatan tubuh, kebersihan tali pusat, serta pemantauan tumbuh kembang harian.",
             clinicalPoints = listOf(
@@ -200,7 +202,7 @@ object PmkVideoDataSource {
             category = "Tanda Kegawatan Bayi Berat Lahir Rendah",
             duration = "00:54",
             durationSeconds = 54,
-            thumbnailRes = R.drawable.thumb_pmk_video_5,
+            thumbnailRes = R.drawable.il_edu_module_5,
             videoRes = R.raw.video_tanda_kegawatan_bblr_5,
             description = "Edukasi kritis mengenai deteksi dini tanda bahaya dan kegawatan klinis (red flags) pada Bayi Berat Lahir Rendah (BBLR) yang memerlukan tindakan darurat segera ke fasilitas pelayanan kesehatan atau rumah sakit.",
             clinicalPoints = listOf(
@@ -240,7 +242,7 @@ object PmkVideoDataSource {
             category = "Perawatan Bayi BBLR",
             duration = "01:07",
             durationSeconds = 67,
-            thumbnailRes = R.drawable.thumb_pmk_video_5,
+            thumbnailRes = R.drawable.il_edu_module_9,
             videoRes = R.raw.video_cara_memandikan_bayi_6,
             description = "Edukasi mengenai cara memandikan bayi dengan benar, aman, dan lembut, mulai dari menyiapkan perlengkapan mandi, menggunakan air suam-suam kuku, membersihkan lipatan kulit, menggunakan sabun khusus bayi, hingga menjaga bayi tetap hangat setelah mandi.",
             clinicalPoints = listOf(
@@ -272,9 +274,107 @@ object PmkVideoDataSource {
             ),
             calloutTip = "PENTING: Jangan pernah meninggalkan bayi sendirian saat mandi, meskipun hanya sebentar. Untuk bayi BBLR, pastikan kondisi bayi stabil dan ikuti petunjuk tenaga kesehatan mengenai cara serta waktu mandi yang aman.",
             nextLessonId = null
+        ),
+
+        PmkVideoItem(
+            id = 7,
+            title = "Cara Pengukuran Berat Badan",
+            category = "Pengukuran Antropometri",
+            duration = "00:39",
+            durationSeconds = 39,
+            thumbnailRes = R.drawable.il_edu_module_2,
+            videoRes = R.raw.video_antropometri_1_berat_badan,
+            description = "Pengukuran berat badan bayi menggunakan timbangan terstandar secara berkala dan higienis.",
+            clinicalPoints = listOf(
+                ClinicalPoint(
+                    number = 1,
+                    title = "Alat Terstandar",
+                    description = "Gunakan timbangan bayi yang terstandar. Lebih baik menggunakan timbangan bayi digital bila tersedia."
+                ),
+                ClinicalPoint(
+                    number = 2,
+                    title = "Tara Timbangan",
+                    description = "Pastikan timbangan telah ditara terlebih dahulu sehingga menunjukkan angka nol sebelum bayi ditimbang."
+                ),
+                ClinicalPoint(
+                    number = 3,
+                    title = "Kondisi Penimbangan",
+                    description = "Timbang bayi dengan keadaan tanpa busana. Lakukan penimbangan 2-3 kali dan catat nilai reratanya."
+                )
+            ),
+            calloutTip = "Catat berat badan secara berkala untuk memantau grafik pertumbuhan bayi pada kurva Fenton.",
+            nextLessonId = 8
+        ),
+
+        PmkVideoItem(
+            id = 8,
+            title = "Cara Pengukuran Panjang Badan",
+            category = "Pengukuran Antropometri",
+            duration = "00:40",
+            durationSeconds = 40,
+            thumbnailRes = R.drawable.il_edu_module_2,
+            videoRes = R.raw.video_antropometri_2_panjang_badan,
+            description = "Pengukuran panjang badan bayi menggunakan alat ukur panjang terstandar secara presisi dan aman.",
+            clinicalPoints = listOf(
+                ClinicalPoint(
+                    number = 1,
+                    title = "Alat Terstandar",
+                    description = "Gunakan alat ukur panjang badan yang terstandar."
+                ),
+                ClinicalPoint(
+                    number = 2,
+                    title = "Posisi Bayi",
+                    description = "Kepala bayi dipegang dengan kedua tangan dan menempel pada titik nol alat ukur. Luruskan kedua kaki bayi."
+                ),
+                ClinicalPoint(
+                    number = 3,
+                    title = "Teknik Pengukuran",
+                    description = "Kedua tumit harus menempel, usahakan hingga 90°. Lakukan pengukuran panjang badan 2-3 kali dan catat nilai reratanya."
+                )
+            ),
+            calloutTip = "Lakukan pengukuran bersama pendamping agar posisi kepala dan kaki bayi dapat terjaga lurus dengan aman.",
+            nextLessonId = 9
+        ),
+
+        PmkVideoItem(
+            id = 9,
+            title = "Cara Pengukuran Lingkar Kepala",
+            category = "Pengukuran Antropometri",
+            duration = "00:46",
+            durationSeconds = 46,
+            thumbnailRes = R.drawable.il_edu_module_2,
+            videoRes = R.raw.video_antropometri_3_lingkar_kepala,
+            description = "Pengukuran lingkar kepala bayi menggunakan tali/pita ukur terstandar untuk memantau lingkar kepala dan perkembangan si kecil.",
+            clinicalPoints = listOf(
+                ClinicalPoint(
+                    number = 1,
+                    title = "Alat Terstandar",
+                    description = "Gunakan tali ukur yang terstandar."
+                ),
+                ClinicalPoint(
+                    number = 2,
+                    title = "Posisi Dahi",
+                    description = "Tali ukur harus melewati bagian paling menonjol pada dahi bayi."
+                ),
+                ClinicalPoint(
+                    number = 3,
+                    title = "Posisi Belakang Kepala",
+                    description = "Tali ukur harus melewati bagian paling menonjol pada sisi belakang kepala bayi."
+                ),
+                ClinicalPoint(
+                    number = 4,
+                    title = "Pencatatan Nilai",
+                    description = "Lakukan pengukuran 2-3 kali kemudian catat nilai reratanya."
+                )
+            ),
+            calloutTip = "Pastikan pita ukur tidak terlalu kencang dan tidak terlalu longgar saat melingkari kepala bayi.",
+            nextLessonId = null
         )
 
     )
+
+    val antropometriVideos: List<PmkVideoItem>
+        get() = videos.filter { it.id in 7..9 }
 
     fun getVideoById(id: Int): PmkVideoItem {
         return videos.find { it.id == id } ?: videos.first()
