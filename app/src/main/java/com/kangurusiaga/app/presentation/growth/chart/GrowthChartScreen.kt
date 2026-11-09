@@ -660,7 +660,7 @@ private fun KiaStatusCard(
                     lineColor = lineColor,
                     modifier = Modifier
                         .fillMaxWidth(0.85f)
-                        .height(18.dp)
+                        .height(22.dp)
                 )
             }
 
@@ -690,10 +690,10 @@ private fun KiaTrendLineCanvas(
 
         val (p1, p2, p3, p4) = when (trendType) {
             KiaTrendType.UPWARD -> listOf(
-                Offset(w * 0.10f, h * 0.85f),
-                Offset(w * 0.38f, h * 0.60f),
-                Offset(w * 0.66f, h * 0.35f),
-                Offset(w * 0.90f, h * 0.15f)
+                Offset(w * 0.10f, h * 0.88f),
+                Offset(w * 0.37f, h * 0.62f),
+                Offset(w * 0.64f, h * 0.36f),
+                Offset(w * 0.90f, h * 0.12f)
             )
             KiaTrendType.FLAT -> listOf(
                 Offset(w * 0.10f, h * 0.50f),
@@ -702,15 +702,15 @@ private fun KiaTrendLineCanvas(
                 Offset(w * 0.90f, h * 0.50f)
             )
             KiaTrendType.DOWNWARD -> listOf(
-                Offset(w * 0.10f, h * 0.40f),
-                Offset(w * 0.37f, h * 0.25f),
-                Offset(w * 0.64f, h * 0.50f),
-                Offset(w * 0.90f, h * 0.65f)
+                Offset(w * 0.10f, h * 0.22f),
+                Offset(w * 0.37f, h * 0.18f),
+                Offset(w * 0.64f, h * 0.55f),
+                Offset(w * 0.90f, h * 0.88f)
             )
         }
 
-        val strokeWidthPx = 1.8.dp.toPx()
-        val dotRadiusPx = 3.5.dp.toPx()
+        val strokeWidthPx = 2.dp.toPx()
+        val dotRadiusPx = 3.8.dp.toPx()
 
         // Connecting lines
         drawLine(
