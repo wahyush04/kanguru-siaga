@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PrematureScreeningRepository {
     fun getScreeningsForBaby(babyId: Long): Flow<List<PrematureScreening>>
+    suspend fun getScreeningById(screeningId: Long): PrematureScreening?
     suspend fun ensureDefaultScreenings(babyId: Long, birthDateEpoch: Long, gestationalAgeWeeks: Int)
     suspend fun updateScreening(screening: PrematureScreening)
     suspend fun insertScreening(screening: PrematureScreening): Long

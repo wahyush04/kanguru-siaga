@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.CloudDone
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Hearing
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.UploadFile
@@ -53,6 +54,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -117,6 +119,7 @@ fun ScreeningInputResultRoute(
     ScreeningInputResultScreen(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
+        onCustomTitleChanged = viewModel::updateCustomTitle,
         onSelectScreeningType = viewModel::selectScreeningType,
         onNotesChanged = viewModel::updateClinicalNotes,
         onInsertQuickPoint = viewModel::insertQuickPoint,
@@ -126,7 +129,7 @@ fun ScreeningInputResultRoute(
                 tempCameraUri = uri
                 cameraLauncher.launch(uri)
             } catch (_: Exception) {
-                // Ignore or handled by ViewModel
+                // Handled in ViewModel
             }
         },
         onAddPdf = {
@@ -149,6 +152,7 @@ fun ScreeningInputResultRoute(
 fun ScreeningInputResultScreen(
     uiState: ScreeningInputResultUiState,
     onNavigateBack: () -> Unit,
+    onCustomTitleChanged: (String) -> Unit,
     onSelectScreeningType: (ScreeningType) -> Unit,
     onNotesChanged: (String) -> Unit,
     onInsertQuickPoint: (String) -> Unit,
@@ -240,12 +244,36 @@ fun ScreeningInputResultScreen(
                 shadowElevation = 8.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 14.dp)
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Tombol Batal
+                    OutlinedButton(
+                        onClick = onNavigateBack,
+                        shape = RoundedCornerShape(16.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = colors.surface,
+                            contentColor = colors.textPrimary
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                    ) {
+                        Text(
+                            text = "Batal",
+                            style = KanguruTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary
+                        )
+                    }
+
+                    // Tombol Simpan Hasil Skrining
                     Button(
                         onClick = onSave,
                         enabled = !uiState.isSaving,
@@ -255,15 +283,26 @@ fun ScreeningInputResultScreen(
                             contentColor = colors.onPrimary
                         ),
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .weight(2f)
                             .height(50.dp)
                     ) {
-                        Text(
-                            text = if (uiState.isSaving) "Menyimpan..." else "Simpan Hasil & Resume Medis",
-                            style = KanguruTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.onPrimary
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CheckCircle,
+                                contentDescription = null,
+                                tint = colors.onPrimary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = if (uiState.isSaving) "Menyimpan..." else "Simpan Hasil Skrining",
+                                style = KanguruTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.onPrimary
+                            )
+                        }
                     }
                 }
             }
@@ -280,9 +319,10 @@ fun ScreeningInputResultScreen(
             // Patient Profile Card
             PatientProfileSummaryCard(uiState = uiState)
 
-            // Section 1: Modalitas Skrining (2x2 Grid)
-            ScreeningModalitySelectorCard(
-                selectedType = uiState.selectedType,
+            // Section 1: Nama Penapisan (Matching Google Stitch Screen)
+            ScreeningTitleSelectorCard(
+                uiState = uiState,
+                onCustomTitleChanged = onCustomTitleChanged,
                 onSelectType = onSelectScreeningType
             )
 
@@ -328,7 +368,7 @@ fun ScreeningInputResultScreen(
             },
             text = {
                 Text(
-                    text = "Laman ini digunakan dokter spesialis atau tenaga kesehatan untuk mencatat ringkasan temuan organ vital (USG Kepala, Mata/ROP, Pendengaran OAE/BERA, dan Lab Tiroid). Anda dapat melampirkan foto hasil atau PDF rujukan untuk arsip rekam medis keluarga.",
+                    text = "Laman ini digunakan dokter spesialis atau tenaga kesehatan untuk mencatat ringkasan temuan organ vital (USG Kepala, Mata/ROP, Pendengaran OAE/BERA, Lab Tiroid, serta pemeriksaan spesialis tambahan seperti USG Abdomen & Ekokardiografi). Anda dapat melampirkan foto hasil atau PDF rujukan untuk arsip rekam medis keluarga.",
                     style = KanguruTheme.typography.bodySmall,
                     color = colors.textSecondary
                 )
@@ -411,7 +451,7 @@ private fun PatientProfileSummaryCard(
                 }
 
                 Text(
-                    text = "PMA: ${uiState.pmaWeeksDisplay} • Lahir: ${uiState.birthGestationalDisplay} (${uiState.birthWeightDisplay})",
+                    text = "Usia Kronologis: ${uiState.pmaWeeksDisplay} • Lahir: ${uiState.birthGestationalDisplay} (${uiState.birthWeightDisplay})",
                     style = KanguruTheme.typography.bodySmall,
                     color = colors.textSecondary
                 )
@@ -439,9 +479,13 @@ private fun PatientProfileSummaryCard(
     }
 }
 
+/**
+ * Card Nama Penapisan: Exactly matching Google Stitch & user screenshot (media_1794231007626_84bc0866.png)
+ */
 @Composable
-private fun ScreeningModalitySelectorCard(
-    selectedType: ScreeningType,
+private fun ScreeningTitleSelectorCard(
+    uiState: ScreeningInputResultUiState,
+    onCustomTitleChanged: (String) -> Unit,
     onSelectType: (ScreeningType) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -464,86 +508,260 @@ private fun ScreeningModalitySelectorCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "PILIH JENIS PENAPISAN (IDAI / KEMENKES)",
-                    style = KanguruTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textSecondary
-                )
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(colors.primaryContainer)
-                        .border(1.dp, colors.clinicalRoseBorder, RoundedCornerShape(12.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "Wajib 4 Skrining",
-                        style = KanguruTheme.typography.labelSmall,
+                        text = "NAMA PENAPISAN",
+                        style = KanguruTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    )
+                    Text(
+                        text = "*",
+                        style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = colors.primary
                     )
                 }
+
+                Text(
+                    text = "Wajib diisi",
+                    style = KanguruTheme.typography.labelSmall,
+                    color = colors.textSecondary
+                )
             }
 
-            // 2x2 Grid of screening options
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+            if (uiState.isCustomScreening) {
+                // Input Field for Custom Screening Name
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(colors.background)
+                        .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
+                        .padding(horizontal = 14.dp, vertical = 4.dp)
                 ) {
-                    ModalityTile(
-                        title = "USG Kepala",
-                        subtitle = "Neurosonografi",
-                        icon = Icons.Default.Psychology,
-                        iconBg = colors.clinicalBlueBg,
-                        iconTint = colors.clinicalBlueText,
-                        isSelected = selectedType == ScreeningType.USG_HEAD,
-                        onClick = { onSelectType(ScreeningType.USG_HEAD) },
-                        modifier = Modifier.weight(1f)
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(colors.primaryContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MedicalServices,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
 
-                    ModalityTile(
-                        title = "Retinopati (ROP)",
-                        subtitle = "Skrining Mata",
-                        icon = Icons.Default.Visibility,
-                        iconBg = colors.clinicalRoseBg,
-                        iconTint = colors.clinicalRoseSolid,
-                        isSelected = selectedType == ScreeningType.ROP_EYE,
-                        onClick = { onSelectType(ScreeningType.ROP_EYE) },
-                        modifier = Modifier.weight(1f)
-                    )
+                        OutlinedTextField(
+                            value = uiState.customTitle,
+                            onValueChange = onCustomTitleChanged,
+                            placeholder = {
+                                Text(
+                                    text = "Contoh: USG Abdomen / Ginjal, Ekokardiografi",
+                                    style = KanguruTheme.typography.bodySmall,
+                                    color = colors.textSecondary.copy(alpha = 0.6f)
+                                )
+                            },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            textStyle = KanguruTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textPrimary
+                            ),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                                unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                                focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                                unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent
+                            )
+                        )
+                    }
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    ModalityTile(
-                        title = "Pendengaran",
-                        subtitle = "OAE & BERA",
-                        icon = Icons.Default.Hearing,
-                        iconBg = colors.clinicalAmberBg,
-                        iconTint = colors.clinicalAmberSolid,
-                        isSelected = selectedType == ScreeningType.HEARING_OAE,
-                        onClick = { onSelectType(ScreeningType.HEARING_OAE) },
-                        modifier = Modifier.weight(1f)
+                // Quick Suggestions Chips for Custom Screening
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = "Pilihan Cepat Tindakan Spesialis:",
+                        style = KanguruTheme.typography.labelSmall,
+                        color = colors.textSecondary
                     )
 
-                    ModalityTile(
-                        title = "Fungsi Tiroid",
-                        subtitle = "SHK / FT4 & TSH",
-                        icon = Icons.Default.Science,
-                        iconBg = colors.clinicalPurpleBg,
-                        iconTint = colors.clinicalPurpleSolid,
-                        isSelected = selectedType == ScreeningType.THYROID_FUNCTION,
-                        onClick = { onSelectType(ScreeningType.THYROID_FUNCTION) },
-                        modifier = Modifier.weight(1f)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        QuickChoiceChip(
+                            label = "+ Ekokardiografi",
+                            onClick = { onCustomTitleChanged("USG Ekokardiografi") }
+                        )
+                        QuickChoiceChip(
+                            label = "+ USG Abdomen / Ginjal",
+                            onClick = { onCustomTitleChanged("USG Abdomen / Ginjal") }
+                        )
+                        QuickChoiceChip(
+                            label = "+ Evaluasi Neurologi",
+                            onClick = { onCustomTitleChanged("Evaluasi Neurologi Anak") }
+                        )
+                        QuickChoiceChip(
+                            label = "+ Skrining Gigi / Oral",
+                            onClick = { onCustomTitleChanged("Skrining Gigi & Rongga Mulut") }
+                        )
+                        QuickChoiceChip(
+                            label = "+ Lab Darah Lengkap",
+                            onClick = { onCustomTitleChanged("Laboratorium Darah Lengkap") }
+                        )
+                    }
+                }
+            } else {
+                // Non-custom: Highlight current modality name in Stitch-style input box
+                val currentTitle = when (uiState.selectedType) {
+                    ScreeningType.USG_HEAD -> "USG Kepala (Neurosonografi)"
+                    ScreeningType.ROP_EYE -> "Retinopati (ROP)"
+                    ScreeningType.HEARING_OAE -> "Gangguan Pendengaran (OAE & BERA)"
+                    ScreeningType.THYROID_FUNCTION -> "Fungsi Tiroid (FT4 & TSH)"
+                    ScreeningType.CUSTOM -> uiState.customTitle.ifBlank { "Skrining Tambahan" }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(colors.background)
+                        .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
+                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(colors.primaryContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MedicalServices,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+
+                        Text(
+                            text = currentTitle,
+                            style = KanguruTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary
+                        )
+                    }
+                }
+
+                // Modality Tiles 2x2 grid to allow switching among standard 4 screenings
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Pilih Modalitas Standar IDAI / Kemenkes:",
+                        style = KanguruTheme.typography.labelSmall,
+                        color = colors.textSecondary
                     )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ModalityTile(
+                            title = "USG Kepala",
+                            subtitle = "Neurosonografi",
+                            icon = Icons.Default.Psychology,
+                            iconBg = colors.clinicalBlueBg,
+                            iconTint = colors.clinicalBlueText,
+                            isSelected = uiState.selectedType == ScreeningType.USG_HEAD,
+                            onClick = { onSelectType(ScreeningType.USG_HEAD) },
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        ModalityTile(
+                            title = "Retinopati (ROP)",
+                            subtitle = "Skrining Mata",
+                            icon = Icons.Default.Visibility,
+                            iconBg = colors.clinicalRoseBg,
+                            iconTint = colors.clinicalRoseSolid,
+                            isSelected = uiState.selectedType == ScreeningType.ROP_EYE,
+                            onClick = { onSelectType(ScreeningType.ROP_EYE) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ModalityTile(
+                            title = "Pendengaran",
+                            subtitle = "OAE & BERA",
+                            icon = Icons.Default.Hearing,
+                            iconBg = colors.clinicalAmberBg,
+                            iconTint = colors.clinicalAmberSolid,
+                            isSelected = uiState.selectedType == ScreeningType.HEARING_OAE,
+                            onClick = { onSelectType(ScreeningType.HEARING_OAE) },
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        ModalityTile(
+                            title = "Fungsi Tiroid",
+                            subtitle = "SHK / FT4 & TSH",
+                            icon = Icons.Default.Science,
+                            iconBg = colors.clinicalPurpleBg,
+                            iconTint = colors.clinicalPurpleSolid,
+                            isSelected = uiState.selectedType == ScreeningType.THYROID_FUNCTION,
+                            onClick = { onSelectType(ScreeningType.THYROID_FUNCTION) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun QuickChoiceChip(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val colors = KanguruTheme.colors
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(colors.surface)
+            .border(1.dp, colors.cardBorder, RoundedCornerShape(10.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 10.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = label,
+            style = KanguruTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = colors.primary
+        )
     }
 }
 
@@ -563,7 +781,7 @@ private fun ModalityTile(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(14.dp))
-            .background(if (isSelected) colors.primaryContainer.copy(alpha = 0.5f) else colors.surface)
+            .background(if (isSelected) colors.primaryContainer.copy(alpha = 0.5f) else colors.background)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
                 color = if (isSelected) colors.primary else colors.cardBorder,
@@ -682,9 +900,9 @@ private fun ClinicalNotesEditorCard(
 
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(colors.clinicalEmeraldBg)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -803,21 +1021,22 @@ private fun ClinicalNotesEditorCard(
 @Composable
 private fun QuickInsertChip(
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(colors.surfaceVariant)
+            .background(colors.surfaceVariant.copy(alpha = 0.6f))
             .clickable { onClick() }
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
         Text(
             text = label,
             style = KanguruTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             color = colors.textPrimary
         )
     }
@@ -831,8 +1050,8 @@ private fun MedicalAttachmentsCard(
     onAddPhoto: () -> Unit,
     onAddPdf: () -> Unit,
     onRemoveAttachment: () -> Unit,
-    onOpenAttachment: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenAttachment: (() -> Unit)? = null
 ) {
     val colors = KanguruTheme.colors
 
@@ -848,6 +1067,7 @@ private fun MedicalAttachmentsCard(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -876,159 +1096,177 @@ private fun MedicalAttachmentsCard(
                     )
                     Text(
                         text = "Hasil cetak USG, foto retina, atau resume lab (Opsional)",
-                        style = KanguruTheme.typography.labelSmall,
+                        style = KanguruTheme.typography.bodySmall,
                         color = colors.textSecondary
                     )
                 }
             }
 
-            // Two action buttons for upload
+            // Dual action buttons: Camera + File Upload
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                UploadBox(
-                    title = "Ambil Foto",
-                    subtitle = "Langsung dari kamera",
-                    icon = Icons.Default.CameraAlt,
-                    iconTint = colors.primary,
-                    onClick = onAddPhoto,
-                    modifier = Modifier.weight(1f)
-                )
-
-                UploadBox(
-                    title = "Unggah PDF / File",
-                    subtitle = "Maksimal ukuran 10MB",
-                    icon = Icons.Default.UploadFile,
-                    iconTint = colors.clinicalBlueText,
-                    onClick = onAddPdf,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            // Attached Item Preview (if present)
-            if (attachmentName != null) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(colors.surfaceVariant)
-                        .clickable(enabled = onOpenAttachment != null) { onOpenAttachment?.invoke() }
-                        .padding(10.dp)
+                        .weight(1f)
+                        .height(96.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(colors.background)
+                        .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
+                        .clickable { onAddPhoto() }
+                        .padding(10.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(if (isAttachmentImage) colors.clinicalRoseBg else colors.clinicalAmberBg),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (isAttachmentImage) Icons.Default.Image else Icons.Default.Description,
-                                    contentDescription = null,
-                                    tint = if (isAttachmentImage) colors.clinicalRoseSolid else colors.clinicalAmberSolid,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = attachmentName,
-                                    style = KanguruTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = colors.textPrimary,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Text(
-                                    text = "${attachmentSize ?: "Siap disimpan"} • Ketuk untuk membuka",
-                                    style = KanguruTheme.typography.labelSmall,
-                                    color = colors.textSecondary
-                                )
-                            }
-                        }
-
-                        IconButton(
-                            onClick = onRemoveAttachment,
-                            modifier = Modifier.size(28.dp)
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(colors.primaryContainer),
+                            contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Hapus Berkas",
-                                tint = colors.textSecondary,
-                                modifier = Modifier.size(16.dp)
+                                imageVector = Icons.Default.CameraAlt,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                modifier = Modifier.size(18.dp)
                             )
+                        }
+                        Text(
+                            text = "Ambil Foto",
+                            style = KanguruTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary
+                        )
+                        Text(
+                            text = "Langsung dari kamera",
+                            style = KanguruTheme.typography.labelSmall,
+                            color = colors.textSecondary
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(96.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(colors.background)
+                        .border(1.dp, colors.cardBorder, RoundedCornerShape(16.dp))
+                        .clickable { onAddPdf() }
+                        .padding(10.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(colors.clinicalBlueBg),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.UploadFile,
+                                contentDescription = null,
+                                tint = colors.clinicalBlueText,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Text(
+                            text = "Unggah PDF / File",
+                            style = KanguruTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary
+                        )
+                        Text(
+                            text = "Maksimal ukuran 5MB",
+                            style = KanguruTheme.typography.labelSmall,
+                            color = colors.textSecondary
+                        )
+                    }
+                }
+            }
+
+            // Attached document preview item
+            AnimatedVisibility(
+                visible = !attachmentName.isNullOrBlank(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                if (!attachmentName.isNullOrBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(colors.background)
+                            .border(1.dp, colors.cardBorder, RoundedCornerShape(14.dp))
+                            .clickable { onOpenAttachment?.invoke() }
+                            .padding(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                modifier = Modifier.weight(1f).padding(end = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(38.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(colors.clinicalAmberBg),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = if (isAttachmentImage) Icons.Default.Image else Icons.Default.Description,
+                                        contentDescription = null,
+                                        tint = colors.clinicalAmberSolid,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+
+                                Column {
+                                    Text(
+                                        text = attachmentName,
+                                        style = KanguruTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.textPrimary,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = attachmentSize ?: "Siap disimpan",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        color = colors.textSecondary
+                                    )
+                                }
+                            }
+
+                            IconButton(
+                                onClick = onRemoveAttachment,
+                                modifier = Modifier.size(28.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Hapus Berkas",
+                                    tint = colors.textSecondary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun UploadBox(
-    title: String,
-    subtitle: String,
-    icon: ImageVector,
-    iconTint: androidx.compose.ui.graphics.Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val colors = KanguruTheme.colors
-
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(14.dp))
-            .background(colors.background)
-            .border(1.dp, colors.cardBorder, RoundedCornerShape(14.dp))
-            .clickable { onClick() }
-            .padding(12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(34.dp)
-                    .clip(CircleShape)
-                    .background(colors.surface),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = iconTint,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-
-            Text(
-                text = title,
-                style = KanguruTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold,
-                color = colors.textPrimary,
-                textAlign = TextAlign.Center
-            )
-
-            Text(
-                text = subtitle,
-                style = KanguruTheme.typography.labelSmall,
-                color = colors.textSecondary,
-                textAlign = TextAlign.Center
-            )
         }
     }
 }

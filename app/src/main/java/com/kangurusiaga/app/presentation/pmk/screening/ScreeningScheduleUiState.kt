@@ -21,12 +21,14 @@ data class RecordScreeningModalState(
 data class AddScreeningModalState(
     val isOpen: Boolean = false,
     val title: String = "",
-    val categoryBadge: String = "Pemeriksaan Tambahan",
+    val categoryBadge: String = "Skrining Tambahan",
     val timingLabel: String = "",
-    val targetDateEpoch: Long = System.currentTimeMillis(),
+    val targetDateEpoch: Long = System.currentTimeMillis() + (7L * 24 * 3600 * 1000L),
     val indication: String = "",
     val clinicalGoal: String = "",
-    val clinicOrLab: String = ""
+    val clinicOrLab: String = "",
+    val isAlarmActive: Boolean = true,
+    val notes: String = ""
 )
 
 data class RescheduleScreeningModalState(

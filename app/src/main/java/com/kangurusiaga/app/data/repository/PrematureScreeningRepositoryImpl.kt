@@ -36,6 +36,18 @@ class PrematureScreeningRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getScreeningById(screeningId: Long): PrematureScreening? {
+        val entity = dao.getScreeningById(screeningId) ?: return null
+        val date1 = if (entity.targetDateEpoch > 0) dateFormat.format(Date(entity.targetDateEpoch)) else ""
+        val date2 = entity.targetDateEpoch2?.let { if (it > 0) dateFormat.format(Date(it)) else "" } ?: ""
+        val realDate = entity.realizationDateEpoch?.let { if (it > 0) dateFormat.format(Date(it)) else null }
+        return entity.toDomain(
+            dateFormatted = date1,
+            date2Formatted = date2,
+            realizationFormatted = realDate
+        )
+    }
+
     override suspend fun ensureDefaultScreenings(
         babyId: Long,
         birthDateEpoch: Long,

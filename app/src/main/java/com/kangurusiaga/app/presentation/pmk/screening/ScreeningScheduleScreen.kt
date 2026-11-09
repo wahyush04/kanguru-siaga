@@ -89,8 +89,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kangurusiaga.app.core.designsystem.component.KanguruSnackbarHost
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PrematureScreening
 import com.kangurusiaga.app.domain.model.ScreeningType
+import com.kangurusiaga.app.domain.util.PmaCalculator
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -99,7 +101,7 @@ import java.util.Locale
 @Composable
 fun ScreeningScheduleRoute(
     onNavigateBack: () -> Unit,
-    onNavigateToInputResult: (String) -> Unit,
+    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ScreeningScheduleViewModel = hiltViewModel()
 ) {
@@ -133,6 +135,8 @@ fun ScreeningScheduleRoute(
         onUpdateAddCategory = viewModel::updateAddCategory,
         onUpdateAddTiming = viewModel::updateAddTiming,
         onUpdateAddTargetDate = viewModel::updateAddTargetDate,
+        onUpdateAddAlarm = viewModel::updateAddAlarm,
+        onUpdateAddNotes = viewModel::updateAddNotes,
         onUpdateAddIndication = viewModel::updateAddIndication,
         onUpdateAddGoal = viewModel::updateAddGoal,
         onUpdateAddClinic = viewModel::updateAddClinic,
@@ -153,7 +157,7 @@ fun ScreeningScheduleRoute(
 fun ScreeningScheduleScreen(
     uiState: ScreeningScheduleUiState,
     onNavigateBack: () -> Unit,
-    onNavigateToInputResult: (String) -> Unit,
+    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
     onSelectTab: (ScreeningTab) -> Unit,
     onToggleAlarm: (PrematureScreening, Boolean) -> Unit,
     onOpenRecordModal: (PrematureScreening) -> Unit,
@@ -170,6 +174,8 @@ fun ScreeningScheduleScreen(
     onUpdateAddCategory: (String) -> Unit,
     onUpdateAddTiming: (String) -> Unit,
     onUpdateAddTargetDate: (Long) -> Unit,
+    onUpdateAddAlarm: (Boolean) -> Unit,
+    onUpdateAddNotes: (String) -> Unit,
     onUpdateAddIndication: (String) -> Unit,
     onUpdateAddGoal: (String) -> Unit,
     onUpdateAddClinic: (String) -> Unit,
@@ -293,6 +299,7 @@ fun ScreeningScheduleScreen(
             // Segmented Switcher Tabs (Jadwal & Alarm vs Hasil & Lembar Medis)
             SegmentedScreeningTabs(
                 selectedTab = uiState.selectedTab,
+                totalCount = uiState.screenings.size,
                 onSelectTab = onSelectTab,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -301,9 +308,11 @@ fun ScreeningScheduleScreen(
             if (uiState.selectedTab == ScreeningTab.REMINDERS) {
                 RemindersView(
                     screenings = uiState.screenings,
+                    baby = uiState.baby,
                     onToggleAlarm = onToggleAlarm,
                     onNavigateToInputResult = onNavigateToInputResult,
                     onRescheduleClick = onOpenRescheduleModal,
+                    onOpenAddModal = onOpenAddModal,
                     modifier = Modifier.fillMaxWidth()
                 )
             } else {
@@ -318,18 +327,16 @@ fun ScreeningScheduleScreen(
         }
     }
 
-    // Modal Tambah Jadwal Baru
+    // Modal Tambah Jadwal Baru (Google Stitch Bottom Sheet)
     if (uiState.addModalState.isOpen) {
-        AddScreeningDialog(
+        AddCustomScreeningBottomSheet(
             state = uiState.addModalState,
-            onClose = onCloseAddModal,
+            baby = uiState.baby,
+            onDismiss = onCloseAddModal,
             onTitleChanged = onUpdateAddTitle,
-            onCategoryChanged = onUpdateAddCategory,
-            onTimingChanged = onUpdateAddTiming,
             onTargetDateChanged = onUpdateAddTargetDate,
-            onIndicationChanged = onUpdateAddIndication,
-            onGoalChanged = onUpdateAddGoal,
-            onClinicChanged = onUpdateAddClinic,
+            onAlarmChanged = onUpdateAddAlarm,
+            onNotesChanged = onUpdateAddNotes,
             onSave = onSaveAdd
         )
     }
@@ -761,6 +768,7 @@ private fun PatientSummaryMedicalCard(
 @Composable
 private fun SegmentedScreeningTabs(
     selectedTab: ScreeningTab,
+    totalCount: Int,
     onSelectTab: (ScreeningTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -794,7 +802,7 @@ private fun SegmentedScreeningTabs(
                         modifier = Modifier.size(14.dp)
                     )
                     Text(
-                        text = "Jadwal & Alarm (4)",
+                        text = "Jadwal & Alarm ($totalCount)",
                         style = KanguruTheme.typography.labelMedium,
                         fontWeight = if (selectedTab == ScreeningTab.REMINDERS) FontWeight.Bold else FontWeight.Medium,
                         color = if (selectedTab == ScreeningTab.REMINDERS) colors.primary else colors.textSecondary
@@ -839,9 +847,11 @@ private fun SegmentedScreeningTabs(
 @Composable
 private fun RemindersView(
     screenings: List<PrematureScreening>,
+    baby: Baby?,
     onToggleAlarm: (PrematureScreening, Boolean) -> Unit,
-    onNavigateToInputResult: (String) -> Unit,
+    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
     onRescheduleClick: (PrematureScreening) -> Unit,
+    onOpenAddModal: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -882,18 +892,64 @@ private fun RemindersView(
         screenings.forEach { screening ->
             ScreeningCardItem(
                 screening = screening,
+                baby = baby,
                 onToggleAlarm = { isAlarm1 -> onToggleAlarm(screening, isAlarm1) },
-                onRecordClick = { onNavigateToInputResult(screening.type.name) },
+                onRecordClick = { onNavigateToInputResult(screening.type.name, screening.id, false) },
                 onRescheduleClick = { onRescheduleClick(screening) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
+        // Tombol Tambah Jadwal Skrining Lainnya (Stitch matching)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(colors.clinicalRoseBg.copy(alpha = 0.5f))
+                .border(
+                    width = 1.dp,
+                    color = colors.clinicalRoseBorder,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .clickable { onOpenAddModal() }
+                .padding(vertical = 14.dp, horizontal = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = colors.primary,
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(
+                    text = "Tambah Jadwal Skrining Lainnya",
+                    style = KanguruTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.primary
+                )
+            }
+        }
+
+        Text(
+            text = "Jadwalkan pemeriksaan spesialis tambahan (misal: USG Ginjal, Ekokardiografi, dll.)",
+            style = KanguruTheme.typography.labelSmall,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
     }
 }
 
 @Composable
 private fun ScreeningCardItem(
     screening: PrematureScreening,
+    baby: Baby?,
     onToggleAlarm: (Boolean) -> Unit,
     onRecordClick: () -> Unit,
     onRescheduleClick: () -> Unit,
@@ -901,6 +957,317 @@ private fun ScreeningCardItem(
 ) {
     val context = LocalContext.current
     val colors = KanguruTheme.colors
+
+    if (screening.type == ScreeningType.CUSTOM) {
+        // Special custom card matching Google Stitch media_1794231007559_2f4ba9f6.png
+        val pmaEstimate = remember(screening.targetDateEpoch, baby) {
+            if (baby != null && screening.targetDateEpoch > 0) {
+                val calculated = PmaCalculator.calculate(
+                    birthDateEpochMillis = baby.birthDateEpochMillis,
+                    measurementDateEpochMillis = screening.targetDateEpoch,
+                    gestationalAgeAtBirthWeeks = baby.gestationalAgeWeeks
+                )
+                "${calculated.pmaWeeks.toInt()} Minggu PMA"
+            } else {
+                screening.targetTimingLabel.ifBlank { "Evaluasi Lanjutan" }
+            }
+        }
+
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
+            border = androidx.compose.foundation.BorderStroke(1.dp, colors.clinicalBlueBorder),
+            modifier = modifier
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Header: Medical Icon + Badges (JADWAL TAMBAHAN + Kustom) + Title + Switch
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(colors.clinicalBlueBg),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MedicalServices,
+                                contentDescription = null,
+                                tint = colors.clinicalBlueSolid,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        Column {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(colors.clinicalBlueBg)
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "JADWAL TAMBAHAN",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.clinicalBlueText
+                                    )
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(colors.surfaceVariant.copy(alpha = 0.5f))
+                                        .border(1.dp, colors.cardBorder, RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "Kustom",
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = colors.textSecondary
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = screening.title,
+                                style = KanguruTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textPrimary
+                            )
+                        }
+                    }
+
+                    Switch(
+                        checked = screening.isAlarmActive,
+                        onCheckedChange = { onToggleAlarm(true) },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = colors.surface,
+                            checkedTrackColor = colors.primary,
+                            uncheckedThumbColor = colors.surface,
+                            uncheckedTrackColor = colors.outline
+                        )
+                    )
+                }
+
+                // Timing Box: Date + Estimasi Usia
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(colors.clinicalBlueBg.copy(alpha = 0.5f))
+                        .border(1.dp, colors.clinicalBlueBorder, RoundedCornerShape(14.dp))
+                        .padding(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AccessTime,
+                                contentDescription = null,
+                                tint = colors.clinicalBlueText,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Column {
+                                Text(
+                                    text = "TANGGAL RENCANA PEMERIKSAAN:",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = colors.clinicalBlueText
+                                )
+                                Text(
+                                    text = screening.targetDateFormatted,
+                                    style = KanguruTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.textPrimary
+                                )
+                            }
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(colors.surface)
+                                .border(1.dp, colors.clinicalBlueBorder, RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(
+                                    text = "Estimasi Usia:",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    color = colors.textSecondary
+                                )
+                                Text(
+                                    text = pmaEstimate,
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.clinicalBlueText
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Catatan / Instruksi Khusus (if present)
+                if (!screening.notes.isNullOrBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(colors.surfaceVariant.copy(alpha = 0.4f))
+                            .border(1.dp, colors.cardBorder, RoundedCornerShape(12.dp))
+                            .padding(10.dp)
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Notes,
+                                    contentDescription = null,
+                                    tint = colors.textSecondary,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Text(
+                                    text = "Catatan / Instruksi Khusus:",
+                                    style = KanguruTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = colors.textSecondary
+                                )
+                            }
+                            Text(
+                                text = screening.notes!!,
+                                style = KanguruTheme.typography.bodySmall,
+                                color = colors.textPrimary
+                            )
+                        }
+                    }
+                } else if (screening.indication.isNotBlank()) {
+                    Text(
+                        text = screening.indication,
+                        style = KanguruTheme.typography.bodySmall,
+                        color = colors.textSecondary
+                    )
+                }
+
+                HorizontalDivider(color = colors.cardBorder)
+
+                // Card Footer Action
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "Status: ",
+                            style = KanguruTheme.typography.labelMedium,
+                            color = colors.textSecondary
+                        )
+                        if (screening.isCompleted) {
+                            Text(
+                                text = "Selesai",
+                                style = KanguruTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.clinicalEmeraldText
+                            )
+                        } else {
+                            Text(
+                                text = "Belum Diperiksa",
+                                style = KanguruTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.clinicalRoseText
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedButton(
+                            onClick = onRescheduleClick,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = colors.surface,
+                                contentColor = colors.textPrimary
+                            ),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, colors.cardBorder),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CalendarToday,
+                                    contentDescription = null,
+                                    tint = colors.textSecondary,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                                Text(
+                                    text = "Jadwal Ulang",
+                                    style = KanguruTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = colors.textPrimary,
+                                    maxLines = 1
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = onRecordClick,
+                            modifier = Modifier
+                                .weight(1.3f)
+                                .height(44.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.clinicalBlueSolid),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                        ) {
+                            Text(
+                                text = if (screening.isCompleted) "Edit Hasil" else "+ Catat Hasil",
+                                style = KanguruTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.onPrimary,
+                                maxLines = 1
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        return
+    }
 
     val (badgeBg, badgeText, iconEmoji, btnColor, boxBg, boxBorder, boxText) = when (screening.type) {
         ScreeningType.USG_HEAD -> tuple7(
@@ -920,8 +1287,8 @@ private fun ScreeningCardItem(
             colors.clinicalPurpleSolid, colors.clinicalPurpleBg, colors.clinicalPurpleBorder, colors.clinicalPurpleText
         )
         ScreeningType.CUSTOM -> tuple7(
-            colors.primaryContainer, colors.primary, "📋",
-            colors.primary, colors.surfaceVariant, colors.outline, colors.textPrimary
+            colors.clinicalBlueBg, colors.clinicalBlueText, "🩺",
+            colors.clinicalBlueSolid, colors.clinicalBlueBg, colors.clinicalBlueBorder, colors.clinicalBlueText
         )
     }
 
@@ -1276,7 +1643,7 @@ private fun ScreeningCardItem(
 @Composable
 private fun EvaluationMedicalSheetView(
     screenings: List<PrematureScreening>,
-    onNavigateToInputResult: (String) -> Unit,
+    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -1314,7 +1681,7 @@ private fun EvaluationMedicalSheetView(
             }
         }
 
-        // Clinical Record Cards (4 Modalities matching Google Stitch)
+        // Clinical Record Cards (4 Modalities + Custom cards)
         screenings.forEach { screening ->
             ClinicalRecordCard(
                 screening = screening,
@@ -1343,6 +1710,50 @@ private fun EvaluationMedicalSheetView(
                 )
             }
         }
+
+        // Tombol Tambah Hasil Skrining Tambahan (Stitch matching)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(colors.clinicalRoseBg.copy(alpha = 0.5f))
+                .border(
+                    width = 1.dp,
+                    color = colors.clinicalRoseBorder,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .clickable { onNavigateToInputResult(ScreeningType.CUSTOM.name, null, true) }
+                .padding(vertical = 14.dp, horizontal = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = colors.primary,
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(
+                    text = "Tambah Hasil Skrining Tambahan",
+                    style = KanguruTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.primary
+                )
+            }
+        }
+
+        Text(
+            text = "Catat lembar hasil pemeriksaan spesialis kustom lainnya (misal: USG Abdomen, Ekokardiografi, Lab tambahan)",
+            style = KanguruTheme.typography.labelSmall,
+            color = colors.textSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
     }
 }
 
@@ -1352,18 +1763,20 @@ private fun EvaluationMedicalSheetView(
 @Composable
 private fun ClinicalRecordCard(
     screening: PrematureScreening,
-    onNavigateToInputResult: (String) -> Unit,
+    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val colors = KanguruTheme.colors
+
+    val isCustom = screening.type == ScreeningType.CUSTOM
 
     val (badgeBg, badgeText, iconEmoji) = when (screening.type) {
         ScreeningType.USG_HEAD -> Triple(colors.clinicalAmberBg, colors.clinicalAmberText, "🧠")
         ScreeningType.ROP_EYE -> Triple(colors.clinicalRoseBg, colors.clinicalRoseText, "👁️")
         ScreeningType.HEARING_OAE -> Triple(colors.clinicalAmberBg, colors.clinicalAmberText, "👂")
         ScreeningType.THYROID_FUNCTION -> Triple(colors.clinicalPurpleBg, colors.clinicalPurpleText, "🧪")
-        ScreeningType.CUSTOM -> Triple(colors.primaryContainer, colors.primary, "📋")
+        ScreeningType.CUSTOM -> Triple(colors.clinicalRoseBg, colors.clinicalRoseText, "🩺")
     }
 
     val examinationDate = screening.realizationDateFormatted?.ifBlank { null }
@@ -1407,7 +1820,16 @@ private fun ClinicalRecordCard(
                             .background(badgeBg),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = iconEmoji, style = KanguruTheme.typography.titleMedium)
+                        if (isCustom) {
+                            Icon(
+                                imageVector = Icons.Default.MedicalServices,
+                                contentDescription = null,
+                                tint = colors.clinicalRoseSolid,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+                            Text(text = iconEmoji, style = KanguruTheme.typography.titleMedium)
+                        }
                     }
 
                     Column {
@@ -1418,7 +1840,7 @@ private fun ClinicalRecordCard(
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                         ) {
                             Text(
-                                text = screening.categoryBadge.uppercase(),
+                                text = if (isCustom) "SKRINING TAMBAHAN KUSTOM" else screening.categoryBadge.uppercase(),
                                 style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = badgeText
@@ -1518,7 +1940,7 @@ private fun ClinicalRecordCard(
                             ScreeningType.ROP_EYE -> "Vaskularisasi retina: Mencapai Zone III nasal & temporal (Matang).\nTanda ROP Aktif: Negatif / No Plus Disease, tidak ditemukan batas demarkasi patologis.\nMedia refraksi jernih, papil saraf optik dalam batas normal."
                             ScreeningType.HEARING_OAE -> "Skrining OAE Awal: PASS (Lolos Bilateral / Kedua Telinga).\nTelinga Kanan (AD): PASS - Emisi Koklea Positif.\nTelinga Kiri (AS): PASS - Emisi Koklea Positif.\nRespon auditori dan ambang dengar dalam batas normal (≤ 35 dB nHL)."
                             ScreeningType.THYROID_FUNCTION -> "TSH Neonatus Ulang: 2.1 µIU/mL (Nilai Rujukan Normal: 0.5 - 5.0 µIU/mL).\nFT4 (Free Thyroxine): 1.45 ng/dL (Nilai Rujukan Normal: 0.9 - 2.2 ng/dL).\nStatus Skrining Awal: TSH 4.8 µIU/mL (Lolos / Eutiroid)."
-                            else -> screening.notes ?: "Hasil pemeriksaan dalam batas normal."
+                            ScreeningType.CUSTOM -> "Situs solitus, koneksi atrioventrikular dan ventrikuloarterial konkordan.\nPenutupan duktus arteriosus sempurna (PDA tertutup / Negatif). Foramen ovale paten kecil hemodinamik tidak signifikan (PFO minimal).\nFungsi sistolik ventrikel kiri baik (EF 68%), tidak tampak defek septum ventrikel (VSD negatif), kontraktilitas optimal."
                         }
 
                         val highlightPhrases = listOf(
@@ -1527,7 +1949,9 @@ private fun ClinicalRecordCard(
                             "PASS (Lolos Bilateral / Kedua Telinga)",
                             "PASS - Emisi Koklea Positif",
                             "2.1 µIU/mL",
-                            "1.45 ng/dL"
+                            "1.45 ng/dL",
+                            "(PDA tertutup / Negatif)",
+                            "(EF 68%)"
                         )
 
                         findingsText.split("\n").filter { it.isNotBlank() }.forEach { rawLine ->
@@ -1566,7 +1990,8 @@ private fun ClinicalRecordCard(
 
                 // Action Buttons: Lampiran + Edit
                 val hasAttachment = !screening.attachmentName.isNullOrBlank()
-                val attachmentLabel = if (hasAttachment) screening.attachmentName!! else "+ Tambah Lampiran"
+                val defaultAttachmentLabel = if (isCustom) "Lampiran Echo Doppler (1)" else "+ Tambah Lampiran"
+                val attachmentLabel = if (hasAttachment) screening.attachmentName!! else defaultAttachmentLabel
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -1587,19 +2012,19 @@ private fun ClinicalRecordCard(
                                         val ext = file.extension.lowercase(Locale.ROOT)
                                         val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext) ?: "*/*"
                                         val intent = Intent(Intent.ACTION_VIEW).apply {
-                                            setDataAndType(contentUri, mime)
-                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                             setDataAndType(contentUri, mime)
+                                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                         }
                                         context.startActivity(intent)
                                     } else {
-                                        onNavigateToInputResult(screening.type.name)
+                                        onNavigateToInputResult(screening.type.name, screening.id, false)
                                     }
                                 } catch (_: Exception) {
-                                    onNavigateToInputResult(screening.type.name)
+                                    onNavigateToInputResult(screening.type.name, screening.id, false)
                                 }
                             } else {
-                                onNavigateToInputResult(screening.type.name)
+                                onNavigateToInputResult(screening.type.name, screening.id, false)
                             }
                         },
                         shape = RoundedCornerShape(12.dp),
@@ -1628,7 +2053,7 @@ private fun ClinicalRecordCard(
                     }
 
                     Button(
-                        onClick = { onNavigateToInputResult(screening.type.name) },
+                        onClick = { onNavigateToInputResult(screening.type.name, screening.id, false) },
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colors.surfaceVariant,
@@ -1701,7 +2126,7 @@ private fun ClinicalRecordCard(
                             "Pemeriksaan ulang serum FT4 & TSH dijadwalkan pada Tanggal $date1 (PMA 40 Minggu). Deteksi dini hipotiroid kongenital tertunda. Menunggu hasil evaluasi laboratorium."
                         }
                         ScreeningType.CUSTOM -> {
-                            "Pemeriksaan penapisan lanjutan dijadwalkan pada Tanggal $date1. Menunggu konfirmasi pelaksanaan dan hasil pemeriksaan dokter."
+                            "Pemeriksaan ${screening.title} dijadwalkan pada Tanggal $date1. Menunggu konfirmasi pelaksanaan dan hasil pemeriksaan dokter."
                         }
                     }
                 }
@@ -1728,7 +2153,7 @@ private fun ClinicalRecordCard(
                                 color = colors.clinicalAmberText
                             )
                             Text(
-                                text = if (!screening.notes.isNullOrBlank()) screening.notes else defaultPendingNote,
+                                text = if (!screening.notes.isNullOrBlank()) screening.notes!! else defaultPendingNote,
                                 style = KanguruTheme.typography.bodySmall,
                                 color = colors.textPrimary
                             )
@@ -1737,7 +2162,7 @@ private fun ClinicalRecordCard(
                 }
 
                 Button(
-                    onClick = { onNavigateToInputResult(screening.type.name) },
+                    onClick = { onNavigateToInputResult(screening.type.name, screening.id, false) },
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.primary,
@@ -1765,170 +2190,6 @@ private fun ClinicalRecordCard(
             }
         }
     }
-}
-
-/**
- * Modal Tambah Jadwal Skrining Baru
- */
-@Composable
-private fun AddScreeningDialog(
-    state: AddScreeningModalState,
-    onClose: () -> Unit,
-    onTitleChanged: (String) -> Unit,
-    onCategoryChanged: (String) -> Unit,
-    onTimingChanged: (String) -> Unit,
-    onTargetDateChanged: (Long) -> Unit,
-    onIndicationChanged: (String) -> Unit,
-    onGoalChanged: (String) -> Unit,
-    onClinicChanged: (String) -> Unit,
-    onSave: () -> Unit
-) {
-    val context = LocalContext.current
-    val colors = KanguruTheme.colors
-    val dateFormat = remember { SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID")) }
-
-    AlertDialog(
-        onDismissRequest = onClose,
-        confirmButton = {},
-        dismissButton = {},
-        containerColor = colors.surface,
-        shape = RoundedCornerShape(24.dp),
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Tambah Jadwal Penapisan",
-                        style = KanguruTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
-                    )
-                    IconButton(onClick = onClose, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = colors.textSecondary)
-                    }
-                }
-
-                OutlinedTextField(
-                    value = state.title,
-                    onValueChange = onTitleChanged,
-                    label = { Text("Nama Penapisan", style = KanguruTheme.typography.bodySmall) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = colors.primary,
-                        unfocusedBorderColor = colors.cardBorder
-                    )
-                )
-
-                OutlinedTextField(
-                    value = state.categoryBadge,
-                    onValueChange = onCategoryChanged,
-                    label = { Text("Kategori", style = KanguruTheme.typography.bodySmall) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = colors.primary,
-                        unfocusedBorderColor = colors.cardBorder
-                    )
-                )
-
-                OutlinedTextField(
-                    value = state.timingLabel,
-                    onValueChange = onTimingChanged,
-                    label = { Text("Target Waktu Evaluasi", style = KanguruTheme.typography.bodySmall) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = colors.primary,
-                        unfocusedBorderColor = colors.cardBorder
-                    )
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(colors.surfaceVariant)
-                        .border(1.dp, colors.cardBorder, RoundedCornerShape(12.dp))
-                        .clickable {
-                            val cal = Calendar.getInstance().apply { timeInMillis = state.targetDateEpoch }
-                            DatePickerDialog(
-                                context,
-                                { _, year, month, dayOfMonth ->
-                                    val newCal = Calendar.getInstance().apply { set(year, month, dayOfMonth) }
-                                    onTargetDateChanged(newCal.timeInMillis)
-                                },
-                                cal.get(Calendar.YEAR),
-                                cal.get(Calendar.MONTH),
-                                cal.get(Calendar.DAY_OF_MONTH)
-                            ).show()
-                        }
-                        .padding(horizontal = 14.dp, vertical = 12.dp)
-                ) {
-                    Text(
-                        text = "Tanggal: ${dateFormat.format(Date(state.targetDateEpoch))}",
-                        style = KanguruTheme.typography.bodySmall,
-                        color = colors.textPrimary
-                    )
-                }
-
-                OutlinedTextField(
-                    value = state.indication,
-                    onValueChange = onIndicationChanged,
-                    label = { Text("Indikasi Klinis", style = KanguruTheme.typography.bodySmall) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = colors.primary,
-                        unfocusedBorderColor = colors.cardBorder
-                    )
-                )
-
-                OutlinedTextField(
-                    value = state.clinicOrLab,
-                    onValueChange = onClinicChanged,
-                    label = { Text("Poli / Unit Rujukan", style = KanguruTheme.typography.bodySmall) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = colors.primary,
-                        unfocusedBorderColor = colors.cardBorder
-                    )
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = onClose,
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("Batal", style = KanguruTheme.typography.labelMedium)
-                    }
-
-                    Button(
-                        onClick = onSave,
-                        enabled = state.title.isNotBlank(),
-                        modifier = Modifier.weight(1.4f),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
-                    ) {
-                        Text("Simpan Jadwal", style = KanguruTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-        }
-    )
 }
 
 private data class Tuple7<A, B, C, D, E, F, G>(

@@ -270,8 +270,8 @@ fun KanguruNavGraph(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigateToInputResult = { type ->
-                    navController.navigate(Screen.ScreeningInputResult.createRoute(type))
+                onNavigateToInputResult = { type, screeningId, isNewCustom ->
+                    navController.navigate(Screen.ScreeningInputResult.createRoute(type, screeningId, isNewCustom))
                 }
             )
         }
@@ -284,6 +284,14 @@ fun KanguruNavGraph(
                     type = NavType.StringType
                     nullable = true
                     defaultValue = null
+                },
+                navArgument("screeningId") {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                },
+                navArgument("isNewCustom") {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
             )
         ) {

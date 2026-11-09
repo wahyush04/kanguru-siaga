@@ -27,12 +27,12 @@
     <string name="baby_profile_label_gestational_age">USIA GESTASI (USIA KEHAMILAN)</string>
     <string name="baby_profile_placeholder_gestational_age">Contoh: 32</string>
     <string name="baby_profile_unit_weeks">minggu</string>
-    <string name="baby_profile_label_birth_weight">BERAT LAHIR</string>
+    <string name="baby_profile_label_birth_weight">BERAT BADANLAHIR</string>
     <string name="baby_profile_placeholder_weight_birth">Contoh: 1800</string>
     <string name="baby_profile_unit_grams">gram</string>
     <string name="baby_profile_bblr_notice">Bayi dengan berat lahir kurang dari 2.500 gram dikategorikan sebagai BBLR (Bayi Berat Lahir Rendah).</string>
 
-    <string name="baby_profile_label_birth_length">PANJANG LAHIR</string>
+    <string name="baby_profile_label_birth_length">PANJANG BADAN LAHIR</string>
     <string name="baby_profile_placeholder_length_birth">Contoh: 42</string>
     <string name="baby_profile_unit_cm">cm</string>
 

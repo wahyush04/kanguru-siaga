@@ -518,6 +518,7 @@ abstract class KanguruColors {
     open val clinicalBlueBg: Color get() = if (isDark) Color(0xFF1E293B) else Color(0xFFEFF6FF)
     open val clinicalBlueBorder: Color get() = if (isDark) Color(0xFF334155) else Color(0xFFBFDBFE)
     open val clinicalBlueText: Color get() = if (isDark) Color(0xFF93C5FD) else Color(0xFF1D4ED8)
+    open val clinicalBlueSolid: Color get() = if (isDark) Color(0xFF2563EB) else Color(0xFF3B82F6)
 
     open val clinicalAmberBg: Color get() = if (isDark) Color(0xFF2A2415) else Color(0xFFFEF9C3)
     open val clinicalAmberBorder: Color get() = if (isDark) Color(0xFF4D3F1D) else Color(0xFFFDE047)

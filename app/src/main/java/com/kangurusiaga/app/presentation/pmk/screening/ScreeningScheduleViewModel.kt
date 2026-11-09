@@ -196,7 +196,10 @@ class ScreeningScheduleViewModel @Inject constructor(
             it.copy(
                 addModalState = AddScreeningModalState(
                     isOpen = true,
-                    targetDateEpoch = System.currentTimeMillis() + (7L * 24 * 3600 * 1000L)
+                    title = "",
+                    targetDateEpoch = System.currentTimeMillis() + (7L * 24 * 3600 * 1000L),
+                    isAlarmActive = true,
+                    notes = ""
                 )
             )
         }
@@ -222,6 +225,14 @@ class ScreeningScheduleViewModel @Inject constructor(
         _uiState.update { it.copy(addModalState = it.addModalState.copy(targetDateEpoch = epoch)) }
     }
 
+    fun updateAddAlarm(active: Boolean) {
+        _uiState.update { it.copy(addModalState = it.addModalState.copy(isAlarmActive = active)) }
+    }
+
+    fun updateAddNotes(notes: String) {
+        _uiState.update { it.copy(addModalState = it.addModalState.copy(notes = notes)) }
+    }
+
     fun updateAddIndication(indication: String) {
         _uiState.update { it.copy(addModalState = it.addModalState.copy(indication = indication)) }
     }
@@ -240,25 +251,35 @@ class ScreeningScheduleViewModel @Inject constructor(
         if (addState.title.isBlank()) return
 
         viewModelScope.launch {
+            val calc = PmaCalculator.calculate(
+                birthDateEpochMillis = baby.birthDateEpochMillis,
+                measurementDateEpochMillis = addState.targetDateEpoch,
+                gestationalAgeAtBirthWeeks = baby.gestationalAgeWeeks
+            )
+            val pmaWeeksPart = calc.pmaWeeks.toInt().coerceAtLeast(baby.gestationalAgeWeeks)
+
             val newScreening = PrematureScreening(
                 babyId = baby.id,
                 type = ScreeningType.CUSTOM,
                 title = addState.title.trim(),
-                categoryBadge = if (addState.categoryBadge.isBlank()) "Pemeriksaan Tambahan" else addState.categoryBadge.trim(),
-                targetTimingLabel = if (addState.timingLabel.isBlank()) "Sesuai Jadwal Dokter" else addState.timingLabel.trim(),
+                categoryBadge = "Skrining Tambahan",
+                targetTimingLabel = "Estimasi $pmaWeeksPart Minggu PMA",
                 targetDateEpoch = addState.targetDateEpoch,
-                indication = addState.indication.trim(),
-                clinicalGoal = addState.clinicalGoal.trim(),
-                clinicOrLab = if (addState.clinicOrLab.isBlank()) "Poli Anak" else addState.clinicOrLab.trim(),
-                isAlarmActive = true,
+                notes = addState.notes.trim(),
+                indication = if (addState.notes.isNotBlank()) addState.notes.trim() else "Pemeriksaan spesialis rujukan tambahan sesuai evaluasi dokter.",
+                clinicalGoal = "Pemeriksaan spesialis penunjang evaluasi tumbuh kembang bayi prematur.",
+                clinicOrLab = "Poli Spesialis / Rujukan",
+                isAlarmActive = addState.isAlarmActive,
                 isCompleted = false
             )
             val newId = screeningRepository.insertScreening(newScreening)
-            screeningReminderScheduler?.schedule(newScreening.copy(id = newId))
+            if (newScreening.isAlarmActive) {
+                screeningReminderScheduler?.schedule(newScreening.copy(id = newId))
+            }
             _uiState.update {
                 it.copy(
                     addModalState = it.addModalState.copy(isOpen = false),
-                    userMessage = "Jadwal penapisan baru berhasil ditambahkan."
+                    userMessage = "Jadwal ${newScreening.title} berhasil ditambahkan."
                 )
             }
         }
