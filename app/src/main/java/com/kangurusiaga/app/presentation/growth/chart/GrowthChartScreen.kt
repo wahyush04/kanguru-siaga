@@ -503,7 +503,7 @@ private fun KiaGrowthEvaluationCard(
                     modifier = Modifier
                         .weight(0.95f)
                         .fillMaxHeight(),
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(18.dp),
                     colors = CardDefaults.cardColors(containerColor = colors.kiaGrowthPreviewBg),
                     border = BorderStroke(1.5.dp, colors.kiaGrowthPreviewBorder),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -511,40 +511,38 @@ private fun KiaGrowthEvaluationCard(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(8.dp),
+                            .padding(horizontal = 8.dp, vertical = 10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f),
-                            shape = RoundedCornerShape(10.dp),
+                            shape = RoundedCornerShape(14.dp),
                             colors = CardDefaults.cardColors(containerColor = colors.surface),
-                            border = BorderStroke(0.8.dp, colors.cardBorder),
+                            border = BorderStroke(1.dp, colors.cardBorder),
                             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.il_grafik_pertumbuhan_preview),
-                                contentDescription = "Grafik Pertumbuhan Bayi",
+                            Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .clip(RoundedCornerShape(10.dp)),
-                                contentScale = ContentScale.Crop
-                            )
+                                    .padding(horizontal = 6.dp, vertical = 12.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.gambarcart),
+                                    contentDescription = "Grafik Pertumbuhan Bayi",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
                         }
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
                         Text(
-                            text = "Grafik",
-                            style = typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.textPrimary,
-                            textAlign = TextAlign.Center
-                        )
-                        Text(
-                            text = "Pertumbuhan Bayi",
-                            style = typography.labelSmall,
+                            text = "Grafik Pertumbuhan\nBayi",
+                            style = typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = colors.textPrimary,
                             textAlign = TextAlign.Center
@@ -632,7 +630,7 @@ private fun KiaStatusCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = colors.cardBackground),
         border = BorderStroke(1.dp, colors.cardBorder),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
