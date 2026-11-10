@@ -105,6 +105,12 @@ fun KanguruNavGraph(
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Splash.route) { inclusive = true }
                     }
+                },
+                onNavigateToTermsOfUse = {
+                    navController.navigate(Screen.TermsOfUse.route)
+                },
+                onNavigateToPrivacyPolicy = {
+                    navController.navigate(Screen.PrivacyPolicy.route)
                 }
             )
         }

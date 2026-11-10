@@ -46,8 +46,8 @@
     <string name="baby_profile_confirm_label_name">Nama Bayi</string>
     <string name="baby_profile_confirm_label_birth_date">Tanggal Lahir</string>
     <string name="baby_profile_confirm_label_gestational_age">Usia Gestasi</string>
-    <string name="baby_profile_confirm_label_birth_weight">Berat Lahir</string>
-    <string name="baby_profile_confirm_label_birth_length">Panjang Lahir</string>
+    <string name="baby_profile_confirm_label_birth_weight">Berat Badan Lahir</string>
+    <string name="baby_profile_confirm_label_birth_length">Panjang Badan Lahir</string>
     <string name="baby_profile_confirm_label_birth_head">Lingkar Kepala Lahir</string>
     <string name="baby_profile_confirm_label_gender">Jenis Kelamin</string>
     <string name="baby_profile_value_weeks">%1$s minggu</string>
@@ -56,6 +56,7 @@
     <string name="baby_profile_confirm_bblr_status">Status: BBLR (%1$s gram) — Panduan Perawatan BBLR &amp; PMK diaktifkan.</string>
 
     <string name="baby_profile_btn_save">Simpan Data</string>
+    <string name="baby_profile_btn_continue">Lanjutkan</string>
     <string name="baby_profile_btn_back">Kembali</string>
     <string name="baby_profile_cd_next">Lanjut</string>
     <string name="baby_profile_date_picker_select">Pilih</string>

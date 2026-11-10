@@ -80,9 +80,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -118,6 +124,8 @@ fun formatWeightString(weightInput: String): String {
 fun BabyProfileSetupRoute(
     onNavigateBackToIntro: () -> Unit,
     onNavigateToHome: () -> Unit,
+    onNavigateToTermsOfUse: () -> Unit = {},
+    onNavigateToPrivacyPolicy: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: BabyProfileSetupViewModel = hiltViewModel()
 ) {
@@ -228,6 +236,8 @@ fun BabyProfileSetupRoute(
                     uiState = uiState,
                     onBackClick = { viewModel.backToForm() },
                     onEditPhotoClick = onGalleryClick,
+                    onTermsOfUseClick = onNavigateToTermsOfUse,
+                    onPrivacyPolicyClick = onNavigateToPrivacyPolicy,
                     onSaveClick = { viewModel.saveProfile() },
                     modifier = Modifier.padding(innerPadding)
                 )
@@ -1090,13 +1100,16 @@ fun BabyProfileConfirmationScreen(
     onBackClick: () -> Unit,
     onEditPhotoClick: () -> Unit,
     onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTermsOfUseClick: () -> Unit = {},
+    onPrivacyPolicyClick: () -> Unit = {}
 ) {
     val isDark = KanguruTheme.isDark
+    val colors = KanguruTheme.colors
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(BrandBackground)
+            .background(colors.background)
     ) {
         Column(
             modifier = Modifier
@@ -1106,7 +1119,10 @@ fun BabyProfileConfirmationScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
             ) {
                 // Top Navigation Bar
                 Row(
@@ -1364,12 +1380,60 @@ fun BabyProfileConfirmationScreen(
                 }
             }
 
-            // Bottom Dual Buttons
+            // Bottom Legal Consent & Dual Buttons
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                    .padding(top = 12.dp, bottom = 12.dp)
             ) {
+                val agreementText = buildAnnotatedString {
+                    append("Dengan melanjutkan, Anda menyetujui ")
+                    withLink(
+                        LinkAnnotation.Clickable(
+                            tag = "terms_of_use",
+                            styles = TextLinkStyles(
+                                style = SpanStyle(
+                                    color = colors.primary,
+                                    fontWeight = FontWeight.Medium,
+                                    textDecoration = TextDecoration.Underline
+                                )
+                            )
+                        ) {
+                            onTermsOfUseClick()
+                        }
+                    ) {
+                        append("Ketentuan Penggunaan")
+                    }
+                    append("\ndan ")
+                    withLink(
+                        LinkAnnotation.Clickable(
+                            tag = "privacy_policy",
+                            styles = TextLinkStyles(
+                                style = SpanStyle(
+                                    color = colors.legalTealAccent,
+                                    fontWeight = FontWeight.Medium,
+                                    textDecoration = TextDecoration.Underline
+                                )
+                            )
+                        ) {
+                            onPrivacyPolicyClick()
+                        }
+                    ) {
+                        append("Kebijakan Privasi")
+                    }
+                    append(" kami.")
+                }
+
+                Text(
+                    text = agreementText,
+                    style = KanguruTheme.typography.bodySmall,
+                    color = colors.textSecondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 14.dp)
+                )
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -1381,9 +1445,9 @@ fun BabyProfileConfirmationScreen(
                             .weight(1f)
                             .heightIn(min = 50.dp),
                         shape = RoundedCornerShape(14.dp),
-                        border = BorderStroke(1.dp, CardBorder),
+                        border = BorderStroke(1.dp, colors.primary),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = TextPrimary
+                            contentColor = colors.primary
                         )
                     ) {
                         Icon(
@@ -1395,11 +1459,12 @@ fun BabyProfileConfirmationScreen(
                         Text(
                             text = stringResource(R.string.baby_profile_btn_back),
                             style = KanguruTheme.typography.bodySmall,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.primary
                         )
                     }
 
-                    // Filled Simpan Data Button
+                    // Filled Lanjutkan Button
                     Button(
                         onClick = onSaveClick,
                         modifier = Modifier
@@ -1408,23 +1473,26 @@ fun BabyProfileConfirmationScreen(
                             .shadow(
                                 elevation = 4.dp,
                                 shape = RoundedCornerShape(14.dp),
-                                spotColor = BrandPink.copy(alpha = 0.35f)
+                                spotColor = colors.primary.copy(alpha = 0.35f)
                             ),
                         shape = RoundedCornerShape(14.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = BrandPink),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.primary,
+                            contentColor = colors.onPrimary
+                        ),
                         enabled = !uiState.isLoading
                     ) {
                         if (uiState.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = White,
+                                color = colors.onPrimary,
                                 strokeWidth = 2.dp
                             )
                         } else {
                             Text(
-                                text = stringResource(R.string.baby_profile_btn_save),
+                                text = stringResource(R.string.baby_profile_btn_continue),
                                 style = KanguruTheme.typography.titleSmall,
-                                color = White
+                                color = colors.onPrimary
                             )
                         }
                     }
