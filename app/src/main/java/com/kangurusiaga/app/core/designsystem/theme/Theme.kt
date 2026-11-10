@@ -549,6 +549,14 @@ abstract class KanguruColors {
     open val weeklyChartLine: Color get() = if (isDark) Color(0xFFFF5C77) else Color(0xFFE84561)
     open val weeklyChartLineDot: Color get() = if (isDark) Color(0xFFFF758F) else Color(0xFFCF2F4B)
     open val weeklyChartGrid: Color get() = if (isDark) Color(0xFF475569) else Color(0xFFCBD5E1)
+
+    // Legal & Privacy Screen Tokens (Google Stitch aligned)
+    open val legalSectionCardBg: Color get() = if (isDark) Color(0xFF1E293B) else Color(0xFFF0F3FF)
+    open val legalTealSurfaceBg: Color get() = if (isDark) Color(0xFF132824) else Color(0xFFF0FDFA)
+    open val legalTealAccent: Color get() = if (isDark) Color(0xFF2DD4BF) else Color(0xFF0D9488)
+    open val legalTealText: Color get() = if (isDark) Color(0xFF5EEAD4) else Color(0xFF006A61)
+    open val legalRoseTintBg: Color get() = if (isDark) Color(0xFF2D161C) else Color(0xFFFFF1F2)
+    open val legalRoseHeadingText: Color get() = if (isDark) Color(0xFFFDA4AF) else Color(0xFF63001D)
 }
 
 

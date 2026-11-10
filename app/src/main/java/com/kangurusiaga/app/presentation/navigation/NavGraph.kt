@@ -53,6 +53,8 @@ import com.kangurusiaga.app.presentation.settings.SettingsRoute
 import com.kangurusiaga.app.presentation.settings.info.AboutAppScreen
 import com.kangurusiaga.app.presentation.settings.info.ClinicalGuidelinesScreen
 import com.kangurusiaga.app.presentation.settings.info.MedicalDisclaimerScreen
+import com.kangurusiaga.app.presentation.settings.info.PrivacyPolicyScreen
+import com.kangurusiaga.app.presentation.settings.info.TermsOfUseScreen
 import com.kangurusiaga.app.presentation.notification.NotificationRoute
 import com.kangurusiaga.app.presentation.settings.info.UserGuideScreen
 
@@ -1094,6 +1096,12 @@ fun KanguruNavGraph(
                 },
                 onNavigateToMedicalDisclaimer = {
                     navController.navigate(Screen.MedicalDisclaimer.route)
+                },
+                onNavigateToTermsOfUse = {
+                    navController.navigate(Screen.TermsOfUse.route)
+                },
+                onNavigateToPrivacyPolicy = {
+                    navController.navigate(Screen.PrivacyPolicy.route)
                 }
             )
         }
@@ -1124,6 +1132,22 @@ fun KanguruNavGraph(
 
         composable(route = Screen.ClinicalGuidelines.route) {
             ClinicalGuidelinesScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.TermsOfUse.route) {
+            TermsOfUseScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.PrivacyPolicy.route) {
+            PrivacyPolicyScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 }

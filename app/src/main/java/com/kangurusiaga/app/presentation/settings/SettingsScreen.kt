@@ -105,6 +105,8 @@ fun SettingsRoute(
     onNavigateToAboutApp: () -> Unit,
     onNavigateToClinicalGuidelines: () -> Unit,
     onNavigateToMedicalDisclaimer: () -> Unit,
+    onNavigateToTermsOfUse: () -> Unit = {},
+    onNavigateToPrivacyPolicy: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
@@ -208,6 +210,8 @@ fun SettingsRoute(
         onNavigateToAboutApp = onNavigateToAboutApp,
         onNavigateToClinicalGuidelines = onNavigateToClinicalGuidelines,
         onNavigateToMedicalDisclaimer = onNavigateToMedicalDisclaimer,
+        onNavigateToTermsOfUse = onNavigateToTermsOfUse,
+        onNavigateToPrivacyPolicy = onNavigateToPrivacyPolicy,
         onOpenEditProfile = viewModel::openEditProfileSheet,
         onCloseEditProfile = viewModel::closeEditProfileSheet,
         onEditNameChange = viewModel::updateEditName,
@@ -339,6 +343,8 @@ fun SettingsScreen(
     onNavigateToAboutApp: () -> Unit,
     onNavigateToClinicalGuidelines: () -> Unit,
     onNavigateToMedicalDisclaimer: () -> Unit,
+    onNavigateToTermsOfUse: () -> Unit = {},
+    onNavigateToPrivacyPolicy: () -> Unit = {},
     onOpenEditProfile: () -> Unit,
     onCloseEditProfile: () -> Unit,
     onEditNameChange: (String) -> Unit,
@@ -1242,7 +1248,48 @@ fun SettingsScreen(
                     }
 
                     // ==========================================
-                    // 7. FOOTER BRANDING
+                    // 7. SECTION: LEGALITAS & PRIVASI
+                    // ==========================================
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "LEGALITAS & PRIVASI",
+                            style = KanguruTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = KanguruTheme.colors.textSecondary,
+                            letterSpacing = 0.5.sp,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        )
+
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                            shadowElevation = 0.5.dp
+                        ) {
+                            Column {
+                                SettingsNavigationItem(
+                                    title = "Ketentuan Penggunaan",
+                                    subtitle = "Syarat, pedoman, dan batasan layanan",
+                                    onClick = onNavigateToTermsOfUse
+                                )
+
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.outlineVariant,
+                                    thickness = 1.dp
+                                )
+
+                                SettingsNavigationItem(
+                                    title = "Kebijakan Privasi",
+                                    subtitle = "Pelindungan data pribadi & UU PDP No. 27/2022",
+                                    onClick = onNavigateToPrivacyPolicy
+                                )
+                            }
+                        }
+                    }
+
+                    // ==========================================
+                    // 8. FOOTER BRANDING
                     // ==========================================
                     Column(
                         modifier = Modifier
