@@ -30,25 +30,21 @@ class ScreeningInputResultViewModel @Inject constructor(
     private val attachmentManager: ScreeningAttachmentManager
 ) : ViewModel() {
 
-    private val isNewCustomArg: Boolean = savedStateHandle["isNewCustom"] ?: false
-    private val screeningIdArg: Long = savedStateHandle["screeningId"] ?: -1L
     private val initialType: ScreeningType = try {
         val typeStr: String? = savedStateHandle["type"]
-        when {
-            isNewCustomArg -> ScreeningType.CUSTOM
-            !typeStr.isNullOrBlank() -> ScreeningType.valueOf(typeStr)
-            else -> ScreeningType.ROP_EYE
+        if (!typeStr.isNullOrBlank()) {
+            val parsed = ScreeningType.valueOf(typeStr)
+            if (parsed == ScreeningType.CUSTOM) ScreeningType.ROP_EYE else parsed
+        } else {
+            ScreeningType.ROP_EYE
         }
     } catch (_: Exception) {
-        if (isNewCustomArg) ScreeningType.CUSTOM else ScreeningType.ROP_EYE
+        ScreeningType.ROP_EYE
     }
 
     private val _uiState = MutableStateFlow(
         ScreeningInputResultUiState(
-            selectedType = initialType,
-            isCustomScreening = isNewCustomArg || initialType == ScreeningType.CUSTOM,
-            isNewCustom = isNewCustomArg,
-            customTitle = if (isNewCustomArg) "" else ""
+            selectedType = initialType
         )
     )
     val uiState: StateFlow<ScreeningInputResultUiState> = _uiState.asStateFlow()
@@ -85,56 +81,32 @@ class ScreeningInputResultViewModel @Inject constructor(
 
                     screeningRepository.getScreeningsForBaby(baby.id).collectLatest { list ->
                         _uiState.update { current ->
-                            if (current.isNewCustom) {
-                                current.copy(
-                                    availableScreenings = list,
-                                    currentScreening = null,
-                                    isCustomScreening = true
-                                )
+                            val currentMatch = list.find { it.type == current.selectedType }
+
+                            val notesText = if (current.clinicalNotes.isEmpty()) {
+                                currentMatch?.findings ?: currentMatch?.notes ?: ""
                             } else {
-                                val currentMatch = if (screeningIdArg > 0) {
-                                    list.find { it.id == screeningIdArg }
-                                } else {
-                                    list.find { it.type == current.selectedType }
-                                }
-
-                                val isCustom = currentMatch?.type == ScreeningType.CUSTOM || current.selectedType == ScreeningType.CUSTOM
-                                val defaultTitle = currentMatch?.title ?: when (current.selectedType) {
-                                    ScreeningType.USG_HEAD -> "USG Kepala (Neurosonografi)"
-                                    ScreeningType.ROP_EYE -> "Retinopati (ROP)"
-                                    ScreeningType.HEARING_OAE -> "Gangguan Pendengaran (OAE & BERA)"
-                                    ScreeningType.THYROID_FUNCTION -> "Fungsi Tiroid (FT4 & TSH)"
-                                    ScreeningType.CUSTOM -> ""
-                                }
-
-                                val notesText = if (current.clinicalNotes.isEmpty()) {
-                                    currentMatch?.findings ?: currentMatch?.notes ?: ""
-                                } else {
-                                    current.clinicalNotes
-                                }
-                                val attName = currentMatch?.attachmentName ?: current.attachmentName
-                                val attUri = currentMatch?.attachmentUri ?: current.attachmentUri
-                                val attSize = if (attUri != null) {
-                                    attachmentManager.getFormattedFileSize(attUri) ?: current.attachmentSize
-                                } else {
-                                    current.attachmentSize
-                                }
-                                val isImg = attName?.lowercase(Locale.ROOT)?.endsWith(".pdf") != true
-
-                                current.copy(
-                                    availableScreenings = list,
-                                    currentScreening = currentMatch,
-                                    selectedType = currentMatch?.type ?: current.selectedType,
-                                    isCustomScreening = isCustom,
-                                    customTitle = if (current.customTitle.isBlank()) defaultTitle else current.customTitle,
-                                    clinicalNotes = notesText,
-                                    charCount = notesText.length,
-                                    attachmentName = attName,
-                                    attachmentUri = attUri,
-                                    attachmentSize = attSize,
-                                    isAttachmentImage = isImg
-                                )
+                                current.clinicalNotes
                             }
+                            val attName = currentMatch?.attachmentName ?: current.attachmentName
+                            val attUri = currentMatch?.attachmentUri ?: current.attachmentUri
+                            val attSize = if (attUri != null) {
+                                attachmentManager.getFormattedFileSize(attUri) ?: current.attachmentSize
+                            } else {
+                                current.attachmentSize
+                            }
+                            val isImg = attName?.lowercase(Locale.ROOT)?.endsWith(".pdf") != true
+
+                            current.copy(
+                                availableScreenings = list,
+                                currentScreening = currentMatch,
+                                clinicalNotes = notesText,
+                                charCount = notesText.length,
+                                attachmentName = attName,
+                                attachmentUri = attUri,
+                                attachmentSize = attSize,
+                                isAttachmentImage = isImg
+                            )
                         }
                     }
                 }
@@ -142,13 +114,8 @@ class ScreeningInputResultViewModel @Inject constructor(
         }
     }
 
-    fun updateCustomTitle(title: String) {
-        _uiState.update {
-            it.copy(customTitle = title)
-        }
-    }
-
     fun selectScreeningType(type: ScreeningType) {
+        if (type == ScreeningType.CUSTOM) return
         val list = _uiState.value.availableScreenings
         val match = list.find { it.type == type }
         val notesText = match?.findings ?: match?.notes ?: ""
@@ -157,20 +124,10 @@ class ScreeningInputResultViewModel @Inject constructor(
         val attSize = attUri?.let { attachmentManager.getFormattedFileSize(it) }
         val isImg = attName?.lowercase(Locale.ROOT)?.endsWith(".pdf") != true
 
-        val defaultTitle = match?.title ?: when (type) {
-            ScreeningType.USG_HEAD -> "USG Kepala"
-            ScreeningType.ROP_EYE -> "Retinopati (ROP)"
-            ScreeningType.HEARING_OAE -> "Gangguan Pendengaran (OAE & BERA)"
-            ScreeningType.THYROID_FUNCTION -> "Fungsi Tiroid (FT4 & TSH)"
-            ScreeningType.CUSTOM -> ""
-        }
-
         _uiState.update {
             it.copy(
                 selectedType = type,
                 currentScreening = match,
-                isCustomScreening = (type == ScreeningType.CUSTOM),
-                customTitle = defaultTitle,
                 clinicalNotes = notesText,
                 charCount = notesText.length,
                 attachmentName = attName,
@@ -186,7 +143,7 @@ class ScreeningInputResultViewModel @Inject constructor(
             it.copy(
                 clinicalNotes = notes,
                 charCount = notes.length,
-                isSaved = true
+                isSaved = false
             )
         }
     }
@@ -308,7 +265,7 @@ class ScreeningInputResultViewModel @Inject constructor(
 
     fun saveResult(onSuccess: () -> Unit) {
         val state = _uiState.value
-        val baby = state.baby ?: return
+        val target = state.currentScreening ?: return
         val notes = state.clinicalNotes.trim()
         val attachment = state.attachmentName
         val attUri = state.attachmentUri
@@ -316,64 +273,24 @@ class ScreeningInputResultViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
 
-            if (state.isNewCustom || state.currentScreening == null) {
-                val finalTitle = state.customTitle.ifBlank { "Skrining Tambahan" }.trim()
-                val newScreening = PrematureScreening(
-                    babyId = baby.id,
-                    type = ScreeningType.CUSTOM,
-                    title = finalTitle,
-                    categoryBadge = "Skrining Tambahan Kustom",
-                    targetTimingLabel = "Pemeriksaan Spesialis Tambahan",
-                    targetDateEpoch = System.currentTimeMillis(),
-                    realizationDateEpoch = System.currentTimeMillis(),
-                    indication = if (notes.isNotBlank()) notes else "Pemeriksaan spesialis penunjang",
-                    clinicalGoal = "Pemeriksaan spesialis penunjang evaluasi tumbuh kembang bayi prematur.",
-                    clinicOrLab = "Poli Spesialis / Rujukan",
-                    isAlarmActive = false,
-                    isCompleted = true,
-                    findings = if (notes.isNotEmpty()) notes else "Hasil pemeriksaan tercatat dalam berkas medis.",
-                    notes = notes,
-                    attachmentName = attachment,
-                    attachmentUri = attUri,
-                    attachmentCount = if (attachment != null) 1 else 0,
-                    updatedAt = System.currentTimeMillis()
+            val updated = target.copy(
+                findings = if (notes.isNotEmpty()) notes else target.findings,
+                notes = if (notes.isNotEmpty()) notes else target.notes,
+                attachmentName = attachment,
+                attachmentUri = attUri,
+                attachmentCount = if (attachment != null) 1 else 0,
+                isCompleted = true,
+                realizationDateEpoch = target.realizationDateEpoch ?: System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis()
+            )
+            screeningRepository.updateScreening(updated)
+            _uiState.update {
+                it.copy(
+                    isSaving = false,
+                    userMessage = "Hasil resume klinis '${target.title}' berhasil disimpan!"
                 )
-                screeningRepository.insertScreening(newScreening)
-                _uiState.update {
-                    it.copy(
-                        isSaving = false,
-                        userMessage = "Hasil resume klinis '$finalTitle' berhasil disimpan!"
-                    )
-                }
-                onSuccess()
-            } else {
-                val target = state.currentScreening
-                val finalTitle = if (state.isCustomScreening && state.customTitle.isNotBlank()) {
-                    state.customTitle.trim()
-                } else {
-                    target.title
-                }
-
-                val updated = target.copy(
-                    title = finalTitle,
-                    findings = if (notes.isNotEmpty()) notes else target.findings,
-                    notes = if (notes.isNotEmpty()) notes else target.notes,
-                    attachmentName = attachment,
-                    attachmentUri = attUri,
-                    attachmentCount = if (attachment != null) 1 else 0,
-                    isCompleted = true,
-                    realizationDateEpoch = target.realizationDateEpoch ?: System.currentTimeMillis(),
-                    updatedAt = System.currentTimeMillis()
-                )
-                screeningRepository.updateScreening(updated)
-                _uiState.update {
-                    it.copy(
-                        isSaving = false,
-                        userMessage = "Hasil resume klinis '$finalTitle' berhasil disimpan!"
-                    )
-                }
-                onSuccess()
             }
+            onSuccess()
         }
     }
 

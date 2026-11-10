@@ -101,7 +101,8 @@ import java.util.Locale
 @Composable
 fun ScreeningScheduleRoute(
     onNavigateBack: () -> Unit,
-    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
+    onNavigateToInputResult: (type: String) -> Unit,
+    onNavigateToCustomInputResult: (screeningId: Long?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ScreeningScheduleViewModel = hiltViewModel()
 ) {
@@ -119,6 +120,7 @@ fun ScreeningScheduleRoute(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onNavigateToInputResult = onNavigateToInputResult,
+        onNavigateToCustomInputResult = onNavigateToCustomInputResult,
         onSelectTab = viewModel::selectTab,
         onToggleAlarm = viewModel::toggleAlarm,
         onOpenRecordModal = viewModel::openRecordModal,
@@ -157,7 +159,8 @@ fun ScreeningScheduleRoute(
 fun ScreeningScheduleScreen(
     uiState: ScreeningScheduleUiState,
     onNavigateBack: () -> Unit,
-    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
+    onNavigateToInputResult: (type: String) -> Unit,
+    onNavigateToCustomInputResult: (screeningId: Long?) -> Unit,
     onSelectTab: (ScreeningTab) -> Unit,
     onToggleAlarm: (PrematureScreening, Boolean) -> Unit,
     onOpenRecordModal: (PrematureScreening) -> Unit,
@@ -311,6 +314,7 @@ fun ScreeningScheduleScreen(
                     baby = uiState.baby,
                     onToggleAlarm = onToggleAlarm,
                     onNavigateToInputResult = onNavigateToInputResult,
+                    onNavigateToCustomInputResult = onNavigateToCustomInputResult,
                     onRescheduleClick = onOpenRescheduleModal,
                     onOpenAddModal = onOpenAddModal,
                     modifier = Modifier.fillMaxWidth()
@@ -319,6 +323,7 @@ fun ScreeningScheduleScreen(
                 EvaluationMedicalSheetView(
                     screenings = uiState.screenings,
                     onNavigateToInputResult = onNavigateToInputResult,
+                    onNavigateToCustomInputResult = onNavigateToCustomInputResult,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -849,7 +854,8 @@ private fun RemindersView(
     screenings: List<PrematureScreening>,
     baby: Baby?,
     onToggleAlarm: (PrematureScreening, Boolean) -> Unit,
-    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
+    onNavigateToInputResult: (type: String) -> Unit,
+    onNavigateToCustomInputResult: (screeningId: Long?) -> Unit,
     onRescheduleClick: (PrematureScreening) -> Unit,
     onOpenAddModal: () -> Unit,
     modifier: Modifier = Modifier
@@ -894,7 +900,13 @@ private fun RemindersView(
                 screening = screening,
                 baby = baby,
                 onToggleAlarm = { isAlarm1 -> onToggleAlarm(screening, isAlarm1) },
-                onRecordClick = { onNavigateToInputResult(screening.type.name, screening.id, false) },
+                onRecordClick = {
+                    if (screening.type == ScreeningType.CUSTOM) {
+                        onNavigateToCustomInputResult(screening.id)
+                    } else {
+                        onNavigateToInputResult(screening.type.name)
+                    }
+                },
                 onRescheduleClick = { onRescheduleClick(screening) },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -1643,7 +1655,8 @@ private fun ScreeningCardItem(
 @Composable
 private fun EvaluationMedicalSheetView(
     screenings: List<PrematureScreening>,
-    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
+    onNavigateToInputResult: (type: String) -> Unit,
+    onNavigateToCustomInputResult: (screeningId: Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -1686,6 +1699,7 @@ private fun EvaluationMedicalSheetView(
             ClinicalRecordCard(
                 screening = screening,
                 onNavigateToInputResult = onNavigateToInputResult,
+                onNavigateToCustomInputResult = onNavigateToCustomInputResult,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -1722,7 +1736,7 @@ private fun EvaluationMedicalSheetView(
                     color = colors.clinicalRoseBorder,
                     shape = RoundedCornerShape(16.dp)
                 )
-                .clickable { onNavigateToInputResult(ScreeningType.CUSTOM.name, null, true) }
+                .clickable { onNavigateToCustomInputResult(null) }
                 .padding(vertical = 14.dp, horizontal = 16.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -1763,13 +1777,22 @@ private fun EvaluationMedicalSheetView(
 @Composable
 private fun ClinicalRecordCard(
     screening: PrematureScreening,
-    onNavigateToInputResult: (type: String, screeningId: Long?, isNewCustom: Boolean) -> Unit,
+    onNavigateToInputResult: (type: String) -> Unit,
+    onNavigateToCustomInputResult: (screeningId: Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val colors = KanguruTheme.colors
 
     val isCustom = screening.type == ScreeningType.CUSTOM
+
+    val onOpenResult: () -> Unit = {
+        if (screening.type == ScreeningType.CUSTOM) {
+            onNavigateToCustomInputResult(screening.id)
+        } else {
+            onNavigateToInputResult(screening.type.name)
+        }
+    }
 
     val (badgeBg, badgeText, iconEmoji) = when (screening.type) {
         ScreeningType.USG_HEAD -> Triple(colors.clinicalAmberBg, colors.clinicalAmberText, "🧠")
@@ -1990,8 +2013,7 @@ private fun ClinicalRecordCard(
 
                 // Action Buttons: Lampiran + Edit
                 val hasAttachment = !screening.attachmentName.isNullOrBlank()
-                val defaultAttachmentLabel = if (isCustom) "Lampiran Echo Doppler (1)" else "+ Tambah Lampiran"
-                val attachmentLabel = if (hasAttachment) screening.attachmentName!! else defaultAttachmentLabel
+                val attachmentLabel = if (hasAttachment) screening.attachmentName!! else "+ Tambah Lampiran"
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -2018,13 +2040,13 @@ private fun ClinicalRecordCard(
                                         }
                                         context.startActivity(intent)
                                     } else {
-                                        onNavigateToInputResult(screening.type.name, screening.id, false)
+                                        onOpenResult()
                                     }
                                 } catch (_: Exception) {
-                                    onNavigateToInputResult(screening.type.name, screening.id, false)
+                                    onOpenResult()
                                 }
                             } else {
-                                onNavigateToInputResult(screening.type.name, screening.id, false)
+                                onOpenResult()
                             }
                         },
                         shape = RoundedCornerShape(12.dp),
@@ -2053,7 +2075,7 @@ private fun ClinicalRecordCard(
                     }
 
                     Button(
-                        onClick = { onNavigateToInputResult(screening.type.name, screening.id, false) },
+                        onClick = onOpenResult,
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colors.surfaceVariant,
@@ -2162,7 +2184,7 @@ private fun ClinicalRecordCard(
                 }
 
                 Button(
-                    onClick = { onNavigateToInputResult(screening.type.name, screening.id, false) },
+                    onClick = onOpenResult,
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.primary,

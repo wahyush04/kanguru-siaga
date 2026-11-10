@@ -41,6 +41,7 @@ import com.kangurusiaga.app.presentation.pmk.video.PmkVideoScreen
 import com.kangurusiaga.app.presentation.growth.antropometri.AntropometriVideoListScreen
 import com.kangurusiaga.app.presentation.pmk.screening.ScreeningScheduleRoute
 import com.kangurusiaga.app.presentation.pmk.screening.ScreeningInputResultRoute
+import com.kangurusiaga.app.presentation.pmk.screening.CustomScreeningInputResultRoute
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.presentation.growth.about.AboutFentonScreen
 import com.kangurusiaga.app.presentation.growth.batch.GrowthBatchMeasurementScreen
@@ -270,13 +271,16 @@ fun KanguruNavGraph(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigateToInputResult = { type, screeningId, isNewCustom ->
-                    navController.navigate(Screen.ScreeningInputResult.createRoute(type, screeningId, isNewCustom))
+                onNavigateToInputResult = { type ->
+                    navController.navigate(Screen.ScreeningInputResult.createRoute(type))
+                },
+                onNavigateToCustomInputResult = { screeningId ->
+                    navController.navigate(Screen.CustomScreeningInputResult.createRoute(screeningId))
                 }
             )
         }
 
-        // Catat Hasil & Resume Medis Skrining (Google Stitch)
+        // Catat Hasil & Resume Medis Skrining Wajib (Google Stitch)
         composable(
             route = Screen.ScreeningInputResult.route,
             arguments = listOf(
@@ -284,18 +288,27 @@ fun KanguruNavGraph(
                     type = NavType.StringType
                     nullable = true
                     defaultValue = null
-                },
-                navArgument("screeningId") {
-                    type = NavType.LongType
-                    defaultValue = -1L
-                },
-                navArgument("isNewCustom") {
-                    type = NavType.BoolType
-                    defaultValue = false
                 }
             )
         ) {
             ScreeningInputResultRoute(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Catat Hasil & Resume Medis Skrining Tambahan Kustom (Google Stitch)
+        composable(
+            route = Screen.CustomScreeningInputResult.route,
+            arguments = listOf(
+                navArgument("screeningId") {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                }
+            )
+        ) {
+            CustomScreeningInputResultRoute(
                 onNavigateBack = {
                     navController.popBackStack()
                 }

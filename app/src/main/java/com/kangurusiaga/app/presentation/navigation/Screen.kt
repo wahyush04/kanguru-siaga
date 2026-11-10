@@ -33,19 +33,19 @@ sealed class Screen(override val route: String, override val destination: String
     data object PmkVideo : Screen(route = "pmk_video", destination = "pmk_video_destination") // legacy alias pointing to video list
     data object ScreeningSchedule : Screen(route = "screening_schedule", destination = "screening_schedule_destination")
     data object ScreeningInputResult : Screen(
-        route = "screening_input_result?type={type}&screeningId={screeningId}&isNewCustom={isNewCustom}",
+        route = "screening_input_result?type={type}",
         destination = "screening_input_result_destination"
     ) {
-        fun createRoute(
-            type: String? = null,
-            screeningId: Long? = null,
-            isNewCustom: Boolean = false
-        ): String {
-            val params = mutableListOf<String>()
-            if (type != null) params.add("type=$type")
-            if (screeningId != null && screeningId > 0) params.add("screeningId=$screeningId")
-            if (isNewCustom) params.add("isNewCustom=true")
-            return if (params.isNotEmpty()) "screening_input_result?${params.joinToString("&")}" else "screening_input_result"
+        fun createRoute(type: String? = null): String {
+            return if (!type.isNullOrBlank()) "screening_input_result?type=$type" else "screening_input_result"
+        }
+    }
+    data object CustomScreeningInputResult : Screen(
+        route = "custom_screening_input_result?screeningId={screeningId}",
+        destination = "custom_screening_input_result_destination"
+    ) {
+        fun createRoute(screeningId: Long? = null): String {
+            return if (screeningId != null && screeningId > 0) "custom_screening_input_result?screeningId=$screeningId" else "custom_screening_input_result"
         }
     }
 
