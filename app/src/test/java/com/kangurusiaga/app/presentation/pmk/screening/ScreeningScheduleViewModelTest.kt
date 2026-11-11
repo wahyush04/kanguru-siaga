@@ -101,6 +101,7 @@ class ScreeningScheduleViewModelTest {
             val state = awaitItem()
             assertThat(state.baby?.name).isEqualTo("By. Ny. Arini")
             assertThat(state.babyAgeDisplay).isEqualTo("Prematur 31 Mgg")
+            assertThat(state.chronologicalAgeDisplay).isNotEmpty()
             assertThat(state.screenings).hasSize(2)
             assertThat(state.screenings[0].title).isEqualTo("USG Kepala")
             cancelAndIgnoreRemainingEvents()

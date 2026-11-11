@@ -40,6 +40,7 @@ data class RescheduleScreeningModalState(
 data class ScreeningScheduleUiState(
     val baby: Baby? = null,
     val babyAgeDisplay: String = "",
+    val chronologicalAgeDisplay: String = "",
     val correctedAgeDisplay: String = "",
     val birthDateDisplay: String = "",
     val selectedTab: ScreeningTab = ScreeningTab.REMINDERS,

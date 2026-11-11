@@ -83,6 +83,7 @@ class ScreeningScheduleViewModel @Inject constructor(
                             it.copy(
                                 baby = baby,
                                 babyAgeDisplay = "Prematur ${baby.gestationalAgeWeeks} Mgg",
+                                chronologicalAgeDisplay = calc.chronologicalDisplay,
                                 correctedAgeDisplay = correctedDisplay,
                                 birthDateDisplay = birthDisplay,
                                 screenings = list,
@@ -96,6 +97,7 @@ class ScreeningScheduleViewModel @Inject constructor(
                         it.copy(
                             baby = null,
                             babyAgeDisplay = "-",
+                            chronologicalAgeDisplay = "-",
                             correctedAgeDisplay = "-",
                             birthDateDisplay = "-",
                             screenings = emptyList(),

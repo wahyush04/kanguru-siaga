@@ -496,6 +496,9 @@ private fun HeroScreeningCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
@@ -509,15 +512,17 @@ private fun HeroScreeningCard(
                         ) {
                             Text(text = "👶", style = KanguruTheme.typography.bodyMedium)
                         }
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "${uiState.baby?.name ?: "Si Kecil"} (${uiState.babyAgeDisplay})",
                                 style = KanguruTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = colors.textPrimary
+                                color = colors.textPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                text = "Koreksi: ${uiState.correctedAgeDisplay} \nLahir: ${uiState.birthDateDisplay}",
+                                text = "Umur Kronologis: ${uiState.chronologicalAgeDisplay}\nLahir: ${uiState.birthDateDisplay}",
                                 style = KanguruTheme.typography.labelMedium,
                                 color = colors.textSecondary
                             )
@@ -532,10 +537,11 @@ private fun HeroScreeningCard(
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = "Rawat Jalan Aktif",
+                            text = "Rawat Jalan\nAktif",
                             style = KanguruTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
-                            color = colors.clinicalEmeraldText
+                            color = colors.clinicalEmeraldText,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -545,8 +551,7 @@ private fun HeroScreeningCard(
 }
 
 /**
- * Tab 2: Patient Summary Card with BBLR Metrics & Completion Progress Bar
- * Directly matching Google Stitch Screen "Lembar Medis & Hasil Penapisan Bayi Prematur"
+ * Tab 2: Patient Summary Card with Completion Progress Bar
  */
 @Composable
 private fun PatientSummaryMedicalCard(
@@ -575,6 +580,9 @@ private fun PatientSummaryMedicalCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -589,7 +597,10 @@ private fun PatientSummaryMedicalCard(
                         Text(text = "👶", style = KanguruTheme.typography.titleMedium)
                     }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -598,7 +609,10 @@ private fun PatientSummaryMedicalCard(
                                 text = uiState.baby?.name ?: "Si Kecil",
                                 style = KanguruTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = colors.textPrimary
+                                color = colors.textPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f, fill = false)
                             )
                             if (uiState.baby?.gestationalAgeWeeks != null) {
                                 Box(
@@ -619,7 +633,7 @@ private fun PatientSummaryMedicalCard(
                         }
 
                         Text(
-                            text = "Koreksi: ${uiState.correctedAgeDisplay} | Lahir: ${uiState.birthDateDisplay}",
+                            text = "Umur Kronologis: ${uiState.chronologicalAgeDisplay}\nLahir: ${uiState.birthDateDisplay}",
                             style = KanguruTheme.typography.labelMedium,
                             color = colors.textSecondary
                         )
@@ -634,80 +648,16 @@ private fun PatientSummaryMedicalCard(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "Rawat Jalan Aktif",
+                        text = "Rawat Jalan\nAktif",
                         style = KanguruTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = colors.clinicalEmeraldText
+                        color = colors.clinicalEmeraldText,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
 
             HorizontalDivider(color = colors.divider.copy(alpha = 0.6f))
-
-            // Metric Strip (2 Columns)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(colors.background)
-                        .border(1.dp, colors.cardBorder, RoundedCornerShape(14.dp))
-                        .padding(10.dp)
-                ) {
-                    Column {
-                        Text(
-                            text = "Berat Lahir (BBLR)",
-                            style = KanguruTheme.typography.labelMedium,
-                            color = colors.textSecondary
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = uiState.birthWeightDisplay,
-                            style = KanguruTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.textPrimary
-                        )
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(colors.background)
-                        .border(1.dp, colors.cardBorder, RoundedCornerShape(14.dp))
-                        .padding(10.dp)
-                ) {
-                    Column {
-                        Text(
-                            text = "Berat Terakhir (Kini)",
-                            style = KanguruTheme.typography.labelMedium,
-                            color = colors.textSecondary
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(
-                                text = uiState.currentWeightDisplay,
-                                style = KanguruTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = colors.clinicalEmeraldText
-                            )
-                            Text(
-                                text = uiState.weightGainDisplay,
-                                style = KanguruTheme.typography.labelMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = colors.clinicalEmeraldSolid
-                            )
-                        }
-                    }
-                }
-            }
 
             // Completion Progress Bar
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
