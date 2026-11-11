@@ -26,7 +26,7 @@ import java.io.InputStreamReader
         GrowthRecordEntity::class
     ],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -38,6 +38,9 @@ abstract class AppDatabase : RoomDatabase() {
         private const val TAG = "AppDatabase"
         const val DATABASE_NAME = "fenton_growth.db"
 
+        // Daftarkan Migration eksplisit di sini saat menaikkan version fenton_growth.db (v2+).
+        internal val APP_DB_MIGRATIONS: Array<androidx.room.migration.Migration> = emptyArray()
+
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -48,8 +51,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     DATABASE_NAME
                 )
+                    .addMigrations(*APP_DB_MIGRATIONS)
                     .addCallback(DatabaseCallback(context.applicationContext))
-                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

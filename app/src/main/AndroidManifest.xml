@@ -14,9 +14,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@null"
         android:fullBackupContent="false"
-        android:icon="@drawable/ic_kangaroo_mascot"
+        android:icon="@mipmap/ic_launcher"
         android:label="${appName}"
-        android:roundIcon="@drawable/ic_kangaroo_mascot"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.KanguruSiaga">
         <activity

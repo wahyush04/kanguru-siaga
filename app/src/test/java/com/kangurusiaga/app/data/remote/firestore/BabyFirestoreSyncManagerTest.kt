@@ -5,12 +5,15 @@ import com.google.common.truth.Truth.assertThat
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kangurusiaga.app.core.common.CrashlyticsLogger
 import com.kangurusiaga.app.core.common.NetworkMonitor
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.slot
+import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -104,5 +107,30 @@ class BabyFirestoreSyncManagerTest {
 
         // Tidak boleh crash atau throw exception ke caller
         assertThat(result).isFalse()
+    }
+
+    @Test
+    fun syncOnboardingBaby_whenOffline_doesNotLogBabyNameToCrashlytics() = runTest(testDispatcher) {
+        every { networkMonitor.isOnline() } returns false
+        val loggedMessage = slot<String>()
+        mockkObject(CrashlyticsLogger)
+        try {
+            every { CrashlyticsLogger.log(capture(loggedMessage)) } returns Unit
+
+            val baby = Baby(
+                id = 99L,
+                name = "Baby Sensitive Name",
+                gender = Gender.FEMALE,
+                birthDateEpochMillis = 1700000000000L,
+                birthWeightGram = 1900,
+                gestationalAgeWeeks = 33
+            )
+
+            syncManager.syncOnboardingBaby(baby, currentWeightGram = 2000)
+
+            assertThat(loggedMessage.captured).doesNotContain("Baby Sensitive Name")
+        } finally {
+            unmockkObject(CrashlyticsLogger)
+        }
     }
 }

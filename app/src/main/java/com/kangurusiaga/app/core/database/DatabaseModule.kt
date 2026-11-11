@@ -17,11 +17,22 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    private val MIGRATION_10_11 = object : androidx.room.migration.Migration(10, 11) {
+    internal val MIGRATION_10_11 = object : androidx.room.migration.Migration(10, 11) {
         override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
             db.execSQL("ALTER TABLE premature_screenings ADD COLUMN attachment_uri TEXT DEFAULT NULL")
         }
     }
+
+    // Daftarkan setiap Migration baru (11 -> 12, dst.) di sini sebelum menaikkan version DB.
+    internal val KANGURU_DB_MIGRATIONS: Array<androidx.room.migration.Migration> = arrayOf(
+        MIGRATION_10_11
+    )
+
+    // Hanya versi pra-migrasi tanpa jalur migrasi eksplisit (1..9) yang diizinkan reset jika
+    // ditemukan dari build dev lama; v10 memakai MIGRATION_10_11, dan v11+ wajib Migration eksplisit.
+    internal val LEGACY_DESTRUCTIVE_FALLBACK_VERSIONS: IntArray = intArrayOf(
+        1, 2, 3, 4, 5, 6, 7, 8, 9
+    )
 
     @Provides
     @Singleton
@@ -33,8 +44,8 @@ object DatabaseModule {
             KanguruDatabase::class.java,
             KanguruDatabase.DATABASE_NAME
         )
-            .addMigrations(MIGRATION_10_11)
-            .fallbackToDestructiveMigration()
+            .addMigrations(*KANGURU_DB_MIGRATIONS)
+            .fallbackToDestructiveMigrationFrom(*LEGACY_DESTRUCTIVE_FALLBACK_VERSIONS)
             .build()
     }
 

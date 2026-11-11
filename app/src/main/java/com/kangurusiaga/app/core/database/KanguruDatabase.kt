@@ -28,7 +28,7 @@ import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
         com.kangurusiaga.app.data.local.entity.PrematureScreeningEntity::class
     ],
     version = 11,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class KanguruDatabase : RoomDatabase() {
     abstract fun babyDao(): BabyDao

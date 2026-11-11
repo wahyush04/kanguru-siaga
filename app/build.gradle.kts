@@ -10,6 +10,10 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 // Hierarchy resolusi API Key yang aman (Environment Variable -> local.properties -> .env)
 val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
@@ -53,7 +57,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

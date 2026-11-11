@@ -90,11 +90,11 @@ class FentonGrowthApiClient @Inject constructor(
                     IllegalStateException("Kunci API Fenton belum disetel. Tambahkan 'fenton.api.key' pada local.properties.")
                 )
             }
-            AppLogger.d("FentonGrowthApiClient", "Memulai fetch ClientPlotPoints untuk baby: ${baby.name} (${baby.gender})")
+            AppLogger.d("FentonGrowthApiClient", "Memulai fetch ClientPlotPoints untuk babyId=${baby.id} (${baby.gender})")
 
             // 1. Format data ke CSV terstandarisasi Fenton
             val csvContent = buildFentonCsv(baby, measurements)
-            AppLogger.d("FentonGrowthApiClient", "CSV Request yang dikirim:\n$csvContent")
+            AppLogger.d("FentonGrowthApiClient", "Payload CSV Fenton disiapkan (${measurements.size} titik pengukuran)")
 
             // 2. Eksekusi POST multipart/form-data ke endpoint /api/Fenton/ClientPlotPoints
             val boundary = "----WebKitFormBoundaryKanguru" + System.currentTimeMillis()
@@ -209,7 +209,7 @@ class FentonGrowthApiClient @Inject constructor(
                     IllegalStateException("Kunci API Fenton belum dikonfigurasi. Tambahkan 'fenton.api.key' pada local.properties.")
                 )
             }
-            AppLogger.d("FentonGrowthApiClient", "Memulai fetch ClientDownloadCsv untuk baby: ${baby.name}")
+            AppLogger.d("FentonGrowthApiClient", "Memulai fetch ClientDownloadCsv untuk babyId=${baby.id}")
 
             val boundary = "----WebKitFormBoundaryKanguruZ" + System.currentTimeMillis()
             val csvUrl = URL(CLIENT_CSV_ENDPOINT)

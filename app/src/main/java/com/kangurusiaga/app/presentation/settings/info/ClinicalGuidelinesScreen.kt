@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kangurusiaga.app.BuildConfig
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
@@ -504,7 +505,11 @@ fun ClinicalGuidelinesScreen(
                             .padding(horizontal = 24.dp)
                     )
                     Text(
-                        text = stringResource(R.string.clinical_guidelines_footer_version),
+                        text = stringResource(
+                            R.string.clinical_guidelines_footer_version,
+                            BuildConfig.VERSION_NAME,
+                            BuildConfig.VERSION_CODE
+                        ),
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextTertiary,

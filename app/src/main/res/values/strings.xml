@@ -655,12 +655,13 @@
     <string name="clinical_guidelines_medical_review_title">Ditelaah Oleh Tenaga Medis</string>
     <string name="clinical_guidelines_medical_review_subtitle">Riset &amp; Inovasi Perinatologi Indonesia</string>
     <string name="clinical_guidelines_footer_notice">Dokumen rujukan diperbarui secara berkala mengikuti konsensus klinis terbaru IDAI dan Kementerian Kesehatan RI.</string>
-    <string name="clinical_guidelines_footer_version">KANGURU SIAGA • Versi 1.2.0 (Build 2026)</string>
+    <string name="clinical_guidelines_footer_version">KANGURU SIAGA • v%1$s (Build %2$d)</string>
 
     <!-- About App (Tentang KANGURU SIAGA) -->
     <string name="about_app_title">Tentang KANGURU SIAGA</string>
-    <string name="about_app_subtitle">Pendamping Perawatan Khusus Bayi Kecil di Rumah</string>
-    <string name="about_app_version">Versi 1.2.0 (Build 2026)</string>
+    <string name="about_app_subtitle">Pendamping Perawatan Khusus Bayi Berat Lahir Rendah di Rumah</string>
+    <string name="about_app_version">v%1$s (Build %2$d)</string>
+    <string name="settings_app_version_format">v%1$s (Build %2$d)</string>
     <string name="about_app_vision_title">Visi &amp; Komitmen Kami</string>
     <string name="about_app_vision_desc">Mewujudkan setiap bayi prematur dan BBLR tumbuh optimal, hangat, dan sehat melalui pemberdayaan keluarga dengan panduan praktis berbasis bukti ilmiah klinis.</string>
     <string name="about_app_pillars_title">4 Pilar Layanan Unggulan</string>
@@ -681,7 +682,7 @@
     <string name="disclaimer_accuracy_title">Akurasi &amp; Pemutakhiran Informasi</string>
     <string name="disclaimer_consent_title">Pernyataan &amp; Persetujuan Pengguna</string>
     <string name="disclaimer_footer_note">Dokumen disclaimer ditinjau berkala mengikuti standar perinatologi IDAI</string>
-    <string name="disclaimer_footer_version">KANGURU SIAGA • Versi 1.2.0 (Build 2026)</string>
+    <string name="disclaimer_footer_version">KANGURU SIAGA • v%1$s (Build %2$d)</string>
     <string name="disclaimer_footer_copyright">© 2026 Tim Riset &amp; Inovasi Perinatologi Indonesia</string>
 
     <!-- Edit Baby Profile Bottom Sheet -->

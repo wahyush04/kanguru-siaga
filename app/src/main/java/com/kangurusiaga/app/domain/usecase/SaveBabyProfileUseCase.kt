@@ -52,7 +52,7 @@ class SaveBabyProfileUseCase @Inject constructor(
             val babyId = babyRepository.saveBaby(sanitizedBaby)
             val savedBaby = sanitizedBaby.copy(id = babyId)
             userPreferencesRepository.setOnboardingCompleted(true)
-            AppLogger.d("SaveBabyProfileUseCase", "Profil bayi '${sanitizedBaby.name}' berhasil disimpan ke Room DB (id=$babyId)")
+            AppLogger.d("SaveBabyProfileUseCase", "Profil bayi berhasil disimpan ke Room DB (id=$babyId)")
 
             // 2. Simpan data awal kelahiran (Berat, Panjang, Lingkar Kepala) ke pertumbuhan
             ensureInitialGrowthDataUseCase(savedBaby)

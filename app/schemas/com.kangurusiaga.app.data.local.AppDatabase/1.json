@@ -1,0 +1,252 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "406bd61d464613c847dc2baca98e6cc2",
+    "entities": [
+      {
+        "tableName": "fenton_lms_reference",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `metric` TEXT NOT NULL, `gender` TEXT NOT NULL, `week` INTEGER NOT NULL, `l` REAL NOT NULL, `m` REAL NOT NULL, `s` REAL NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "metric",
+            "columnName": "metric",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gender",
+            "columnName": "gender",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "week",
+            "columnName": "week",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "l",
+            "columnName": "l",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "m",
+            "columnName": "m",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "s",
+            "columnName": "s",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_fenton_lms_reference_metric_gender_week",
+            "unique": true,
+            "columnNames": [
+              "metric",
+              "gender",
+              "week"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_fenton_lms_reference_metric_gender_week` ON `${TABLE_NAME}` (`metric`, `gender`, `week`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "baby_profiles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`babyId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `gender` TEXT NOT NULL, `birthDate` INTEGER NOT NULL, `gestationalAgeWeeksAtBirth` INTEGER NOT NULL, `gestationalAgeDaysAtBirth` INTEGER NOT NULL, `birthWeightGrams` REAL NOT NULL, `birthLengthCm` REAL NOT NULL, `birthHeadCircumferenceCm` REAL NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "babyId",
+            "columnName": "babyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gender",
+            "columnName": "gender",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "birthDate",
+            "columnName": "birthDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gestationalAgeWeeksAtBirth",
+            "columnName": "gestationalAgeWeeksAtBirth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gestationalAgeDaysAtBirth",
+            "columnName": "gestationalAgeDaysAtBirth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "birthWeightGrams",
+            "columnName": "birthWeightGrams",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "birthLengthCm",
+            "columnName": "birthLengthCm",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "birthHeadCircumferenceCm",
+            "columnName": "birthHeadCircumferenceCm",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "babyId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "baby_growth_records",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recordId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `babyId` INTEGER NOT NULL, `recordedAt` INTEGER NOT NULL, `pmaWeeks` INTEGER NOT NULL, `pmaDays` INTEGER NOT NULL, `weightGrams` REAL, `lengthCm` REAL, `headCircumferenceCm` REAL, `calculatedWeightZScore` REAL, `calculatedWeightPercentile` TEXT, `clinicalClassification` TEXT, FOREIGN KEY(`babyId`) REFERENCES `baby_profiles`(`babyId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "recordId",
+            "columnName": "recordId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "babyId",
+            "columnName": "babyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recordedAt",
+            "columnName": "recordedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pmaWeeks",
+            "columnName": "pmaWeeks",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pmaDays",
+            "columnName": "pmaDays",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weightGrams",
+            "columnName": "weightGrams",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lengthCm",
+            "columnName": "lengthCm",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "headCircumferenceCm",
+            "columnName": "headCircumferenceCm",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "calculatedWeightZScore",
+            "columnName": "calculatedWeightZScore",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "calculatedWeightPercentile",
+            "columnName": "calculatedWeightPercentile",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "clinicalClassification",
+            "columnName": "clinicalClassification",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "recordId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_baby_growth_records_babyId",
+            "unique": false,
+            "columnNames": [
+              "babyId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_baby_growth_records_babyId` ON `${TABLE_NAME}` (`babyId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "baby_profiles",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "babyId"
+            ],
+            "referencedColumns": [
+              "babyId"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '406bd61d464613c847dc2baca98e6cc2')"
+    ]
+  }
+}

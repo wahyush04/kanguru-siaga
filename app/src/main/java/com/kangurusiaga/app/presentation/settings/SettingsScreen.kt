@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.kangurusiaga.app.BuildConfig
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandCardBorder
@@ -1189,7 +1191,11 @@ fun SettingsScreen(
                                         color = MaterialTheme.colorScheme.surfaceVariant
                                     ) {
                                         Text(
-                                            text = "v1.2.0 (Build 2026)",
+                                            text = stringResource(
+                                                R.string.settings_app_version_format,
+                                                BuildConfig.VERSION_NAME,
+                                                BuildConfig.VERSION_CODE
+                                            ),
                                             style = KanguruTheme.typography.labelSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextSecondary,

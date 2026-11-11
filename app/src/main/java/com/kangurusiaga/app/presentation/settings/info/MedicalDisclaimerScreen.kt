@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kangurusiaga.app.BuildConfig
 import com.kangurusiaga.app.R
 import com.kangurusiaga.app.core.designsystem.theme.BrandBackground
 import com.kangurusiaga.app.core.designsystem.theme.BrandPink
@@ -218,7 +219,7 @@ fun MedicalDisclaimerScreen(
                                 withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = primaryTextColor)) {
                                     append("dokter spesialis anak (Sp.A)")
                                 }
-                                append(", dokter umum, bidan, maupun tenaga perinatologi di fasilitas kesehatan.")
+                                append(", dokter umum, bidan, maupun perawat perinatologi di fasilitas kesehatan.")
                             }
                         }
                         Text(
@@ -552,7 +553,11 @@ fun MedicalDisclaimerScreen(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = stringResource(R.string.disclaimer_footer_version),
+                        text = stringResource(
+                            R.string.disclaimer_footer_version,
+                            BuildConfig.VERSION_NAME,
+                            BuildConfig.VERSION_CODE
+                        ),
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = TextTertiary,

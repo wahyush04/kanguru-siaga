@@ -51,8 +51,8 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
             val isOnline = networkMonitor.isOnline()
             AppLogger.d(TAG, "Mengecek konektivitas sebelum sync Firestore: isOnline=$isOnline")
             if (!isOnline) {
-                AppLogger.w(TAG, "Perangkat offline: Melewati sinkronisasi onboarding bayi (${baby.name}) ke Firestore")
-                CrashlyticsLogger.log("Offline: Melewati sinkronisasi onboarding bayi (${baby.name}) ke Firestore")
+                AppLogger.w(TAG, "Perangkat offline: Melewati sinkronisasi onboarding bayi (babyId=${baby.id}) ke Firestore")
+                CrashlyticsLogger.log("Offline: Melewati sinkronisasi onboarding bayi ke Firestore")
                 return@withContext false
             }
 
@@ -80,7 +80,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
 
             // 3. Eksekusi pengiriman ke Firestore
             try {
-                AppLogger.d(TAG, "Mengirim profil bayi '${baby.name}' ke koleksi '$COLLECTION_BABY_PROFILES' di Firestore: ${dto.toMap()}")
+                AppLogger.d(TAG, "Mengirim profil onboarding bayi (babyId=${baby.id}) ke koleksi '$COLLECTION_BABY_PROFILES' di Firestore")
                 val documentReference = firestore.collection(COLLECTION_BABY_PROFILES)
                     .add(dto.toMap())
                     .await()
