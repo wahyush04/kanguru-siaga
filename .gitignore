@@ -19,6 +19,11 @@ app/google-services.json
 .env.*
 *.properties.local
 
+# Keystore & Release Signing
+*.jks
+*.keystore
+keystore.properties
+
 # Temporary reference folder (akan dikeluarkan)
 fentongrowth/
 

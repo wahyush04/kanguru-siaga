@@ -36,6 +36,33 @@ val fentonApiKey: String = System.getenv("FENTON_API_KEY")
     ?: envProperties.getProperty("API_KEY")
     ?: ""
 
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("keystore.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+fun signingProp(propKey: String, envKey: String): String? =
+    System.getenv(envKey)?.takeIf { it.isNotBlank() }
+        ?: keystoreProperties.getProperty(propKey)?.takeIf { it.isNotBlank() }
+
+val releaseStoreFilePath = signingProp("storeFile", "RELEASE_STORE_FILE")
+val releaseStorePassword = signingProp("storePassword", "RELEASE_STORE_PASSWORD")
+val releaseKeyAlias = signingProp("keyAlias", "RELEASE_KEY_ALIAS")
+val releaseKeyPassword = signingProp("keyPassword", "RELEASE_KEY_PASSWORD")
+val resolvedReleaseKeystore = releaseStoreFilePath?.let { path ->
+    file(path).takeIf { it.exists() } ?: rootProject.file(path).takeIf { it.exists() }
+}
+val hasReleaseSigning = resolvedReleaseKeystore != null &&
+    !releaseStorePassword.isNullOrBlank() &&
+    !releaseKeyAlias.isNullOrBlank() &&
+    !releaseKeyPassword.isNullOrBlank()
+
+if (keystoreProperties.isNotEmpty() && !hasReleaseSigning) {
+    logger.warn("keystore.properties ditemukan tetapi konfigurasi signing release belum lengkap atau file keystore tidak ditemukan.")
+}
+
 android {
     namespace = "com.kangurusiaga.app"
     compileSdk = 36
@@ -55,8 +82,22 @@ android {
         buildConfigField("String", "FENTON_API_KEY", "\"$fentonApiKey\"")
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = resolvedReleaseKeystore
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -151,7 +192,6 @@ dependencies {
 
     // Firebase
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.firestore)
 

@@ -6,6 +6,8 @@
 **Versi Dokumen:** 1.1  
 **Pengembang:** KuliTech *(Tim Pengembang Kanguru Siaga)*  
 **Email Dukungan Resmi:** `support@kulitech.my.id`  
+**URL Ketentuan Penggunaan:** `https://kulitech.my.id/kanguru-siaga/term-of-use`  
+**URL Kebijakan Privasi:** `https://kulitech.my.id/kanguru-siaga/privacy-policy`  
 **Status Kepatuhan:** Sesuai Undang-Undang Republik Indonesia No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP), Standar Etika Medis Perinatologi, serta Kebijakan Data Safety, Health Apps, dan Alarm Google Play Console.
 
 ---
@@ -28,7 +30,7 @@
   - [2. Informasi & Data yang Kami Kumpulkan](#2-informasi--data-yang-kami-kumpulkan)
   - [3. Arsitektur Penyimpanan Data: Lokal & Cloud Firestore](#3-arsitektur-penyimpanan-data-lokal--cloud-firestore)
   - [4. Tujuan Pengolahan & Penggunaan Data](#4-tujuan-pengolahan--penggunaan-data)
-  - [5. Kebijakan Bebas Penjualan Data, Layanan Analitik, & Pihak Ketiga](#5-kebijakan-bebas-penjualan-data-layanan-analitik--pihak-ketiga)
+  - [5. Kebijakan Bebas Penjualan Data, Non-Pelacakan Iklan, & Pihak Ketiga](#5-kebijakan-bebas-penjualan-data-non-pelacakan-iklan--pihak-ketiga)
   - [6. Izin Akses Perangkat (Device Permissions)](#6-izin-akses-perangkat-device-permissions)
   - [7. Langkah-Langkah Keamanan & Enkripsi Data](#7-langkah-langkah-keamanan--enkripsi-data)
   - [8. Hak-Hak Pengguna atas Data Pribadi (UU PDP)](#8-hak-hak-pengguna-atas-data-pribadi-uu-pdp)
@@ -165,7 +167,6 @@ Kami di **KuliTech** selaku pengembang aplikasi **Kanguru Siaga** menghargai dan
 | **Data Aktivitas PMK, Nutrisi, & Pengingat** | Waktu mulai/selesai kontak *skin-to-skin*, durasi sesi, target harian PMK, jadwal pengingat PMK, dan jadwal alarm minum ASI/OGT/NGT. | **100% Lokal di perangkat** (Room SQLite & DataStore). Tidak dikirim ke Cloud Firestore. | Menghitung capaian target harian PMK, grafik mingguan, dan menjadwalkan alarm pengingat tepat waktu. |
 | **Data Skrining Medis & Lampiran Klinis** | Jadwal 4 skrining wajib IDAI/Kemenkes & skrining kustom, catatan temuan/resume klinis dokter, serta **berkas lampiran medis** (foto cetak USG/retina atau file PDF resume lab, maks 10 MB per berkas). | **100% Lokal di perangkat** (Room SQLite & direktori internal `screening_attachments/`). **TIDAK PERNAH** diunggah ke Cloud Firestore atau server kami. | Mengarsipkan hasil evaluasi medis bayi di perangkat pengasuh dan mengingatkan jadwal tindak lanjut spesialis. |
 | **Media (Foto Profil Bayi)** | Foto profil bayi yang diambil via kamera sistem atau dipilih lewat Android Photo Picker. | **100% Lokal di perangkat** (direktori internal `baby_photos/`). **TIDAK PERNAH** diunggah ke server cloud kami. | Personalisasi visual kartu identitas bayi di dalam Aplikasi pada perangkat pengguna. |
-| **Data Analitik Aplikasi (Firebase Analytics)** | *App Instance ID*, event standar penggunaan layar/interaksi fitur, informasi perangkat (model, OS Android), perkiraan lokasi umum berbasis IP oleh layanan Google, serta *Advertising ID* bawaan perangkat (kecuali dibatasi pengguna di setelan Android). | Diproses oleh SDK **Google Firebase Analytics**. | Memahami kestabilan adopsi fitur secara agregat dan mengoptimalkan kinerja Aplikasi tanpa tujuan penayangan iklan. |
 | **Data Diagnostik & Log Error (Firebase Crashlytics)** | Model perangkat, versi OS, versi aplikasi, *stack trace* crash/error non-fatal, ID dokumen Firestore hasil sinkronisasi, serta log breadcrumb lokal saat terjadi peristiwa sinkronisasi/error. | Dikirim ke **Google Firebase Crashlytics** saat terjadi error atau peristiwa sinkronisasi terkait crash. | Penelusuran kesalahan teknis dan peningkatan keandalan Aplikasi tanpa mencatat nama bayi pada log breadcrumb. |
 
 ---
@@ -196,17 +197,16 @@ Arsitektur data Kanguru Siaga memisahkan penyimpanan privat di perangkat dan sin
 Data yang dikumpulkan diproses atas dasar persetujuan eksplisit pengguna khusus untuk:
 1. **Fungsionalitas Klinis & Pemantauan Harian:** Menghitung usia kronologis/koreksi/PMA, memetakan grafik pertumbuhan Kurva Fenton (2013/2025), menjadwalkan alarm pengingat ASI/OGT/NGT serta PMK, dan mengarsipkan lembar hasil skrining BBLR secara lokal.
 2. **Kustomisasi Pengalaman Pengguna:** Menyimpan preferensi tema (*Warm Light* / *Dark Nursing Mode*) dan ukuran skala teks agar ramah dibaca di ruang NICU maupun rumah.
-3. **Keandalan Sistem & Analitik Produk:** Memantau rasio crash, diagnosa kegagalan sinkronisasi (*Crashlytics*), serta performa pemakaian fitur aplikasi (*Firebase Analytics*).
+3. **Keandalan Sistem & Pemecahan Masalah:** Memantau rasio crash serta diagnosa kegagalan sinkronisasi atau kesalahan teknis (*Firebase Crashlytics*).
 4. **Evaluasi Program & Riset Kesehatan Anonim:** Data onboarding dan pertumbuhan dapat diagregasikan serta dianonimkan (dengan menghapus nama bayi dan identitas langsung) untuk evaluasi klinis program perawatan BBLR dan publikasi ilmiah pencegahan komplikasi prematuritas.
 
 ---
 
-### 5. Kebijakan Bebas Penjualan Data, Layanan Analitik, & Pihak Ketiga
+### 5. Kebijakan Bebas Penjualan Data, Non-Pelacakan Iklan, & Pihak Ketiga
 
-1. **Tidak Ada Penayangan Iklan Komersial:** Aplikasi Kanguru Siaga tidak menampilkan iklan pihak ketiga (*ad networks*) dan tidak pernah menjual data pengguna maupun data anak kepada pengiklan atau broker data.
+1. **Tidak Ada Penayangan Iklan & Tidak Menggunakan Advertising ID:** Aplikasi Kanguru Siaga tidak menampilkan iklan pihak ketiga (*ad networks*), tidak menggunakan SDK Firebase Analytics maupun izin `AD_ID` (*Advertising ID*), dan tidak pernah menjual atau memperdagangkan data pengguna maupun data anak kepada pengiklan atau broker data.
 2. **Layanan Sub-prosesor & API Pihak Ketiga yang Digunakan Aplikasi:**
    * **Google Firebase — Cloud Firestore:** Penyimpanan profil onboarding bayi saat pendaftaran awal online, didukung infrastruktur Google Cloud berstandar keamanan global (ISO 27001 / SOC 2).
-   * **Google Firebase — Firebase Analytics:** SDK analitik standar untuk memantau metrik penggunaan dan stabilitas aplikasi. Secara bawaan SDK ini mengumpulkan *App Instance ID*, event penggunaan aplikasi, info perangkat/OS, perkiraan lokasi kasar berbasis IP, serta *Advertising ID* perangkat Android. Kanguru Siaga **tidak** memanfaatkan *Advertising ID* untuk periklanan tertarget. Pengguna dapat menonaktifkan atau menyetel ulang *Advertising ID* kapan saja lewat **Pengaturan Android > Google > Iklan (*Ads*)**.
    * **Google Firebase — Firebase Crashlytics:** Pelaporan error aplikasi dan crash diagnostik otomatis, termasuk log konteks teknis (*breadcrumb*) sebagaimana dijelaskan pada Pasal 2.
    * **FentonGrowth.ca API (`https://fentongrowth.ca`):** Layanan web kalkulator pertumbuhan prematur ilmiah resmi milik University of Calgary / Dr. Tanis Fenton yang dipanggil **hanya ketika pengguna memberikan konfirmasi melalui dialog persetujuan akses internet (`FentonInternetConfirmationDialog`)** untuk merender grafik dan menghitung persentil/Z-score resmi. Payload CSV terstruktur yang dikirim ke `fentongrowth.ca` berisi:
      * `Title`: nama profil tampilan bayi (bila terisi);
@@ -224,7 +224,7 @@ Aplikasi hanya mendeklarasikan izin yang benar-benar dibutuhkan dan selaras pers
 
 | Izin Sistem (`AndroidManifest.xml`) | Mengapa Dibutuhkan? | Sifat & Kebijakan |
 | :--- | :--- | :--- |
-| `INTERNET` | Menghubungkan Aplikasi ke Google Firebase (Firestore, Analytics, Crashlytics) serta memanggil **FentonGrowth.ca API** saat memuat grafik/Z-score online. | Wajib untuk fitur sinkronisasi & grafik online (fitur harian tetap jalan *offline*) |
+| `INTERNET` | Menghubungkan Aplikasi ke Google Firebase (Cloud Firestore & Crashlytics) serta memanggil **FentonGrowth.ca API** saat memuat grafik/Z-score online. | Wajib untuk fitur sinkronisasi & grafik online (fitur harian tetap jalan *offline*) |
 | `ACCESS_NETWORK_STATE` | Mengecek ketersediaan koneksi internet sebelum memicu sinkronisasi cloud atau unduhan grafik agar tidak gagal secara diam-diam. | Otomatis oleh sistem |
 | `POST_NOTIFICATIONS` | Menampilkan notifikasi timer sesi PMK yang sedang berjalan, pengingat jadwal minum ASI, serta pengingat jadwal skrining prematur. | Opsional / Dapat dimatikan di Pengaturan |
 | `SCHEDULE_EXACT_ALARM` | Menjadwalkan alarm pengingat pemberian nutrisi enteral (ASI/OGT/NGT berinterval 2–3 jam), target sesi PMK, dan jadwal skrining kritis secara tepat waktu apabila izin *Alarms & reminders* diaktifkan oleh pengguna (pada Android 14+ otomatis beralih ke penjadwalan standar hemat daya jika tidak diaktifkan). | Opsional / Esensial untuk ketepatan jadwal perawatan |
@@ -256,7 +256,7 @@ Sesuai UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi, Anda memiliki hak 
    * Reset seluruh basis data dan preferensi ke pengaturan awal melalui menu **Pengaturan > Reset Data Aplikasi**;
    * Menghapus pemasangan (*uninstall*) Aplikasi dari perangkat akan menghapus seluruh basis data SQLite Room, berkas foto profil, Z-score CSV, dan lampiran dokumen skrining secara permanen dari perangkat.
 3. **Hak Penghapusan Data Cloud:** Anda berhak meminta penghapusan data onboarding bayi di Cloud Firestore melalui prosedur pada **Pasal 10**.
-4. **Hak Menarik Persetujuan:** Anda dapat mencabut izin notifikasi/alarm di Setelan Aplikasi Android, mereset/membatasi *Advertising ID* pada setelan Google Android, atau berhenti menggunakan Aplikasi kapan saja.
+4. **Hak Menarik Persetujuan:** Anda dapat mencabut izin notifikasi atau alarm kapan saja melalui Setelan Aplikasi Android, atau berhenti menggunakan Aplikasi serta menghapus data sesuai ketentuan Pasal 10.
 
 ---
 
@@ -273,7 +273,7 @@ Subjek data dalam Aplikasi ini mencakup data bayi baru lahir dan anak-anak:
 #### A. Masa Retensi Data Terukur
 * **Data Lokal Perangkat:** Tersimpan selama Aplikasi terpasang pada perangkat Anda, atau hingga Anda menggunakan fitur *Hapus Riwayat Aktivitas*, *Reset Data Aplikasi*, atau melakukan *uninstall*.
 * **Data Profil Onboarding Cloud (`baby_onboarding_profiles` di Cloud Firestore):** Disimpan untuk kebutuhan integritas evaluasi sistem dan pemantauan awal maksimal **24 (dua puluh empat) bulan** sejak tanggal pencatatan (`createdAtServer`), atau segera dihapus lebih awal apabila pengguna mengajukan permohonan penghapusan. Setelah jangka waktu retensi berakhir, dokumen akan dihapus permanen atau dianonimkan seutuhnya dengan menghapus pengenal nama dan tanggal lahir.
-* **Data Diagnostik & Analitik Firebase:** Log error/crash pada **Firebase Crashlytics** tersimpan mengikuti siklus retensi standar **90 hari**, sedangkan data peristiwa agregat **Firebase Analytics** mengikuti batas retensi layanan Google Firebase maksimal **14 bulan** sebelum kedaluwarsa otomatis.
+* **Data Diagnostik Firebase Crashlytics:** Log error dan laporan crash pada **Firebase Crashlytics** tersimpan mengikuti siklus retensi standar **90 hari** sebelum kedaluwarsa otomatis.
 
 #### B. Mekanisme Permohonan Penghapusan Data Cloud (*Data Deletion Request*)
 Karena Aplikasi dapat digunakan tanpa akun/login dan dokumen pada koleksi `baby_onboarding_profiles` di Cloud Firestore memakai ID dokumen acak otomatis (*auto-generated Document ID*) tanpa menyimpan *User ID* atau pengenal akun tetap di perangkat pengguna, permohonan penghapusan data cloud dilakukan dengan langkah berikut:
@@ -302,6 +302,8 @@ Apabila Anda memiliki pertanyaan, keberatan, permohonan akses/penghapusan data p
 * **Nama Aplikasi:** Kanguru Siaga
 * **Pengembang (Akun Google Play Console):** KuliTech *(Tim Pengembang Kanguru Siaga)*
 * **Email Dukungan & Pelindungan Data:** `support@kulitech.my.id`
+* **Tautan Publik Kebijakan Privasi:** `https://kulitech.my.id/kanguru-siaga/privacy-policy`
+* **Tautan Publik Ketentuan Penggunaan:** `https://kulitech.my.id/kanguru-siaga/term-of-use`
 * **Kategori Aplikasi:** Kesehatan & Kebugaran Maternal & Neonatal (*Maternal & Infant Health*)
 * **Wilayah Hukum:** Republik Indonesia
 

@@ -474,7 +474,7 @@ fun PrivacyPolicyScreen(
                     title = "Data Diagnostik & Crashlytics",
                     badgeText = "Anonim",
                     isLocalHighlight = false,
-                    description = AnnotatedString("Firebase Analytics & Crashlytics merekam log galat terenkripsi tanpa data nama bayi ataupun informasi rekam medis pribadi, semata-mata untuk menjaga kestabilan aplikasi saat sesi pemantauan kritis di ruang perawatan atau rumah.")
+                    description = AnnotatedString("Firebase Crashlytics merekam log galat terenkripsi tanpa data nama bayi ataupun informasi rekam medis pribadi, semata-mata untuk menjaga kestabilan aplikasi saat sesi pemantauan kritis di ruang perawatan atau rumah.")
                 )
             }
 
@@ -563,7 +563,7 @@ fun PrivacyPolicyScreen(
                     iconTint = colors.textPrimary,
                     iconBoxColor = colors.legalSectionCardBg,
                     title = "Google Firebase (Cloud Platform)",
-                    description = AnnotatedString("Menyediakan infrastruktur Firestore, Firebase Crashlytics, dan Firebase Analytics yang tersertifikasi kepatuhan ISO 27001 dan SOC 2 Type II untuk integritas infrastruktur cloud.")
+                    description = AnnotatedString("Menyediakan infrastruktur Cloud Firestore dan Firebase Crashlytics yang tersertifikasi kepatuhan ISO 27001 dan SOC 2 Type II untuk integritas infrastruktur cloud dan keandalan layanan.")
                 )
                 PrivacyHighlightItemCard(
                     icon = Icons.AutoMirrored.Filled.ShowChart,
@@ -785,21 +785,11 @@ fun PrivacyPolicyScreen(
                                     modifier = Modifier.weight(1f)
                                 )
                             }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                PrivacyRetentionCell(
-                                    label = "Crashlytics",
-                                    value = "90 Hari",
-                                    modifier = Modifier.weight(1f)
-                                )
-                                PrivacyRetentionCell(
-                                    label = "Firebase Analytics",
-                                    value = "14 Bulan",
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
+                            PrivacyRetentionCell(
+                                label = "Crashlytics",
+                                value = "90 Hari",
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                 }
