@@ -237,7 +237,7 @@ fun TermsOfUseScreen(
                                         color = colors.textSecondary
                                     )
                                     Text(
-                                        text = "9 November 2026",
+                                        text = "11 November 2026",
                                         style = KanguruTheme.typography.labelSmall,
                                         fontWeight = FontWeight.SemiBold,
                                         color = colors.textPrimary
@@ -252,7 +252,7 @@ fun TermsOfUseScreen(
                                         color = colors.legalRoseTintBg
                                     ) {
                                         Text(
-                                            text = "Versi 1.0",
+                                            text = "Versi 1.1",
                                             style = KanguruTheme.typography.labelSmall,
                                             fontWeight = FontWeight.SemiBold,
                                             color = colors.primary,
@@ -260,6 +260,15 @@ fun TermsOfUseScreen(
                                         )
                                     }
                                 }
+
+                                Text(
+                                    text = boldPrefixText(
+                                        "Pengembang: ",
+                                        "KuliTech (Tim Pengembang Kanguru Siaga)"
+                                    ),
+                                    style = KanguruTheme.typography.bodySmall,
+                                    color = colors.textPrimary
+                                )
 
                                 Row(
                                     verticalAlignment = Alignment.Top,
@@ -274,7 +283,7 @@ fun TermsOfUseScreen(
                                             .size(16.dp)
                                     )
                                     Text(
-                                        text = "Kepatuhan: Sesuai UU No. 27 Tahun 2022 (UU Perlindungan Data Pribadi) dan Standar Etika Medis Perinatologi.",
+                                        text = "Kepatuhan: Sesuai UU No. 27 Tahun 2022 (UU PDP), Standar Etika Medis Perinatologi, serta Kebijakan Data Safety, Health Apps, dan Alarm Google Play Console.",
                                         style = KanguruTheme.typography.bodySmall,
                                         color = colors.textPrimary
                                     )
@@ -305,7 +314,7 @@ fun TermsOfUseScreen(
                     // ==========================================
                     TermsSection(number = "1.", title = "Penerimaan Ketentuan") {
                         Text(
-                            text = "Ketentuan Penggunaan ini merupakan perjanjian hukum yang sah dan mengikat antara Anda sebagai pengguna (“Pengguna” atau “Anda”) dan Tim Pengembang Kanguru Siaga (“Kami”). Perjanjian ini mengatur hak, kewajiban, batasan lisensi, serta tanggung jawab para pihak dalam memanfaatkan seluruh fitur, materi edukasi, kalkulator klinis pendukung, dan ekosistem digital Kanguru Siaga.",
+                            text = "Ketentuan Penggunaan ini merupakan perjanjian hukum yang mengikat antara Anda selaku pengguna (“Pengguna”, “Anda”) dan KuliTech selaku tim pengembang resmi Aplikasi Kanguru Siaga (“Pengembang”, “Kami”). Penggunaan Aplikasi juga tunduk pada Kebijakan Privasi yang merupakan satu kesatuan yang tidak terpisahkan dari dokumen ini.",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -354,7 +363,7 @@ fun TermsOfUseScreen(
                                 )
 
                                 Text(
-                                    text = "Seluruh konten, penghitungan usia koreksi, timer kontak, kurva pertumbuhan, pengingat minum ASI, dan panduan edukasi disediakan semata-mata untuk tujuan informasi umum, pemantauan mandiri di rumah (home monitoring), serta sarana pendukung edukatif bagi orang tua.",
+                                    text = "Seluruh konten, kalkulasi persentil/Z-score, penghitungan usia koreksi, timer kontak, kurva pertumbuhan, pengingat minum ASI, dan panduan edukasi disediakan semata-mata untuk tujuan informasi umum, pemantauan mandiri di rumah (home monitoring), serta alat bantu edukatif — dan tidak boleh digunakan untuk mendiagnosis penyakit, menentukan resep obat, atau mengubah rencana terapi medis tanpa persetujuan dokter.",
                                     style = KanguruTheme.typography.bodyMedium,
                                     color = colors.textPrimary
                                 )
@@ -461,7 +470,7 @@ fun TermsOfUseScreen(
                     // ==========================================
                     TermsSection(number = "3.", title = "Tujuan & Hakikat Aplikasi") {
                         Text(
-                            text = "Kanguru Siaga dirancang untuk memberdayakan keluarga dengan bayi prematur dan Bayi Berat Lahir Rendah (BBLR) pasca-rawat inap NICU melalui fungsionalitas utama:",
+                            text = "Kanguru Siaga dikembangkan untuk memberdayakan keluarga dengan bayi prematur dan Bayi Berat Lahir Rendah (BBLR) melalui fungsionalitas utama:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -470,22 +479,22 @@ fun TermsOfUseScreen(
                             TermsIconBulletItem(
                                 icon = Icons.Default.CheckCircle,
                                 iconTint = colors.primary,
-                                text = AnnotatedString("Mendukung dan memotivasi penerapan Perawatan Metode Kanguru (PMK / Kangaroo Mother Care) berdurasi 8 hingga 24 jam sehari di rumah.")
+                                text = AnnotatedString("Mendukung orang tua dan keluarga dalam menerapkan Perawatan Metode Kanguru (PMK / Kangaroo Mother Care) secara konsisten dan terarah di rumah.")
                             )
                             TermsIconBulletItem(
                                 icon = Icons.Default.CheckCircle,
                                 iconTint = colors.primary,
-                                text = AnnotatedString("Memfasilitasi pencatatan log harian kontak kulit-ke-kulit (skin-to-skin contact) antara bayi dan orang tua/pengasuh.")
+                                text = AnnotatedString("Memfasilitasi pencatatan durasi kontak kulit-ke-kulit (skin-to-skin contact) harian guna mencapai target medis (minimal 8 jam/hari hingga 24 jam kontinu).")
                             )
                             TermsIconBulletItem(
                                 icon = Icons.Default.CheckCircle,
                                 iconTint = colors.primary,
-                                text = AnnotatedString("Membantu visualisasi tren pertumbuhan antropometri menggunakan referensi standar kurva Fenton Preterm Growth Chart (2013/2025) dan Buku KIA Khusus Bayi Kecil (Kemenkes RI, 2021).")
+                                text = AnnotatedString("Membantu memvisualisasikan tren catch-up growth bayi prematur menggunakan kurva Fenton Preterm Growth Chart (2013/2025) dan rujukan Buku KIA Khusus Bayi Kecil (Kemenkes RI, 2021).")
                             )
                             TermsIconBulletItem(
                                 icon = Icons.Default.CheckCircle,
                                 iconTint = colors.primary,
-                                text = AnnotatedString("Meningkatkan literasi manajemen nutrisi enteral (ASI perah, OGT/NGT) serta pencegahan dini risiko hipotermia dan infeksi nosokomial.")
+                                text = AnnotatedString("Meningkatkan literasi keluarga mengenai teknik pemberian nutrisi (ASI/OGT/NGT), higiene, skrining lanjutan bayi prematur, serta pencegahan komplikasi hipotermia.")
                             )
                         }
                     }
@@ -495,7 +504,7 @@ fun TermsOfUseScreen(
                     // ==========================================
                     TermsSection(number = "4.", title = "Kelayakan Pengguna") {
                         Text(
-                            text = "Aplikasi ini ditujukan secara khusus untuk kategori pengguna berikut:",
+                            text = "Aplikasi ini ditujukan bagi kategori pengguna berikut:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -503,15 +512,15 @@ fun TermsOfUseScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             TermsLetteredItem(
                                 letter = "a.",
-                                text = "Orang tua kandung, anggota keluarga, atau pengasuh sah (caregiver) dari bayi prematur atau BBLR."
+                                text = "Orang tua kandung, wali sah, keluarga, atau pengasuh yang merawat bayi prematur atau Bayi Berat Lahir Rendah (BBLR)."
                             )
                             TermsLetteredItem(
                                 letter = "b.",
-                                text = "Tenaga kesehatan pendamping (dokter spesialis anak, bidan, perawat perinatologi/NICU) yang memonitor pasien pasca-pulang."
+                                text = "Tenaga kesehatan (dokter spesialis anak, dokter umum, bidan, perawat perinatologi/NICU) yang mendampingi edukasi keluarga pasca-rawat inap."
                             )
                             TermsLetteredItem(
                                 letter = "c.",
-                                text = "Individu yang telah berusia minimal 18 tahun atau telah cakap menurut hukum yang berlaku di Republik Indonesia untuk menyetujui perjanjian yang mengikat."
+                                text = "Pengguna wajib berusia minimal 18 tahun atau telah cakap hukum menurut peraturan perundang-undangan di Republik Indonesia."
                             )
                         }
                     }
@@ -524,35 +533,35 @@ fun TermsOfUseScreen(
                         title = "Fitur Utama & Panduan Penggunaan yang Sah"
                     ) {
                         Text(
-                            text = "Pengguna berhak memanfaatkan fitur-fitur yang disediakan sesuai peruntukan alaminya:",
+                            text = "Pengguna berhak menggunakan fitur-fitur berikut sesuai dengan peruntukannya:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
 
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             TermsFeatureCard(
-                                title = "Pencatatan Profil Biologis Bayi",
-                                description = "Input akurat data identitas, tanggal lahir, usia gestasi kelahiran (minggu), berat, panjang badan, dan lingkar kepala."
+                                title = "Pencatatan Identitas & Profil Bayi",
+                                description = "Pengisian data biologis kelahiran bayi (nama, tanggal lahir, usia gestasi, berat, panjang, lingkar kepala, dan foto opsional) untuk personalisasi kurva dan usia kronologis/koreksi."
                             )
                             TermsFeatureCard(
-                                title = "Timer & Log Sesi PMK",
-                                description = "Alat bantu pewaktu sesi dekapan kangguru dengan rekapitulasi durasi kumulatif harian."
+                                title = "Timer & Pencatatan Sesi PMK",
+                                description = "Penggunaan pengatur waktu (timer) kontinu/intermiten dan input sesi manual untuk menghitung akumulasi jam dekapan harian beserta rekapitulasi mingguan."
                             )
                             TermsFeatureCard(
-                                title = "Grafik Pertumbuhan Fenton Berbasis PMA",
-                                description = "Visualisasi tren kenaikan berat, panjang, dan lingkar kepala berdasarkan Postmenstrual Age (22-50 minggu)."
+                                title = "Grafik Pertumbuhan Fenton",
+                                description = "Plotting data antropometri ke dalam grafik standar internasional berbasis Usia Pascamenstruasi (PMA 22–50 minggu), baik melalui data referensi lokal maupun sinkronisasi grafik/Z-score resmi FentonGrowth.ca."
                             )
                             TermsFeatureCard(
-                                title = "Jadwal & Alarm Nutrisi ASI",
-                                description = "Pemberitahuan interval jadwal minum (tiap 2-3 jam) untuk mencegah hipoglikemia neonatus."
+                                title = "Jadwal & Alarm Pemberian ASI",
+                                description = "Pengingat audio-getar interval nutrisi rutin setiap 2–3 jam (termasuk bagi bayi dengan selang OGT/NGT) untuk membantu mencegah hipoglikemia neonatus."
                             )
                             TermsFeatureCard(
                                 title = "Katalog Video & Modul Edukasi",
-                                description = "Materi audiovisual teknik posisi PMK, cara memerah dan menyimpan ASI, serta stimulasi tumbuh kembang."
+                                description = "Pembelajaran teknik memandikan, posisi dekapan kanguru yang aman, tanda kegawatan, menyusui, dan pengukuran antropometri."
                             )
                             TermsFeatureCard(
-                                title = "Pengingat Skrining Prematuritas",
-                                description = "Pencatatan tanggal janji temu penting skrining mata (ROP), fungsi pendengaran (OAE/BERA), dan USG kepala."
+                                title = "Penapisan & Lembar Hasil Skrining Prematur",
+                                description = "Pencatatan jadwal pengingat alarm untuk 4 skrining wajib IDAI/Kemenkes (USG Kepala, Retinopati Prematuritas/ROP, Pendengaran OAE/BERA, dan Fungsi Tiroid) maupun skrining spesialis tambahan kustom, lengkap dengan catatan temuan medis dan lampiran berkas di penyimpanan lokal perangkat."
                             )
                         }
                     }
@@ -576,15 +585,15 @@ fun TermsOfUseScreen(
                                 iconTint = colors.legalTealText,
                                 text = boldPrefixText(
                                     "Keakuratan Input Data: ",
-                                    "Kebenaran tanggal lahir, usia kehamilan lahir, dan angka timbangan yang dimasukkan secara mandiri oleh orang tua. Kesalahan input data berdampak langsung pada ketepatan kalkulasi kurva dan usia koreksi."
+                                    "Kebenaran, keakuratan, dan validitas data yang dimasukkan ke dalam Aplikasi (seperti tanggal lahir, berat badan, panjang badan, lingkar kepala, dan usia kehamilan). Kesalahan input dapat menyebabkan kurva pertumbuhan dan kalkulasi usia menjadi tidak akurat."
                                 )
                             )
                             TermsIconBulletItem(
                                 icon = Icons.Default.Check,
                                 iconTint = colors.legalTealText,
                                 text = boldPrefixText(
-                                    "Keamanan Akses Perangkat: ",
-                                    "Menjaga keamanan fisik telepon genggam, kode kunci layar, PIN, atau autentikasi biometrik agar data riwayat medis anak tidak diakses oleh pihak yang tidak berhak."
+                                    "Keamanan Perangkat Fisik: ",
+                                    "Karena data riwayat operasional, foto profil bayi, dan lampiran hasil medis tersimpan secara lokal di memori ponsel pintar Anda, Anda bertanggung jawab menjaga keamanan fisik perangkat dan akses kunci layar (PIN/Kata Sandi/Biometrik) agar tidak diakses pihak yang tidak berhak."
                                 )
                             )
                         }
@@ -595,12 +604,17 @@ fun TermsOfUseScreen(
                     // ==========================================
                     TermsSection(number = "7.", title = "Hak Kekayaan Intelektual") {
                         Text(
-                            text = "Seluruh kode sumber, desain UI/UX, tata letak antarmuka, maskot visual, grafik ilustrasi, video demonstrasi, modul teks, dan merek dagang “Kanguru Siaga” adalah milik eksklusif Tim Pengembang Kanguru Siaga atau pemegang lisensi resminya.",
+                            text = "Seluruh kode sumber, arsitektur perangkat lunak, antarmuka visual (UI), pengalaman pengguna (UX), merek “Kanguru Siaga”, maskot ilustrasi, teks materi edukasi, serta video panduan adalah kekayaan intelektual milik KuliTech (Tim Pengembang Kanguru Siaga) atau pemegang lisensi resminya dan dilindungi oleh Undang-Undang Hak Cipta Republik Indonesia.",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
                         Text(
-                            text = "Referensi ilmiah kurva Fenton Growth Chart dilindungi hak cipta Dr. Tanis Fenton / University of Calgary, dan instrumen Buku KIA Bayi Kecil dilindungi oleh Kementerian Kesehatan Republik Indonesia. Keduanya diintegrasikan murni untuk tujuan ilmiah, edukatif klinis, non-komersial, serta peningkatan angka keselamatan bayi di Indonesia.",
+                            text = "Kurva dan metodologi pertumbuhan mengacu pada Fenton Preterm Growth Chart (Hak Cipta © Dr. Tanis Fenton / University of Calgary) dan Buku KIA Khusus Bayi Kecil (Hak Cipta © Kementerian Kesehatan Republik Indonesia). Penggunaan standar ini dalam Aplikasi semata-mata bersifat akademis, edukatif klinis, dan non-komersial untuk keselamatan bayi.",
+                            style = KanguruTheme.typography.bodyMedium,
+                            color = colors.textPrimary
+                        )
+                        Text(
+                            text = "Pengguna dilarang menyalin, memodifikasi, merekayasa balik (reverse engineering), mendekompilasi, mendistribusikan ulang, atau mengeksploitasi materi dalam Aplikasi untuk tujuan komersial tanpa izin tertulis dari Kami.",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -614,7 +628,7 @@ fun TermsOfUseScreen(
                         title = "Larangan Penggunaan (Prohibited Conduct)"
                     ) {
                         Text(
-                            text = "Dalam menggunakan Aplikasi ini, Anda dilarang keras untuk:",
+                            text = "Dalam menggunakan Aplikasi ini, Pengguna dilarang:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -623,22 +637,22 @@ fun TermsOfUseScreen(
                             TermsIconBulletItem(
                                 icon = Icons.Default.Close,
                                 iconTint = colors.error,
-                                text = AnnotatedString("Memasukkan data biologis palsu atau identitas yang bukan merupakan anak dalam pengasuhan sah Anda.")
+                                text = AnnotatedString("Memasukkan data palsu, identitas yang bukan merupakan anak dalam pengasuhan sah Anda, atau muatan berbahaya secara sengaja.")
                             )
                             TermsIconBulletItem(
                                 icon = Icons.Default.Close,
                                 iconTint = colors.error,
-                                text = AnnotatedString("Melakukan rekayasa balik (reverse engineering), dekompilasi, atau mencoba membongkar kode sumber Aplikasi.")
+                                text = AnnotatedString("Mengganggu, meretas, melumpuhkan, atau mencoba membongkar serta menembus integritas server, database Cloud Firestore, API eksternal, atau infrastruktur Aplikasi.")
                             )
                             TermsIconBulletItem(
                                 icon = Icons.Default.Close,
                                 iconTint = colors.error,
-                                text = AnnotatedString("Melakukan serangan siber, upaya penetrasi tidak sah ke server/database Cloud Firestore, atau mengganggu kestabilan infrastruktur sistem.")
+                                text = AnnotatedString("Menggunakan alat otomatis (bots, scrapers, crawlers) untuk mengambil data atau konten dari Aplikasi tanpa izin tertulis.")
                             )
                             TermsIconBulletItem(
                                 icon = Icons.Default.Close,
                                 iconTint = colors.error,
-                                text = AnnotatedString("Menggunakan script otomatis, spider, bot, atau scraper untuk mengambil database materi edukasi atau data aplikasi tanpa izin tertulis.")
+                                text = AnnotatedString("Menggunakan Aplikasi untuk tindakan melanggar hukum di wilayah Republik Indonesia.")
                             )
                         }
                     }
@@ -651,12 +665,12 @@ fun TermsOfUseScreen(
                         title = "Batasan Tanggung Jawab (Limitation of Liability)"
                     ) {
                         Text(
-                            text = "LAYANAN DAN KONTEN DISEDIAKAN BERDASARKAN PRINSIP “SEBAGAIMANA ADANYA” (AS IS) DAN “SEBAGAIMANA TERSEDIA” (AS AVAILABLE) TANPA JAMINAN APAPUN, BAIK TERSURAT MAUPUN TERSIRAT.",
+                            text = "Aplikasi disediakan atas dasar “SEBAGAIMANA ADANYA” (AS IS) dan “SEBAGAIMANA TERSEDIA” (AS AVAILABLE) tanpa jaminan tersurat maupun tersirat apa pun.",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
                         Text(
-                            text = "Sepanjang diizinkan oleh hukum yang berlaku, Tim Pengembang Kanguru Siaga tidak bertanggung jawab atas:",
+                            text = "Sejauh diizinkan oleh hukum yang berlaku, KuliTech tidak bertanggung jawab atas kerugian fisik, cedera, komplikasi kesehatan, kematian, atau kerugian material/immaterial yang timbul akibat:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -664,19 +678,19 @@ fun TermsOfUseScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             TermsLetteredItem(
                                 letter = "a.",
-                                text = "Keterlambatan atau kelalaian mencari pertolongan medis darurat karena asumsi keliru bahwa aplikasi berfungsi sebagai monitor keselamatan tanda-tanda vital otomatis."
+                                text = "Keterlambatan mencari bantuan medis profesional atau anggapan keliru bahwa aplikasi merupakan alat pemantau tanda-tanda vital otomatis."
                             )
                             TermsLetteredItem(
                                 letter = "b.",
-                                text = "Interpretasi mandiri yang salah terhadap grafik pertumbuhan atau skor evaluasi mandiri."
+                                text = "Kesalahan penafsiran mandiri terhadap grafik pertumbuhan, persentil, Z-score, atau materi edukasi."
                             )
                             TermsLetteredItem(
                                 letter = "c.",
-                                text = "Kegagalan alarm atau notifikasi pengingat akibat manajemen daya baterai perangkat (battery optimization), pembaruan sistem operasi ponsel, atau perangkat mati."
+                                text = "Kegagalan fungsi atau tidak berbunyinya alarm pengingat akibat perangkat mati, pencabutan izin sistem oleh pengguna, atau pembatasan latar belakang ekstrem oleh produsen perangkat."
                             )
                             TermsLetteredItem(
                                 letter = "d.",
-                                text = "Kerusakan perangkat keras fisik, kehilangan memori lokal, atau kegagalan koneksi internet pada perangkat Pengguna."
+                                text = "Kehilangan data lokal yang disebabkan oleh kerusakan perangkat, factory reset, atau penghapusan aplikasi (uninstall) oleh Pengguna."
                             )
                         }
                     }
@@ -686,7 +700,7 @@ fun TermsOfUseScreen(
                     // ==========================================
                     TermsSection(number = "10.", title = "Pembaruan & Modifikasi Layanan") {
                         Text(
-                            text = "Kami berhak sewaktu-waktu memperbarui, menambah, mengubah, atau menghentikan fitur tertentu dalam Aplikasi guna menyelaraskan dengan pembaruan pedoman klinis WHO/Kemenkes RI terbaru atau perbaikan teknis. Jika terdapat perubahan substansial pada Ketentuan Penggunaan ini, pemberitahuan akan ditampilkan melalui pembaruan aplikasi dalam format tanggal revisi terbaru.",
+                            text = "Kami berhak untuk sewaktu-waktu memperbarui, menambah fitur, memperbaiki celah (bug), atau mengubah Ketentuan Penggunaan ini demi penyelarasan pedoman klinis terbaru dan peningkatan mutu teknis. Pembaruan ketentuan akan diinformasikan melalui pembaruan Aplikasi pada Google Play Store serta pembaruan dokumen di dalam menu Pengaturan > Legalitas & Privasi > Ketentuan Penggunaan.",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -697,7 +711,7 @@ fun TermsOfUseScreen(
                     // ==========================================
                     TermsSection(number = "11.", title = "Hukum yang Mengatur & Yurisdiksi") {
                         Text(
-                            text = "Ketentuan Penggunaan ini diatur oleh dan ditafsirkan sesuai dengan hukum yang berlaku di Negara Kesatuan Republik Indonesia. Setiap perselisihan yang timbul dari atau sehubungan dengan penggunaan Aplikasi ini akan diupayakan untuk diselesaikan terlebih dahulu melalui musyawarah untuk mufakat dalam waktu 30 (tiga puluh) hari kalender sebelum diajukan ke ranah pengadilan yurisdiksi Republik Indonesia.",
+                            text = "Ketentuan Penggunaan ini diatur oleh dan ditafsirkan sesuai dengan hukum Negara Republik Indonesia. Segala perselisihan yang timbul akan diupayakan penyelesaiannya melalui musyawarah untuk mufakat dalam jangka waktu 30 (tiga puluh) hari kalender, dan apabila tidak tercapai kesepakatan, diselesaikan melalui yurisdiksi pengadilan negeri yang berwenang di Republik Indonesia.",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -734,20 +748,20 @@ fun TermsOfUseScreen(
                             }
 
                             Text(
-                                text = "Jika Anda memiliki pertanyaan, klarifikasi, atau masukan mengenai Ketentuan Penggunaan ini, silakan hubungi tim kami:",
+                                text = "Jika Anda memiliki pertanyaan, klarifikasi, atau masukan mengenai Ketentuan Penggunaan ini, silakan hubungi pengembang resmi kami:",
                                 style = KanguruTheme.typography.bodySmall,
                                 color = colors.textPrimary
                             )
 
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Text(
-                                    text = "Tim Pengembang Kanguru Siaga",
+                                    text = "KuliTech (Tim Pengembang Kanguru Siaga)",
                                     style = KanguruTheme.typography.labelLarge,
                                     fontWeight = FontWeight.SemiBold,
                                     color = colors.textPrimary
                                 )
                                 Text(
-                                    text = "Inisiatif Pendampingan Perawatan Metode Kanguru Indonesia",
+                                    text = "Kesehatan & Kebugaran Maternal & Neonatal • Republik Indonesia",
                                     style = KanguruTheme.typography.bodySmall,
                                     color = colors.textSecondary
                                 )
@@ -760,7 +774,7 @@ fun TermsOfUseScreen(
                                         .clickable {
                                             try {
                                                 val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                                    data = Uri.parse("mailto:kulitech.id@gmail.com")
+                                                    data = Uri.parse("mailto:support@kulitech.my.id")
                                                 }
                                                 context.startActivity(intent)
                                             } catch (_: Exception) {
@@ -777,7 +791,7 @@ fun TermsOfUseScreen(
                                         modifier = Modifier.size(16.dp)
                                     )
                                     Text(
-                                        text = "kulitech.id@gmail.com",
+                                        text = "support@kulitech.my.id",
                                         style = KanguruTheme.typography.labelLarge,
                                         fontWeight = FontWeight.SemiBold,
                                         color = colors.primary

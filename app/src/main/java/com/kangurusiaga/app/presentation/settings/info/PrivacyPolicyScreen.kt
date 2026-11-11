@@ -25,25 +25,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Rule
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChildCare
 import androidx.compose.material.icons.filled.CloudDone
 import androidx.compose.material.icons.filled.CloudSync
-import androidx.compose.material.icons.filled.Devices
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.HourglassBottom
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockClock
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.NoAccounts
-import androidx.compose.material.icons.filled.Rule
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.filled.Vaccines
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.VerifiedUser
@@ -228,7 +231,7 @@ fun PrivacyPolicyScreen(
                                             modifier = Modifier.size(15.dp)
                                         )
                                         Text(
-                                            text = "Tanggal Berlaku: 9 November 2026",
+                                            text = "Tanggal Berlaku: 11 November 2026",
                                             style = KanguruTheme.typography.bodySmall,
                                             color = colors.textSecondary
                                         )
@@ -240,13 +243,23 @@ fun PrivacyPolicyScreen(
                                         shadowElevation = 0.5.dp
                                     ) {
                                         Text(
-                                            text = "Versi 1.0",
+                                            text = "Versi 1.1",
                                             style = KanguruTheme.typography.labelSmall,
-                                            color = colors.textSecondary,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = colors.primary,
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                                         )
                                     }
                                 }
+
+                                Text(
+                                    text = privacyBoldPrefix(
+                                        "Pengembang: ",
+                                        "KuliTech (Tim Pengembang Kanguru Siaga)"
+                                    ),
+                                    style = KanguruTheme.typography.bodySmall,
+                                    color = colors.textPrimary
+                                )
 
                                 Text(
                                     text = buildAnnotatedString {
@@ -258,7 +271,7 @@ fun PrivacyPolicyScreen(
                                         ) {
                                             append("Landasan Hukum: ")
                                         }
-                                        append("Sesuai Undang-Undang Republik Indonesia No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP).")
+                                        append("Sesuai Undang-Undang Republik Indonesia No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP) serta Kebijakan Data Safety, Health Apps, dan Alarm Google Play Console.")
                                     },
                                     style = KanguruTheme.typography.bodySmall,
                                     color = colors.textSecondary
@@ -297,7 +310,7 @@ fun PrivacyPolicyScreen(
                                 )
                             }
                             Text(
-                                text = "Kami di Kanguru Siaga menghargai dan menjunjung tinggi privasi Anda serta si kecil. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menyimpan, melindungi, dan mengolah informasi data pribadi Anda saat menggunakan Aplikasi Kanguru Siaga, sesuai dengan Undang-Undang RI No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP).",
+                                text = "Kami di KuliTech selaku pengembang aplikasi Kanguru Siaga menghargai dan menjunjung tinggi privasi Anda serta buah hati Anda. Kebijakan Privasi ini menjelaskan secara transparan bagaimana kami mengumpulkan, memproses, menyimpan, mengirimkan kepada sub-prosesor tepercaya, melindungi, dan menghapus data pribadi Anda saat menggunakan Aplikasi Kanguru Siaga, sesuai UU PDP No. 27 Tahun 2022 dan standar transparansi Google Play Console.",
                                 style = KanguruTheme.typography.bodyMedium,
                                 color = colors.legalTealText
                             )
@@ -305,16 +318,35 @@ fun PrivacyPolicyScreen(
                     }
 
                     // ==========================================
-                    // PASAL 1: KOMITMEN PRIVASI UTAMA
+                    // PASAL 1: KOMITMEN PRIVASI & DASAR HUKUM UU PDP
                     // ==========================================
-                    PrivacySection(number = "1", title = "Komitmen Privasi Utama") {
+                    PrivacySection(
+                        number = "1",
+                        title = "Komitmen Privasi & Dasar Hukum Pemrosesan Data Spesifik (UU PDP)"
+                    ) {
                         Text(
-                            text = "Integritas dan keselamatan digital bayi premature maupun BBLR (Bayi Berat Lahir Rendah) adalah prioritas mutlak kami. Prinsip dasar kami meliputi:",
+                            text = "Integritas dan keselamatan digital bayi prematur maupun BBLR (Bayi Berat Lahir Rendah) adalah prioritas mutlak kami. Prinsip dasar pemrosesan data kami meliputi:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
 
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            PrivacyIconCard(
+                                icon = Icons.Default.VerifiedUser,
+                                iconTint = colors.legalTealAccent,
+                                text = privacyBoldPrefix(
+                                    "Kategori Data Pribadi Spesifik (Pasal 4 ayat (2) UU PDP): ",
+                                    "Informasi kelahiran, kondisi prematuritas/BBLR, parameter pertumbuhan antropometri, catatan skrining medis, dan data anak tergolong Data Pribadi yang Bersifat Spesifik."
+                                )
+                            )
+                            PrivacyIconCard(
+                                icon = Icons.Default.Verified,
+                                iconTint = colors.legalTealAccent,
+                                text = privacyBoldPrefix(
+                                    "Dasar Hukum Persetujuan Eksplisit: ",
+                                    "Seluruh pemrosesan data didasarkan pada persetujuan sah secara eksplisit (explicit consent) orang tua/wali yang berwenang — termasuk konfirmasi pada layar Konfirmasi Data Bayi saat onboarding (sebelum penyimpanan lokal maupun sinkronisasi Cloud Firestore) serta konfirmasi interaktif sebelum akses grafik online ke FentonGrowth.ca."
+                                )
+                            )
                             PrivacyIconCard(
                                 icon = Icons.Default.Block,
                                 iconTint = colors.primary,
@@ -331,23 +363,15 @@ fun PrivacyPolicyScreen(
                                     ) {
                                         append("TIDAK PERNAH")
                                     }
-                                    append(" menjual, memperdagangkan, menyewakan, atau memberikan data pribadi atau data catatan kesehatan bayi Anda kepada pihak ketiga, broker data, atau jaringan periklanan komersial mana pun.")
+                                    append(" menjual, memperdagangkan, atau menyewakan data pribadi maupun data kesehatan bayi Anda kepada pihak ketiga, broker data, atau jaringan periklanan komersial mana pun.")
                                 }
-                            )
-                            PrivacyIconCard(
-                                icon = Icons.Default.LockClock,
-                                iconTint = colors.legalTealAccent,
-                                text = privacyBoldPrefix(
-                                    "Privasi Sejak Desain (Privacy by Design): ",
-                                    "Sebagian besar data pemantauan dan operasional esensial tersimpan secara lokal langsung di memori ponsel pintar Anda sendiri."
-                                )
                             )
                             PrivacyIconCard(
                                 icon = Icons.Default.NoAccounts,
                                 iconTint = colors.legalTealAccent,
                                 text = privacyBoldPrefix(
-                                    "Akses Bebas Akun: ",
-                                    "Aplikasi dapat dioperasikan penuh tanpa kewajiban registrasi akun sosial media, alamat email, ataupun verifikasi nomor ponsel pribadi."
+                                    "Desentralisasi Data (Offline-First & Bebas Akun): ",
+                                    "Sebagian besar catatan harian, media foto, dan dokumen medis disimpan privat di memori internal perangkat dan dapat digunakan tanpa registrasi akun email maupun nomor telepon pribadi."
                                 )
                             )
                         }
@@ -358,7 +382,7 @@ fun PrivacyPolicyScreen(
                     // ==========================================
                     PrivacySection(number = "2", title = "Informasi & Data yang Kami Kumpulkan") {
                         Text(
-                            text = "Untuk memberikan kalkulasi pertumbuhan neonatus yang presisi dan panduan Perawatan Metode Kanguru (PMK), kami memproses rincian parameter berikut:",
+                            text = "Berikut rincian kategori data yang diproses beserta tempat penyimpanan dan tujuannya:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -366,23 +390,23 @@ fun PrivacyPolicyScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             PrivacyDataCard(
                                 icon = Icons.Default.ChildCare,
-                                title = "Identitas Kelahiran Bayi",
-                                description = "Nama panggilan anak, tanggal & jam kelahiran, usia gestasi saat lahir (minggu & hari), berat badan lahir (gram), panjang badan lahir (cm), lingkar kepala lahir (cm), dan jenis kelamin biologis."
+                                title = "Identitas Kelahiran & Profil Onboarding Bayi",
+                                description = "Nama panggilan/lengkap bayi, tanggal lahir (epoch & terformat), usia kehamilan lahir (minggu), berat lahir & berat saat onboarding (gram), panjang & lingkar kepala lahir/saat ini (cm), jenis kelamin, versi aplikasi, dan environment build. Disimpan lokal di Room SQLite serta disinkronkan satu kali saat onboarding (bila online) ke koleksi baby_onboarding_profiles di Cloud Firestore."
                             )
                             PrivacyDataCard(
                                 icon = Icons.Default.Straighten,
-                                title = "Data Antropometri Berkala",
-                                description = "Catatan berkala berat badan rutin (gram), panjang badan (cm), lingkar kepala (cm), tanggal dan waktu penimbangan, serta catatan observasi perkembangan klinis orang tua."
+                                title = "Data Antropometri & Pertumbuhan Berkala",
+                                description = "Catatan berkala berat, panjang, dan lingkar kepala beserta tanggal pengukuran, kalkulasi persentil/Z-score, berkas CSV lokal (fenton_zscore_*.csv), dan cache gambar grafik. Disimpan lokal di perangkat; hanya dikirim ke FentonGrowth.ca API apabila pengguna mengonfirmasi fitur grafik/Z-score online."
                             )
                             PrivacyDataCard(
                                 icon = Icons.Default.HourglassBottom,
-                                title = "Data Aktivitas PMK (Kangaroo Mother Care)",
-                                description = "Waktu mulai dan selesai kontak kulit-ke-kulit (skin-to-skin), durasi per sesi pemantauan, akumulasi total durasi harian, serta mode PMK (kontinu atau intermiten)."
+                                title = "Data Aktivitas PMK, Nutrisi, & Pengingat",
+                                description = "Waktu mulai/selesai kontak skin-to-skin, durasi sesi, target harian PMK, jadwal pengingat PMK, dan jadwal alarm minum ASI/OGT/NGT. Disimpan 100% lokal di perangkat (Room SQLite & DataStore) dan tidak dikirim ke Cloud Firestore."
                             )
                             PrivacyDataCard(
                                 icon = Icons.Default.Vaccines,
-                                title = "Data Nutrisi & Pemantauan Medis Khusus",
-                                description = "Jadwal pemberian asupan (ASI / Susu Formula Khusus / Sonde OGT / NGT), target volume cairan per 24 jam, serta daftar centang skrining esensial BBLR (ROP, BERA, USG Kepala)."
+                                title = "Data Skrining Medis & Lampiran Klinis",
+                                description = "Jadwal 4 skrining wajib IDAI/Kemenkes & skrining tambahan kustom, catatan temuan/resume klinis dokter, serta berkas lampiran medis (foto cetak USG/retina atau file PDF resume lab maks. 10 MB per berkas di direktori internal screening_attachments/). Disimpan 100% lokal di perangkat dan TIDAK PERNAH diunggah ke Cloud Firestore atau server kami."
                             )
 
                             // Special Media Card (Rose Tint)
@@ -406,7 +430,7 @@ fun PrivacyPolicyScreen(
                                             modifier = Modifier.size(18.dp)
                                         )
                                         Text(
-                                            text = "Media (Foto Bayi) - Penegasan Khusus",
+                                            text = "Media (Foto Profil Bayi) — 100% Lokal",
                                             style = KanguruTheme.typography.labelLarge,
                                             fontWeight = FontWeight.SemiBold,
                                             color = colors.primary
@@ -414,7 +438,7 @@ fun PrivacyPolicyScreen(
                                     }
                                     Text(
                                         text = buildAnnotatedString {
-                                            append("Foto profil anak yang dipilih dari galeri atau kamera Anda ")
+                                            append("Foto profil bayi yang diambil via kamera sistem atau dipilih lewat Android Photo Picker ")
                                             withStyle(
                                                 SpanStyle(
                                                     fontWeight = FontWeight.Bold,
@@ -423,14 +447,14 @@ fun PrivacyPolicyScreen(
                                             ) {
                                                 append("disimpan 100% secara lokal")
                                             }
-                                            append(" pada penyimpanan sandboxed ponsel Anda. Berkas foto ")
+                                            append(" di direktori internal sandbox baby_photos/ pada perangkat Anda. Berkas foto ")
                                             withStyle(
                                                 SpanStyle(
                                                     fontWeight = FontWeight.Bold,
                                                     textDecoration = TextDecoration.Underline
                                                 )
                                             ) {
-                                                append("TIDAK PERNAH diunggah, ditransmisikan, atau disimpan")
+                                                append("TIDAK PERNAH diunggah atau disimpan")
                                             }
                                             append(" pada server cloud kami.")
                                         },
@@ -441,9 +465,15 @@ fun PrivacyPolicyScreen(
                             }
 
                             PrivacyDataCard(
-                                icon = Icons.Default.Devices,
-                                title = "Data Teknis & Diagnostik Anonim",
-                                description = "Tipe model ponsel, versi sistem operasi Android, dan log crash teknis terenkripsi melalui Firebase Crashlytics untuk stabilitas tanpa identifier pribadi."
+                                icon = Icons.Default.Analytics,
+                                title = "Data Analitik Aplikasi (Firebase Analytics)",
+                                description = "App Instance ID, event standar penggunaan layar/interaksi fitur, informasi perangkat (model, OS Android), perkiraan lokasi umum berbasis IP oleh Google, serta Advertising ID bawaan perangkat (kecuali dibatasi pengguna di setelan Android). Diproses oleh SDK Google Firebase Analytics untuk memantau kestabilan adopsi fitur secara agregat tanpa penayangan iklan."
+                            )
+
+                            PrivacyDataCard(
+                                icon = Icons.Default.BugReport,
+                                title = "Data Diagnostik & Log Error (Firebase Crashlytics)",
+                                description = "Model perangkat, versi OS, versi aplikasi, stack trace crash/error non-fatal, ID dokumen Firestore hasil sinkronisasi, serta log breadcrumb lokal saat peristiwa sinkronisasi/error. Catatan transparansi: breadcrumb log status offline pada BabyFirestoreSyncManager dapat mencatat nama tampilan profil bayi apabila crash terjadi tepat setelah log tersebut."
                             )
                         }
                     }
@@ -451,17 +481,20 @@ fun PrivacyPolicyScreen(
                     // ==========================================
                     // PASAL 3: ARSITEKTUR PENYIMPANAN
                     // ==========================================
-                    PrivacySection(number = "3", title = "Arsitektur Penyimpanan: Lokal & Cloud") {
+                    PrivacySection(
+                        number = "3",
+                        title = "Arsitektur Penyimpanan Data: Lokal & Cloud Firestore"
+                    ) {
                         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             PrivacyStorageCard(
                                 icon = Icons.Default.Smartphone,
-                                title = "Penyimpanan Lokal (Offline-First Architecture)",
-                                description = "Menggunakan basis data SQLite/Room terisolasi berstandar Sandbox Android. Riwayat sesi PMK harian, grafik pertumbuhan, jadwal pengingat, dan foto tersimpan eksklusif di ruang memori internal aplikasi. Seluruh fungsi inti beroperasi normal tanpa koneksi internet maupun saat mode pesawat."
+                                title = "Penyimpanan Lokal Perangkat (Offline-First Architecture)",
+                                description = "Menggunakan database Room (SQLite), DataStore Preferences, serta direktori penyimpanan internal privat Android Application Sandbox (filesDir dan cacheDir). Data yang 100% hanya tersimpan lokal meliputi: seluruh log sesi PMK & jadwal alarm PMK/nutrisi; seluruh pengukuran antropometri berkala, file CSV lokal (fenton_zscore_*.csv), & gambar cache grafik; seluruh jadwal & catatan temuan skrining plus berkas lampiran medis hingga 10 MB di folder screening_attachments/ (ScreeningAttachmentManager); foto profil bayi di folder baby_photos/ (PhotoStorageManager); serta preferensi tema/teks. Seluruh fitur harian tetap berjalan penuh secara offline."
                             )
                             PrivacyStorageCard(
                                 icon = Icons.Default.CloudSync,
                                 title = "Sinkronisasi Cloud Terbatas (Google Cloud Firestore)",
-                                description = "Saat ponsel online, data identifikasi awal dan parameter pertumbuhan dapat disinkronkan secara aman melalui Cloud Firestore Security Rules berspesifikasi ketat (validasi klinis batas wajar, izin create-only terproteksi, serta akses baca terbuka/publik ditutup seutuhnya)."
+                                description = "Hanya saat onboarding setelah pengguna mengonfirmasi data di Konfirmasi Data Bayi dan perangkat online, Aplikasi mengirim satu kali secara non-blocking ke koleksi baby_onboarding_profiles (auto-generated Document ID). Daftar lengkap 15 field yang dikirim: babyName, birthDateEpochMillis, birthDateFormatted, gestationalAgeWeeks, birthWeightGram, currentWeightGram, birthLengthCm, currentLengthCm, birthHeadCircumferenceCm, currentHeadCircumferenceCm, gender, environment, appVersion, syncedAtEpochMillis, dan createdAtServer. Aturan keamanan firestore.rules bersifat create-only dari klien dengan validasi CEL, sedangkan read, update, dan delete ditutup penuh bagi publik/klien (hanya admin terautentikasi dengan klaim admin == true)."
                             )
                         }
                     }
@@ -472,53 +505,65 @@ fun PrivacyPolicyScreen(
                     PrivacySection(number = "4", title = "Tujuan Pengolahan & Penggunaan Data") {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             PrivacyCheckBullet(
-                                prefix = "Fungsionalitas Klinis: ",
-                                body = "Mengotomatisasi kalkulasi usia koreksi (Corrected Age/PMA), memetakan persentil kurva pertumbuhan Fenton 2025, dan mengkalkulasi pencapaian target harian PMK."
+                                prefix = "Fungsionalitas Klinis & Pemantauan Harian: ",
+                                body = "Menghitung usia kronologis/koreksi/PMA, memetakan grafik pertumbuhan Kurva Fenton (2013/2025), menjadwalkan alarm pengingat ASI/OGT/NGT serta PMK, dan mengarsipkan lembar hasil skrining BBLR secara lokal."
                             )
                             PrivacyCheckBullet(
-                                prefix = "Alarm & Manajemen Waktu: ",
-                                body = "Menghasilkan pengingat berkala untuk jadwal pemberian nutrisi per 2-3 jam serta batas pergantian posisi skin-to-skin."
+                                prefix = "Kustomisasi Pengalaman Pengguna: ",
+                                body = "Menyimpan preferensi tema (Warm Light / Dark Nursing Mode) dan ukuran skala teks agar nyaman dibaca di ruang NICU maupun rumah."
                             )
                             PrivacyCheckBullet(
-                                prefix = "Kustomisasi Pribadi: ",
-                                body = "Mengatur kenyamanan visual (mode redup malam di ruang NICU) dan preferensi pengingat suara hening."
+                                prefix = "Keandalan Sistem & Analitik Produk: ",
+                                body = "Memantau rasio crash, diagnosa kegagalan sinkronisasi (Crashlytics), serta performa pemakaian fitur aplikasi (Firebase Analytics)."
                             )
                             PrivacyCheckBullet(
-                                prefix = "Riset Ilmiah Anonim: ",
-                                body = "Pengembangan studi kesehatan pencegahan komplikasi stunting dan hipotermia pada BBLR secara teragregasi tanpa data identitas perorangan."
+                                prefix = "Evaluasi Program & Riset Kesehatan Anonim: ",
+                                body = "Data onboarding dan pertumbuhan dapat diagregasikan serta dianonimkan (menghapus nama bayi dan identitas langsung) untuk evaluasi klinis program perawatan BBLR dan publikasi ilmiah pencegahan komplikasi prematuritas."
                             )
                         }
                     }
 
                     // ==========================================
-                    // PASAL 5: BEBAS IKLAN & PIHAK KETIGA
+                    // PASAL 5: BEBAS PENJUALAN DATA, ANALITIK, & PIHAK KETIGA
                     // ==========================================
                     PrivacySection(
                         number = "5",
-                        title = "Bebas Iklan & Keterlibatan Pihak Ketiga"
+                        title = "Kebijakan Bebas Penjualan Data, Layanan Analitik, & Pihak Ketiga"
                     ) {
                         Text(
-                            text = "Aplikasi Kanguru Siaga dirancang murni sebagai sarana pendampingan medis suportif:",
+                            text = "Aplikasi Kanguru Siaga tidak menayangkan iklan pihak ketiga (ad networks) dan hanya bekerja dengan sub-prosesor tepercaya berikut:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
 
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             PrivacyIconCard(
-                                icon = Icons.Default.Verified,
-                                iconTint = colors.legalTealAccent,
+                                icon = Icons.Default.Block,
+                                iconTint = colors.primary,
                                 text = privacyBoldPrefix(
-                                    "Bebas Iklan Komersial: ",
-                                    "Tidak ada library pelacak pihak ketiga (third-party tracking SDKs) untuk profil penargetan iklan."
+                                    "Tidak Ada Penayangan Iklan Komersial: ",
+                                    "Aplikasi tidak menampilkan iklan pihak ketiga dan tidak pernah menjual data pengguna maupun data anak kepada pengiklan atau broker data."
                                 )
                             )
-                            PrivacyIconCard(
+                            PrivacyDataCard(
                                 icon = Icons.Default.CloudDone,
-                                iconTint = colors.legalTealAccent,
-                                text = privacyBoldPrefix(
-                                    "Sub-prosesor Resmi Berstandar Global: ",
-                                    "Pemrosesan infrastruktur didukung oleh Google Cloud Platform (enkripsi ISO 27001 / SOC 2) dan fungsionalitas algoritma FentonGrowth.ca untuk validasi standar persentil."
-                                )
+                                title = "Google Firebase — Cloud Firestore",
+                                description = "Penyimpanan profil onboarding bayi saat pendaftaran awal online pada infrastruktur Google Cloud berstandar keamanan global (ISO 27001 / SOC 2)."
+                            )
+                            PrivacyDataCard(
+                                icon = Icons.Default.Analytics,
+                                title = "Google Firebase — Firebase Analytics",
+                                description = "Mengumpulkan App Instance ID, event penggunaan, info perangkat/OS, perkiraan lokasi kasar berbasis IP, serta Advertising ID Android. Kanguru Siaga tidak menggunakan Advertising ID untuk iklan tertarget. Anda dapat menyetel ulang atau menonaktifkan Advertising ID via Pengaturan Android > Google > Iklan (Ads)."
+                            )
+                            PrivacyDataCard(
+                                icon = Icons.Default.BugReport,
+                                title = "Google Firebase — Firebase Crashlytics",
+                                description = "Pelaporan error aplikasi dan crash diagnostik otomatis, termasuk breadcrumb teknis sinkronisasi sebagaimana dijelaskan pada Pasal 2."
+                            )
+                            PrivacyDataCard(
+                                icon = Icons.Default.Verified,
+                                title = "FentonGrowth.ca API (https://fentongrowth.ca)",
+                                description = "Layanan kalkulator pertumbuhan prematur University of Calgary / Dr. Tanis Fenton yang dipanggil HANYA setelah konfirmasi pengguna melalui dialog FentonInternetConfirmationDialog. Payload CSV yang dikirim berisi: Title (nama tampilan bayi bila terisi), Number (ID numerik internal database lokal), Sex (M/F), Date of birth (dd-MMM-yyyy), GA at birth (minggu), serta titik pengukuran pertumbuhan: GA (weeks), Weight (g), Head (cm), dan Length (cm)."
                             )
                         }
                     }
@@ -531,36 +576,78 @@ fun PrivacyPolicyScreen(
                         title = "Izin Akses Perangkat (Device Permissions)"
                     ) {
                         Text(
-                            text = "Setiap permintaan izin sistem operasi Android digunakan secara eksklusif untuk tujuan fungsional:",
+                            text = "Aplikasi hanya mendeklarasikan 8 izin yang dibutuhkan dan selaras persis dengan file AndroidManifest.xml:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
 
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             PrivacyPermissionCard(
-                                permission = "POST_NOTIFICATIONS (Android 13+)",
-                                reason = "Menampilkan banner waktu nyata saat sesi timer PMK sedang berjalan di latar belakang dan notifikasi pengingat minum susu."
+                                permission = "INTERNET",
+                                reason = "Menghubungkan Aplikasi ke Google Firebase (Firestore, Analytics, Crashlytics) serta memanggil FentonGrowth.ca API saat memuat grafik/Z-score online. Fitur harian tetap berjalan offline."
+                            )
+                            PrivacyPermissionCard(
+                                permission = "ACCESS_NETWORK_STATE",
+                                reason = "Mengecek ketersediaan koneksi internet sebelum memicu sinkronisasi cloud atau unduhan grafik agar tidak gagal diam-diam."
+                            )
+                            PrivacyPermissionCard(
+                                permission = "POST_NOTIFICATIONS",
+                                reason = "Menampilkan notifikasi timer sesi PMK berjalan, pengingat jadwal minum ASI, serta pengingat jadwal skrining prematur (dapat dimatikan di Pengaturan)."
                             )
                             PrivacyPermissionCard(
                                 permission = "SCHEDULE_EXACT_ALARM",
-                                reason = "Memicu alarm audio/getar pada waktu presisi demi kepatuhan pemberian nutrisi terjadwal bayi kecil."
+                                reason = "Menjadwalkan alarm pengingat pemberian nutrisi dan sesi PMK agar dipicu tepat waktu sesuai jadwal pengasuh."
                             )
                             PrivacyPermissionCard(
-                                permission = "CAMERA",
-                                reason = "Mengambil foto avatar si kecil langsung dari perangkat atas inisiatif pengguna. Foto tidak pernah diunggah."
+                                permission = "USE_EXACT_ALARM (Izin Sensitif Kebijakan Alarm Google Play)",
+                                reason = "Memastikan pengingat nutrisi enteral (ASI/OGT/NGT per 2–3 jam pada bayi BBLR berisiko hipoglikemia/dehidrasi), target PMK, dan alarm skrining kritis tetap berbunyi presisi meski ponsel memasuki mode hemat daya/Doze Android. Digunakan murni untuk alarm klinis perawatan & nutrisi bayi."
                             )
                             PrivacyPermissionCard(
-                                permission = "READ_MEDIA_IMAGES / READ_EXTERNAL_STORAGE",
-                                reason = "Memilih foto bayi dari album galeri untuk keperluan personalisasi kartu profil di perangkat."
+                                permission = "RECEIVE_BOOT_COMPLETED",
+                                reason = "Memulihkan dan menjadwalkan ulang seluruh alarm PMK, alarm ASI, dan alarm skrining secara otomatis setelah ponsel dinyalakan ulang (reboot) atau aplikasi diperbarui."
                             )
                             PrivacyPermissionCard(
-                                permission = "WRITE_EXTERNAL_STORAGE (Android 9 ke bawah)",
-                                reason = "Menyimpan berkas ringkasan ekspor grafik laporan (format PDF/gambar) ke direktori unduhan pengguna."
+                                permission = "VIBRATE",
+                                reason = "Memberikan getaran lembut saat notifikasi pengingat berbunyi sehingga pengasuh tetap sadar meski perangkat dalam mode senyap di ruang perawatan/NICU."
                             )
                             PrivacyPermissionCard(
-                                permission = "INTERNET & ACCESS_NETWORK_STATE",
-                                reason = "Mengecek konektivitas jaringan untuk pengiriman laporan eror anonim serta sinkronisasi awan opsional."
+                                permission = "WRITE_EXTERNAL_STORAGE (maxSdkVersion=\"28\" / Android ≤ 9)",
+                                reason = "Menyimpan ekspor gambar Grafik Pertumbuhan Fenton ke Galeri pada Android 9 ke bawah. Pada Android 10+ (API 29+), Aplikasi memakai MediaStore modern tanpa izin penyimpanan legacy."
                             )
+
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(10.dp),
+                                color = colors.legalTealSurfaceBg
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(12.dp),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.FolderOpen,
+                                            contentDescription = null,
+                                            tint = colors.legalTealAccent,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Text(
+                                            text = "Kamera, Galeri, & Dokumen Tanpa Izin Penuh (Privacy-Preserving Pickers)",
+                                            style = KanguruTheme.typography.labelLarge,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = colors.legalTealText
+                                        )
+                                    }
+                                    Text(
+                                        text = "Aplikasi TIDAK mendeklarasikan izin CAMERA, READ_MEDIA_IMAGES, maupun READ_EXTERNAL_STORAGE di AndroidManifest.xml:\n• Kamera Sistem (TakePicture via FileProvider): pemotretan diserahkan ke aplikasi kamera bawaan Android dengan URI terisolasi.\n• Android Photo Picker (PickVisualMedia): Aplikasi tidak dapat memindai seluruh galeri, hanya menerima akses sementara ke 1 foto pilihan Anda.\n• System Document Picker / SAF (OpenDocument): unggahan PDF/foto lampiran medis hanya mengakses 1 berkas pilihan Anda lalu menyalinnya ke ruang privat (screening_attachments/).",
+                                        style = KanguruTheme.typography.bodySmall,
+                                        color = colors.legalTealText
+                                    )
+                                }
+                            }
                         }
                     }
 
@@ -569,23 +656,23 @@ fun PrivacyPolicyScreen(
                     // ==========================================
                     PrivacySection(
                         number = "7",
-                        title = "Langkah-Langkah Keamanan & Enkripsi"
+                        title = "Langkah-Langkah Keamanan & Enkripsi Data"
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             PrivacySecurityCard(
                                 icon = Icons.Default.Lock,
-                                title = "Enkripsi Data dalam Transit",
-                                description = "Seluruh komunikasi data keluar menggunakan protokol terenkripsi kuat TLS 1.3 / HTTPS dengan perlindungan man-in-the-middle."
+                                title = "Enkripsi dalam Transit",
+                                description = "Seluruh lalu lintas data antara Aplikasi, layanan Google Firebase, dan server FentonGrowth.ca menggunakan protokol terenkripsi HTTPS / TLS."
                             )
                             PrivacySecurityCard(
                                 icon = Icons.Default.Shield,
-                                title = "Android Application Sandbox",
-                                description = "Data lokal disimpan dalam kontainer memori internal privat yang tidak dapat diakses langsung oleh aplikasi lain pada perangkat."
+                                title = "Isolasi Application Sandbox & FileProvider",
+                                description = "Database Room, DataStore, foto profil bayi, Z-score CSV, dan lampiran PDF/foto medis berada di ruang penyimpanan internal privat yang tidak dapat dibaca aplikasi lain; pembukaan lampiran memakai izin baca sementara FileProvider."
                             )
                             PrivacySecurityCard(
                                 icon = Icons.AutoMirrored.Filled.Rule,
-                                title = "Aturan Database Granular (CEL)",
-                                description = "Penyaringan ketat Common Expression Language pada tingkat server untuk menolak input data di luar standar klinis bayi."
+                                title = "Penegakan Aturan Database Granular (CEL)",
+                                description = "Koleksi Cloud Firestore dilindungi validasi skema dan batas klinis Common Expression Language (CEL), akses create-only dari klien onboarding, serta larangan read/update/delete oleh publik."
                             )
                         }
                     }
@@ -595,10 +682,10 @@ fun PrivacyPolicyScreen(
                     // ==========================================
                     PrivacySection(
                         number = "8",
-                        title = "Hak-Hak Pengguna (Berdasarkan UU PDP)"
+                        title = "Hak-Hak Pengguna atas Data Pribadi (UU PDP)"
                     ) {
                         Text(
-                            text = "Sebagai subjek data pribadi, Anda memiliki hak hukum penuh sesuai ketentuan UU RI No. 27 Tahun 2022:",
+                            text = "Sesuai UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi, Anda memiliki hak penuh atas data Anda:",
                             style = KanguruTheme.typography.bodyMedium,
                             color = colors.textPrimary
                         )
@@ -606,50 +693,76 @@ fun PrivacyPolicyScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             PrivacyRightCard(
                                 title = "Hak Akses & Pembaruan",
-                                description = "Anda dapat melihat dan menyunting riwayat berat badan, panjang badan, dan profil identitas kapan pun melalui menu \"Edit Profil Bayi\"."
+                                description = "Anda dapat melihat dan mengubah data profil bayi beserta riwayat pertumbuhan kapan pun melalui menu Pengaturan > Profil Bayi."
                             )
                             PrivacyRightCard(
-                                title = "Hak Penghapusan (Right to Erasure)",
-                                description = "Anda dapat menghapus seluruh data catatan dengan tombol \"Bersihkan Riwayat\", melakukan reset melalui pengaturan Android, atau menghapus pemasangan aplikasi (uninstall)."
+                                title = "Hak Penghapusan Data Lokal (Right to Erasure)",
+                                description = "Hapus log aktivitas & jadwal lama lewat Pengaturan > Hapus Riwayat Aktivitas; reset seluruh database lewat Pengaturan > Reset Data Aplikasi; atau lakukan uninstall untuk menghapus permanen Room SQLite, foto profil, Z-score CSV, dan seluruh lampiran dokumen medis dari perangkat."
+                            )
+                            PrivacyRightCard(
+                                title = "Hak Penghapusan Data Cloud",
+                                description = "Anda berhak meminta penghapusan dokumen onboarding bayi di Cloud Firestore melalui prosedur resmi pada Pasal 10."
                             )
                             PrivacyRightCard(
                                 title = "Hak Menarik Persetujuan",
-                                description = "Anda berhak mencabut izin notifikasi dan kamera kapan saja melalui menu Pengaturan Aplikasi di perangkat Anda."
+                                description = "Anda berhak mencabut izin notifikasi/alarm di Setelan Aplikasi Android, mereset atau membatasi Advertising ID pada setelan Google Android, atau berhenti menggunakan Aplikasi kapan saja."
                             )
                         }
                     }
 
                     // ==========================================
-                    // PASAL 9 & 10
+                    // PASAL 9: PRIVASI ANAK & BAYI
                     // ==========================================
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        PrivacySection(
-                            number = "9",
-                            title = "Privasi Anak & Bayi (Children's Privacy)"
-                        ) {
-                            Text(
-                                text = "Aplikasi Kanguru Siaga ditujukan untuk digunakan oleh orang tua, wali sah, atau tenaga medis profesional dewasa. Aplikasi tidak dirancang untuk dioperasikan secara mandiri oleh anak-anak. Seluruh pencatatan data anak dilakukan atas kendali dan otorisasi penuh orang tua atau wali yang berwenang.",
-                                style = KanguruTheme.typography.bodyMedium,
-                                color = colors.textPrimary
-                            )
-                        }
+                    PrivacySection(
+                        number = "9",
+                        title = "Privasi Anak & Bayi (Children's Privacy)"
+                    ) {
+                        Text(
+                            text = "Subjek data dalam Aplikasi mencakup data bayi baru lahir dan anak-anak. Aplikasi tidak ditujukan untuk dioperasikan secara mandiri oleh anak-anak di bawah umur dan hanya boleh digunakan oleh orang tua kandung, wali hukum yang sah, atau tenaga kesehatan pendamping dewasa. Seluruh data anak diinput atas otorisasi penuh orang tua/wali yang sah dan kami tidak pernah mengumpulkan kontak pribadi langsung anak (email/telepon anak).",
+                            style = KanguruTheme.typography.bodyMedium,
+                            color = colors.textPrimary
+                        )
+                    }
 
-                        PrivacySection(
-                            number = "10",
-                            title = "Retensi & Penghapusan Data"
-                        ) {
-                            Text(
-                                text = "Data lokal tetap tersimpan di perangkat selama aplikasi terpasang atau hingga pengguna membersihkan data aplikasi secara manual. Data analitik anonim agregat disimpan maksimal selama masa evaluasi berkala untuk perbaikan algoritma, setelah itu dihapus secara permanen.",
-                                style = KanguruTheme.typography.bodyMedium,
-                                color = colors.textPrimary
+                    // ==========================================
+                    // PASAL 10: RETENSI & MEKANISME PENGHAPUSAN DATA
+                    // ==========================================
+                    PrivacySection(
+                        number = "10",
+                        title = "Retensi & Mekanisme Penghapusan Data (Data Deletion Policy)"
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            PrivacyRightCard(
+                                title = "Masa Retensi Data Terukur",
+                                description = "• Data Lokal Perangkat: tersimpan selama Aplikasi terpasang atau hingga pengguna menjalankan Hapus Riwayat Aktivitas, Reset Data Aplikasi, atau uninstall.\n• Profil Onboarding Cloud (baby_onboarding_profiles): disimpan maksimal 24 (dua puluh empat) bulan sejak tanggal pencatatan (createdAtServer), atau dihapus lebih awal atas permintaan, lalu dihapus permanen atau dianonimkan seutuhnya.\n• Firebase Crashlytics & Analytics: log Crashlytics mengikuti retensi standar 90 hari, sedangkan data agregat Analytics maksimal 14 bulan sebelum kedaluwarsa otomatis."
+                            )
+
+                            PrivacySecurityCard(
+                                icon = Icons.Default.DeleteForever,
+                                title = "Mekanisme Permohonan Penghapusan Data Cloud",
+                                description = "Karena Aplikasi dapat dipakai tanpa akun/login dan dokumen baby_onboarding_profiles memakai auto-generated Document ID tanpa User ID tetap di perangkat, ajukan penghapusan data cloud dengan:\n1. Kirim email ke support@kulitech.my.id dengan subjek: \"Permohonan Penghapusan Data Cloud - Kanguru Siaga\".\n2. Sertakan informasi pencocokan: nama bayi saat onboarding (babyName), tanggal lahir (birthDateFormatted), perkiraan tanggal & waktu pendaftaran onboarding diselesaikan, serta data verifikasi (usia gestasi lahir, berat badan lahir, jenis kelamin).\n3. Tim administrator KuliTech memverifikasi kecocokan dan menghapus dokumen terkait secara permanen selambat-lambatnya dalam 14 (empat belas) hari kerja disertai email konfirmasi."
                             )
                         }
                     }
 
                     // ==========================================
-                    // PASAL 11: KONTAK & LAYANAN PENGADUAN
+                    // PASAL 11: PERUBAHAN KEBIJAKAN PRIVASI
                     // ==========================================
-                    PrivacySection(number = "11", title = "Kontak & Layanan Pengaduan") {
+                    PrivacySection(
+                        number = "11",
+                        title = "Perubahan Kebijakan Privasi"
+                    ) {
+                        PrivacySecurityCard(
+                            icon = Icons.Default.Update,
+                            title = "Pembaruan Dokumen & Pemberitahuan Perubahan Material",
+                            description = "Kami dapat memperbarui Kebijakan Privasi ini mengikuti pembaruan fitur, sub-prosesor, pedoman Google Play Console, maupun hukum yang berlaku:\n• Setiap pembaruan mencantumkan Tanggal Berlaku dan Versi Dokumen terbaru di atas halaman ini (Pengaturan > Legalitas & Privasi > Kebijakan Privasi).\n• Untuk perubahan material terkait Data Pribadi yang Bersifat Spesifik atau pihak ketiga baru, pemberitahuan disampaikan melalui rilis Google Play Store dan/atau di dalam Aplikasi sebelum berlaku efektif.\n• Dengan terus menggunakan Aplikasi setelah tanggal berlaku, Anda menyetujui pembaruan tersebut; jika tidak setuju, Anda berhak menghentikan pemakaian, menghapus data lokal, dan mengajukan penghapusan cloud sesuai Pasal 10."
+                        )
+                    }
+
+                    // ==========================================
+                    // PASAL 12: KONTAK & LAYANAN PENGADUAN
+                    // ==========================================
+                    PrivacySection(number = "12", title = "Kontak & Layanan Pengaduan") {
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
@@ -660,10 +773,16 @@ fun PrivacyPolicyScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
-                                    text = "Tim Pengembang Kanguru Siaga",
+                                    text = "KuliTech (Tim Pengembang Kanguru Siaga)",
                                     style = KanguruTheme.typography.labelLarge,
                                     fontWeight = FontWeight.SemiBold,
                                     color = colors.textPrimary
+                                )
+
+                                Text(
+                                    text = "Kesehatan & Kebugaran Maternal & Neonatal (Maternal & Infant Health)",
+                                    style = KanguruTheme.typography.bodySmall,
+                                    color = colors.textSecondary
                                 )
 
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -673,7 +792,7 @@ fun PrivacyPolicyScreen(
                                             .clickable {
                                                 try {
                                                     val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                                        data = Uri.parse("mailto:kulitech.id@gmail.com")
+                                                        data = Uri.parse("mailto:support@kulitech.my.id")
                                                     }
                                                     context.startActivity(intent)
                                                 } catch (_: Exception) {
@@ -689,9 +808,10 @@ fun PrivacyPolicyScreen(
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Text(
-                                            text = "kulitech.id@gmail.com",
+                                            text = "support@kulitech.my.id",
                                             style = KanguruTheme.typography.bodySmall,
-                                            color = colors.textSecondary
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = colors.primary
                                         )
                                     }
 
@@ -746,7 +866,7 @@ fun PrivacyPolicyScreen(
                                 )
                             }
                             Text(
-                                text = "Dengan memasang, membuka, atau menggunakan Aplikasi Kanguru Siaga, Anda menyatakan bahwa Anda telah membaca, memahami, dan menyetujui seluruh ketentuan dalam Kebijakan Privasi ini demi keselamatan dan pemantauan optimal buah hati Anda.",
+                                text = "Dengan melanjutkan dan menggunakan Aplikasi Kanguru Siaga, Anda mengakui bahwa Anda telah membaca, memahami, serta menyetujui Ketentuan Penggunaan dan Kebijakan Privasi ini secara sukarela dan sadar hukum.",
                                 style = KanguruTheme.typography.bodyMedium,
                                 color = colors.textSecondary
                             )
