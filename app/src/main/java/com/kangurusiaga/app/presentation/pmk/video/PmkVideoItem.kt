@@ -294,7 +294,7 @@ object PmkVideoDataSource {
                 ClinicalPoint(
                     number = 2,
                     title = "Tara Timbangan",
-                    description = "Pastikan timbangan telah ditara terlebih dahulu sehingga menunjukkan angka nol sebelum bayi ditimbang."
+                    description = "Pastikan timbangan telah ditera terlebih dahulu sehingga menunjukkan angka nol sebelum bayi ditimbang."
                 ),
                 ClinicalPoint(
                     number = 3,
