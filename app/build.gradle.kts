@@ -34,12 +34,12 @@ val fentonApiKey: String = System.getenv("FENTON_API_KEY")
 
 android {
     namespace = "com.kangurusiaga.app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.kangurusiaga.app"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
 

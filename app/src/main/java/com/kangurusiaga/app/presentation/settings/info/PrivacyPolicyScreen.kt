@@ -590,11 +590,11 @@ fun PrivacyPolicyScreen(
                     description = "Menampilkan banner timer sesi Kangaroo Mother Care yang sedang berjalan dan pengingat jadwal minum ASI tepat waktu."
                 )
                 PrivacyPermissionItemCard(
-                    permission = "SCHEDULE_EXACT_ALARM / USE_EXACT_ALARM",
-                    category = "Izin Sensitif",
+                    permission = "SCHEDULE_EXACT_ALARM",
+                    category = "Alarm Presisi",
                     isRosePermission = true,
                     isTealCategory = true,
-                    description = "Memicu alarm pada waktu presisi demi mencegah komplikasi hipoglikemia pada bayi kecil akibat keterlambatan jadwal nutrisi 2-3 jam."
+                    description = "Memicu pengingat pemberian nutrisi ASI per 2-3 jam, target sesi PMK, dan alarm skrining pada waktu presisi jika diaktifkan; bila izin belum diberikan pada Android 14+, aplikasi otomatis beralih ke pengingat standar tanpa crash."
                 )
                 PrivacyPermissionItemCard(
                     permission = "INTERNET & ACCESS_NETWORK_STATE",

@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.kangurusiaga.app.domain.model.FeedingSchedule
 import com.kangurusiaga.app.domain.model.RepeatType
 import com.kangurusiaga.app.domain.repository.FeedingScheduleRepository
@@ -123,57 +122,14 @@ class FeedingReminderSchedulerImpl @Inject constructor(
     }
 
     private fun scheduleAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent, scheduleId: Long) {
-        if (alarmManager == null) return
-
-        try {
-            // Provide a show intent that opens the feeding alarm screen when user taps the alarm clock icon in system UI
-            val showIntent = Intent(context, com.kangurusiaga.app.MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                putExtra("navigate_to", "feeding")
-            }
-            val showPendingIntent = PendingIntent.getActivity(
-                context,
-                (scheduleId % Int.MAX_VALUE).toInt(),
-                showIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-            val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, showPendingIntent)
-            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-        } catch (_: SecurityException) {
-            // Fallback for custom ROMs or environments where setAlarmClock might be restricted
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (alarmManager.canScheduleExactAlarms()) {
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            triggerAtMillis,
-                            pendingIntent
-                        )
-                    } else {
-                        alarmManager.setAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            triggerAtMillis,
-                            pendingIntent
-                        )
-                    }
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        triggerAtMillis,
-                        pendingIntent
-                    )
-                } else {
-                    alarmManager.setExact(
-                        AlarmManager.RTC_WAKEUP,
-                        triggerAtMillis,
-                        pendingIntent
-                    )
-                }
-            } catch (_: SecurityException) {
-                // Gracefully handle exact alarm permission rejection
-            }
-        }
+        ExactAlarmHelper.scheduleAlarmClockOrFallback(
+            context = context,
+            alarmManager = alarmManager,
+            triggerAtMillis = triggerAtMillis,
+            pendingIntent = pendingIntent,
+            showRequestCode = (scheduleId % Int.MAX_VALUE).toInt(),
+            navigateDestination = "feeding"
+        )
     }
 
     private fun computeNextTriggerTime(
