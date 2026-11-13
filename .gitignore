@@ -23,9 +23,12 @@ app/google-services.json
 *.jks
 *.keystore
 keystore.properties
+app/release/
+app/release
 
 # Temporary reference folder (akan dikeluarkan)
 fentongrowth/
+play-store-assets/
 
 # Agent instructions & rules
 AGENTS.md
