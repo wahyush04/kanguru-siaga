@@ -49,4 +49,26 @@ class UserPreferencesDataStoreTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun freshInstall_hasSeenAlarmGuidance_defaultsToFalse() = runTest {
+        val dataStore = createDataStore()
+
+        dataStore.hasSeenAlarmGuidance.test {
+            assertThat(awaitItem()).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun setHasSeenAlarmGuidance_updatesFlagToTrue() = runTest {
+        val dataStore = createDataStore()
+
+        dataStore.setHasSeenAlarmGuidance(true)
+
+        dataStore.hasSeenAlarmGuidance.test {
+            assertThat(awaitItem()).isTrue()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }

@@ -21,6 +21,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override val themeMode: Flow<AppThemeMode> = dataStore.themeMode
     override val textScale: Flow<AppTextScale> = dataStore.textScale
     override val notificationsEnabled: Flow<Boolean> = dataStore.notificationsEnabled
+    override val hasSeenAlarmGuidance: Flow<Boolean> = dataStore.hasSeenAlarmGuidance
 
     override val appSettings: Flow<AppSettings> = combine(
         themeMode,
@@ -48,5 +49,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun setNotificationsEnabled(enabled: Boolean) {
         dataStore.setNotificationsEnabled(enabled)
+    }
+
+    override suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean) {
+        dataStore.setHasSeenAlarmGuidance(hasSeen)
     }
 }

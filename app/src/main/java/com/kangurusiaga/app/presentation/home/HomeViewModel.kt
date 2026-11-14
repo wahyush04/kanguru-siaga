@@ -6,11 +6,13 @@ import com.kangurusiaga.app.core.common.PmkTimerManager
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.model.PmkTimerState
+import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
 import com.kangurusiaga.app.domain.usecase.GetBabyProfileUseCase
 import com.kangurusiaga.app.domain.usecase.GetTodayPmkSessionsUseCase
 import com.kangurusiaga.app.domain.usecase.notification.GetUnreadNotificationCountUseCase
 import com.kangurusiaga.app.domain.usecase.notification.SyncInAppNotificationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,8 +35,17 @@ class HomeViewModel @Inject constructor(
     private val getTodayPmkSessionsUseCase: GetTodayPmkSessionsUseCase,
     private val getUnreadNotificationCountUseCase: GetUnreadNotificationCountUseCase? = null,
     private val syncInAppNotificationsUseCase: SyncInAppNotificationsUseCase? = null,
-    private val pmkTimerManager: PmkTimerManager? = null
+    private val pmkTimerManager: PmkTimerManager? = null,
+    private val userPreferencesRepository: UserPreferencesRepository? = null
 ) : ViewModel() {
+
+    val hasSeenAlarmGuidance: Flow<Boolean> = userPreferencesRepository?.hasSeenAlarmGuidance ?: flowOf(true)
+
+    fun dismissAlarmGuidance() {
+        viewModelScope.launch {
+            userPreferencesRepository?.setHasSeenAlarmGuidance(true)
+        }
+    }
 
     private val _dialogState = MutableStateFlow(
         DialogState(

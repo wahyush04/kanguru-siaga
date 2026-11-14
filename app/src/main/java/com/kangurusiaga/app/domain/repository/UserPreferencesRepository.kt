@@ -11,10 +11,12 @@ interface UserPreferencesRepository {
     val themeMode: Flow<AppThemeMode>
     val textScale: Flow<AppTextScale>
     val notificationsEnabled: Flow<Boolean>
+    val hasSeenAlarmGuidance: Flow<Boolean>
     val appSettings: Flow<AppSettings>
 
     suspend fun setOnboardingCompleted(completed: Boolean)
     suspend fun setThemeMode(mode: AppThemeMode)
     suspend fun setTextScale(scale: AppTextScale)
     suspend fun setNotificationsEnabled(enabled: Boolean)
+    suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean)
 }

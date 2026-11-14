@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.PmkSession
+import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
 import com.kangurusiaga.app.domain.usecase.GetBabyProfileUseCase
 import com.kangurusiaga.app.domain.usecase.GetTodayPmkSessionsUseCase
 import io.mockk.every
@@ -123,5 +124,21 @@ class HomeViewModelTest {
 
         viewModel.closeEmergencyDialog()
         testDispatcher.scheduler.advanceUntilIdle()
+    }
+
+    @Test
+    fun dismissAlarmGuidance_callsUserPreferencesRepository() = runTest {
+        every { getBabyProfileUseCase() } returns flowOf(null)
+        val userPrefs: UserPreferencesRepository = mockk(relaxed = true)
+        val viewModel = HomeViewModel(
+            getBabyProfileUseCase = getBabyProfileUseCase,
+            getTodayPmkSessionsUseCase = getTodayPmkSessionsUseCase,
+            userPreferencesRepository = userPrefs
+        )
+
+        viewModel.dismissAlarmGuidance()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        io.mockk.coVerify { userPrefs.setHasSeenAlarmGuidance(true) }
     }
 }

@@ -105,9 +105,12 @@ import com.kangurusiaga.app.core.designsystem.theme.TextSecondary
 import com.kangurusiaga.app.core.designsystem.theme.White
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.presentation.growth.components.FentonInternetConfirmationDialog
+import com.kangurusiaga.app.presentation.home.components.AlarmGuidanceBottomSheet
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -131,6 +134,15 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val hasSeenAlarmGuidance by viewModel.hasSeenAlarmGuidance.collectAsStateWithLifecycle(initialValue = true)
+    var showAlarmGuidanceSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(hasSeenAlarmGuidance) {
+        if (!hasSeenAlarmGuidance) {
+            delay(800)
+            showAlarmGuidanceSheet = true
+        }
+    }
 
     HomeScreen(
         uiState = uiState,
@@ -157,6 +169,15 @@ fun HomeRoute(
         onClearInfo = viewModel::clearInfoMessage,
         modifier = modifier
     )
+
+    if (showAlarmGuidanceSheet) {
+        AlarmGuidanceBottomSheet(
+            onDismiss = {
+                showAlarmGuidanceSheet = false
+                viewModel.dismissAlarmGuidance()
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -26,6 +26,7 @@ class UserPreferencesDataStore @Inject constructor(
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val TEXT_SCALE = floatPreferencesKey("text_scale")
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
+        val HAS_SEEN_ALARM_GUIDANCE = booleanPreferencesKey("has_seen_alarm_guidance")
     }
 
     val isOnboardingCompleted: Flow<Boolean> = dataStore.data.map { preferences ->
@@ -44,6 +45,10 @@ class UserPreferencesDataStore @Inject constructor(
 
     val notificationsEnabled: Flow<Boolean> = dataStore.data.map { preferences ->
         preferences[PreferencesKeys.NOTIFICATIONS_ENABLED] ?: true
+    }
+
+    val hasSeenAlarmGuidance: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.HAS_SEEN_ALARM_GUIDANCE] ?: false
     }
 
     suspend fun setOnboardingCompleted(completed: Boolean) {
@@ -67,6 +72,12 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setNotificationsEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.NOTIFICATIONS_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.HAS_SEEN_ALARM_GUIDANCE] = hasSeen
         }
     }
 }
