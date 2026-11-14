@@ -1,5 +1,6 @@
 package com.kangurusiaga.app.core.notification
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -88,11 +89,8 @@ class AlarmSoundService : Service() {
         handler.removeCallbacks(autoStopRunnable)
         handler.postDelayed(autoStopRunnable, AUTO_STOP_DELAY_MS)
 
-        // 3. Start audio playback with USAGE_ALARM
-        startAudioPlayback()
-
-        // 4. Build and start foreground notification with "Matikan" & "Tunda 10 Menit"
-        val notification = buildForegroundNotification()
+        // 3. Build and start foreground notification with "Matikan" & "Tunda 10 Menit"
+        val notification = buildForegroundNotification(isOngoing = true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
                 KanguruNotificationManager.NOTIFICATION_ID_ALARM_SOUND,
@@ -102,6 +100,9 @@ class AlarmSoundService : Service() {
         } else {
             startForeground(KanguruNotificationManager.NOTIFICATION_ID_ALARM_SOUND, notification)
         }
+
+        // 4. Start audio playback with USAGE_ALARM (single play, no looping)
+        startAudioPlayback()
     }
 
     private fun startAudioPlayback() {
@@ -123,14 +124,36 @@ class AlarmSoundService : Service() {
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .build()
                 )
-                isLooping = true
+                isLooping = false
+                setOnCompletionListener {
+                    onAudioPlaybackCompleted()
+                }
                 start()
             }
         } catch (_: Exception) {
         }
     }
 
-    private fun buildForegroundNotification(): android.app.Notification {
+    private fun onAudioPlaybackCompleted() {
+        stopAudioAndWakeLock()
+
+        // Stop foreground mode so system doesn't treat it as active mediaPlayback
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_DETACH)
+        } else {
+            @Suppress("DEPRECATION")
+            stopForeground(false)
+        }
+
+        // Post dismissible notification so user can still see and interact with reminder
+        val notification = buildForegroundNotification(isOngoing = false)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.notify(KanguruNotificationManager.NOTIFICATION_ID_ALARM_SOUND, notification)
+
+        stopSelf()
+    }
+
+    private fun buildForegroundNotification(isOngoing: Boolean = true): android.app.Notification {
         val navigateDestination = if (currentType == "PMK") "pmk_timer" else "feeding"
         val openAppIntent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -191,7 +214,8 @@ class AlarmSoundService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(contentPendingIntent)
-            .setOngoing(true)
+            .setAutoCancel(true)
+            .setOngoing(isOngoing)
             .addAction(0, getString(R.string.alarm_action_dismiss), stopPendingIntent)
             .addAction(0, getString(R.string.alarm_action_snooze), snoozePendingIntent)
             .build()
@@ -200,7 +224,14 @@ class AlarmSoundService : Service() {
     private fun snoozeAlarm() {
         val reminderIdToSnooze = currentReminderId
         stopAudioAndWakeLock()
-        stopForeground(STOP_FOREGROUND_REMOVE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        } else {
+            @Suppress("DEPRECATION")
+            stopForeground(true)
+        }
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.cancel(KanguruNotificationManager.NOTIFICATION_ID_ALARM_SOUND)
         stopSelf()
 
         if (reminderIdToSnooze.isNotBlank()) {
@@ -215,7 +246,14 @@ class AlarmSoundService : Service() {
 
     private fun stopAlarm() {
         stopAudioAndWakeLock()
-        stopForeground(STOP_FOREGROUND_REMOVE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        } else {
+            @Suppress("DEPRECATION")
+            stopForeground(true)
+        }
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.cancel(KanguruNotificationManager.NOTIFICATION_ID_ALARM_SOUND)
         stopSelf()
     }
 

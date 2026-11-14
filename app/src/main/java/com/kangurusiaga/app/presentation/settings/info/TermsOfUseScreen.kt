@@ -566,7 +566,7 @@ fun TermsOfUseScreen(
                         icon = Icons.Default.Timer,
                         iconTint = colors.legalTealAccent,
                         title = "Timer & Alarm Estafet PMK (Urgent)",
-                        description = "Alat bantu pewaktu sesi dekapan kangguru dengan 3 jadwal estafet harian, nada dering khusus berulang, tombol kontrol interaktif Matikan/Tunda 10 Menit, dan auto-stop 5 menit."
+                        description = "Alat bantu pewaktu sesi dekapan kangguru dengan 3 jadwal estafet harian, nada dering khusus, tombol kontrol interaktif Matikan/Tunda 10 Menit, dan auto-stop."
                     )
                     TermsFeatureHighlightCard(
                         icon = Icons.AutoMirrored.Filled.ShowChart,

@@ -601,7 +601,7 @@ fun PrivacyPolicyScreen(
                     category = "Alarm Audio",
                     isRosePermission = true,
                     isTealCategory = false,
-                    description = "Menjalankan pemutaran nada dering alarm khusus berulang pada pengingat mendesak (PMK & ASI) dengan kontrol notifikasi interaktif ('Matikan' & 'Tunda 10 Menit') serta batas henti otomatis 5 menit."
+                    description = "Menjalankan pemutaran nada dering alarm khusus pada pengingat mendesak (PMK & ASI) satu kali putar dengan kontrol notifikasi interaktif ('Matikan' & 'Tunda 10 Menit') serta batas henti otomatis."
                 )
                 PrivacyPermissionItemCard(
                     permission = "WAKE_LOCK & VIBRATE",
