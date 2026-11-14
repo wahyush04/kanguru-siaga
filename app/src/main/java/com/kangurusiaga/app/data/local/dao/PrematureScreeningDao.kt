@@ -26,6 +26,12 @@ interface PrematureScreeningDao {
     @Update
     suspend fun updateScreening(screening: PrematureScreeningEntity)
 
+    @Query("SELECT * FROM premature_screenings WHERE is_completed = 0")
+    suspend fun getAllIncomplete(): List<PrematureScreeningEntity>
+
+    @Query("SELECT * FROM premature_screenings WHERE baby_id = :babyId ORDER BY id ASC")
+    suspend fun getScreeningsListForBaby(babyId: Long): List<PrematureScreeningEntity>
+
     @Query("DELETE FROM premature_screenings WHERE id = :screeningId")
     suspend fun deleteScreeningById(screeningId: Long)
 }

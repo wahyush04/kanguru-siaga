@@ -136,6 +136,12 @@
     <string name="emergency_not_found">Modul tidak ditemukan</string>
 
     <!-- Feeding / Alarm Module -->
+    <string name="alarm_action_dismiss">Matikan</string>
+    <string name="alarm_action_snooze">Tunda 10 Menit</string>
+    <string name="alarm_missed_title">Pengingat Terlewat: %1$s</string>
+    <string name="alarm_missed_desc">Jadwal %1$s pada %2$s terlewat saat perangkat tidak aktif.</string>
+    <string name="alarm_delayed_title">Pengingat Tertunda: %1$s</string>
+    <string name="alarm_delayed_desc">Jadwal pemeriksaan %1$s telah melewati tanggal target.</string>
     <string name="alarm_title">Alarm Pemberian ASI</string>
     <string name="alarm_subtitle_ogt">(OGT/NGT)</string>
     <string name="alarm_info_cd">Informasi Medis</string>

@@ -2,13 +2,13 @@
 
 *Dokumen Resmi Ketentuan Layanan (Terms of Use) dan Kebijakan Pelindungan Data Pribadi (Privacy Policy) untuk Aplikasi Mobile **Kanguru Siaga**.*
 
-**Tanggal Berlaku:** 11 November 2026  
-**Versi Dokumen:** 1.1  
+**Tanggal Berlaku:** 14 November 2026  
+**Versi Dokumen:** 1.2  
 **Pengembang:** KuliTech *(Tim Pengembang Kanguru Siaga)*  
 **Email Dukungan Resmi:** `support@kulitech.my.id`  
 **URL Ketentuan Penggunaan:** `https://kulitech.my.id/kanguru-siaga/term-of-use`  
 **URL Kebijakan Privasi:** `https://kulitech.my.id/kanguru-siaga/privacy-policy`  
-**Status Kepatuhan:** Sesuai Undang-Undang Republik Indonesia No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP), Standar Etika Medis Perinatologi, serta Kebijakan Data Safety, Health Apps, dan Alarm Google Play Console.
+**Status Kepatuhan:** Sesuai Undang-Undang Republik Indonesia No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP), Standar Etika Medis Perinatologi, serta Kebijakan Data Safety, Health Apps, Foreground Service, dan Alarm Google Play Console.
 
 ---
 
@@ -93,11 +93,14 @@ Aplikasi ini ditujukan bagi:
 ### 5. Fitur Utama & Panduan Penggunaan yang Sah
 Pengguna berhak menggunakan fitur-fitur berikut sesuai dengan peruntukannya:
 1. **Pencatatan Identitas & Profil Bayi:** Pengisian data biologis kelahiran bayi (nama, tanggal lahir, usia gestasi, berat, panjang, lingkar kepala, dan foto opsional) untuk personalisasi kurva dan usia kronologis/koreksi.
-2. **Timer & Pencatatan Sesi PMK:** Penggunaan pengatur waktu (*timer*) kontinu/intermiten dan input sesi manual untuk menghitung akumulasi jam dekapan harian beserta rekapitulasi mingguan.
-3. **Grafik Pertumbuhan Fenton:** Plotting data antropometri ke dalam grafik standar internasional berbasis Usia Pascamenstruasi (PMA 22–50 minggu), baik melalui data referensi lokal maupun sinkronisasi grafik/Z-score resmi FentonGrowth.ca.
-4. **Jadwal & Alarm Pemberian ASI:** Pengingat audio-getar interval nutrisi rutin setiap 2–3 jam (termasuk bagi bayi dengan selang OGT/NGT).
+2. **Timer & Alarm Estafet Sesi PMK (Mendesak / Urgent):** Penggunaan pengatur waktu (*timer*) kontinu/intermiten dan input sesi manual untuk menghitung akumulasi jam dekapan harian. Dilengkapi sistem pengingat 3 jadwal estafet harian (Pagi, Siang, dan Malam) dengan alarm audio bersuara khusus berulang (*custom looping ringtone*), kontrol interaktif notifikasi untuk **"Matikan"** atau **"Tunda 10 Menit"** (*snooze*), serta perlindungan henti otomatis (*auto-stop* 5 menit) guna menghemat daya baterai.
+3. **Grafik Pertumbuhan Fenton & Pengingat Mingguan (Rutin):** Plotting data antropometri ke dalam kurva standar internasional berbasis Usia Pascamenstruasi (PMA 22–50 minggu), baik melalui data referensi lokal maupun sinkronisasi grafik/Z-score resmi FentonGrowth.ca, disertai opsi pengingat mingguan berkala (interval 7 hari) untuk memantau pertumbuhan bayi secara disiplin.
+4. **Jadwal & Alarm Pemberian ASI (Mendesak / Urgent):** Pengingat nutrisi enteral terstruktur (12 jadwal harian tetap dengan interval 2 jam, termasuk bagi bayi dengan selang OGT/NGT) menggunakan alarm bersuara khusus berulang (*custom looping ringtone*) dan tombol kontrol langsung **"Matikan"** atau **"Tunda 10 Menit"**.
 5. **Katalog Video & Modul Edukasi:** Pembelajaran teknik memandikan, posisi dekapan kanguru yang aman, tanda kegawatan, menyusui, dan pengukuran antropometri.
-6. **Penapisan & Lembar Hasil Skrining Prematur:** Pencatatan jadwal pengingat alarm untuk 4 skrining wajib IDAI/Kemenkes (USG Kepala, Retinopati Prematuritas/ROP, Pendengaran OAE/BERA, dan Fungsi Tiroid) maupun skrining spesialis tambahan kustom, lengkap dengan catatan temuan medis dan lampiran berkas di penyimpanan lokal perangkat.
+6. **Penapisan & Lembar Hasil Skrining Prematur (Rutin):** Pencatatan jadwal pengingat untuk 4 penapisan klinis wajib satu kali jalan / non-berulang (USG Kepala, Retinopati Prematuritas/ROP, Pendengaran OAE/BERA, dan Fungsi Tiroid) maupun skrining spesialis kustom, lengkap dengan catatan temuan medis dan lampiran berkas di penyimpanan lokal perangkat.
+7. **Sistem Pemulihan Pengingat Terlewat (*Catch-Up Mechanism*):** Mekanisme cerdas terpadu di mana sistem hanya mendaftarkan 1 alarm aktif terdekat (*Sequential Single Next-Alarm*) untuk menghemat baterai. Apabila perangkat mati atau tertidur lama sehingga jadwal terlewat:
+   * Pengingat mendesak (PMK & ASI) yang terlewat ≤ 30 menit akan memunculkan notifikasi informatif tanpa alarm audio keras yang mengagetkan dan langsung memajukan slot ke hari berikutnya; jika terlewat > 30 menit akan dimajukan secara hening ke slot aktif terdekat.
+   * Pengingat rutin (Skrining & Fenton) akan memunculkan notifikasi *"Pengingat Tertunda"* agar pengasuh dapat segera melakukan evaluasi atau menjadwalkan ulang kontrol ke fasilitas kesehatan.
 
 ---
 
@@ -164,7 +167,7 @@ Kami di **KuliTech** selaku pengembang aplikasi **Kanguru Siaga** menghargai dan
 | :--- | :--- | :--- | :--- |
 | **Identitas Kelahiran & Profil Onboarding Bayi** | Nama panggilan/lengkap bayi, tanggal lahir (epoch & terformat), usia kehamilan lahir (minggu), berat lahir (gram), berat saat onboarding (gram), panjang lahir & saat ini (cm), lingkar kepala lahir & saat ini (cm), jenis kelamin, versi aplikasi, dan *environment* build. | Disimpan lokal di Room SQLite **serta** disinkronkan satu kali saat onboarding (bila perangkat *online*) ke koleksi `baby_onboarding_profiles` di Cloud Firestore. | Menghitung usia kronologis, PMA, dan usia koreksi; menentukan kurva Fenton; deteksi kategori BBLR; serta pencatatan agregat onboarding sistem. |
 | **Data Antropometri & Pertumbuhan Berkala** | Catatan pengukuran berat, panjang, dan lingkar kepala berkala beserta tanggal pengukuran, kalkulasi persentil/Z-score, berkas CSV lokal (`fenton_zscore_*.csv`), dan cache gambar grafik. | Disimpan lokal di perangkat (Room SQLite & filesDir/cacheDir). Hanya dikirim ke **FentonGrowth.ca API** ketika pengguna mengonfirmasi fitur grafik/Z-score online. | Memantau kurva *catch-up growth* berbasis Fenton (2013/2025) dan memperoleh kalkulasi Z-score serta persentil resmi. |
-| **Data Aktivitas PMK, Nutrisi, & Pengingat** | Waktu mulai/selesai kontak *skin-to-skin*, durasi sesi, target harian PMK, jadwal pengingat PMK, dan jadwal alarm minum ASI/OGT/NGT. | **100% Lokal di perangkat** (Room SQLite & DataStore). Tidak dikirim ke Cloud Firestore. | Menghitung capaian target harian PMK, grafik mingguan, dan menjadwalkan alarm pengingat tepat waktu. |
+| **Data Aktivitas PMK, Nutrisi, & Pengingat** | Waktu mulai/selesai kontak *skin-to-skin*, durasi sesi, target harian PMK, 3 jadwal pengingat PMK harian, 12 jadwal alarm minum ASI/OGT/NGT, jadwal penapisan skrining klinis, jadwal pengingat mingguan Fenton, status keaktifan jadwal, serta antrean waktu picu alarm berikutnya (`nextTriggerMillis`) pada tabel Room `reminder_schedules`. | **100% Lokal di perangkat** (Room SQLite & DataStore). Tidak dikirim ke Cloud Firestore. | Menghitung capaian target harian PMK, grafik mingguan, serta mengeksekusi arsitektur penjadwalan alarm tunggal berantai secara tepat waktu dan hemat daya. |
 | **Data Skrining Medis & Lampiran Klinis** | Jadwal 4 skrining wajib IDAI/Kemenkes & skrining kustom, catatan temuan/resume klinis dokter, serta **berkas lampiran medis** (foto cetak USG/retina atau file PDF resume lab, maks 10 MB per berkas). | **100% Lokal di perangkat** (Room SQLite & direktori internal `screening_attachments/`). **TIDAK PERNAH** diunggah ke Cloud Firestore atau server kami. | Mengarsipkan hasil evaluasi medis bayi di perangkat pengasuh dan mengingatkan jadwal tindak lanjut spesialis. |
 | **Media (Foto Profil Bayi)** | Foto profil bayi yang diambil via kamera sistem atau dipilih lewat Android Photo Picker. | **100% Lokal di perangkat** (direktori internal `baby_photos/`). **TIDAK PERNAH** diunggah ke server cloud kami. | Personalisasi visual kartu identitas bayi di dalam Aplikasi pada perangkat pengguna. |
 | **Data Diagnostik & Log Error (Firebase Crashlytics)** | Model perangkat, versi OS, versi aplikasi, *stack trace* crash/error non-fatal, ID dokumen Firestore hasil sinkronisasi, serta log breadcrumb lokal saat terjadi peristiwa sinkronisasi/error. | Dikirim ke **Google Firebase Crashlytics** saat terjadi error atau peristiwa sinkronisasi terkait crash. | Penelusuran kesalahan teknis dan peningkatan keandalan Aplikasi tanpa mencatat nama bayi pada log breadcrumb. |
@@ -176,9 +179,9 @@ Kami di **KuliTech** selaku pengembang aplikasi **Kanguru Siaga** menghargai dan
 Arsitektur data Kanguru Siaga memisahkan penyimpanan privat di perangkat dan sinkronisasi cloud terbatas secara jelas:
 
 1. **Penyimpanan Lokal Perangkat (*Local Device Storage — Offline-First*):**
-   * Menggunakan database **Room (SQLite)**, **DataStore Preferences**, serta direktori penyimpanan internal privat **Android Application Sandbox** (`filesDir` dan `cacheDir`).
+   * Menggunakan database **Room (SQLite v12)**, **DataStore Preferences**, serta direktori penyimpanan internal privat **Android Application Sandbox** (`filesDir` dan `cacheDir`).
    * Data yang **100% hanya tersimpan secara lokal** di perangkat Anda meliputi:
-     * Seluruh log sesi harian PMK, statistik, dan pengaturan alarm PMK maupun nutrisi ASI/OGT/NGT;
+     * Seluruh log sesi harian PMK, statistik, antrean jadwal pengingat Room (`reminder_schedules`), alarm PMK, alarm nutrisi ASI/OGT/NGT, pengingat skrining klinis, dan pengingat mingguan Fenton;
      * Seluruh entri pengukuran antropometri berkala lanjutan, hasil parser Z-score CSV lokal (`fenton_zscore_*.csv`), dan gambar cache grafik;
      * Seluruh jadwal skrining lanjutan, catatan temuan/resume medis dokter, serta **seluruh berkas lampiran dokumen medis** (foto hasil atau PDF hingga 10 MB di folder `screening_attachments/` via `ScreeningAttachmentManager`);
      * **Foto profil bayi** (di folder `baby_photos/` via `PhotoStorageManager`);
@@ -226,9 +229,12 @@ Aplikasi hanya mendeklarasikan izin yang benar-benar dibutuhkan dan selaras pers
 | :--- | :--- | :--- |
 | `INTERNET` | Menghubungkan Aplikasi ke Google Firebase (Cloud Firestore & Crashlytics) serta memanggil **FentonGrowth.ca API** saat memuat grafik/Z-score online. | Wajib untuk fitur sinkronisasi & grafik online (fitur harian tetap jalan *offline*) |
 | `ACCESS_NETWORK_STATE` | Mengecek ketersediaan koneksi internet sebelum memicu sinkronisasi cloud atau unduhan grafik agar tidak gagal secara diam-diam. | Otomatis oleh sistem |
-| `POST_NOTIFICATIONS` | Menampilkan notifikasi timer sesi PMK yang sedang berjalan, pengingat jadwal minum ASI, serta pengingat jadwal skrining prematur. | Opsional / Dapat dimatikan di Pengaturan |
-| `SCHEDULE_EXACT_ALARM` | Menjadwalkan alarm pengingat pemberian nutrisi enteral (ASI/OGT/NGT berinterval 2–3 jam), target sesi PMK, dan jadwal skrining kritis secara tepat waktu apabila izin *Alarms & reminders* diaktifkan oleh pengguna (pada Android 14+ otomatis beralih ke penjadwalan standar hemat daya jika tidak diaktifkan). | Opsional / Esensial untuk ketepatan jadwal perawatan |
-| `RECEIVE_BOOT_COMPLETED` | Memulihkan dan menjadwalkan ulang seluruh alarm PMK, alarm ASI, dan alarm skrining secara otomatis setelah perangkat dinyalakan ulang (*reboot*), aplikasi diperbarui, atau izin alarm presisi diaktifkan. | Otomatis oleh sistem demi keandalan alarm |
+| `POST_NOTIFICATIONS` | Menampilkan notifikasi timer sesi PMK yang sedang berjalan, pengingat alarm mendesak (PMK & ASI), pengingat rutin penapisan klinis & grafik Fenton, serta notifikasi informatif jadwal terlewat. | Opsional / Dapat dimatikan di Pengaturan |
+| `SCHEDULE_EXACT_ALARM` | Menjadwalkan alarm waktu presisi untuk pengingat penting/mendesak (3 jadwal estafet PMK dan 12 jadwal minum ASI berinterval 2 jam) menggunakan arsitektur *Sequential Single Next-Alarm* (hanya mendaftarkan 1 jadwal aktif terdekat ke sistem) yang hemat baterai. Aplikasi memeriksa `canScheduleExactAlarms()` dan menyediakan *graceful fallback* ke penjadwalan hemat daya (`setAndAllowWhileIdle()`) bila izin tidak aktif. Aplikasi secara ketat **TIDAK** menggunakan izin agresif `USE_EXACT_ALARM`. | Opsional / Esensial untuk ketepatan jadwal perawatan bayi prematur |
+| `RECEIVE_BOOT_COMPLETED` | Memulihkan dan menjadwalkan ulang 1 alarm berikutnya secara otomatis setelah perangkat dinyalakan ulang (*reboot*), aplikasi diperbarui, atau setelah perubahan waktu/zona waktu sistem (`TIME_SET`, `TIMEZONE_CHANGED`). | Otomatis oleh sistem demi keandalan alarm |
+| `FOREGROUND_SERVICE` | Menjalankan layanan latar depan (`AlarmSoundService`) saat jadwal alarm mendesak (PMK & ASI) berbunyi, sehingga pengingat audio dapat berbunyi andal dengan notifikasi kontrol interaktif meskipun aplikasi sedang tertutup atau layar ponsel terkunci. | Otomatis saat alarm mendesak aktif |
+| `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | Menentukan jenis spesifik layanan latar depan untuk pemutaran audio alarm (`mediaPlayback`) sesuai ketentuan kebijakan Google Play Android 14+ (API 34). Layanan ini hanya aktif selama alarm berdering dan otomatis berhenti setelah pengguna menekan "Matikan", "Tunda 10 Menit", atau batas waktu aman (5 menit) tercapai. | Kepatuhan Google Play Android 14+ (API 34) |
+| `WAKE_LOCK` | Menjaga prosesor perangkat tetap aktif sementara (*partial wake lock*) selama alarm bersuara agar pemutaran nada pengingat nutrisi dan PMK tidak terputus secara mendadak oleh manajemen daya sistem saat layar padam. Memiliki batas waktu aman otomatis (*timeout*). | Otomatis saat alarm berbunyi |
 | `VIBRATE` | Memberikan umpan balik getaran lembut saat notifikasi pengingat berbunyi sehingga pengasuh tetap sadar meski perangkat dalam mode senyap di ruang perawatan/NICU. | Otomatis saat alarm/notifikasi aktif |
 | `WRITE_EXTERNAL_STORAGE` *(Dibatasi `maxSdkVersion="28"` / Android ≤ 9)* | Menyimpan ekspor gambar Grafik Pertumbuhan Fenton ke Galeri perangkat pada ponsel Android versi 9 ke bawah. Pada Android 10 (API 29) ke atas, Aplikasi memakai API `MediaStore` modern tanpa izin penyimpanan *legacy*. | Opsional (Hanya diminta pada Android ≤ 9 saat pengguna mengekspor grafik) |
 

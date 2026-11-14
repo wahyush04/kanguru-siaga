@@ -241,7 +241,7 @@ fun PrivacyPolicyScreen(
                                     label = "Tanggal Berlaku",
                                     trailing = {
                                         Text(
-                                            text = "11 November 2026",
+                                            text = "14 November 2026",
                                             style = KanguruTheme.typography.labelMedium,
                                             fontWeight = FontWeight.SemiBold,
                                             color = colors.textPrimary
@@ -258,7 +258,7 @@ fun PrivacyPolicyScreen(
                                             color = colors.legalRoseTintBg
                                         ) {
                                             Text(
-                                                text = "v1.1",
+                                                text = "v1.2",
                                                 style = KanguruTheme.typography.labelMedium,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = colors.primary,
@@ -296,7 +296,7 @@ fun PrivacyPolicyScreen(
                                             .size(18.dp)
                                     )
                                     Text(
-                                        text = "Kepatuhan: Sesuai UU No. 27/2022 (UU PDP), Standar Etika Medis Perinatologi, serta Perlindungan Khusus Data Anak & Kesehatan.",
+                                        text = "Kepatuhan: Sesuai UU No. 27/2022 (UU PDP), Standar Etika Medis Perinatologi, serta Kebijakan Data Safety, Health Apps, Foreground Service & Alarm Google Play Console.",
                                         style = KanguruTheme.typography.bodySmall,
                                         color = colors.textSecondary
                                     )
@@ -587,14 +587,35 @@ fun PrivacyPolicyScreen(
                     category = "Sistem",
                     isRosePermission = true,
                     isTealCategory = false,
-                    description = "Menampilkan banner timer sesi Kangaroo Mother Care yang sedang berjalan dan pengingat jadwal minum ASI tepat waktu."
+                    description = "Menampilkan banner timer sesi PMK yang berjalan, pengingat alarm mendesak (PMK & ASI), pengingat rutin penapisan klinis & grafik Fenton, serta notifikasi informatif jadwal terlewat."
                 )
                 PrivacyPermissionItemCard(
                     permission = "SCHEDULE_EXACT_ALARM",
                     category = "Alarm Presisi",
                     isRosePermission = true,
                     isTealCategory = true,
-                    description = "Memicu pengingat pemberian nutrisi ASI per 2-3 jam, target sesi PMK, dan alarm skrining pada waktu presisi jika diaktifkan; bila izin belum diberikan pada Android 14+, aplikasi otomatis beralih ke pengingat standar tanpa crash."
+                    description = "Menjadwalkan alarm waktu presisi untuk pengingat penting/mendesak (3 jadwal estafet PMK dan 12 jadwal minum ASI per 2 jam) menggunakan arsitektur Sequential Single Next-Alarm yang hemat baterai. Aplikasi memeriksa canScheduleExactAlarms() dan beralih ke penjadwalan hemat daya (setAndAllowWhileIdle()) jika izin tidak aktif tanpa crash. Secara ketat tidak menggunakan USE_EXACT_ALARM."
+                )
+                PrivacyPermissionItemCard(
+                    permission = "FOREGROUND_SERVICE (MEDIA_PLAYBACK)",
+                    category = "Alarm Audio",
+                    isRosePermission = true,
+                    isTealCategory = false,
+                    description = "Menjalankan pemutaran nada dering alarm khusus berulang pada pengingat mendesak (PMK & ASI) dengan kontrol notifikasi interaktif ('Matikan' & 'Tunda 10 Menit') serta batas henti otomatis 5 menit."
+                )
+                PrivacyPermissionItemCard(
+                    permission = "WAKE_LOCK & VIBRATE",
+                    category = "Sistem",
+                    isRosePermission = false,
+                    isTealCategory = false,
+                    description = "Menjaga prosesor tetap aktif sementara saat alarm berbunyi agar nada pengingat tidak terputus saat layar padam, serta getaran haptik lembut di ruang perawatan."
+                )
+                PrivacyPermissionItemCard(
+                    permission = "RECEIVE_BOOT_COMPLETED",
+                    category = "Alarm",
+                    isRosePermission = false,
+                    isTealCategory = false,
+                    description = "Memulihkan dan menjadwalkan ulang 1 alarm berikutnya secara otomatis setelah perangkat dinyalakan ulang (reboot) atau setelah perubahan waktu/zona waktu sistem."
                 )
                 PrivacyPermissionItemCard(
                     permission = "INTERNET & ACCESS_NETWORK_STATE",
@@ -602,13 +623,6 @@ fun PrivacyPolicyScreen(
                     isRosePermission = false,
                     isTealCategory = false,
                     description = "Mendeteksi ketersediaan sambungan online untuk sinkronisasi profil awal, pelaporan crash anonim, dan akses grafik FentonGrowth."
-                )
-                PrivacyPermissionItemCard(
-                    permission = "RECEIVE_BOOT_COMPLETED & VIBRATE",
-                    category = "Alarm",
-                    isRosePermission = false,
-                    isTealCategory = false,
-                    description = "Menjadwalkan ulang pengingat nutrisi bayi setelah perangkat dinyalakan ulang dan memberikan getaran haptik saat alarm berbunyi."
                 )
                 PrivacyPermissionItemCard(
                     permission = "WRITE_EXTERNAL_STORAGE (Android ≤ 9)",

@@ -3,6 +3,7 @@ package com.kangurusiaga.app.presentation.growth.batch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kangurusiaga.app.core.common.AppLogger
+import com.kangurusiaga.app.core.notification.AlarmScheduler
 import com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient
 import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Baby
@@ -56,7 +57,8 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
     private val saveBatchGrowthRecordsUseCase: SaveBatchGrowthRecordsUseCase,
     private val fentonGrowthApiClient: FentonGrowthApiClient,
     private val growthRepository: GrowthRepository,
-    private val fentonGrowthRepository: FentonGrowthRepository
+    private val fentonGrowthRepository: FentonGrowthRepository,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GrowthBatchUiState())
@@ -364,6 +366,13 @@ class GrowthBatchMeasurementViewModel @Inject constructor(
                     }
                 } catch (e: Exception) {
                     AppLogger.w("GrowthBatchMeasurementViewModel", "Exception saat auto-refresh Fenton: ${e.message}")
+                }
+                if (state.reminderEnabled) {
+                    try {
+                        alarmScheduler.scheduleFentonWeeklyReminder(baby.id, true)
+                    } catch (e: Exception) {
+                        AppLogger.w("GrowthBatchMeasurementViewModel", "Gagal menjadwalkan reminder mingguan Fenton: ${e.message}")
+                    }
                 }
                 _uiState.update { current ->
                     current.copy(isSaving = false, isSaved = true)

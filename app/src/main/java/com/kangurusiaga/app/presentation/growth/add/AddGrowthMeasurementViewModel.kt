@@ -3,6 +3,7 @@ package com.kangurusiaga.app.presentation.growth.add
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kangurusiaga.app.core.notification.AlarmScheduler
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
 import com.kangurusiaga.app.data.local.entity.GrowthRecordEntity
 import com.kangurusiaga.app.data.repository.FentonGrowthRepository
@@ -45,6 +46,7 @@ class AddGrowthMeasurementViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
     private val growthRepository: GrowthRepository,
     private val fentonGrowthRepository: FentonGrowthRepository,
+    private val alarmScheduler: AlarmScheduler,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -177,6 +179,10 @@ class AddGrowthMeasurementViewModel @Inject constructor(
                 calculatedWeightPercentile = percentileBadge
             )
             fentonGrowthRepository.saveNewRecord(fentonRecord)
+
+            if (state.reminderEnabled) {
+                alarmScheduler.scheduleFentonWeeklyReminder(baby.id, true)
+            }
 
             _uiState.update { it.copy(isSaving = false, isSaved = true) }
             onSuccess()

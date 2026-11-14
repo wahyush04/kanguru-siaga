@@ -37,4 +37,12 @@ object NotificationModule {
     ): ScreeningReminderScheduler {
         return impl
     }
+
+    @Provides
+    @Singleton
+    fun provideAlarmScheduler(
+        impl: AlarmSchedulerImpl
+    ): AlarmScheduler {
+        return impl
+    }
 }

@@ -12,14 +12,32 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.activity.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.kangurusiaga.app.core.designsystem.theme.KanguruSiagaTheme
+import com.kangurusiaga.app.core.notification.AlarmScheduler
 import com.kangurusiaga.app.presentation.navigation.KanguruNavGraph
 import com.kangurusiaga.app.presentation.navigation.Screen
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var alarmScheduler: AlarmScheduler
+
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                alarmScheduler.syncAndScheduleNextAlarm()
+            } catch (_: Exception) {
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()

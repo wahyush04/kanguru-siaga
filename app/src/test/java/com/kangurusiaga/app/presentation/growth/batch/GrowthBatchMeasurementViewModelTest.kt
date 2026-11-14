@@ -35,6 +35,7 @@ class GrowthBatchMeasurementViewModelTest {
     private val fentonGrowthApiClient: com.kangurusiaga.app.data.remote.fenton.FentonGrowthApiClient = mockk(relaxed = true)
     private val growthRepository: com.kangurusiaga.app.domain.repository.GrowthRepository = mockk(relaxed = true)
     private val fentonGrowthRepository: com.kangurusiaga.app.data.repository.FentonGrowthRepository = mockk(relaxed = true)
+    private val alarmScheduler: com.kangurusiaga.app.core.notification.AlarmScheduler = mockk(relaxed = true)
 
     private val testBaby = Baby(
         id = 1L,
@@ -59,7 +60,8 @@ class GrowthBatchMeasurementViewModelTest {
             saveBatchGrowthRecordsUseCase = saveBatchGrowthRecordsUseCase,
             fentonGrowthApiClient = fentonGrowthApiClient,
             growthRepository = growthRepository,
-            fentonGrowthRepository = fentonGrowthRepository
+            fentonGrowthRepository = fentonGrowthRepository,
+            alarmScheduler = alarmScheduler
         )
     }
 
@@ -98,7 +100,8 @@ class GrowthBatchMeasurementViewModelTest {
             saveBatchGrowthRecordsUseCase = saveBatchGrowthRecordsUseCase,
             fentonGrowthApiClient = fentonGrowthApiClient,
             growthRepository = growthRepository,
-            fentonGrowthRepository = fentonGrowthRepository
+            fentonGrowthRepository = fentonGrowthRepository,
+            alarmScheduler = alarmScheduler
         )
         advanceUntilIdle()
 

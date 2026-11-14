@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@drawable/il_edu_module_*,@drawable/il_emergency_*" />
+    tools:keep="@drawable/il_edu_module_*,@drawable/il_emergency_*,@raw/alarm_sound_1" />
 

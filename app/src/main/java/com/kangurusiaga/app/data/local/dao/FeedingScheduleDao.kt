@@ -48,6 +48,9 @@ interface FeedingScheduleDao {
     @Query("UPDATE feeding_schedules SET reminder_offset_minutes = 0 WHERE reminder_offset_minutes != 0")
     suspend fun resetAllOffsetToZero()
 
+    @Query("SELECT * FROM feeding_schedules")
+    suspend fun getAllSchedules(): List<FeedingScheduleEntity>
+
     @Query("DELETE FROM feeding_schedules")
     suspend fun deleteAll()
 }

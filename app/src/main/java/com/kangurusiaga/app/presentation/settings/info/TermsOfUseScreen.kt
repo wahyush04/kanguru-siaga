@@ -50,6 +50,7 @@ import androidx.compose.material.icons.filled.Sell
 import androidx.compose.material.icons.filled.SmartDisplay
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.HorizontalDivider
@@ -249,7 +250,7 @@ fun TermsOfUseScreen(
                                 label = "Tanggal Berlaku",
                                 trailing = {
                                     Text(
-                                        text = "11 November 2026",
+                                        text = "14 November 2026",
                                         style = KanguruTheme.typography.labelMedium,
                                         fontWeight = FontWeight.SemiBold,
                                         color = colors.textPrimary
@@ -266,7 +267,7 @@ fun TermsOfUseScreen(
                                         color = colors.legalRoseTintBg
                                     ) {
                                         Text(
-                                            text = "v1.1",
+                                            text = "v1.2",
                                             style = KanguruTheme.typography.labelMedium,
                                             fontWeight = FontWeight.SemiBold,
                                             color = colors.primary,
@@ -303,7 +304,7 @@ fun TermsOfUseScreen(
                                         .size(18.dp)
                                 )
                                 Text(
-                                    text = "Kepatuhan: Sesuai UU No. 27/2022 (UU PDP), Standar Etika Medis Perinatologi, Kebijakan Google Play Health Apps & Exact Alarm.",
+                                    text = "Kepatuhan: Sesuai UU No. 27/2022 (UU PDP), Standar Etika Medis Perinatologi, Kebijakan Google Play Health Apps, Foreground Service & Exact Alarm.",
                                     style = KanguruTheme.typography.bodySmall,
                                     color = colors.textSecondary
                                 )
@@ -564,20 +565,20 @@ fun TermsOfUseScreen(
                     TermsFeatureHighlightCard(
                         icon = Icons.Default.Timer,
                         iconTint = colors.legalTealAccent,
-                        title = "Timer & Log Sesi PMK",
-                        description = "Alat bantu pewaktu sesi dekapan kangguru dengan rekapitulasi durasi kumulatif harian dan grafik kepatuhan."
+                        title = "Timer & Alarm Estafet PMK (Urgent)",
+                        description = "Alat bantu pewaktu sesi dekapan kangguru dengan 3 jadwal estafet harian, nada dering khusus berulang, tombol kontrol interaktif Matikan/Tunda 10 Menit, dan auto-stop 5 menit."
                     )
                     TermsFeatureHighlightCard(
                         icon = Icons.AutoMirrored.Filled.ShowChart,
                         iconTint = colors.primary,
-                        title = "Grafik Pertumbuhan Fenton Berbasis PMA",
-                        description = "Visualisasi tren kenaikan berat, panjang, dan lingkar kepala berdasarkan Postmenstrual Age (22-50 minggu)."
+                        title = "Grafik Pertumbuhan Fenton & Pengingat Mingguan",
+                        description = "Visualisasi tren kenaikan antropometri berbasis PMA (22-50 minggu) disertai opsi alarm pengingat rutin mingguan (interval 7 hari) untuk evaluasi berkala."
                     )
                     TermsFeatureHighlightCard(
                         icon = Icons.Default.Alarm,
                         iconTint = colors.legalTealAccent,
-                        title = "Jadwal & Alarm Nutrisi ASI",
-                        description = "Pemberitahuan interval jadwal minum (tiap 2-3 jam) untuk mencegah risiko hipoglikemia neonatus via Google Play Exact Alarm policy."
+                        title = "Jadwal & Alarm Nutrisi ASI (Urgent)",
+                        description = "12 jadwal harian terstruktur (interval 2 jam) dengan nada dering khusus dan kontrol langsung Matikan/Tunda untuk mencegah risiko hipoglikemia neonatus via Sequential Next-Alarm."
                     )
                     TermsFeatureHighlightCard(
                         icon = Icons.Default.SmartDisplay,
@@ -589,7 +590,13 @@ fun TermsOfUseScreen(
                         icon = Icons.Default.Checklist,
                         iconTint = colors.legalTealAccent,
                         title = "Penapisan & Lembar Hasil Skrining Prematuritas",
-                        description = "Pencatatan tanggal janji temu penting skrining mata (ROP), fungsi pendengaran (OAE/BERA), USG kepala, serta skrining kustom tambahan."
+                        description = "Pencatatan tanggal janji temu penting 4 skrining klinis wajib (ROP, OAE/BERA, USG Kepala, Tiroid) serta skrining tambahan via notifikasi standar."
+                    )
+                    TermsFeatureHighlightCard(
+                        icon = Icons.Default.Update,
+                        iconTint = colors.primary,
+                        title = "Pemulihan Pengingat Terlewat (Catch-Up)",
+                        description = "Mekanisme cerdas pemulihan alarm saat gawai mati/tertidur: memunculkan notifikasi ringkas dan memajukan jadwal ke slot berikutnya tanpa menumpuk bunyi alarm lama."
                     )
                 }
             }

@@ -32,6 +32,12 @@ class KanguruNotificationManager @Inject constructor(
         const val CHANNEL_FEEDING_NAME = "Jadwal Pemberian ASI"
         const val CHANNEL_SCREENING_ID = "channel_screening_reminder"
         const val CHANNEL_SCREENING_NAME = "Jadwal & Evaluasi Skrining"
+        const val CHANNEL_ALARM_URGENT_ID = "channel_alarm_urgent"
+        const val CHANNEL_ALARM_URGENT_NAME = "Alarm Pengingat Mendesak (PMK & ASI)"
+        const val CHANNEL_ROUTINE_ID = "channel_routine_reminder"
+        const val CHANNEL_ROUTINE_NAME = "Pengingat Rutin (Skrining & Fenton)"
+        const val CHANNEL_MISSED_ID = "channel_missed_reminder"
+        const val CHANNEL_MISSED_NAME = "Pemberitahuan Jadwal Terlewat"
 
         const val NOTIFICATION_ID_PMK_REMINDER = 1001
         const val NOTIFICATION_ID_PMK_TIMER = 1002
@@ -39,6 +45,10 @@ class KanguruNotificationManager @Inject constructor(
         const val NOTIFICATION_ID_PMK_PERIOD_COMPLETED = 1004
         const val NOTIFICATION_ID_FEEDING_BASE = 2000
         const val NOTIFICATION_ID_SCREENING_BASE = 3000
+        const val NOTIFICATION_ID_ALARM_SOUND = 4001
+        const val NOTIFICATION_ID_FENTON = 5001
+        const val NOTIFICATION_ID_MISSED_BASE = 6000
+        const val NOTIFICATION_ID_DELAYED_BASE = 7000
     }
 
     init {
@@ -82,10 +92,40 @@ class KanguruNotificationManager @Inject constructor(
                 enableVibration(true)
             }
 
+            val urgentAlarmChannel = NotificationChannel(
+                CHANNEL_ALARM_URGENT_ID,
+                CHANNEL_ALARM_URGENT_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Alarm bersuara untuk pengingat penting PMK dan jadwal minum ASI"
+                enableVibration(true)
+                lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+            }
+
+            val routineChannel = NotificationChannel(
+                CHANNEL_ROUTINE_ID,
+                CHANNEL_ROUTINE_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Pengingat rutin skrining dan pengukuran grafik pertumbuhan mingguan Fenton"
+                enableVibration(true)
+            }
+
+            val missedChannel = NotificationChannel(
+                CHANNEL_MISSED_ID,
+                CHANNEL_MISSED_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Pemberitahuan informatif jika ada jadwal pengingat yang terlewat saat perangkat tidak aktif"
+            }
+
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(pmkChannel)
             notificationManager.createNotificationChannel(feedingChannel)
             notificationManager.createNotificationChannel(screeningChannel)
+            notificationManager.createNotificationChannel(urgentAlarmChannel)
+            notificationManager.createNotificationChannel(routineChannel)
+            notificationManager.createNotificationChannel(missedChannel)
         }
     }
 
@@ -301,6 +341,98 @@ class KanguruNotificationManager @Inject constructor(
             NotificationManagerCompat.from(context).notify(notificationId, builder.build())
         } catch (_: SecurityException) {
             // Handled when notification permission is not granted
+        }
+    }
+
+    fun showFentonWeeklyReminderNotification(title: String, message: String) {
+        if (!areAppNotificationsEnabled) return
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigate_to", "growth")
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            NOTIFICATION_ID_FENTON,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_ROUTINE_ID)
+            .setSmallIcon(R.drawable.ic_kangaroo_mascot)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        try {
+            NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_FENTON, builder.build())
+        } catch (_: SecurityException) {
+        }
+    }
+
+    fun showMissedReminderNotification(title: String, message: String, navigateDestination: String = "notification") {
+        if (!areAppNotificationsEnabled) return
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigate_to", navigateDestination)
+        }
+
+        val notificationId = NOTIFICATION_ID_MISSED_BASE + (System.currentTimeMillis() % 1000).toInt()
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_MISSED_ID)
+            .setSmallIcon(R.drawable.ic_kangaroo_mascot)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        try {
+            NotificationManagerCompat.from(context).notify(notificationId, builder.build())
+        } catch (_: SecurityException) {
+        }
+    }
+
+    fun showDelayedReminderNotification(title: String, message: String, navigateDestination: String = "screening_schedule") {
+        if (!areAppNotificationsEnabled) return
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigate_to", navigateDestination)
+        }
+
+        val notificationId = NOTIFICATION_ID_DELAYED_BASE + (System.currentTimeMillis() % 1000).toInt()
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_ROUTINE_ID)
+            .setSmallIcon(R.drawable.ic_kangaroo_mascot)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        try {
+            NotificationManagerCompat.from(context).notify(notificationId, builder.build())
+        } catch (_: SecurityException) {
         }
     }
 }
