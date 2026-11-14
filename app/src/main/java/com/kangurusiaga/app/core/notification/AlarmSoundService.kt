@@ -15,6 +15,7 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import com.kangurusiaga.app.MainActivity
 import com.kangurusiaga.app.R
+import com.kangurusiaga.app.domain.model.ReminderType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -109,7 +110,13 @@ class AlarmSoundService : Service() {
             mediaPlayer?.release()
             mediaPlayer = null
 
-            mediaPlayer = MediaPlayer.create(this, R.raw.alarm_sound_1)?.apply {
+            val soundResId = if (currentType.equals(ReminderType.ASI.name, ignoreCase = true)) {
+                R.raw.sound_alarm_asi
+            } else {
+                R.raw.sound_alarm_pmk
+            }
+
+            mediaPlayer = MediaPlayer.create(this, soundResId)?.apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_ALARM)
