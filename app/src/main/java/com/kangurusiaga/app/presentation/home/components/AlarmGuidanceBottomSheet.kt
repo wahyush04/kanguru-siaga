@@ -39,6 +39,7 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -147,13 +148,17 @@ fun AlarmGuidanceBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = maxContentHeight)
-                .navigationBarsPadding()
-                .nestedScroll(contentNestedScrollConnection)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f, fill = false)
+                    .nestedScroll(contentNestedScrollConnection)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
             // 1. Header Icon
             Box(
                 modifier = Modifier.size(68.dp),
@@ -519,49 +524,71 @@ fun AlarmGuidanceBottomSheet(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // 6. Action Buttons
-            Button(
-                onClick = dismissWithAnimation,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.primary
-                )
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text(
-                        text = "Saya Sudah Mengaktifkannya",
-                        style = KanguruTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextButton(
-                onClick = dismissWithAnimation,
+            // 6. Floating Fixed Bottom Action Buttons
+            Surface(
+                color = colors.surface,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "Nanti Saja (Alarm Mungkin Tertunda)",
-                    style = KanguruTheme.typography.labelMedium,
-                    color = colors.textSecondary
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                ) {
+                    HorizontalDivider(
+                        color = colors.divider.copy(alpha = 0.5f),
+                        thickness = 1.dp
+                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp, vertical = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(
+                            onClick = dismissWithAnimation,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colors.primary
+                            )
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AutoAwesome,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(
+                                    text = "Saya Sudah Mengaktifkannya",
+                                    style = KanguruTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        TextButton(
+                            onClick = dismissWithAnimation,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Nanti Saja (Alarm Mungkin Tertunda)",
+                                style = KanguruTheme.typography.labelMedium,
+                                color = colors.textSecondary
+                            )
+                        }
+                    }
+                }
             }
         }
     }
