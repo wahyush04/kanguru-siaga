@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -137,7 +138,7 @@ fun AlarmGuidanceBottomSheet(
             }
         },
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-        modifier = modifier
+        modifier = modifier.fillMaxHeight(0.9f)
     ) {
         Column(
             modifier = Modifier
