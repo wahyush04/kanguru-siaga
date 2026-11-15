@@ -46,19 +46,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -68,14 +76,66 @@ fun AlarmGuidanceBottomSheet(
 ) {
     val context = LocalContext.current
     val colors = KanguruTheme.colors
+    val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isAndroid14OrHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+
+    // Isolate downward scroll inside the content so that swiping down while reading
+    // will NOT accidentally dismiss the bottom sheet.
+    // The sheet can only be dismissed by dragging the top drag handle bar or clicking buttons.
+    val contentNestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                // Consume unconsumed downward scroll from the content so it does not propagate to ModalBottomSheet
+                return if (available.y > 0f) {
+                    Offset(0f, available.y)
+                } else {
+                    Offset.Zero
+                }
+            }
+
+            override suspend fun onPostFling(
+                consumed: Velocity,
+                available: Velocity
+            ): Velocity {
+                // Consume downward fling velocity so fast swipes inside content don't fling the sheet closed
+                return if (available.y > 0f) {
+                    Velocity(0f, available.y)
+                } else {
+                    Velocity.Zero
+                }
+            }
+        }
+    }
+
+    val dismissWithAnimation: () -> Unit = {
+        coroutineScope.launch {
+            sheetState.hide()
+            onDismiss()
+        }
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = colors.surface,
-        dragHandle = { BottomSheetDefaults.DragHandle() },
+        dragHandle = {
+            // Expand the drag handle touch target area across the top header
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                BottomSheetDefaults.DragHandle(
+                    color = colors.divider.copy(alpha = 0.8f)
+                )
+            }
+        },
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         modifier = modifier
     ) {
@@ -83,6 +143,7 @@ fun AlarmGuidanceBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
+                .nestedScroll(contentNestedScrollConnection)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
                 .padding(bottom = 24.dp),
@@ -457,7 +518,7 @@ fun AlarmGuidanceBottomSheet(
 
             // 6. Action Buttons
             Button(
-                onClick = onDismiss,
+                onClick = dismissWithAnimation,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -488,7 +549,7 @@ fun AlarmGuidanceBottomSheet(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(
-                onClick = onDismiss,
+                onClick = dismissWithAnimation,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
