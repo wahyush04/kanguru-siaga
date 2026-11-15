@@ -8,6 +8,8 @@ import android.provider.Settings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +17,8 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -55,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -83,7 +88,7 @@ fun AlarmGuidanceBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isAndroid14OrHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
     val configuration = LocalConfiguration.current
-    val maxContentHeight = (configuration.screenHeightDp * 0.9f).dp - 48.dp
+    val topGap = (configuration.screenHeightDp * 0.10f).dp
 
     // Isolate downward scroll inside the content so that swiping down while reading
     // will NOT accidentally dismiss the bottom sheet.
@@ -127,38 +132,62 @@ fun AlarmGuidanceBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = colors.surface,
-        dragHandle = {
-            // Expand the drag handle touch target area across the top header
+        containerColor = Color.Transparent,
+        scrimColor = BottomSheetDefaults.ScrimColor,
+        dragHandle = null,
+        shape = RectangleShape,
+        contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
+        modifier = modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // 1. Top 10% empty space showing scrim; tapping it dismisses the sheet
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                BottomSheetDefaults.DragHandle(
-                    color = colors.divider.copy(alpha = 0.8f)
-                )
-            }
-        },
-        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = maxContentHeight)
-        ) {
-            Column(
+                    .height(topGap)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = dismissWithAnimation
+                    )
+            )
+
+            // 2. 90% Bottom Sheet Container Surface anchored all the way to the bottom edge
+            Surface(
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                color = colors.surface,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f, fill = false)
-                    .nestedScroll(contentNestedScrollConnection)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .weight(1f)
             ) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // Top drag handle touch target bar
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        BottomSheetDefaults.DragHandle(
+                            color = colors.divider.copy(alpha = 0.8f)
+                        )
+                    }
+
+                    // Scrollable Content
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .nestedScroll(contentNestedScrollConnection)
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 24.dp)
+                            .padding(bottom = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
             // 1. Header Icon
             Box(
                 modifier = Modifier.size(68.dp),
@@ -592,6 +621,8 @@ fun AlarmGuidanceBottomSheet(
             }
         }
     }
+}
+}
 }
 
 @Composable

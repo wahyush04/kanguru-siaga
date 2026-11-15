@@ -216,6 +216,8 @@ class AlarmSoundService : Service() {
             .setContentIntent(contentPendingIntent)
             .setAutoCancel(true)
             .setOngoing(isOngoing)
+            .setSilent(true)
+            .setSound(null)
             .addAction(0, getString(R.string.alarm_action_dismiss), stopPendingIntent)
             .addAction(0, getString(R.string.alarm_action_snooze), snoozePendingIntent)
             .build()

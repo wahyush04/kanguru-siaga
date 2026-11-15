@@ -32,7 +32,7 @@ class KanguruNotificationManager @Inject constructor(
         const val CHANNEL_FEEDING_NAME = "Jadwal Pemberian ASI"
         const val CHANNEL_SCREENING_ID = "channel_screening_reminder"
         const val CHANNEL_SCREENING_NAME = "Jadwal & Evaluasi Skrining"
-        const val CHANNEL_ALARM_URGENT_ID = "channel_alarm_urgent"
+        const val CHANNEL_ALARM_URGENT_ID = "channel_alarm_urgent_v2"
         const val CHANNEL_ALARM_URGENT_NAME = "Alarm Pengingat Mendesak (PMK & ASI)"
         const val CHANNEL_ROUTINE_ID = "channel_routine_reminder"
         const val CHANNEL_ROUTINE_NAME = "Pengingat Rutin (Skrining & Fenton)"
@@ -99,6 +99,7 @@ class KanguruNotificationManager @Inject constructor(
             ).apply {
                 description = "Alarm bersuara untuk pengingat penting PMK dan jadwal minum ASI"
                 enableVibration(true)
+                setSound(null, null) // Explicitly silent channel, audio is managed exclusively by AlarmSoundService MediaPlayer
                 lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
             }
 
@@ -120,6 +121,10 @@ class KanguruNotificationManager @Inject constructor(
             }
 
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            try {
+                notificationManager.deleteNotificationChannel("channel_alarm_urgent")
+            } catch (_: Exception) {
+            }
             notificationManager.createNotificationChannel(pmkChannel)
             notificationManager.createNotificationChannel(feedingChannel)
             notificationManager.createNotificationChannel(screeningChannel)
