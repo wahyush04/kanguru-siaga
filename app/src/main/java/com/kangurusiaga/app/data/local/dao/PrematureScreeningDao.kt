@@ -32,6 +32,12 @@ interface PrematureScreeningDao {
     @Query("SELECT * FROM premature_screenings WHERE baby_id = :babyId ORDER BY id ASC")
     suspend fun getScreeningsListForBaby(babyId: Long): List<PrematureScreeningEntity>
 
+    @Query("UPDATE premature_screenings SET is_alarm_active = :isActive WHERE id = :screeningId")
+    suspend fun updateAlarmActive(screeningId: Long, isActive: Boolean)
+
+    @Query("UPDATE premature_screenings SET is_alarm_2_active = :isActive WHERE id = :screeningId")
+    suspend fun updateAlarm2Active(screeningId: Long, isActive: Boolean)
+
     @Query("DELETE FROM premature_screenings WHERE id = :screeningId")
     suspend fun deleteScreeningById(screeningId: Long)
 }

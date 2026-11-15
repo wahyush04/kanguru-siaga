@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import com.kangurusiaga.app.data.local.dao.BabyDao
 import com.kangurusiaga.app.data.local.dao.InAppNotificationDao
+import com.kangurusiaga.app.data.local.dao.PrematureScreeningDao
 import com.kangurusiaga.app.data.local.dao.ReminderScheduleDao
 import com.kangurusiaga.app.data.local.entity.InAppNotificationEntity
 import com.kangurusiaga.app.domain.model.NotificationBadgeColor
@@ -35,6 +36,9 @@ class AlarmReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var babyDao: BabyDao
+
+    @Inject
+    lateinit var prematureScreeningDao: PrematureScreeningDao
 
     override fun onReceive(context: Context, intent: Intent) {
         val reminderId = intent.getStringExtra(EXTRA_REMINDER_ID) ?: return
@@ -136,34 +140,74 @@ class AlarmReceiver : BroadcastReceiver() {
                         val parts = extraData?.split("|") ?: emptyList()
                         val categoryBadge = parts.getOrNull(0) ?: "Skrining Bayi"
                         val clinicOrLab = parts.getOrNull(1) ?: "Fasilitas Kesehatan"
+                        val isOverdueCheck = parts.getOrNull(2) == "OVERDUE"
 
-                        notificationManager.showScreeningReminderNotification(
-                            screeningId = referenceId,
-                            title = label,
-                            categoryBadge = categoryBadge,
-                            clinicOrLab = clinicOrLab,
-                            alarmIndex = subIndex
-                        )
+                        val screening = prematureScreeningDao.getScreeningById(referenceId)
+                        val isCompleted = screening?.isCompleted ?: false
 
-                        inAppNotificationDao.insertOrUpdate(
-                            InAppNotificationEntity(
-                                id = 0L,
-                                babyId = babyId,
-                                category = NotificationCategory.SCREENING_REMINDER.name,
-                                referenceId = referenceId,
-                                title = "Jadwal Skrining: $label",
-                                message = "Waktunya evaluasi klinis $categoryBadge untuk $babyName ($clinicOrLab).",
-                                badgeLabel = categoryBadge,
-                                badgeColor = NotificationBadgeColor.AMBER.name,
-                                timeLabel = "Baru saja",
-                                targetInfo = null,
-                                isRead = false,
-                                isToday = true,
-                                primaryActionLabel = "Buka Jadwal",
-                                secondaryActionLabel = "Catat Hasil",
-                                timestampEpoch = System.currentTimeMillis()
-                            )
-                        )
+                        if (isOverdueCheck) {
+                            // Next morning overdue notification: only if user hasn't recorded results
+                            if (!isCompleted) {
+                                val notifId = KanguruNotificationManager.NOTIFICATION_ID_DELAYED_BASE + (referenceId * 2 + subIndex).toInt()
+                                notificationManager.showDelayedReminderNotification(
+                                    title = "Pengingat Tertunda: $label",
+                                    message = "Jadwal evaluasi klinis telah melewati batas tanggal. Segera konsultasikan ke fasilitas kesehatan.",
+                                    navigateDestination = "screening_schedule",
+                                    notificationId = notifId
+                                )
+
+                                inAppNotificationDao.insertOrUpdate(
+                                    InAppNotificationEntity(
+                                        id = 0L,
+                                        babyId = babyId,
+                                        category = NotificationCategory.SCREENING_REMINDER.name,
+                                        referenceId = referenceId,
+                                        title = "Pengingat Tertunda: $label",
+                                        message = "Jadwal evaluasi klinis telah melewati batas tanggal untuk $babyName ($clinicOrLab).",
+                                        badgeLabel = categoryBadge,
+                                        badgeColor = NotificationBadgeColor.PINK.name,
+                                        timeLabel = "Baru saja",
+                                        targetInfo = null,
+                                        isRead = false,
+                                        isToday = true,
+                                        primaryActionLabel = "Buka Jadwal",
+                                        secondaryActionLabel = "Jadwal Ulang",
+                                        timestampEpoch = System.currentTimeMillis()
+                                    )
+                                )
+                            }
+                        } else {
+                            // Scheduled day morning 07:00 AM notification
+                            if (!isCompleted) {
+                                notificationManager.showScreeningReminderNotification(
+                                    screeningId = referenceId,
+                                    title = label,
+                                    categoryBadge = categoryBadge,
+                                    clinicOrLab = clinicOrLab,
+                                    alarmIndex = subIndex
+                                )
+
+                                inAppNotificationDao.insertOrUpdate(
+                                    InAppNotificationEntity(
+                                        id = 0L,
+                                        babyId = babyId,
+                                        category = NotificationCategory.SCREENING_REMINDER.name,
+                                        referenceId = referenceId,
+                                        title = "Jadwal Skrining Hari Ini: $label",
+                                        message = "Hari ini jadwal evaluasi klinis $categoryBadge untuk $babyName ($clinicOrLab).",
+                                        badgeLabel = categoryBadge,
+                                        badgeColor = NotificationBadgeColor.AMBER.name,
+                                        timeLabel = "Baru saja",
+                                        targetInfo = null,
+                                        isRead = false,
+                                        isToday = true,
+                                        primaryActionLabel = "Buka Jadwal",
+                                        secondaryActionLabel = "Catat Hasil",
+                                        timestampEpoch = System.currentTimeMillis()
+                                    )
+                                )
+                            }
+                        }
                     }
 
                     ReminderType.FENTON.name -> {
@@ -213,8 +257,31 @@ class AlarmReceiver : BroadcastReceiver() {
                             }
 
                             ReminderType.SKRINING.name -> {
-                                // One-shot milestone: disable after triggered
-                                reminderScheduleDao.updateEnabled(reminderId, false)
+                                val screening = prematureScreeningDao.getScreeningById(currentSchedule.referenceId)
+                                val isCompleted = screening?.isCompleted ?: false
+                                val parts = currentSchedule.extraData?.split("|") ?: emptyList()
+                                val isOverdueCheck = parts.getOrNull(2) == "OVERDUE"
+
+                                if (isOverdueCheck || isCompleted) {
+                                    if (currentSchedule.subIndex == 1) {
+                                        prematureScreeningDao.updateAlarmActive(currentSchedule.referenceId, false)
+                                    } else {
+                                        prematureScreeningDao.updateAlarm2Active(currentSchedule.referenceId, false)
+                                    }
+                                    reminderScheduleDao.updateEnabled(reminderId, false)
+                                } else {
+                                    val targetDate = currentSchedule.targetDateMillis ?: currentSchedule.nextTriggerMillis
+                                    val nextDay7AM = AlarmSchedulerImpl.computeNextDay7AM(targetDate)
+                                    val categoryBadge = parts.getOrNull(0) ?: "Skrining"
+                                    val clinicOrLab = parts.getOrNull(1) ?: ""
+                                    reminderScheduleDao.insertOrUpdate(
+                                        currentSchedule.copy(
+                                            nextTriggerMillis = nextDay7AM,
+                                            extraData = "$categoryBadge|$clinicOrLab|OVERDUE",
+                                            updatedAt = System.currentTimeMillis()
+                                        )
+                                    )
+                                }
                             }
 
                             ReminderType.FENTON.name -> {

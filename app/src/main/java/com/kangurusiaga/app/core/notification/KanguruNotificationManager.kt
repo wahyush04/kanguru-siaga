@@ -410,7 +410,12 @@ class KanguruNotificationManager @Inject constructor(
         }
     }
 
-    fun showDelayedReminderNotification(title: String, message: String, navigateDestination: String = "screening_schedule") {
+    fun showDelayedReminderNotification(
+        title: String,
+        message: String,
+        navigateDestination: String = "screening_schedule",
+        notificationId: Int = NOTIFICATION_ID_DELAYED_BASE
+    ) {
         if (!areAppNotificationsEnabled) return
 
         val intent = Intent(context, MainActivity::class.java).apply {
@@ -418,7 +423,6 @@ class KanguruNotificationManager @Inject constructor(
             putExtra("navigate_to", navigateDestination)
         }
 
-        val notificationId = NOTIFICATION_ID_DELAYED_BASE + (System.currentTimeMillis() % 1000).toInt()
         val pendingIntent = PendingIntent.getActivity(
             context,
             notificationId,

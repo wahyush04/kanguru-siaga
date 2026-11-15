@@ -175,12 +175,60 @@ class AlarmSchedulerTest {
             notificationManager.showDelayedReminderNotification(
                 title = match { it.contains("USG Kepala") },
                 message = any(),
-                navigateDestination = "screening_schedule"
+                navigateDestination = "screening_schedule",
+                notificationId = any()
             )
         }
 
         coVerify(exactly = 1) {
+            prematureScreeningDao.updateAlarmActive(1L, false)
+        }
+
+        coVerify(exactly = 1) {
             reminderScheduleDao.updateEnabled("SKRINING_1_1", false, any())
+        }
+    }
+
+    @Test
+    fun syncDomainTablesWithRoom_overdueScreening_showsDelayedNotificationAndDisablesSwitch() = runTest {
+        val now = System.currentTimeMillis()
+        val pastDate = now - TimeUnit.DAYS.toMillis(5)
+
+        val overdueScreening = com.kangurusiaga.app.data.local.entity.PrematureScreeningEntity(
+            id = 2L,
+            babyId = 1L,
+            screeningType = "USG",
+            title = "USG Kepala",
+            categoryBadge = "Neurosonografi",
+            targetTimingLabel = "2 Minggu",
+            targetDateEpoch = pastDate,
+            indication = "",
+            clinicalGoal = "",
+            clinicOrLab = "RSIA",
+            isAlarmActive = true,
+            isCompleted = false
+        )
+
+        coEvery { prematureScreeningDao.getAllIncomplete() } returns listOf(overdueScreening)
+        coEvery { reminderScheduleDao.getNextEarliestActive(any()) } returns null
+
+        scheduler.syncAndScheduleNextAlarm()
+
+        verify(exactly = 1) {
+            notificationManager.showDelayedReminderNotification(
+                title = match { it.contains("USG Kepala") },
+                message = any(),
+                navigateDestination = "screening_schedule",
+                notificationId = any()
+            )
+        }
+
+        coVerify(exactly = 1) {
+            prematureScreeningDao.updateAlarmActive(2L, false)
+        }
+
+        coVerify(exactly = 1) {
+            reminderScheduleDao.updateEnabled("SKRINING_2_1", false, any())
         }
     }
 

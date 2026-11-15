@@ -195,60 +195,98 @@ class AlarmSchedulerImpl @Inject constructor(
                 // Alarm 1: Primary Target Date
                 if (screening.targetDateEpoch > 0) {
                     val id1 = "SKRINING_${screening.id}_1"
-                    val existing1 = reminderScheduleDao.getById(id1)
-                    val trigger1 = computeScreeningTrigger(screening.targetDateEpoch)
-                    val next1 = if (existing1 != null && existing1.nextTriggerMillis > now) {
-                        existing1.nextTriggerMillis
-                    } else {
-                        trigger1
-                    }
+                    val targetDay7AM = computeScreeningTrigger(screening.targetDateEpoch)
+                    val endOfTargetDay = computeEndOfDay(screening.targetDateEpoch)
+                    val nextDay7AM = computeNextDay7AM(screening.targetDateEpoch)
 
-                    reminderScheduleDao.insertOrUpdate(
-                        ReminderScheduleEntity(
-                            id = id1,
-                            type = ReminderType.SKRINING.name,
-                            referenceId = screening.id,
-                            subIndex = 1,
-                            label = screening.title,
-                            timeHour = 8,
-                            timeMinute = 0,
-                            targetDateMillis = screening.targetDateEpoch,
-                            isEnabled = screening.isAlarmActive && !screening.isCompleted,
-                            nextTriggerMillis = next1,
-                            extraData = "${screening.categoryBadge}|${screening.clinicOrLab}",
-                            updatedAt = now
+                    if (now > endOfTargetDay) {
+                        // Target date has passed without completion:
+                        // If alarm was active, show delayed notification ONCE and disable switch immediately
+                        if (screening.isAlarmActive && !screening.isCompleted) {
+                            val notifId = KanguruNotificationManager.NOTIFICATION_ID_DELAYED_BASE + (screening.id * 2 + 1).toInt()
+                            notificationManager.showDelayedReminderNotification(
+                                title = "Pengingat Tertunda: ${screening.title}",
+                                message = "Jadwal evaluasi klinis telah melewati batas tanggal. Segera konsultasikan ke fasilitas kesehatan.",
+                                navigateDestination = "screening_schedule",
+                                notificationId = notifId
+                            )
+                            prematureScreeningDao.updateAlarmActive(screening.id, false)
+                        }
+                        reminderScheduleDao.updateEnabled(id1, false)
+                    } else {
+                        // Target date is today or in the future
+                        val nextTrigger = if (now < targetDay7AM) {
+                            targetDay7AM
+                        } else {
+                            nextDay7AM
+                        }
+                        val extraFlag = if (now >= targetDay7AM) "OVERDUE" else "SCHEDULED"
+
+                        reminderScheduleDao.insertOrUpdate(
+                            ReminderScheduleEntity(
+                                id = id1,
+                                type = ReminderType.SKRINING.name,
+                                referenceId = screening.id,
+                                subIndex = 1,
+                                label = screening.title,
+                                timeHour = 7,
+                                timeMinute = 0,
+                                targetDateMillis = screening.targetDateEpoch,
+                                isEnabled = screening.isAlarmActive && !screening.isCompleted,
+                                nextTriggerMillis = nextTrigger,
+                                extraData = "${screening.categoryBadge}|${screening.clinicOrLab}|$extraFlag",
+                                updatedAt = now
+                            )
                         )
-                    )
+                    }
                 }
 
                 // Alarm 2: Secondary Target Date (Hearing OAE/BERA)
                 val date2 = screening.targetDateEpoch2
                 if (date2 != null && date2 > 0) {
                     val id2 = "SKRINING_${screening.id}_2"
-                    val existing2 = reminderScheduleDao.getById(id2)
-                    val trigger2 = computeScreeningTrigger(date2)
-                    val next2 = if (existing2 != null && existing2.nextTriggerMillis > now) {
-                        existing2.nextTriggerMillis
-                    } else {
-                        trigger2
-                    }
+                    val target2Day7AM = computeScreeningTrigger(date2)
+                    val endOfTarget2Day = computeEndOfDay(date2)
+                    val nextDay2_7AM = computeNextDay7AM(date2)
 
-                    reminderScheduleDao.insertOrUpdate(
-                        ReminderScheduleEntity(
-                            id = id2,
-                            type = ReminderType.SKRINING.name,
-                            referenceId = screening.id,
-                            subIndex = 2,
-                            label = "${screening.title} (Lanjutan)",
-                            timeHour = 8,
-                            timeMinute = 0,
-                            targetDateMillis = date2,
-                            isEnabled = screening.isAlarm2Active && !screening.isCompleted,
-                            nextTriggerMillis = next2,
-                            extraData = "${screening.categoryBadge}|${screening.clinicOrLab}",
-                            updatedAt = now
+                    if (now > endOfTarget2Day) {
+                        // Date 2 has passed without completion:
+                        if (screening.isAlarm2Active && !screening.isCompleted) {
+                            val notifId = KanguruNotificationManager.NOTIFICATION_ID_DELAYED_BASE + (screening.id * 2 + 2).toInt()
+                            notificationManager.showDelayedReminderNotification(
+                                title = "Pengingat Tertunda: ${screening.title} (Lanjutan)",
+                                message = "Jadwal evaluasi klinis telah melewati batas tanggal. Segera konsultasikan ke fasilitas kesehatan.",
+                                navigateDestination = "screening_schedule",
+                                notificationId = notifId
+                            )
+                            prematureScreeningDao.updateAlarm2Active(screening.id, false)
+                        }
+                        reminderScheduleDao.updateEnabled(id2, false)
+                    } else {
+                        val nextTrigger2 = if (now < target2Day7AM) {
+                            target2Day7AM
+                        } else {
+                            nextDay2_7AM
+                        }
+                        val extraFlag2 = if (now >= target2Day7AM) "OVERDUE" else "SCHEDULED"
+
+                        reminderScheduleDao.insertOrUpdate(
+                            ReminderScheduleEntity(
+                                id = id2,
+                                type = ReminderType.SKRINING.name,
+                                referenceId = screening.id,
+                                subIndex = 2,
+                                label = "${screening.title} (Lanjutan)",
+                                timeHour = 7,
+                                timeMinute = 0,
+                                targetDateMillis = date2,
+                                isEnabled = screening.isAlarm2Active && !screening.isCompleted,
+                                nextTriggerMillis = nextTrigger2,
+                                extraData = "${screening.categoryBadge}|${screening.clinicOrLab}|$extraFlag2",
+                                updatedAt = now
+                            )
                         )
-                    )
+                    }
                 }
             }
         } catch (_: Exception) {
@@ -287,12 +325,19 @@ class AlarmSchedulerImpl @Inject constructor(
                 }
 
                 ReminderType.SKRINING.name -> {
-                    // Inform user of overdue milestone, then disable
+                    // Inform user of overdue milestone ONCE with fixed notification ID, then disable switch and schedule
+                    val notifId = KanguruNotificationManager.NOTIFICATION_ID_DELAYED_BASE + (missed.referenceId * 2 + missed.subIndex).toInt()
                     notificationManager.showDelayedReminderNotification(
                         title = "Pengingat Tertunda: ${missed.label}",
                         message = "Jadwal evaluasi klinis telah melewati batas tanggal. Segera konsultasikan ke fasilitas kesehatan.",
-                        navigateDestination = "screening_schedule"
+                        navigateDestination = "screening_schedule",
+                        notificationId = notifId
                     )
+                    if (missed.subIndex == 1) {
+                        prematureScreeningDao.updateAlarmActive(missed.referenceId, false)
+                    } else {
+                        prematureScreeningDao.updateAlarm2Active(missed.referenceId, false)
+                    }
                     reminderScheduleDao.updateEnabled(missed.id, false)
                 }
 
@@ -432,7 +477,30 @@ class AlarmSchedulerImpl @Inject constructor(
         fun computeScreeningTrigger(targetEpoch: Long): Long {
             val calendar = Calendar.getInstance().apply {
                 timeInMillis = targetEpoch
-                set(Calendar.HOUR_OF_DAY, 8)
+                set(Calendar.HOUR_OF_DAY, 7)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            return calendar.timeInMillis
+        }
+
+        fun computeEndOfDay(epoch: Long): Long {
+            val calendar = Calendar.getInstance().apply {
+                timeInMillis = epoch
+                set(Calendar.HOUR_OF_DAY, 23)
+                set(Calendar.MINUTE, 59)
+                set(Calendar.SECOND, 59)
+                set(Calendar.MILLISECOND, 999)
+            }
+            return calendar.timeInMillis
+        }
+
+        fun computeNextDay7AM(epoch: Long): Long {
+            val calendar = Calendar.getInstance().apply {
+                timeInMillis = epoch
+                add(Calendar.DAY_OF_YEAR, 1)
+                set(Calendar.HOUR_OF_DAY, 7)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
