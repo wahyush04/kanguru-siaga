@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -99,71 +101,77 @@ fun GrowthBatchMeasurementScreen(
         containerColor = BrandBackground,
         snackbarHost = { KanguruSnackbarHost(snackbarHostState) },
         topBar = {
-            // Sticky Top Bar matching Stitch
-            Row(
+            // Sticky Top Bar matching Stitch with status bar padding to avoid system notification bar overlap
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(KanguruTheme.colors.surface)
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .statusBarsPadding()
             ) {
-                IconButton(
-                    onClick = onNavigateBack,
-                    modifier = Modifier.size(36.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = GrowthIcons.Back,
-                        contentDescription = stringResource(R.string.common_back),
-                        tint = KanguruTheme.colors.textPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.growth_batch_title),
-                        style = KanguruTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = KanguruTheme.colors.textPrimary,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = stringResource(R.string.growth_batch_subtitle),
-                        style = KanguruTheme.typography.labelSmall,
-                        color = KanguruTheme.colors.textSecondary,
-                        textAlign = TextAlign.Center
-                    )
-                }
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    onNavigateToChart?.let { navigateToChart ->
-                        IconButton(
-                            onClick = navigateToChart,
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                imageVector = GrowthIcons.Trending,
-                                contentDescription = "Lihat Grafik Fenton",
-                                tint = KanguruTheme.colors.primary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    }
-
                     IconButton(
-                        onClick = onNavigateToAboutFenton,
+                        onClick = onNavigateBack,
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
-                            imageVector = GrowthIcons.Help,
-                            contentDescription = stringResource(R.string.growth_batch_btn_help),
-                            tint = KanguruTheme.colors.textSecondary,
+                            imageVector = GrowthIcons.Back,
+                            contentDescription = stringResource(R.string.common_back),
+                            tint = KanguruTheme.colors.textPrimary,
                             modifier = Modifier.size(20.dp)
                         )
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.growth_batch_title),
+                            style = KanguruTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = KanguruTheme.colors.textPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = stringResource(R.string.growth_batch_subtitle),
+                            style = KanguruTheme.typography.labelSmall,
+                            color = KanguruTheme.colors.textSecondary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        onNavigateToChart?.let { navigateToChart ->
+                            IconButton(
+                                onClick = navigateToChart,
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Icon(
+                                    imageVector = GrowthIcons.Trending,
+                                    contentDescription = "Lihat Grafik Fenton",
+                                    tint = KanguruTheme.colors.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+
+                        IconButton(
+                            onClick = onNavigateToAboutFenton,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = GrowthIcons.Help,
+                                contentDescription = stringResource(R.string.growth_batch_btn_help),
+                                tint = KanguruTheme.colors.textSecondary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -174,6 +182,7 @@ fun GrowthBatchMeasurementScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(KanguruTheme.colors.surface)
+                    .navigationBarsPadding()
                     .padding(horizontal = 20.dp, vertical = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
