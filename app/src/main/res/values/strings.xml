@@ -7,7 +7,21 @@
     <string name="baby_profile_header_tag">IDENTITAS BAYI</string>
     <string name="baby_profile_form_title">Data Bayi</string>
     <string name="baby_profile_form_guidance">Lengkapi data si kecil untuk menyesuaikan panduan, pengingat, dan grafik pertumbuhan.</string>
-    <string name="baby_profile_confirm_title">Konfirmasi Data Bayi</string>
+
+    <!-- Mother Identity Setup (Stitch: Identitas Ibu) -->
+    <string name="mother_profile_header_tag">IDENTITAS IBU</string>
+    <string name="mother_profile_title">Identitas Ibu</string>
+    <string name="mother_profile_subtitle">Masukan nama ibu dan nomor telepon untuk bisa menghubungi jika nakes menemukan data pertumbuhan yang tidak baik pada bayi.</string>
+    <string name="mother_profile_label_name">NAMA LENGKAP BUNDA</string>
+    <string name="mother_profile_placeholder_name">Contoh: Ny. Arini Rahmawati</string>
+    <string name="mother_profile_label_phone">NOMOR TELEPON</string>
+    <string name="mother_profile_placeholder_phone">Contoh: 081234567890</string>
+    <string name="mother_profile_wa_hint">Disarankan memasukkan nomor telepon dengan WhatsApp aktif.</string>
+    <string name="mother_profile_btn_save">Simpan Data Ibu</string>
+    <string name="baby_profile_confirm_label_mother_name">Nama Ibu</string>
+    <string name="baby_profile_confirm_label_mother_phone">Nomor Telepon</string>
+
+    <string name="baby_profile_confirm_title">Konfirmasi Data Ibu &amp; Bayi</string>
     <string name="baby_profile_confirm_subtitle">Pastikan data yang Anda masukkan sudah benar.</string>
 
     <string name="baby_profile_photo_desc">Foto Bayi</string>
@@ -428,7 +442,7 @@
     <string name="onboarding_welcome_title">Selamat Datang\ndi KANGURU SIAGA</string>
     <string name="onboarding_welcome_desc">Teman Pendamping Perawatan Khusus Bayi Berat Lahir Rendah di Rumah untuk Mendukung Tumbuh Kembang Si Kecil.</string>
     <string name="onboarding_profile_intro_img_cd">Registrasi data bayi</string>
-    <string name="onboarding_profile_intro_title">Yuk, Mulai dengan\nData Bayi</string>
+    <string name="onboarding_profile_intro_title">Yuk, Mulai dengan\nData Ibu &amp; Bayi</string>
     <string name="onboarding_profile_intro_desc">Informasi Ini Akan Digunakan untuk Menyesuaikan Panduan, Pengingat, dan Grafik Pertumbuhan.</string>
 
     <!-- Splash Module -->

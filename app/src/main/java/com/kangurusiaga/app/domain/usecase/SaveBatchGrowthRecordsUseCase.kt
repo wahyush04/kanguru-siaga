@@ -2,13 +2,19 @@ package com.kangurusiaga.app.domain.usecase
 
 import com.kangurusiaga.app.data.local.entity.GrowthRecordEntity
 import com.kangurusiaga.app.data.local.fenton.FentonReferenceData
+import com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
 import com.kangurusiaga.app.data.repository.FentonGrowthRepository
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.GrowthRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Provider
 
 data class BatchRowData(
     val pmaWeeks: Int,
@@ -19,7 +25,8 @@ data class BatchRowData(
 
 class SaveBatchGrowthRecordsUseCase @Inject constructor(
     private val fentonGrowthRepository: FentonGrowthRepository,
-    private val growthRepository: GrowthRepository
+    private val growthRepository: GrowthRepository,
+    private val firestoreSyncManager: Provider<BabyFirestoreSyncManager>? = null
 ) {
     suspend operator fun invoke(
         babyId: Long,
@@ -210,6 +217,15 @@ class SaveBatchGrowthRecordsUseCase @Inject constructor(
                 }
                 fentonGrowthRepository.saveNewRecord(recordEntity)
                 savedCount++
+            }
+
+            // Sinkronkan seluruh data pengukuran pertumbuhan ke Firestore jika online
+            firestoreSyncManager?.let { managerProvider ->
+                CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+                    try {
+                        managerProvider.get().syncAllGrowthMeasurements(babyId)
+                    } catch (_: Exception) {}
+                }
             }
 
             Result.success(savedCount)

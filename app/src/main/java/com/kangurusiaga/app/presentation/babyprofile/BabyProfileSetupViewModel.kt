@@ -24,6 +24,37 @@ class BabyProfileSetupViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(BabyProfileSetupUiState())
     val uiState: StateFlow<BabyProfileSetupUiState> = _uiState.asStateFlow()
 
+    fun updateMotherName(name: String) {
+        _uiState.update { it.copy(motherName = name, errorMessage = null) }
+    }
+
+    fun updateMotherPhoneNumber(phone: String) {
+        val sanitized = phone.filter { it.isDigit() || it == '+' }
+        _uiState.update { it.copy(motherPhoneNumber = sanitized, errorMessage = null) }
+    }
+
+    fun proceedToBabyForm(): Boolean {
+        val state = _uiState.value
+        if (state.motherName.trim().isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Nama lengkap Bunda belum diisi") }
+            return false
+        }
+        if (state.motherPhoneNumber.trim().isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Nomor telepon belum diisi") }
+            return false
+        }
+        if (state.motherPhoneNumber.trim().length < 8) {
+            _uiState.update { it.copy(errorMessage = "Nomor telepon minimal 8 digit") }
+            return false
+        }
+        _uiState.update { it.copy(currentStep = ProfileSetupStep.BABY_FORM, errorMessage = null) }
+        return true
+    }
+
+    fun backToMotherIdentity() {
+        _uiState.update { it.copy(currentStep = ProfileSetupStep.MOTHER_IDENTITY, errorMessage = null) }
+    }
+
     fun updateName(name: String) {
         _uiState.update { it.copy(name = name, errorMessage = null) }
     }
@@ -105,24 +136,31 @@ class BabyProfileSetupViewModel @Inject constructor(
     }
 
     fun backToForm() {
-        _uiState.update { it.copy(currentStep = ProfileSetupStep.FORM, errorMessage = null) }
+        _uiState.update { it.copy(currentStep = ProfileSetupStep.BABY_FORM, errorMessage = null) }
     }
 
     fun onNextStep(): Boolean {
-        return if (_uiState.value.currentStep == ProfileSetupStep.FORM) {
-            proceedToConfirmation()
-        } else {
-            saveProfile()
-            true
+        return when (_uiState.value.currentStep) {
+            ProfileSetupStep.MOTHER_IDENTITY -> proceedToBabyForm()
+            ProfileSetupStep.BABY_FORM -> proceedToConfirmation()
+            ProfileSetupStep.CONFIRMATION -> {
+                saveProfile()
+                true
+            }
         }
     }
 
     fun onPreviousStep(): Boolean {
-        return if (_uiState.value.currentStep == ProfileSetupStep.CONFIRMATION) {
-            backToForm()
-            true
-        } else {
-            false
+        return when (_uiState.value.currentStep) {
+            ProfileSetupStep.CONFIRMATION -> {
+                backToForm()
+                true
+            }
+            ProfileSetupStep.BABY_FORM -> {
+                backToMotherIdentity()
+                true
+            }
+            ProfileSetupStep.MOTHER_IDENTITY -> false
         }
     }
 
@@ -132,6 +170,14 @@ class BabyProfileSetupViewModel @Inject constructor(
 
     fun saveProfile() {
         val state = _uiState.value
+        if (state.motherName.trim().isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Nama lengkap Bunda belum diisi") }
+            return
+        }
+        if (state.motherPhoneNumber.trim().isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Nomor telepon belum diisi") }
+            return
+        }
         if (state.name.trim().isBlank()) {
             _uiState.update { it.copy(errorMessage = "Nama bayi belum diisi") }
             return
@@ -146,6 +192,8 @@ class BabyProfileSetupViewModel @Inject constructor(
 
             val baby = Baby(
                 name = state.name.trim(),
+                motherName = state.motherName.trim(),
+                motherPhoneNumber = state.motherPhoneNumber.trim(),
                 gender = state.gender,
                 birthDateEpochMillis = state.birthDateEpochMillis,
                 birthWeightGram = state.birthWeightGram,

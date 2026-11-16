@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kangurusiaga.app.domain.model.settings.AppTextScale
 import com.kangurusiaga.app.domain.model.settings.AppThemeMode
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,6 +28,7 @@ class UserPreferencesDataStore @Inject constructor(
         val TEXT_SCALE = floatPreferencesKey("text_scale")
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
         val HAS_SEEN_ALARM_GUIDANCE = booleanPreferencesKey("has_seen_alarm_guidance")
+        val FIRESTORE_BABY_DOC_ID = stringPreferencesKey("firestore_baby_doc_id")
     }
 
     val isOnboardingCompleted: Flow<Boolean> = dataStore.data.map { preferences ->
@@ -34,6 +36,10 @@ class UserPreferencesDataStore @Inject constructor(
     }
 
     val hasCompletedOnboarding: Flow<Boolean> = isOnboardingCompleted
+
+    val firestoreBabyDocId: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.FIRESTORE_BABY_DOC_ID]
+    }
 
     val themeMode: Flow<AppThemeMode> = dataStore.data.map { preferences ->
         AppThemeMode.fromString(preferences[PreferencesKeys.THEME_MODE])
@@ -78,6 +84,24 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.HAS_SEEN_ALARM_GUIDANCE] = hasSeen
+        }
+    }
+
+    suspend fun getOrCreateFirestoreBabyDocId(): String {
+        var currentId = dataStore.data.firstOrNull()?.get(PreferencesKeys.FIRESTORE_BABY_DOC_ID)
+        if (currentId.isNullOrBlank()) {
+            val newId = java.util.UUID.randomUUID().toString()
+            dataStore.edit { preferences ->
+                preferences[PreferencesKeys.FIRESTORE_BABY_DOC_ID] = newId
+            }
+            currentId = newId
+        }
+        return currentId
+    }
+
+    suspend fun setFirestoreBabyDocId(id: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.FIRESTORE_BABY_DOC_ID] = id
         }
     }
 }

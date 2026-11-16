@@ -59,6 +59,9 @@ interface PmkSessionDao {
     @Query("SELECT COUNT(*) FROM pmk_sessions WHERE baby_id = :babyId AND start_time_epoch >= :startEpoch AND start_time_epoch <= :endEpoch")
     fun getSessionCountInRange(babyId: Long, startEpoch: Long, endEpoch: Long): Flow<Int>
 
+    @Query("SELECT * FROM pmk_sessions WHERE baby_id = :babyId ORDER BY start_time_epoch ASC")
+    suspend fun getAllSessionsListForBaby(babyId: Long): List<PmkSessionEntity>
+
     @Query("SELECT SUM(duration_minutes) FROM pmk_sessions WHERE baby_id = :babyId AND start_time_epoch >= :startEpoch AND start_time_epoch <= :endEpoch")
     fun getTotalMinutesInRange(babyId: Long, startEpoch: Long, endEpoch: Long): Flow<Int?>
 

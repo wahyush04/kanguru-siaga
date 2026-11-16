@@ -416,41 +416,51 @@ fun PrivacyPolicyScreen(
                 PrivacyDataCategoryCard(
                     icon = Icons.Default.Badge,
                     iconTint = colors.primary,
-                    title = "Profil Identitas Kelahiran Bayi",
+                    title = "Profil Identitas Ibu & Bayi",
                     badgeText = "Lokal + Cloud",
                     isLocalHighlight = false,
                     description = buildAnnotatedString {
-                        append("Nama panggilan, tanggal & jam lahir, usia gestasi saat lahir (minggu + hari), jenis kelamin biologis, berat/panjang lahir. Disimpan di Room SQLite lokal & sinkronisasi 1x saat onboarding ke koleksi Firestore ")
-                        appendCodePill("baby_onboarding_profiles", colors.textPrimary, colors.legalSectionCardBg)
-                        append(".")
+                        append("Nama lengkap Bunda, nomor telepon kontak darurat, serta nama bayi, tanggal/jam lahir, usia gestasi, jenis kelamin, dan berat/panjang lahir. Disimpan di Room SQLite lokal & disinkronkan ke koleksi Cloud Firestore ")
+                        appendCodePill("baby_records/{babyDocId}", colors.textPrimary, colors.legalSectionCardBg)
+                        append(" saat terhubung internet.")
                     }
                 )
                 PrivacyDataCategoryCard(
                     icon = Icons.Default.Straighten,
                     iconTint = colors.legalTealAccent,
-                    title = "Data Antropometri Berkala",
-                    badgeText = "Lokal + API Opsional",
+                    title = "Data Pertumbuhan Berkala",
+                    badgeText = "Lokal + Cloud",
                     isLocalHighlight = false,
-                    description = AnnotatedString("Berat badan harian, panjang badan, lingkar kepala berkala. Disimpan lokal di Room SQLite dan berkas CSV. Hanya dikirim ke endpoint kalkulasi FentonGrowth.ca API jika pengguna memberikan konfirmasi eksplisit untuk menghasilkan grafik persentil.")
+                    description = buildAnnotatedString {
+                        append("Pengukuran berkala berat badan, panjang badan, lingkar kepala, dan persentil Fenton. Disimpan lokal di Room SQLite & disinkronkan ke subkoleksi ")
+                        appendCodePill("growth_measurements", colors.textPrimary, colors.legalSectionCardBg)
+                        append(" di Firestore saat perangkat online.")
+                    }
                 )
                 PrivacyDataCategoryCard(
                     icon = Icons.Default.Timer,
                     iconTint = colors.primary,
                     title = "Aktivitas PMK & Pemantauan Nutrisi",
-                    badgeText = "100% Lokal",
-                    isLocalHighlight = true,
-                    description = AnnotatedString("Durasi sesi kontak kulit-ke-kulit (skin-to-skin), target harian jam PMK, jadwal nutrisi enteral (ASI / OGT / NGT), dan alarm terjadwal. Sepenuhnya tersimpan di database lokal perangkat Anda dan tidak pernah dikirim ke Cloud Firestore.")
+                    badgeText = "Lokal + Cloud",
+                    isLocalHighlight = false,
+                    description = buildAnnotatedString {
+                        append("Durasi sesi kontak kulit-ke-kulit (skin-to-skin), waktu mulai/selesai, pengasuh, dan catatan sesi tersimpan lokal di Room serta disinkronkan ke subkoleksi ")
+                        appendCodePill("pmk_sessions", colors.textPrimary, colors.legalSectionCardBg)
+                        append(" di Cloud Firestore saat perangkat online untuk evaluasi kepatuhan nakes.")
+                    }
                 )
                 PrivacyDataCategoryCard(
                     icon = Icons.Default.FolderSpecial,
                     iconTint = colors.primary,
-                    title = "Skrining Medis & Lampiran Berkas",
-                    badgeText = "100% Lokal",
-                    isLocalHighlight = true,
+                    title = "Skrining Medis & Evaluasi Klinis",
+                    badgeText = "Lokal + Cloud",
+                    isLocalHighlight = false,
                     description = buildAnnotatedString {
-                        append("Catatan skrining esensial BBLR (ROP mata, BERA pendengaran, USG kepala). Berkas lampiran PDF atau foto hasil lab disimpan aman dalam direktori privat gawai ")
+                        append("Jadwal skrining esensial BBLR (USG kepala, ROP mata, pendengaran BERA, fungsi tiroid), tanggal realisasi, dokter, rumah sakit, dan hasil klinis disinkronkan ke subkoleksi ")
+                        appendCodePill("screenings", colors.textPrimary, colors.legalSectionCardBg)
+                        append(". Berkas lampiran gambar/PDF medis tetap tersimpan 100% lokal di direktori ")
                         appendCodePill("screening_attachments/", colors.textPrimary, colors.legalSectionCardBg)
-                        append(" (maks. 10MB per berkas).")
+                        append(" dan tidak diunggah ke cloud.")
                     }
                 )
                 PrivacyDataCategoryCard(
@@ -496,19 +506,11 @@ fun PrivacyPolicyScreen(
                     icon = Icons.Default.CloudSync,
                     iconTint = colors.primary,
                     iconBoxColor = colors.legalSectionCardBg,
-                    title = "Sinkronisasi Cloud Terbatas (Google Firestore)",
+                    title = "Sinkronisasi Cloud Medis (Google Firestore)",
                     description = buildAnnotatedString {
-                        append("Hanya 15 atribut data profil onboarding terkirim saat pendaftaran awal. Dilindungi oleh Firebase Security Rules (CEL) berbasis ")
-                        withStyle(
-                            SpanStyle(
-                                fontStyle = FontStyle.Italic,
-                                fontFamily = FontFamily.Monospace,
-                                color = colors.textPrimary
-                            )
-                        ) {
-                            append("create-only")
-                        }
-                        append(": klien tidak memiliki akses membaca, memperbarui, atau menghapus data publik secara bebas.")
+                        append("Menyinkronkan data profil ibu & bayi (")
+                        appendCodePill("baby_records", colors.textPrimary, colors.legalSectionCardBg)
+                        append("), sesi PMK, skrining klinis, dan pertumbuhan saat terhubung internet. Dilindungi penuh oleh Firebase Security Rules (CEL) berbasis role-based access; akses baca ditutup untuk publik dan hanya nakes/admin terverifikasi yang dapat mengakses data rekam medis.")
                     }
                 )
             }

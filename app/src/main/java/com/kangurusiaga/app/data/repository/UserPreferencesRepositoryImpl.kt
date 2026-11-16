@@ -22,6 +22,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override val textScale: Flow<AppTextScale> = dataStore.textScale
     override val notificationsEnabled: Flow<Boolean> = dataStore.notificationsEnabled
     override val hasSeenAlarmGuidance: Flow<Boolean> = dataStore.hasSeenAlarmGuidance
+    override val firestoreBabyDocId: Flow<String?> = dataStore.firestoreBabyDocId
 
     override val appSettings: Flow<AppSettings> = combine(
         themeMode,
@@ -53,5 +54,13 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean) {
         dataStore.setHasSeenAlarmGuidance(hasSeen)
+    }
+
+    override suspend fun getOrCreateFirestoreBabyDocId(): String {
+        return dataStore.getOrCreateFirestoreBabyDocId()
+    }
+
+    override suspend fun setFirestoreBabyDocId(id: String) {
+        dataStore.setFirestoreBabyDocId(id)
     }
 }

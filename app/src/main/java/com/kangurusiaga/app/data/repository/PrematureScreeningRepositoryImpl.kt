@@ -1,22 +1,30 @@
 package com.kangurusiaga.app.data.repository
 
+import com.kangurusiaga.app.core.common.AppLogger
 import com.kangurusiaga.app.data.local.dao.PrematureScreeningDao
 import com.kangurusiaga.app.data.local.entity.PrematureScreeningEntity
+import com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
 import com.kangurusiaga.app.domain.model.PrematureScreening
 import com.kangurusiaga.app.domain.model.ScreeningType
 import com.kangurusiaga.app.domain.repository.PrematureScreeningRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
 class PrematureScreeningRepositoryImpl @Inject constructor(
-    private val dao: PrematureScreeningDao
+    private val dao: PrematureScreeningDao,
+    private val firestoreSyncManager: Provider<BabyFirestoreSyncManager>
 ) : PrematureScreeningRepository {
 
     private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
@@ -148,14 +156,38 @@ class PrematureScreeningRepositoryImpl @Inject constructor(
         )
 
         dao.insertScreenings(defaultList)
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            try {
+                firestoreSyncManager.get().syncAllScreenings(babyId)
+            } catch (e: Exception) {
+                AppLogger.e("PrematureScreeningRepo", "Gagal auto-sync default screenings: ${e.message}", e)
+            }
+        }
     }
 
     override suspend fun updateScreening(screening: PrematureScreening) {
-        dao.updateScreening(PrematureScreeningEntity.fromDomain(screening))
+        val entity = PrematureScreeningEntity.fromDomain(screening)
+        dao.updateScreening(entity)
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            try {
+                firestoreSyncManager.get().syncScreening(entity)
+            } catch (e: Exception) {
+                AppLogger.e("PrematureScreeningRepo", "Gagal auto-sync screening update: ${e.message}", e)
+            }
+        }
     }
 
     override suspend fun insertScreening(screening: PrematureScreening): Long {
-        return dao.insertScreening(PrematureScreeningEntity.fromDomain(screening))
+        val entity = PrematureScreeningEntity.fromDomain(screening)
+        val id = dao.insertScreening(entity)
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            try {
+                firestoreSyncManager.get().syncScreening(entity.copy(id = id))
+            } catch (e: Exception) {
+                AppLogger.e("PrematureScreeningRepo", "Gagal auto-sync screening insert: ${e.message}", e)
+            }
+        }
+        return id
     }
 
     override suspend fun deleteScreening(screeningId: Long) {

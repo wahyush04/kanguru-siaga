@@ -13,6 +13,8 @@ class BabyMapperTest {
         val entity = BabyEntity(
             id = 1L,
             name = "Bayi Sehat",
+            motherName = "Ny. Arini Rahmawati",
+            motherPhoneNumber = "081234567890",
             gender = "MALE",
             birthDateEpochMillis = 1727136000000L,
             birthWeightGram = 2100,
@@ -28,6 +30,8 @@ class BabyMapperTest {
 
         assertThat(domain.id).isEqualTo(1L)
         assertThat(domain.name).isEqualTo("Bayi Sehat")
+        assertThat(domain.motherName).isEqualTo("Ny. Arini Rahmawati")
+        assertThat(domain.motherPhoneNumber).isEqualTo("081234567890")
         assertThat(domain.gender).isEqualTo(Gender.MALE)
         assertThat(domain.birthWeightGram).isEqualTo(2100)
         assertThat(domain.birthLengthCm).isEqualTo(44.5f)
@@ -42,6 +46,8 @@ class BabyMapperTest {
         val domain = Baby(
             id = 2L,
             name = "Bayi Ceria",
+            motherName = "Ny. Siti Aminah",
+            motherPhoneNumber = "089876543210",
             gender = Gender.FEMALE,
             birthDateEpochMillis = 1727136000000L,
             birthWeightGram = 1950,
@@ -56,6 +62,8 @@ class BabyMapperTest {
 
         assertThat(entity.id).isEqualTo(2L)
         assertThat(entity.name).isEqualTo("Bayi Ceria")
+        assertThat(entity.motherName).isEqualTo("Ny. Siti Aminah")
+        assertThat(entity.motherPhoneNumber).isEqualTo("089876543210")
         assertThat(entity.gender).isEqualTo("FEMALE")
         assertThat(entity.birthWeightGram).isEqualTo(1950)
         assertThat(entity.birthLengthCm).isEqualTo(43.0f)

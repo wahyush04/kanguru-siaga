@@ -28,7 +28,7 @@ import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
         com.kangurusiaga.app.data.local.entity.PrematureScreeningEntity::class,
         com.kangurusiaga.app.data.local.entity.ReminderScheduleEntity::class
     ],
-    version = 12,
+    version = 13,
     exportSchema = true
 )
 abstract class KanguruDatabase : RoomDatabase() {

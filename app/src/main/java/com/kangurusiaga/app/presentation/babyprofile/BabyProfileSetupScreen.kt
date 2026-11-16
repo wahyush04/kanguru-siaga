@@ -197,13 +197,14 @@ fun BabyProfileSetupRoute(
     }
 
     // Handle back button behavior:
-    // If in CONFIRMATION step -> returns to FORM
-    // If in FORM step -> returns to ProfileIntro
+    // If in CONFIRMATION step -> returns to BABY_FORM
+    // If in BABY_FORM step -> returns to MOTHER_IDENTITY
+    // If in MOTHER_IDENTITY step -> returns to ProfileIntro
     BackHandler(enabled = true) {
-        if (uiState.currentStep == ProfileSetupStep.CONFIRMATION) {
-            viewModel.backToForm()
-        } else {
-            onNavigateBackToIntro()
+        when (uiState.currentStep) {
+            ProfileSetupStep.CONFIRMATION -> viewModel.backToForm()
+            ProfileSetupStep.BABY_FORM -> viewModel.backToMotherIdentity()
+            ProfileSetupStep.MOTHER_IDENTITY -> onNavigateBackToIntro()
         }
     }
 
@@ -213,10 +214,21 @@ fun BabyProfileSetupRoute(
         containerColor = BrandBackground
     ) { innerPadding ->
         when (uiState.currentStep) {
-            ProfileSetupStep.FORM -> {
+            ProfileSetupStep.MOTHER_IDENTITY -> {
+                com.kangurusiaga.app.presentation.babyprofile.components.MotherIdentityScreen(
+                    motherName = uiState.motherName,
+                    motherPhoneNumber = uiState.motherPhoneNumber,
+                    onMotherNameChange = viewModel::updateMotherName,
+                    onMotherPhoneNumberChange = viewModel::updateMotherPhoneNumber,
+                    onBackClick = onNavigateBackToIntro,
+                    onProceedToBabyForm = { viewModel.proceedToBabyForm() },
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+            ProfileSetupStep.BABY_FORM -> {
                 BabyProfileFormScreen(
                     uiState = uiState,
-                    onBackClick = onNavigateBackToIntro,
+                    onBackClick = { viewModel.backToMotherIdentity() },
                     onNameChange = viewModel::updateName,
                     onGenderChange = viewModel::updateGender,
                     onBirthDateChange = viewModel::updateBirthDate,
@@ -1280,6 +1292,24 @@ fun BabyProfileConfirmationScreen(
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
+                        ConfirmationDataRow(
+                            label = stringResource(R.string.baby_profile_confirm_label_mother_name),
+                            value = uiState.motherName.ifBlank { "-" }
+                        )
+                        HorizontalDivider(
+                            thickness = 0.8.dp,
+                            color = CardBorder
+                        )
+
+                        ConfirmationDataRow(
+                            label = stringResource(R.string.baby_profile_confirm_label_mother_phone),
+                            value = uiState.motherPhoneNumber.ifBlank { "-" }
+                        )
+                        HorizontalDivider(
+                            thickness = 0.8.dp,
+                            color = CardBorder
+                        )
+
                         ConfirmationDataRow(
                             label = stringResource(R.string.baby_profile_confirm_label_name),
                             value = uiState.name

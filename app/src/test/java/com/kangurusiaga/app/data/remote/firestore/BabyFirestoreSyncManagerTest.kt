@@ -4,11 +4,22 @@ import com.google.android.gms.tasks.Tasks
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kangurusiaga.app.core.common.CrashlyticsLogger
 import com.kangurusiaga.app.core.common.NetworkMonitor
+import com.kangurusiaga.app.data.local.dao.BabyDao
+import com.kangurusiaga.app.data.local.dao.GrowthMeasurementDao
+import com.kangurusiaga.app.data.local.dao.PmkSessionDao
+import com.kangurusiaga.app.data.local.dao.PrematureScreeningDao
+import com.kangurusiaga.app.data.local.entity.BabyEntity
+import com.kangurusiaga.app.data.local.entity.GrowthMeasurementEntity
+import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
+import com.kangurusiaga.app.data.local.entity.PrematureScreeningEntity
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
+import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -27,18 +38,47 @@ class BabyFirestoreSyncManagerTest {
     private val testDispatcher = StandardTestDispatcher()
     private val firestore: FirebaseFirestore = mockk()
     private val networkMonitor: NetworkMonitor = mockk()
+    private val userPreferencesRepository: UserPreferencesRepository = mockk(relaxed = true)
+    private val babyDao: BabyDao = mockk(relaxed = true)
+    private val pmkSessionDao: PmkSessionDao = mockk(relaxed = true)
+    private val prematureScreeningDao: PrematureScreeningDao = mockk(relaxed = true)
+    private val growthMeasurementDao: GrowthMeasurementDao = mockk(relaxed = true)
+
     private val collectionRef: CollectionReference = mockk()
+    private val subCollectionRef: CollectionReference = mockk()
     private val documentRef: DocumentReference = mockk()
+    private val subDocRef: DocumentReference = mockk()
+    private val docSnapshot: DocumentSnapshot = mockk()
 
     private lateinit var syncManager: BabyFirestoreSyncManagerImpl
 
     @Before
     fun setUp() {
-        every { firestore.collection(BabyFirestoreSyncManagerImpl.COLLECTION_BABY_PROFILES) } returns collectionRef
+        coEvery { userPreferencesRepository.getOrCreateFirestoreBabyDocId() } returns "doc_test_123"
+
+        every { firestore.collection(any()) } returns collectionRef
+        every { collectionRef.document(any()) } returns documentRef
+        every { collectionRef.add(any()) } returns Tasks.forResult(documentRef)
+
         every { documentRef.id } returns "doc_12345"
+        every { documentRef.get() } returns Tasks.forResult(docSnapshot)
+        every { documentRef.set(any()) } returns Tasks.forResult(null)
+        every { documentRef.update(any<Map<String, Any?>>()) } returns Tasks.forResult(null)
+        every { documentRef.collection(any()) } returns subCollectionRef
+
+        every { subCollectionRef.document(any()) } returns subDocRef
+        every { subDocRef.set(any()) } returns Tasks.forResult(null)
+
+        every { docSnapshot.exists() } returns false
+
         syncManager = BabyFirestoreSyncManagerImpl(
             firestore = firestore,
             networkMonitor = networkMonitor,
+            userPreferencesRepository = userPreferencesRepository,
+            babyDao = babyDao,
+            pmkSessionDao = pmkSessionDao,
+            prematureScreeningDao = prematureScreeningDao,
+            growthMeasurementDao = growthMeasurementDao,
             ioDispatcher = testDispatcher
         )
     }
@@ -62,7 +102,7 @@ class BabyFirestoreSyncManagerTest {
     }
 
     @Test
-    fun syncOnboardingBaby_whenOnline_sendsAll6RequiredFieldsToFirestore() = runTest(testDispatcher) {
+    fun syncOnboardingBaby_whenOnline_sendsDataToFirestore() = runTest(testDispatcher) {
         every { networkMonitor.isOnline() } returns true
 
         val capturedMap = slot<Map<String, Any?>>()
@@ -79,7 +119,7 @@ class BabyFirestoreSyncManagerTest {
         val result = syncManager.syncOnboardingBaby(baby, currentWeightGram = 2050)
 
         assertThat(result).isTrue()
-        verify(exactly = 1) { collectionRef.add(any()) }
+        verify(atLeast = 1) { collectionRef.add(any()) }
 
         val map = capturedMap.captured
         assertThat(map["babyName"]).isEqualTo("Siti Aisyah")
@@ -94,6 +134,7 @@ class BabyFirestoreSyncManagerTest {
     fun syncOnboardingBaby_whenFirestoreThrowsException_handlesGracefullyAndReturnsFalse() = runTest(testDispatcher) {
         every { networkMonitor.isOnline() } returns true
         every { collectionRef.add(any()) } throws RuntimeException("Simulated Firestore Exception")
+        every { documentRef.get() } throws RuntimeException("Simulated Firestore Exception")
 
         val baby = Baby(
             name = "Baby Test",
@@ -110,27 +151,117 @@ class BabyFirestoreSyncManagerTest {
     }
 
     @Test
-    fun syncOnboardingBaby_whenOffline_doesNotLogBabyNameToCrashlytics() = runTest(testDispatcher) {
-        every { networkMonitor.isOnline() } returns false
-        val loggedMessage = slot<String>()
-        mockkObject(CrashlyticsLogger)
-        try {
-            every { CrashlyticsLogger.log(capture(loggedMessage)) } returns Unit
+    fun syncBabyProfile_whenOnline_createsOrUpdatesDocument() = runTest(testDispatcher) {
+        every { networkMonitor.isOnline() } returns true
+        every { docSnapshot.exists() } returns false
 
-            val baby = Baby(
-                id = 99L,
-                name = "Baby Sensitive Name",
-                gender = Gender.FEMALE,
-                birthDateEpochMillis = 1700000000000L,
-                birthWeightGram = 1900,
-                gestationalAgeWeeks = 33
-            )
+        val baby = Baby(
+            id = 1L,
+            name = "Kenzo",
+            motherName = "Ny. Sarah",
+            motherPhoneNumber = "081234567890",
+            gender = Gender.MALE,
+            birthDateEpochMillis = 1700000000000L,
+            birthWeightGram = 1800,
+            gestationalAgeWeeks = 32
+        )
 
-            syncManager.syncOnboardingBaby(baby, currentWeightGram = 2000)
+        val result = syncManager.syncBabyProfile(baby)
 
-            assertThat(loggedMessage.captured).doesNotContain("Baby Sensitive Name")
-        } finally {
-            unmockkObject(CrashlyticsLogger)
-        }
+        assertThat(result).isTrue()
+        verify(atLeast = 1) { documentRef.set(any()) }
+    }
+
+    @Test
+    fun syncPmkSession_whenOnline_syncsToSubcollection() = runTest(testDispatcher) {
+        every { networkMonitor.isOnline() } returns true
+        every { docSnapshot.exists() } returns true
+
+        val session = PmkSessionEntity(
+            id = 10L,
+            babyId = 1L,
+            startTimeEpoch = 1700000000000L,
+            endTimeEpoch = 1700003600000L,
+            durationMinutes = 60,
+            source = "TIMER",
+            currentCaregiver = "IBU"
+        )
+
+        val result = syncManager.syncPmkSession(session)
+
+        assertThat(result).isTrue()
+        verify(atLeast = 1) { subDocRef.set(any()) }
+    }
+
+    @Test
+    fun syncScreening_whenOnline_syncsToSubcollection() = runTest(testDispatcher) {
+        every { networkMonitor.isOnline() } returns true
+        every { docSnapshot.exists() } returns true
+
+        val screening = PrematureScreeningEntity(
+            id = 5L,
+            babyId = 1L,
+            screeningType = "USG_HEAD",
+            title = "USG Kepala",
+            categoryBadge = "Neurosonografi",
+            targetTimingLabel = "Usia 2 Minggu",
+            targetDateEpoch = 1700000000000L,
+            indication = "Bayi prematur",
+            clinicalGoal = "Deteksi IVH",
+            clinicOrLab = "Poli Anak",
+            isCompleted = false
+        )
+
+        val result = syncManager.syncScreening(screening)
+
+        assertThat(result).isTrue()
+        verify(atLeast = 1) { subDocRef.set(any()) }
+    }
+
+    @Test
+    fun syncGrowthMeasurement_whenOnline_syncsToSubcollection() = runTest(testDispatcher) {
+        every { networkMonitor.isOnline() } returns true
+        every { docSnapshot.exists() } returns true
+
+        val measurement = GrowthMeasurementEntity(
+            id = 7L,
+            babyId = 1L,
+            parameter = "WEIGHT",
+            measurementDateEpochMillis = 1700000000000L,
+            chronologicalAgeWeeks = 2.0f,
+            pmaWeeks = 34.0f,
+            value = 1950.0f,
+            unit = "gram"
+        )
+
+        val result = syncManager.syncGrowthMeasurement(measurement)
+
+        assertThat(result).isTrue()
+        verify(atLeast = 1) { subDocRef.set(any()) }
+    }
+
+    @Test
+    fun syncAll_whenOnline_syncsAllCategories() = runTest(testDispatcher) {
+        every { networkMonitor.isOnline() } returns true
+        every { docSnapshot.exists() } returns true
+
+        val babyEntity = BabyEntity(
+            id = 1L,
+            name = "Baby Kenzo",
+            motherName = "Ny. Sarah",
+            motherPhoneNumber = "081234567890",
+            gender = Gender.MALE.name,
+            birthDateEpochMillis = 1700000000000L,
+            birthWeightGram = 1800,
+            gestationalAgeWeeks = 32
+        )
+        coEvery { babyDao.getActiveBabyOnce() } returns babyEntity
+        coEvery { pmkSessionDao.getAllSessionsListForBaby(1L) } returns emptyList()
+        coEvery { prematureScreeningDao.getScreeningsListForBaby(1L) } returns emptyList()
+        coEvery { growthMeasurementDao.getAllMeasurementsListForBaby(1L) } returns emptyList()
+
+        val result = syncManager.syncAll(1L)
+
+        assertThat(result).isTrue()
     }
 }

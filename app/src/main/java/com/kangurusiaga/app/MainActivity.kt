@@ -29,11 +29,18 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var alarmScheduler: AlarmScheduler
 
+    @Inject
+    lateinit var babyFirestoreSyncManager: com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
+
     override fun onStart() {
         super.onStart()
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 alarmScheduler.syncAndScheduleNextAlarm()
+            } catch (_: Exception) {
+            }
+            try {
+                babyFirestoreSyncManager.syncAll()
             } catch (_: Exception) {
             }
         }

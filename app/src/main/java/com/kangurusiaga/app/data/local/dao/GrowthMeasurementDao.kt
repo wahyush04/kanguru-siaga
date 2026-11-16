@@ -21,6 +21,9 @@ interface GrowthMeasurementDao {
     @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId ORDER BY pmaWeeks DESC, measurementDateEpochMillis DESC")
     fun getAllMeasurementsForBaby(babyId: Long): Flow<List<GrowthMeasurementEntity>>
 
+    @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId ORDER BY measurementDateEpochMillis ASC")
+    suspend fun getAllMeasurementsListForBaby(babyId: Long): List<GrowthMeasurementEntity>
+
     @Query("SELECT * FROM growth_measurements WHERE babyId = :babyId AND parameter = :parameter ORDER BY pmaWeeks DESC, measurementDateEpochMillis DESC LIMIT 1")
     fun getLatestMeasurement(babyId: Long, parameter: String): Flow<GrowthMeasurementEntity?>
 

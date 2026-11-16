@@ -1,24 +1,32 @@
 package com.kangurusiaga.app.data.repository
 
 import com.kangurusiaga.app.core.common.AppDispatchers
+import com.kangurusiaga.app.core.common.AppLogger
 import com.kangurusiaga.app.core.common.Dispatcher
 import com.kangurusiaga.app.data.local.dao.PmkSessionDao
 import com.kangurusiaga.app.data.mapper.toDomain
 import com.kangurusiaga.app.data.mapper.toEntity
+import com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
 import com.kangurusiaga.app.domain.model.PmkSegment
 import com.kangurusiaga.app.domain.model.PmkSession
+import com.kangurusiaga.app.domain.model.TimerStatus
 import com.kangurusiaga.app.domain.repository.PmkRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
 class PmkRepositoryImpl @Inject constructor(
     private val pmkSessionDao: PmkSessionDao,
+    private val firestoreSyncManager: Provider<BabyFirestoreSyncManager>,
     @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) : PmkRepository {
 
@@ -46,12 +54,26 @@ class PmkRepositoryImpl @Inject constructor(
 
     override suspend fun saveSession(session: PmkSession): Long {
         return withContext(ioDispatcher) {
-            if (session.id == 0L) {
+            val id = if (session.id == 0L) {
                 pmkSessionDao.insertSession(session.toEntity())
             } else {
                 pmkSessionDao.updateSession(session.toEntity())
                 session.id
             }
+
+            // Otomatis sinkronkan sesi PMK ke Firestore jika sesi selesai
+            if (session.status == TimerStatus.COMPLETED || session.endTimeEpoch > session.startTimeEpoch) {
+                CoroutineScope(ioDispatcher + SupervisorJob()).launch {
+                    try {
+                        val entity = session.toEntity().copy(id = id)
+                        firestoreSyncManager.get().syncPmkSession(entity)
+                    } catch (e: Exception) {
+                        AppLogger.e("PmkRepository", "Gagal auto-sync sesi PMK ke Firestore: ${e.message}", e)
+                    }
+                }
+            }
+
+            id
         }
     }
 

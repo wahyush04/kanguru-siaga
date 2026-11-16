@@ -14,6 +14,8 @@ fun BabyEntity.toDomain(): Baby {
     return Baby(
         id = id,
         name = name,
+        motherName = motherName,
+        motherPhoneNumber = motherPhoneNumber,
         gender = domainGender,
         birthDateEpochMillis = birthDateEpochMillis,
         birthWeightGram = birthWeightGram,
@@ -30,6 +32,8 @@ fun Baby.toEntity(isActive: Boolean = true): BabyEntity {
     return BabyEntity(
         id = id,
         name = name,
+        motherName = motherName,
+        motherPhoneNumber = motherPhoneNumber,
         gender = gender?.name,
         birthDateEpochMillis = birthDateEpochMillis,
         birthWeightGram = birthWeightGram,

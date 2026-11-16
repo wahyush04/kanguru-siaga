@@ -1,19 +1,27 @@
 package com.kangurusiaga.app.data.repository
 
+import com.kangurusiaga.app.core.common.AppLogger
 import com.kangurusiaga.app.data.local.dao.GrowthMeasurementDao
 import com.kangurusiaga.app.data.mapper.toDomain
 import com.kangurusiaga.app.data.mapper.toEntity
+import com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
 import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.GrowthRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
 class GrowthRepositoryImpl @Inject constructor(
-    private val dao: GrowthMeasurementDao
+    private val dao: GrowthMeasurementDao,
+    private val firestoreSyncManager: Provider<BabyFirestoreSyncManager>
 ) : GrowthRepository {
 
     override fun getMeasurementsAsc(babyId: Long, parameter: GrowthParameter): Flow<List<GrowthMeasurement>> {
@@ -43,11 +51,28 @@ class GrowthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertMeasurement(measurement: GrowthMeasurement): Long {
-        return dao.insertMeasurement(measurement.toEntity())
+        val entity = measurement.toEntity()
+        val id = dao.insertMeasurement(entity)
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            try {
+                firestoreSyncManager.get().syncGrowthMeasurement(entity.copy(id = id))
+            } catch (e: Exception) {
+                AppLogger.e("GrowthRepository", "Gagal auto-sync growth measurement: ${e.message}", e)
+            }
+        }
+        return id
     }
 
     override suspend fun updateMeasurement(measurement: GrowthMeasurement) {
-        dao.updateMeasurement(measurement.toEntity())
+        val entity = measurement.toEntity()
+        dao.updateMeasurement(entity)
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            try {
+                firestoreSyncManager.get().syncGrowthMeasurement(entity)
+            } catch (e: Exception) {
+                AppLogger.e("GrowthRepository", "Gagal auto-sync growth measurement update: ${e.message}", e)
+            }
+        }
     }
 
     override suspend fun deleteMeasurement(id: Long) {

@@ -49,10 +49,18 @@ object DatabaseModule {
         }
     }
 
+    internal val MIGRATION_12_13 = object : androidx.room.migration.Migration(12, 13) {
+        override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE babies ADD COLUMN mother_name TEXT NOT NULL DEFAULT ''")
+            db.execSQL("ALTER TABLE babies ADD COLUMN mother_phone_number TEXT NOT NULL DEFAULT ''")
+        }
+    }
+
     // Daftarkan setiap Migration baru (11 -> 12, dst.) di sini sebelum menaikkan version DB.
     internal val KANGURU_DB_MIGRATIONS: Array<androidx.room.migration.Migration> = arrayOf(
         MIGRATION_10_11,
-        MIGRATION_11_12
+        MIGRATION_11_12,
+        MIGRATION_12_13
     )
 
     // Hanya versi pra-migrasi tanpa jalur migrasi eksplisit (1..9) yang diizinkan reset jika

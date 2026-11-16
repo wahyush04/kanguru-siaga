@@ -12,6 +12,7 @@ interface UserPreferencesRepository {
     val textScale: Flow<AppTextScale>
     val notificationsEnabled: Flow<Boolean>
     val hasSeenAlarmGuidance: Flow<Boolean>
+    val firestoreBabyDocId: Flow<String?>
     val appSettings: Flow<AppSettings>
 
     suspend fun setOnboardingCompleted(completed: Boolean)
@@ -19,4 +20,6 @@ interface UserPreferencesRepository {
     suspend fun setTextScale(scale: AppTextScale)
     suspend fun setNotificationsEnabled(enabled: Boolean)
     suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean)
+    suspend fun getOrCreateFirestoreBabyDocId(): String
+    suspend fun setFirestoreBabyDocId(id: String)
 }

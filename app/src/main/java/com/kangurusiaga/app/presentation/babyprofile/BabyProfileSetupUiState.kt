@@ -3,12 +3,15 @@ package com.kangurusiaga.app.presentation.babyprofile
 import com.kangurusiaga.app.domain.model.Gender
 
 enum class ProfileSetupStep {
-    FORM,
+    MOTHER_IDENTITY,
+    BABY_FORM,
     CONFIRMATION
 }
 
 data class BabyProfileSetupUiState(
-    val currentStep: ProfileSetupStep = ProfileSetupStep.FORM,
+    val currentStep: ProfileSetupStep = ProfileSetupStep.MOTHER_IDENTITY,
+    val motherName: String = "",
+    val motherPhoneNumber: String = "",
     val name: String = "",
     val gender: Gender? = null,
     val birthDateEpochMillis: Long = System.currentTimeMillis(),
