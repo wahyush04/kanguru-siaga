@@ -191,6 +191,16 @@ class PrematureScreeningRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteScreening(screeningId: Long) {
+        val target = dao.getScreeningById(screeningId)
         dao.deleteScreeningById(screeningId)
+        if (target != null) {
+            CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+                try {
+                    firestoreSyncManager.get().syncAllScreenings(target.babyId)
+                } catch (e: Exception) {
+                    AppLogger.e("PrematureScreeningRepo", "Gagal auto-sync screening delete: ${e.message}", e)
+                }
+            }
+        }
     }
 }

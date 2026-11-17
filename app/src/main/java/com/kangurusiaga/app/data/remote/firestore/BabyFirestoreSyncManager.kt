@@ -315,13 +315,12 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
 
                 for (s in screenings) {
                     val dto = ScreeningFirestoreDto.fromEntity(s)
-                    val map = dto.toMap()
                     when (s.screeningType) {
-                        "USG_HEAD" -> neuroMap = map
-                        "ROP_EYE", "ROP" -> oftamologiMap = map
-                        "HEARING_OAE", "HEARING_OAE_BERA" -> audiologiMap = map
-                        "THYROID_FUNCTION", "THYROID" -> tiroidMap = map
-                        else -> additionalList.add(map)
+                        "USG_HEAD" -> neuroMap = dto.toMap(isInsideArray = false)
+                        "ROP_EYE", "ROP" -> oftamologiMap = dto.toMap(isInsideArray = false)
+                        "HEARING_OAE", "HEARING_OAE_BERA" -> audiologiMap = dto.toMap(isInsideArray = false)
+                        "THYROID_FUNCTION", "THYROID" -> tiroidMap = dto.toMap(isInsideArray = false)
+                        else -> additionalList.add(dto.toMap(isInsideArray = true))
                     }
                 }
 

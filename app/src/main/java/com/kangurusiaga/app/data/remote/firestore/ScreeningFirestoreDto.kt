@@ -1,5 +1,6 @@
 package com.kangurusiaga.app.data.remote.firestore
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.kangurusiaga.app.data.local.entity.PrematureScreeningEntity
 
@@ -23,8 +24,8 @@ data class ScreeningFirestoreDto(
     val conclusion: String,
     val syncedAtEpochMillis: Long = System.currentTimeMillis()
 ) {
-    fun toMap(): Map<String, Any?> {
-        return mapOf(
+    fun toMap(isInsideArray: Boolean = false): Map<String, Any?> {
+        val map = mutableMapOf<String, Any?>(
             "screeningId" to screeningIdLocal,
             "screeningIdLocal" to screeningIdLocal,
             "screeningType" to screeningType,
@@ -43,9 +44,16 @@ data class ScreeningFirestoreDto(
             "clinicalResult" to clinicalResult,
             "findings" to findings,
             "conclusion" to conclusion,
-            "syncedAtEpochMillis" to syncedAtEpochMillis,
-            "updatedAtServer" to FieldValue.serverTimestamp()
+            "syncedAtEpochMillis" to syncedAtEpochMillis
         )
+        if (isInsideArray) {
+            // Firestore does not allow FieldValue.serverTimestamp() inside arrays.
+            // Using Timestamp.now() stores the exact same Firestore Timestamp type.
+            map["updatedAtServer"] = Timestamp.now()
+        } else {
+            map["updatedAtServer"] = FieldValue.serverTimestamp()
+        }
+        return map
     }
 
     companion object {

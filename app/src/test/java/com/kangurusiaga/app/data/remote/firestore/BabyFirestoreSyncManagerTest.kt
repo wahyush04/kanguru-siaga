@@ -232,6 +232,46 @@ class BabyFirestoreSyncManagerTest {
     }
 
     @Test
+    fun syncScreening_withCustomScreening_syncsToAdditionalScreeningDoc() = runTest(testDispatcher) {
+        every { networkMonitor.isOnline() } returns true
+        every { docSnapshot.exists() } returns true
+
+        val essentialScreening = PrematureScreeningEntity(
+            id = 5L,
+            babyId = 1L,
+            screeningType = "USG_HEAD",
+            title = "USG Kepala",
+            categoryBadge = "Neurosonografi",
+            targetTimingLabel = "Usia 2 Minggu",
+            targetDateEpoch = 1700000000000L,
+            indication = "Bayi prematur",
+            clinicalGoal = "Deteksi IVH",
+            clinicOrLab = "Poli Anak",
+            isCompleted = false
+        )
+        val customScreening = PrematureScreeningEntity(
+            id = 6L,
+            babyId = 1L,
+            screeningType = "CUSTOM",
+            title = "Evaluasi Neurologi Anak",
+            categoryBadge = "Skrining Tambahan Kustom",
+            targetTimingLabel = "Pemeriksaan Spesialis",
+            targetDateEpoch = 1700000000000L,
+            indication = "Evaluasi neurologi",
+            clinicalGoal = "Evaluasi tumbuh kembang",
+            clinicOrLab = "Poli Neurologi",
+            isCompleted = true,
+            findings = "Hasil skrining kustom neurologi"
+        )
+        coEvery { prematureScreeningDao.getScreeningsListForBaby(1L) } returns listOf(essentialScreening, customScreening)
+
+        val result = syncManager.syncScreening(customScreening)
+
+        assertThat(result).isTrue()
+        verify(atLeast = 2) { subDocRef.set(any(), any()) }
+    }
+
+    @Test
     fun syncGrowthMeasurement_whenOnline_syncsToSubcollection() = runTest(testDispatcher) {
         every { networkMonitor.isOnline() } returns true
         every { docSnapshot.exists() } returns true
