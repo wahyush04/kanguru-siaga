@@ -106,23 +106,31 @@ class BabyFirestoreSyncManagerTest {
         every { networkMonitor.isOnline() } returns true
 
         val capturedMap = slot<Map<String, Any?>>()
-        every { collectionRef.add(capture(capturedMap)) } returns Tasks.forResult(documentRef)
+        every { documentRef.set(capture(capturedMap)) } returns Tasks.forResult(null)
 
         val baby = Baby(
+            id = 1L,
             name = "Siti Aisyah",
+            motherName = "Ny. Fatimah",
+            motherPhoneNumber = "081234567890",
             gender = Gender.FEMALE,
             birthDateEpochMillis = 1700000000000L,
             birthWeightGram = 1950,
             gestationalAgeWeeks = 33
         )
 
+        coEvery { prematureScreeningDao.getScreeningsListForBaby(1L) } returns emptyList()
+        coEvery { growthMeasurementDao.getAllMeasurementsListForBaby(1L) } returns emptyList()
+
         val result = syncManager.syncOnboardingBaby(baby, currentWeightGram = 2050)
 
         assertThat(result).isTrue()
-        verify(atLeast = 1) { collectionRef.add(any()) }
+        verify(atLeast = 1) { documentRef.set(any()) }
 
         val map = capturedMap.captured
         assertThat(map["babyName"]).isEqualTo("Siti Aisyah")
+        assertThat(map["motherName"]).isEqualTo("Ny. Fatimah")
+        assertThat(map["motherPhoneNumber"]).isEqualTo("081234567890")
         assertThat(map["birthDateEpochMillis"]).isEqualTo(1700000000000L)
         assertThat(map["gestationalAgeWeeks"]).isEqualTo(33)
         assertThat(map["birthWeightGram"]).isEqualTo(1950)
@@ -133,7 +141,6 @@ class BabyFirestoreSyncManagerTest {
     @Test
     fun syncOnboardingBaby_whenFirestoreThrowsException_handlesGracefullyAndReturnsFalse() = runTest(testDispatcher) {
         every { networkMonitor.isOnline() } returns true
-        every { collectionRef.add(any()) } throws RuntimeException("Simulated Firestore Exception")
         every { documentRef.get() } throws RuntimeException("Simulated Firestore Exception")
 
         val baby = Baby(

@@ -153,55 +153,30 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 return@withContext false
             }
 
-            var newSchemaSuccess = false
-
-            // 1. Kirim ke skema baru baby_records/{babyDocId}
             try {
-                newSchemaSuccess = syncBabyProfile(
+                // 1. Sinkronkan profil utama ibu & bayi ke baby_records/{babyDocId}
+                val profileSuccess = syncBabyProfile(
                     baby = baby,
                     currentWeightGram = currentWeightGram,
                     currentLengthCm = currentLengthCm,
                     currentHeadCircumferenceCm = currentHeadCircumferenceCm
                 )
-            } catch (e: Exception) {
-                AppLogger.e(TAG, "Gagal sinkron baby_records saat onboarding: ${e.message}", e)
-            }
 
-            // 2. Kirim ke koleksi lama baby_onboarding_profiles untuk backward compatibility
-            var oldSchemaSuccess = false
-            try {
-                val genderString = when (baby.gender) {
-                    Gender.MALE -> "LAKI_LAKI"
-                    Gender.FEMALE -> "PEREMPUAN"
-                    Gender.UNSPECIFIED, null -> "TIDAK_DIKETAHUI"
+                if (profileSuccess) {
+                    // 2. Sinkronkan data awal skrining dan pengukuran pertumbuhan saat onboarding
+                    syncAllScreenings(baby.id)
+                    syncAllGrowthMeasurements(baby.id)
+                    AppLogger.i(TAG, "BERHASIL menyinkronkan profil, skrining, dan pertumbuhan onboarding ke baby_records")
+                    true
+                } else {
+                    AppLogger.w(TAG, "Gagal menyinkronkan profil bayi saat onboarding")
+                    false
                 }
-
-                val dto = BabyOnboardingFirestoreDto.create(
-                    babyName = baby.name,
-                    birthDateEpochMillis = baby.birthDateEpochMillis,
-                    gestationalAgeWeeks = baby.gestationalAgeWeeks,
-                    birthWeightGram = baby.birthWeightGram,
-                    currentWeightGram = currentWeightGram,
-                    birthLengthCm = baby.birthLengthCm,
-                    currentLengthCm = currentLengthCm,
-                    birthHeadCircumferenceCm = baby.birthHeadCircumferenceCm,
-                    currentHeadCircumferenceCm = currentHeadCircumferenceCm,
-                    gender = genderString,
-                    environment = BuildConfig.ENVIRONMENT,
-                    appVersion = BuildConfig.VERSION_NAME
-                )
-
-                val docRef = firestore.collection(COLLECTION_BABY_PROFILES)
-                    .add(dto.toMap())
-                    .await()
-                AppLogger.i(TAG, "BERHASIL mencatat onboarding ke $COLLECTION_BABY_PROFILES id=${docRef.id}")
-                oldSchemaSuccess = true
             } catch (e: Exception) {
-                AppLogger.e(TAG, "GAGAL menyinkronkan onboarding ke $COLLECTION_BABY_PROFILES: ${e.message}", e)
+                AppLogger.e(TAG, "Gagal sinkron onboarding ke Firestore: ${e.message}", e)
                 CrashlyticsLogger.recordException(e)
+                false
             }
-
-            newSchemaSuccess || oldSchemaSuccess
         }
     }
 
@@ -247,7 +222,12 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
 
                 val snapshot = docRef.get().await()
                 if (snapshot.exists()) {
-                    docRef.update(dto.toMap(isNewDocument = false)).await()
+                    val existingCreatedAt = snapshot.get("createdAtServer")
+                    val map = dto.toMap(isNewDocument = false).toMutableMap()
+                    if (existingCreatedAt != null) {
+                        map["createdAtServer"] = existingCreatedAt
+                    }
+                    docRef.set(map).await()
                     AppLogger.i(TAG, "BERHASIL update profil bayi di Firestore: babyDocId=$babyDocId")
                 } else {
                     docRef.set(dto.toMap(isNewDocument = true)).await()

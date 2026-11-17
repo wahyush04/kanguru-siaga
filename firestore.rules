@@ -51,7 +51,8 @@ rules_version = '2';
 //      - createdAtServer: timestamp (required, immutable, == request.time saat create) - Server timestamp pembuatan
 //      - updatedAtServer: timestamp (required, == request.time) - Server timestamp pembaharuan
 //    Access Pattern:
-//      - Read: Admin only (PII perlindungan data ibu & anak)
+//      - Get: Diizinkan bagi klien untuk membaca dokumen tunggal dengan docId spesifik (sinkronisasi create vs update)
+//      - List: Admin only (mencegah scraping/enumerasi data PII ibu & anak)
 //      - Create: Diizinkan jika valid & createdAtServer == request.time & updatedAtServer == request.time
 //      - Update: Diizinkan jika valid & createdAtServer tidak berubah & updatedAtServer == request.time
 //      - Delete: Admin only
@@ -69,7 +70,8 @@ rules_version = '2';
 //      - syncedAtEpochMillis: number (required, > 0, <= request.time.toMillis() + 300000) - Waktu sinkronisasi
 //      - updatedAtServer: timestamp (required, == request.time) - Server timestamp pembaharuan
 //    Access Pattern:
-//      - Read: Admin only
+//      - Get: Diizinkan bagi klien dengan sessionId spesifik
+//      - List: Admin only
 //      - Create: Diizinkan jika valid & updatedAtServer == request.time
 //      - Update: Diizinkan jika valid & updatedAtServer == request.time
 //      - Delete: Admin only
@@ -97,7 +99,8 @@ rules_version = '2';
 //      - syncedAtEpochMillis: number (required, > 0, <= request.time.toMillis() + 300000) - Waktu sinkronisasi
 //      - updatedAtServer: timestamp (required, == request.time) - Server timestamp pembaharuan
 //    Access Pattern:
-//      - Read: Admin only
+//      - Get: Diizinkan bagi klien dengan screeningId spesifik
+//      - List: Admin only
 //      - Create: Diizinkan jika valid & updatedAtServer == request.time
 //      - Update: Diizinkan jika valid & updatedAtServer == request.time
 //      - Delete: Admin only
@@ -118,7 +121,8 @@ rules_version = '2';
 //      - syncedAtEpochMillis: number (required, > 0, <= request.time.toMillis() + 300000) - Waktu sinkronisasi
 //      - updatedAtServer: timestamp (required, == request.time) - Server timestamp pembaharuan
 //    Access Pattern:
-//      - Read: Admin only
+//      - Get: Diizinkan bagi klien dengan measurementId spesifik
+//      - List: Admin only
 //      - Create: Diizinkan jika valid & updatedAtServer == request.time
 //      - Update: Diizinkan jika valid & updatedAtServer == request.time
 //      - Delete: Admin only
@@ -608,8 +612,12 @@ service cloud.firestore {
 
     // 2. Koleksi Rekam Medis Komprehensif Bayi & Ibu
     match /baby_records/{babyDocId} {
-      // READ: Ditutup untuk publik/non-admin demi melindungi privasi data ibu dan anak (PII).
-      allow read: if isAdmin();
+      // GET: Diizinkan untuk membaca dokumen tunggal dengan docId spesifik (UUID rahasia klien).
+      // Dibutuhkan klien saat sinkronisasi untuk mendeteksi create vs update dan audit timestamp.
+      allow get: if true;
+
+      // LIST: Ditutup untuk klien umum dan hanya diizinkan untuk Admin (mencegah scraping/enumerasi PII).
+      allow list: if isAdmin();
 
       // CREATE: Diizinkan untuk aplikasi klien yang melakukan sinkronisasi dengan validasi skema ketat.
       // Server timestamps (createdAtServer & updatedAtServer) diverifikasi menggunakan request.time.
@@ -626,7 +634,8 @@ service cloud.firestore {
 
       // 3. Subkoleksi Sesi PMK (Kangaroo Mother Care)
       match /pmk_sessions/{sessionId} {
-        allow read: if isAdmin();
+        allow get: if true;
+        allow list: if isAdmin();
         allow create: if isValidPmkSession(request.resource.data);
         allow update: if isValidPmkSession(request.resource.data);
         allow delete: if isAdmin();
@@ -634,7 +643,8 @@ service cloud.firestore {
 
       // 4. Subkoleksi Skrining Bayi Prematur
       match /screenings/{screeningId} {
-        allow read: if isAdmin();
+        allow get: if true;
+        allow list: if isAdmin();
         allow create: if isValidScreening(request.resource.data);
         allow update: if isValidScreening(request.resource.data);
         allow delete: if isAdmin();
@@ -642,7 +652,8 @@ service cloud.firestore {
 
       // 5. Subkoleksi Pengukuran Pertumbuhan (Growth Measurements)
       match /growth_measurements/{measurementId} {
-        allow read: if isAdmin();
+        allow get: if true;
+        allow list: if isAdmin();
         allow create: if isValidGrowthMeasurement(request.resource.data);
         allow update: if isValidGrowthMeasurement(request.resource.data);
         allow delete: if isAdmin();
