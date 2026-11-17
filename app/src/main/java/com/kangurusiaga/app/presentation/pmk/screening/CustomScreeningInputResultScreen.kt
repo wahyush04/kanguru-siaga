@@ -294,7 +294,8 @@ fun CustomScreeningInputResultScreen(
                 isMale = uiState.isMale,
                 pmaWeeksDisplay = uiState.pmaWeeksDisplay,
                 birthGestationalDisplay = uiState.birthGestationalDisplay,
-                birthWeightDisplay = uiState.birthWeightDisplay
+                birthWeightDisplay = uiState.birthWeightDisplay,
+                photoUri = uiState.baby?.photoUri
             )
 
             // Section 1: NAMA PENAPISAN * (Wajib diisi) dengan Input Text Field & Chip Cepat

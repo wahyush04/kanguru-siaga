@@ -72,6 +72,8 @@ import com.kangurusiaga.app.core.designsystem.theme.KanguruTheme
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.presentation.growth.components.FentonApiErrorDialog
 import com.kangurusiaga.app.presentation.growth.components.GrowthIcons
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import java.util.Locale
 
 /**
@@ -276,7 +278,8 @@ fun GrowthChartScreen(
                 isBoy = isBoy,
                 gestationalAgeWeeksAtBirth = uiState.baby?.gestationalAgeWeeks ?: 0,
                 birthWeightGrams = uiState.baby?.birthWeightGram ?: 0,
-                currentPmaWeeks = uiState.currentPmaWeeks
+                currentPmaWeeks = uiState.currentPmaWeeks,
+                babyPhotoUri = uiState.baby?.photoUri
             )
 
             // 4. Interactive Fenton Chart Canvas Card
@@ -327,7 +330,8 @@ private fun PatientVitalContextCard(
     isBoy: Boolean,
     gestationalAgeWeeksAtBirth: Int,
     birthWeightGrams: Int,
-    currentPmaWeeks: Float
+    currentPmaWeeks: Float,
+    babyPhotoUri: String? = null
 ) {
     val colors = KanguruTheme.colors
     val typography = KanguruTheme.typography
@@ -359,7 +363,7 @@ private fun PatientVitalContextCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.weight(1f, fill = false)
             ) {
-                // Initials Circle
+                // Initials or Photo Circle
                 Box(
                     modifier = Modifier
                         .size(44.dp)
@@ -368,12 +372,24 @@ private fun PatientVitalContextCard(
                         .border(1.dp, colors.fentonPatientMetricCardBorder, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = initials,
-                        style = typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.fentonPatientSubtitleText
-                    )
+                    if (!babyPhotoUri.isNullOrBlank()) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(babyPhotoUri)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Foto $babyName",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Text(
+                            text = initials,
+                            style = typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.fentonPatientSubtitleText
+                        )
+                    }
                 }
 
                 // Name & Gender Tag

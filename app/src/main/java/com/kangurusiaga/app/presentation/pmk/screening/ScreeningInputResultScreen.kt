@@ -71,7 +71,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -318,7 +321,8 @@ fun ScreeningInputResultScreen(
                 isMale = uiState.isMale,
                 pmaWeeksDisplay = uiState.pmaWeeksDisplay,
                 birthGestationalDisplay = uiState.birthGestationalDisplay,
-                birthWeightDisplay = uiState.birthWeightDisplay
+                birthWeightDisplay = uiState.birthWeightDisplay,
+                photoUri = uiState.baby?.photoUri
             )
 
             // Section 1: PILIH JENIS PENAPISAN (IDAI / KEMENKES) dengan badge Wajib 4 Skrining & Grid 2x2
@@ -566,6 +570,7 @@ internal fun PatientProfileSummaryCard(
     pmaWeeksDisplay: String,
     birthGestationalDisplay: String,
     birthWeightDisplay: String,
+    photoUri: String? = null,
     modifier: Modifier = Modifier
 ) {
     val colors = KanguruTheme.colors
@@ -594,12 +599,24 @@ internal fun PatientProfileSummaryCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = babyInitials,
-                    style = KanguruTheme.typography.titleMedium,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = colors.onPrimary
-                )
+                if (!photoUri.isNullOrBlank()) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(photoUri)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Foto $babyName",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Text(
+                        text = babyInitials,
+                        style = KanguruTheme.typography.titleMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = colors.onPrimary
+                    )
+                }
             }
 
             Column(

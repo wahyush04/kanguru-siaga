@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,8 +37,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -113,7 +118,7 @@ fun GrowthBabySummaryCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                // Circle Avatar Initials
+                // Circle Avatar Initials or Photo
                 Box(
                     modifier = Modifier
                         .size(44.dp)
@@ -122,12 +127,24 @@ fun GrowthBabySummaryCard(
                         .border(1.dp, KanguruTheme.colors.growthBabyAvatarBorder, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = initials,
-                        style = KanguruTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = White
-                    )
+                    if (!baby?.photoUri.isNullOrBlank()) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(baby.photoUri)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Foto ${baby.name}",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Text(
+                            text = initials,
+                            style = KanguruTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = White
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(10.dp))

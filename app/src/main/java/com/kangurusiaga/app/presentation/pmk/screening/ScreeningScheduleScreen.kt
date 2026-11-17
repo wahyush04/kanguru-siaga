@@ -80,7 +80,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -510,7 +513,19 @@ private fun HeroScreeningCard(
                                 .border(1.dp, colors.clinicalAmberBorder, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = "👶", style = KanguruTheme.typography.bodyMedium)
+                            if (!uiState.baby?.photoUri.isNullOrBlank()) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(uiState.baby?.photoUri)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Foto ${uiState.baby?.name ?: "Si Kecil"}",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                Text(text = "👶", style = KanguruTheme.typography.bodyMedium)
+                            }
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
@@ -594,7 +609,19 @@ private fun PatientSummaryMedicalCard(
                             .border(1.dp, colors.clinicalAmberBorder, RoundedCornerShape(16.dp)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "👶", style = KanguruTheme.typography.titleMedium)
+                        if (!uiState.baby?.photoUri.isNullOrBlank()) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(uiState.baby?.photoUri)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = "Foto ${uiState.baby?.name ?: "Si Kecil"}",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Text(text = "👶", style = KanguruTheme.typography.titleMedium)
+                        }
                     }
 
                     Column(
