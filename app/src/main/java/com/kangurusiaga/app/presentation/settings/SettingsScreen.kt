@@ -72,6 +72,7 @@ import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.settings.AppTextScale
 import com.kangurusiaga.app.domain.model.settings.AppThemeMode
 import com.kangurusiaga.app.presentation.settings.components.EditBabyProfileBottomSheet
+import com.kangurusiaga.app.presentation.settings.components.EditMotherBottomSheet
 import com.kangurusiaga.app.presentation.settings.components.TextSizeBottomSheet
 import com.kangurusiaga.app.presentation.settings.components.ThemeSelectionBottomSheet
 import android.Manifest
@@ -223,6 +224,11 @@ fun SettingsRoute(
         onEditPhotoSelected = viewModel::onPhotoSelected,
         createTempCameraUri = viewModel::createTempCameraUri,
         onSaveProfile = viewModel::saveProfileChanges,
+        onOpenEditMother = viewModel::openEditMotherSheet,
+        onCloseEditMother = viewModel::closeEditMotherSheet,
+        onEditMotherNameChange = viewModel::updateEditMotherName,
+        onEditMotherPhoneNumberChange = viewModel::updateEditMotherPhoneNumber,
+        onSaveMother = viewModel::saveMotherChanges,
         onOpenTheme = viewModel::openThemeSheet,
         onCloseTheme = viewModel::closeThemeSheet,
         onSelectTheme = viewModel::selectThemeMode,
@@ -356,6 +362,11 @@ fun SettingsScreen(
     onEditPhotoSelected: (android.net.Uri) -> Unit,
     createTempCameraUri: () -> android.net.Uri,
     onSaveProfile: () -> Unit,
+    onOpenEditMother: () -> Unit = {},
+    onCloseEditMother: () -> Unit = {},
+    onEditMotherNameChange: (String) -> Unit = {},
+    onEditMotherPhoneNumberChange: (String) -> Unit = {},
+    onSaveMother: () -> Unit = {},
     onOpenTheme: () -> Unit,
     onCloseTheme: () -> Unit,
     onSelectTheme: (AppThemeMode) -> Unit,
@@ -729,6 +740,78 @@ fun SettingsScreen(
                                                     }
                                                 }
                                             }
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                                contentDescription = null,
+                                                tint = TextTertiary,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    }
+
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+
+                                    // Row 6: Nama Ibu
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable(onClick = onOpenEditMother)
+                                            .padding(14.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = "Nama Ibu",
+                                            style = KanguruTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.Medium,
+                                            color = TextSecondary
+                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Text(
+                                                text = baby.motherName.ifBlank { "-" },
+                                                style = KanguruTheme.typography.titleSmall,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = TextPrimary
+                                            )
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                                contentDescription = null,
+                                                tint = TextTertiary,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    }
+
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+
+                                    // Row 7: Nomor Telepon
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable(onClick = onOpenEditMother)
+                                            .padding(14.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = "Nomor Telepon",
+                                            style = KanguruTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.Medium,
+                                            color = TextSecondary
+                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Text(
+                                                text = baby.motherPhoneNumber.ifBlank { "-" },
+                                                style = KanguruTheme.typography.titleSmall,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = TextPrimary
+                                            )
                                             Icon(
                                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                                 contentDescription = null,
@@ -1335,6 +1418,19 @@ fun SettingsScreen(
             createTempCameraUri = createTempCameraUri,
             onSave = onSaveProfile,
             onDismiss = onCloseEditProfile
+        )
+    }
+
+    if (uiState.showEditMotherSheet) {
+        EditMotherBottomSheet(
+            motherName = uiState.editMotherName,
+            phoneNumber = uiState.editMotherPhoneNumber,
+            errorMessage = uiState.editMotherErrorMessage,
+            isSaving = uiState.isSavingMother,
+            onMotherNameChange = onEditMotherNameChange,
+            onPhoneNumberChange = onEditMotherPhoneNumberChange,
+            onSave = onSaveMother,
+            onDismiss = onCloseEditMother
         )
     }
 

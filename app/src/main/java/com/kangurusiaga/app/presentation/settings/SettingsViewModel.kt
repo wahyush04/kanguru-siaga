@@ -248,6 +248,77 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    // --- Mother Profile Editing BottomSheet ---
+    fun openEditMotherSheet() {
+        val baby = _uiState.value.baby ?: return
+        _uiState.update {
+            it.copy(
+                showEditMotherSheet = true,
+                editMotherName = baby.motherName,
+                editMotherPhoneNumber = baby.motherPhoneNumber,
+                editMotherErrorMessage = null
+            )
+        }
+    }
+
+    fun closeEditMotherSheet() {
+        _uiState.update { it.copy(showEditMotherSheet = false, editMotherErrorMessage = null) }
+    }
+
+    fun updateEditMotherName(name: String) {
+        _uiState.update { it.copy(editMotherName = name, editMotherErrorMessage = null) }
+    }
+
+    fun updateEditMotherPhoneNumber(phone: String) {
+        val sanitized = phone.filter { it.isDigit() || it == '+' }
+        _uiState.update { it.copy(editMotherPhoneNumber = sanitized, editMotherErrorMessage = null) }
+    }
+
+    fun saveMotherChanges() {
+        val currentBaby = _uiState.value.baby ?: return
+        val state = _uiState.value
+
+        if (state.editMotherName.trim().isBlank()) {
+            _uiState.update { it.copy(editMotherErrorMessage = "Nama ibu belum diisi") }
+            return
+        }
+        if (state.editMotherPhoneNumber.trim().isBlank()) {
+            _uiState.update { it.copy(editMotherErrorMessage = "Nomor telepon belum diisi") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSavingMother = true, editMotherErrorMessage = null) }
+
+            val updatedBaby = currentBaby.copy(
+                motherName = state.editMotherName.trim(),
+                motherPhoneNumber = state.editMotherPhoneNumber.trim(),
+                updatedAt = System.currentTimeMillis()
+            )
+
+            val result = updateBabyProfileUseCase(updatedBaby)
+            result.fold(
+                onSuccess = {
+                    _uiState.update {
+                        it.copy(
+                            isSavingMother = false,
+                            showEditMotherSheet = false,
+                            snackbarMessage = "Data ibu berhasil diperbarui"
+                        )
+                    }
+                },
+                onFailure = { throwable ->
+                    _uiState.update {
+                        it.copy(
+                            isSavingMother = false,
+                            editMotherErrorMessage = throwable.localizedMessage ?: "Gagal memperbarui data ibu"
+                        )
+                    }
+                }
+            )
+        }
+    }
+
     // --- Theme BottomSheet ---
     fun openThemeSheet() {
         _uiState.update {

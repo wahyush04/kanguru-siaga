@@ -74,6 +74,7 @@ class SettingsViewModelTest {
         every { observeFeedingSchedulesUseCase() } returns feedingFlow
         coEvery { prematureScreeningRepository.ensureDefaultScreenings(any(), any(), any()) } returns Unit
         every { prematureScreeningRepository.getScreeningsForBaby(any()) } returns screeningFlow
+        coEvery { updateBabyProfileUseCase(any()) } returns Result.success(Unit)
     }
 
     @After
@@ -193,6 +194,30 @@ class SettingsViewModelTest {
         val state = viewModel.uiState.value
         assertThat(state.isFeedingAlarmActive).isTrue()
         assertThat(state.feedingAlarmBadgeText).isEqualTo("Aktif")
+    }
+
+    @Test
+    fun saveMotherChanges_updatesBabyProfileAndDismissesSheet() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.openEditMotherSheet()
+        assertThat(viewModel.uiState.value.showEditMotherSheet).isTrue()
+
+        viewModel.updateEditMotherName("Ny. Arini Rahmawati")
+        viewModel.updateEditMotherPhoneNumber("081234567890")
+        viewModel.saveMotherChanges()
+
+        advanceUntilIdle()
+
+        coVerify {
+            updateBabyProfileUseCase(
+                match {
+                    it.motherName == "Ny. Arini Rahmawati" && it.motherPhoneNumber == "081234567890"
+                }
+            )
+        }
+        assertThat(viewModel.uiState.value.showEditMotherSheet).isFalse()
     }
 }
 

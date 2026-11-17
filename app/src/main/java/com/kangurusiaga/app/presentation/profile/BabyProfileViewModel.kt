@@ -10,6 +10,7 @@ import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
 import com.kangurusiaga.app.domain.repository.GrowthRepository
+import com.kangurusiaga.app.domain.usecase.UpdateBabyProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +31,8 @@ class BabyProfileViewModel @Inject constructor(
     private val babyRepository: BabyRepository,
     private val growthRepository: GrowthRepository,
     private val fentonGrowthRepository: FentonGrowthRepository,
-    private val fentonGrowthApiClient: FentonGrowthApiClient
+    private val fentonGrowthApiClient: FentonGrowthApiClient,
+    private val updateBabyProfileUseCase: UpdateBabyProfileUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BabyProfileUiState())
@@ -260,5 +262,80 @@ class BabyProfileViewModel @Inject constructor(
                 }
             }.collectLatest { }
         }
+    }
+
+    // --- Mother Profile Editing ---
+    fun openEditMotherSheet() {
+        val baby = _uiState.value.baby ?: return
+        _uiState.update {
+            it.copy(
+                showEditMotherSheet = true,
+                editMotherName = baby.motherName,
+                editMotherPhoneNumber = baby.motherPhoneNumber,
+                editMotherErrorMessage = null
+            )
+        }
+    }
+
+    fun closeEditMotherSheet() {
+        _uiState.update { it.copy(showEditMotherSheet = false, editMotherErrorMessage = null) }
+    }
+
+    fun updateEditMotherName(name: String) {
+        _uiState.update { it.copy(editMotherName = name, editMotherErrorMessage = null) }
+    }
+
+    fun updateEditMotherPhoneNumber(phone: String) {
+        val sanitized = phone.filter { it.isDigit() || it == '+' }
+        _uiState.update { it.copy(editMotherPhoneNumber = sanitized, editMotherErrorMessage = null) }
+    }
+
+    fun saveMotherChanges() {
+        val currentBaby = _uiState.value.baby ?: return
+        val state = _uiState.value
+
+        if (state.editMotherName.trim().isBlank()) {
+            _uiState.update { it.copy(editMotherErrorMessage = "Nama ibu belum diisi") }
+            return
+        }
+        if (state.editMotherPhoneNumber.trim().isBlank()) {
+            _uiState.update { it.copy(editMotherErrorMessage = "Nomor telepon belum diisi") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSavingMother = true, editMotherErrorMessage = null) }
+
+            val updatedBaby = currentBaby.copy(
+                motherName = state.editMotherName.trim(),
+                motherPhoneNumber = state.editMotherPhoneNumber.trim(),
+                updatedAt = System.currentTimeMillis()
+            )
+
+            val result = updateBabyProfileUseCase(updatedBaby)
+            result.fold(
+                onSuccess = {
+                    _uiState.update {
+                        it.copy(
+                            isSavingMother = false,
+                            showEditMotherSheet = false,
+                            userMessage = "Data ibu berhasil diperbarui"
+                        )
+                    }
+                },
+                onFailure = { throwable ->
+                    _uiState.update {
+                        it.copy(
+                            isSavingMother = false,
+                            editMotherErrorMessage = throwable.localizedMessage ?: "Gagal memperbarui data ibu"
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    fun clearUserMessage() {
+        _uiState.update { it.copy(userMessage = null) }
     }
 }

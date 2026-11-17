@@ -20,6 +20,7 @@ data class SettingsUiState(
 
     // BottomSheet Visibility
     val showEditProfileSheet: Boolean = false,
+    val showEditMotherSheet: Boolean = false,
     val showThemeSheet: Boolean = false,
     val showTextSizeSheet: Boolean = false,
 
@@ -36,6 +37,12 @@ data class SettingsUiState(
     val editGestationalWeeks: Int = 32,
     val editErrorMessage: String? = null,
     val isSavingProfile: Boolean = false,
+
+    // Edit Mother Form State
+    val editMotherName: String = "",
+    val editMotherPhoneNumber: String = "",
+    val editMotherErrorMessage: String? = null,
+    val isSavingMother: Boolean = false,
 
     // Theme Selection Temporary State in Sheet
     val selectedThemeMode: AppThemeMode = AppThemeMode.WARM_LIGHT,

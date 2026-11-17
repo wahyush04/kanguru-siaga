@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,10 +36,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import com.kangurusiaga.app.presentation.settings.components.EditMotherBottomSheet
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,6 +86,14 @@ fun BabyProfileRoute(
     viewModel: BabyProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.userMessage) {
+        uiState.userMessage?.let { msg ->
+            snackbarHostState.showSnackbar(msg)
+            viewModel.clearUserMessage()
+        }
+    }
 
     BabyProfileScreen(
         uiState = uiState,
@@ -89,6 +103,12 @@ fun BabyProfileRoute(
         onNavigateToPmk = onNavigateToPmk,
         onNavigateToEducation = onNavigateToEducation,
         onNavigateToAlarm = onNavigateToAlarm,
+        onOpenEditMother = viewModel::openEditMotherSheet,
+        onCloseEditMother = viewModel::closeEditMotherSheet,
+        onMotherNameChange = viewModel::updateEditMotherName,
+        onPhoneNumberChange = viewModel::updateEditMotherPhoneNumber,
+        onSaveMother = viewModel::saveMotherChanges,
+        snackbarHostState = snackbarHostState,
         modifier = modifier
     )
 }
@@ -102,6 +122,12 @@ fun BabyProfileScreen(
     onNavigateToPmk: () -> Unit,
     onNavigateToEducation: () -> Unit,
     onNavigateToAlarm: () -> Unit,
+    onOpenEditMother: () -> Unit = {},
+    onCloseEditMother: () -> Unit = {},
+    onMotherNameChange: (String) -> Unit = {},
+    onPhoneNumberChange: (String) -> Unit = {},
+    onSaveMother: () -> Unit = {},
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -109,6 +135,7 @@ fun BabyProfileScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = BrandBackground,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Surface(
                 color = BrandBackground,
@@ -438,7 +465,7 @@ fun BabyProfileScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Berat Lahir",
+                                    text = "Berat Badan Lahir",
                                     style = KanguruTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Medium,
                                     color = TextSecondary
@@ -473,7 +500,7 @@ fun BabyProfileScreen(
 
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
-                            // Row 4: Usia Gestasi saat Lahir
+                            // Row 4: Usia Gestasi Lahir
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -482,7 +509,7 @@ fun BabyProfileScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Usia Gestasi saat Lahir",
+                                    text = "Usia Gestasi Lahir",
                                     style = KanguruTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Medium,
                                     color = TextSecondary
@@ -518,36 +545,21 @@ fun BabyProfileScreen(
 
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
-                            // Row 5: Status Pertumbuhan
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 10.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Status Pertumbuhan",
-                                    style = KanguruTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.Medium,
-                                    color = TextSecondary
-                                )
-                                Column(horizontalAlignment = Alignment.End) {
-                                    val isSummaryMeasured = uiState.growthStatusSummary != "Belum Diukur"
-                                    Text(
-                                        text = uiState.growthStatusSummary,
-                                        style = KanguruTheme.typography.bodySmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = if (isSummaryMeasured) KanguruTheme.colors.success else TextSecondary
-                                    )
-                                    Text(
-                                        text = "Kurva Fenton",
-                                        style = KanguruTheme.typography.bodySmall,
-                                        fontWeight = FontWeight.Normal,
-                                        color = TextTertiary
-                                    )
-                                }
-                            }
+                            // Row 5: Nama Ibu
+                            InfoDataRow(
+                                label = "Nama Ibu",
+                                value = baby.motherName.ifBlank { "-" },
+                                onClick = onOpenEditMother
+                            )
+
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+
+                            // Row 6: Nomor Telepon
+                            InfoDataRow(
+                                label = "Nomor Telepon",
+                                value = baby.motherPhoneNumber.ifBlank { "-" },
+                                onClick = onOpenEditMother
+                            )
                         }
                     }
 
@@ -556,16 +568,31 @@ fun BabyProfileScreen(
             }
         }
     }
+
+    if (uiState.showEditMotherSheet) {
+        EditMotherBottomSheet(
+            motherName = uiState.editMotherName,
+            phoneNumber = uiState.editMotherPhoneNumber,
+            errorMessage = uiState.editMotherErrorMessage,
+            isSaving = uiState.isSavingMother,
+            onMotherNameChange = onMotherNameChange,
+            onPhoneNumberChange = onPhoneNumberChange,
+            onSave = onSaveMother,
+            onDismiss = onCloseEditMother
+        )
+    }
 }
 
 @Composable
 private fun InfoDataRow(
     label: String,
-    value: String
+    value: String,
+    onClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

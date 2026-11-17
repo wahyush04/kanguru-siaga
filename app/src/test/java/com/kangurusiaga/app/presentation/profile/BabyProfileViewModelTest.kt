@@ -11,6 +11,9 @@ import com.kangurusiaga.app.domain.model.GrowthMeasurement
 import com.kangurusiaga.app.domain.model.GrowthParameter
 import com.kangurusiaga.app.domain.repository.BabyRepository
 import com.kangurusiaga.app.domain.repository.GrowthRepository
+import com.kangurusiaga.app.domain.usecase.UpdateBabyProfileUseCase
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +36,7 @@ class BabyProfileViewModelTest {
     private val growthRepository: GrowthRepository = mockk()
     private val fentonGrowthRepository: FentonGrowthRepository = mockk()
     private val fentonGrowthApiClient: FentonGrowthApiClient = mockk()
+    private val updateBabyProfileUseCase: UpdateBabyProfileUseCase = mockk(relaxed = true)
 
     private val dummyBaby = Baby(
         id = 1L,
@@ -52,6 +56,7 @@ class BabyProfileViewModelTest {
         every { growthRepository.getLatestMeasurement(any(), any()) } returns flowOf(null)
         every { fentonGrowthRepository.getLatestRecordFlow(any()) } returns flowOf(null)
         every { fentonGrowthApiClient.getLatestZScoreEntry(any()) } returns null
+        coEvery { updateBabyProfileUseCase(any()) } returns Result.success(Unit)
     }
 
     @After
@@ -80,7 +85,8 @@ class BabyProfileViewModelTest {
             babyRepository = babyRepository,
             growthRepository = growthRepository,
             fentonGrowthRepository = fentonGrowthRepository,
-            fentonGrowthApiClient = fentonGrowthApiClient
+            fentonGrowthApiClient = fentonGrowthApiClient,
+            updateBabyProfileUseCase = updateBabyProfileUseCase
         )
 
         advanceUntilIdle()
@@ -129,7 +135,8 @@ class BabyProfileViewModelTest {
             babyRepository = babyRepository,
             growthRepository = growthRepository,
             fentonGrowthRepository = fentonGrowthRepository,
-            fentonGrowthApiClient = fentonGrowthApiClient
+            fentonGrowthApiClient = fentonGrowthApiClient,
+            updateBabyProfileUseCase = updateBabyProfileUseCase
         )
 
         advanceUntilIdle()
@@ -139,6 +146,38 @@ class BabyProfileViewModelTest {
         assertThat(state.weightMetric.percentileText).isEqualTo("P32")
         assertThat(state.lengthMetric.valueFormatted).isEqualTo("46,0")
         assertThat(state.headMetric.valueFormatted).isEqualTo("34,0")
+    }
+
+    @Test
+    fun `saveMotherChanges invokes updateBabyProfileUseCase with updated mother data`() = runTest {
+        val viewModel = BabyProfileViewModel(
+            babyRepository = babyRepository,
+            growthRepository = growthRepository,
+            fentonGrowthRepository = fentonGrowthRepository,
+            fentonGrowthApiClient = fentonGrowthApiClient,
+            updateBabyProfileUseCase = updateBabyProfileUseCase
+        )
+
+        advanceUntilIdle()
+
+        viewModel.openEditMotherSheet()
+        assertThat(viewModel.uiState.value.showEditMotherSheet).isTrue()
+
+        viewModel.updateEditMotherName("Ny. Arini Rahmawati")
+        viewModel.updateEditMotherPhoneNumber("081234567890")
+        viewModel.saveMotherChanges()
+
+        advanceUntilIdle()
+
+        coVerify {
+            updateBabyProfileUseCase(
+                match {
+                    it.motherName == "Ny. Arini Rahmawati" && it.motherPhoneNumber == "081234567890"
+                }
+            )
+        }
+        assertThat(viewModel.uiState.value.showEditMotherSheet).isFalse()
+        assertThat(viewModel.uiState.value.userMessage).isEqualTo("Data ibu berhasil diperbarui")
     }
 }
 

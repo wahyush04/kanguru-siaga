@@ -24,5 +24,13 @@ data class BabyProfileUiState(
     val lengthMetric: MetricEvaluation = MetricEvaluation(valueFormatted = "-", unit = "cm"),
     val headMetric: MetricEvaluation = MetricEvaluation(valueFormatted = "-", unit = "cm"),
     val growthStatusSummary: String = "Belum Diukur",
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+
+    // Edit Mother BottomSheet State
+    val showEditMotherSheet: Boolean = false,
+    val editMotherName: String = "",
+    val editMotherPhoneNumber: String = "",
+    val editMotherErrorMessage: String? = null,
+    val isSavingMother: Boolean = false,
+    val userMessage: String? = null
 )
