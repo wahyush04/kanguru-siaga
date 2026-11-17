@@ -197,6 +197,7 @@ class BabyFirestoreSyncManagerTest {
             source = "TIMER",
             currentCaregiver = "IBU"
         )
+        coEvery { pmkSessionDao.getAllSessionsListForBaby(1L) } returns listOf(session)
 
         val result = syncManager.syncPmkSession(session)
 

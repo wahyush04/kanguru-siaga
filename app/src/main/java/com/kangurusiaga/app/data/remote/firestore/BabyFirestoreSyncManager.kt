@@ -237,32 +237,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
     }
 
     override suspend fun syncPmkSession(session: PmkSessionEntity): Boolean {
-        return withContext(ioDispatcher) {
-            if (!networkMonitor.isOnline()) {
-                AppLogger.d(TAG, "Offline: Melewati sinkronisasi sesi PMK (id=${session.id})")
-                return@withContext false
-            }
-
-            try {
-                val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
-                ensureParentBabyDocExists(babyDocId, session.babyId)
-
-                val dto = PmkSessionFirestoreDto.fromEntity(session)
-                firestore.collection(COLLECTION_BABY_RECORDS)
-                    .document(babyDocId)
-                    .collection(SUBCOLLECTION_PMK_DAILY)
-                    .document("session_${session.id}")
-                    .set(dto.toMap())
-                    .await()
-
-                AppLogger.i(TAG, "BERHASIL menyinkronkan sesi PMK ke $SUBCOLLECTION_PMK_DAILY: session_${session.id}")
-                true
-            } catch (e: Exception) {
-                AppLogger.e(TAG, "GAGAL menyinkronkan sesi PMK (id=${session.id}) ke Firestore: ${e.message}", e)
-                CrashlyticsLogger.recordException(e)
-                false
-            }
-        }
+        return syncAllPmkSessions(session.babyId)
     }
 
     override suspend fun syncAllPmkSessions(babyId: Long): Boolean {
@@ -275,19 +250,43 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
                 ensureParentBabyDocExists(babyDocId, babyId)
 
-                for (session in sessions) {
-                    val dto = PmkSessionFirestoreDto.fromEntity(session)
+                // Kelompokkan sesi PMK berdasarkan tanggal hari (format ddMMyyyy)
+                val sdfDocId = java.text.SimpleDateFormat("ddMMyyyy", java.util.Locale.US)
+                val sdfFormatted = java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale("id", "ID"))
+
+                val groupedByDay = sessions.groupBy { sdfDocId.format(java.util.Date(it.startTimeEpoch)) }
+
+                for ((dayKey, daySessions) in groupedByDay) {
+                    val firstSession = daySessions.minByOrNull { it.startTimeEpoch } ?: daySessions.first()
+                    val totalDuration = daySessions.sumOf { it.durationMinutes }
+                    val formattedDate = try {
+                        sdfFormatted.format(java.util.Date(firstSession.startTimeEpoch))
+                    } catch (_: Exception) {
+                        ""
+                    }
+
+                    val dailyMap = mapOf(
+                        "sessionId" to firstSession.id,
+                        "dateEpochMillis" to firstSession.startTimeEpoch,
+                        "dateFormatted" to formattedDate,
+                        "totalDurationMinutes" to totalDuration,
+                        "syncedAtEpochMillis" to System.currentTimeMillis(),
+                        "updatedAtServer" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                    )
+
+                    val docName = "date_$dayKey"
                     firestore.collection(COLLECTION_BABY_RECORDS)
                         .document(babyDocId)
                         .collection(SUBCOLLECTION_PMK_DAILY)
-                        .document("session_${session.id}")
-                        .set(dto.toMap())
+                        .document(docName)
+                        .set(dailyMap)
                         .await()
                 }
-                AppLogger.i(TAG, "BERHASIL menyinkronkan ${sessions.size} sesi PMK ke $SUBCOLLECTION_PMK_DAILY")
+
+                AppLogger.i(TAG, "BERHASIL menyinkronkan rekam harian PMK ke $SUBCOLLECTION_PMK_DAILY (${groupedByDay.size} hari)")
                 true
             } catch (e: Exception) {
-                AppLogger.e(TAG, "GAGAL menyinkronkan semua sesi PMK ke Firestore: ${e.message}", e)
+                AppLogger.e(TAG, "GAGAL menyinkronkan rekam harian PMK ke Firestore: ${e.message}", e)
                 CrashlyticsLogger.recordException(e)
                 false
             }
@@ -319,9 +318,9 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                     val map = dto.toMap()
                     when (s.screeningType) {
                         "USG_HEAD" -> neuroMap = map
-                        "ROP" -> oftamologiMap = map
-                        "HEARING_OAE_BERA" -> audiologiMap = map
-                        "THYROID" -> tiroidMap = map
+                        "ROP_EYE", "ROP" -> oftamologiMap = map
+                        "HEARING_OAE", "HEARING_OAE_BERA" -> audiologiMap = map
+                        "THYROID_FUNCTION", "THYROID" -> tiroidMap = map
                         else -> additionalList.add(map)
                     }
                 }
@@ -344,6 +343,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
 
                 val additionalDoc = mapOf(
                     "items" to additionalList,
+                    "additional_screening" to additionalList,
                     "syncedAtEpochMillis" to System.currentTimeMillis(),
                     "updatedAtServer" to com.google.firebase.firestore.FieldValue.serverTimestamp()
                 )
@@ -378,10 +378,10 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
                 ensureParentBabyDocExists(babyDocId, babyId)
 
-                val sdfDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
-                val grouped = measurements.groupBy { sdfDate.format(java.util.Date(it.measurementDateEpochMillis)) }
+                // Kelompokkan data pengukuran berdasarkan PMA weeks (integer) agar record bernama pma_week_XX
+                val groupedByPma = measurements.groupBy { it.pmaWeeks.toInt() }
 
-                for ((_, list) in grouped) {
+                for ((pmaWeekInt, list) in groupedByPma) {
                     val first = list.first()
                     var weightVal = 0.0
                     var lengthVal = 0.0
@@ -411,7 +411,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                         measurementId = first.id,
                         measurementDateEpochMillis = first.measurementDateEpochMillis,
                         measurementDateFormatted = formattedDate,
-                        pmaWeeks = first.pmaWeeks,
+                        pmaWeeks = pmaWeekInt.toFloat(),
                         chronologicalAgeWeeks = first.chronologicalAgeWeeks,
                         weightValue = weightVal,
                         weightUnit = "gram",
@@ -421,15 +421,16 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                         headUnit = "cm"
                     )
 
+                    val docName = "pma_week_$pmaWeekInt"
                     firestore.collection(COLLECTION_BABY_RECORDS)
                         .document(babyDocId)
                         .collection(SUBCOLLECTION_GROWTH)
-                        .document("measurement_${first.id}")
+                        .document(docName)
                         .set(structuredDto.toMap())
                         .await()
                 }
 
-                AppLogger.i(TAG, "BERHASIL menyinkronkan data pertumbuhan ke $SUBCOLLECTION_GROWTH")
+                AppLogger.i(TAG, "BERHASIL menyinkronkan data pertumbuhan ke $SUBCOLLECTION_GROWTH berdasarkan PMA weeks")
                 true
             } catch (e: Exception) {
                 AppLogger.e(TAG, "GAGAL menyinkronkan semua data pertumbuhan ke Firestore: ${e.message}", e)

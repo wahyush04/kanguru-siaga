@@ -1,585 +1,19 @@
 rules_version = '2';
 
-// ===============================================================
-// Assumed Data Model
-// ===============================================================
-//
-// 1. Collection: baby_onboarding_profiles (Backward Compatibility)
-//    Document ID: Auto-generated Firestore ID
-//    Fields:
-//      - babyName: string (required, 1..100 characters) - Nama bayi saat onboarding
-//      - birthDateEpochMillis: number (required, > 0, <= request.time.toMillis()) - Epoch milidetik lahir
-//      - birthDateFormatted: string (required, <= 50 characters) - Tanggal lahir terformat
-//      - gestationalAgeWeeks: number (required, 20..50) - Usia gestasi bayi dalam minggu saat lahir
-//      - birthWeightGram: number (required, 100..10000) - Berat badan lahir dalam gram
-//      - currentWeightGram: number (required, 100..20000) - Berat badan saat onboarding dalam gram
-//      - birthLengthCm: number (required, 0.0..100.0) - Panjang badan lahir dalam cm
-//      - currentLengthCm: number (required, 0.0..100.0) - Panjang badan saat onboarding dalam cm
-//      - birthHeadCircumferenceCm: number (required, 0.0..80.0) - Lingkar kepala lahir dalam cm
-//      - currentHeadCircumferenceCm: number (required, 0.0..80.0) - Lingkar kepala saat onboarding dalam cm
-//      - gender: string (required, allowed: ['LAKI_LAKI', 'PEREMPUAN', 'TIDAK_DIKETAHUI']) - Jenis kelamin
-//      - environment: string (required, 1..30 characters) - Environment build aplikasi
-//      - appVersion: string (required, 1..30 characters) - Versi rilis aplikasi klien
-//      - syncedAtEpochMillis: number (required, > 0, <= request.time.toMillis() + 300000) - Waktu sinkronisasi
-//      - createdAtServer: timestamp (required, == request.time) - Timestamp pencatatan server
-//    Access Pattern:
-//      - Read: Admin only (melindungi PII medis bayi)
-//      - Create: Diizinkan jika mematuhi validasi skema ketat
-//      - Update: Admin only & mematuhi validasi skema
-//      - Delete: Admin only
-//
-// 2. Collection: baby_records/{userDocId} (User / Device Document Root)
-//    Document ID: ID Dokumen pengguna/perangkat unik (persistent UUID)
-//    Fields: Metadata pengguna/perangkat (e.g. userId, appVersion, environment, updatedAtServer)
-//    Access Pattern:
-//      - Get: Diizinkan untuk membaca dokumen user dengan userDocId spesifik
-//      - List: Admin only (mencegah scraping/enumerasi seluruh pengguna)
-//      - Create/Update: Diizinkan untuk inisialisasi dan sinkronisasi metadata user
-//      - Delete: Admin only
-//
-// 3. Subcollection: baby_records/{userDocId}/baby_data/{docId} (Baby & Mother Profile)
-//    Document ID: ID dokumen profil identitas (e.g. 'profile' atau auto-generated ID)
-//    Fields:
-//      - babyId: number (required, >= 0) - ID lokal bayi pada database lokal
-//      - motherName: string (required, 1..100 characters) - Nama lengkap/panggilan ibu
-//      - motherPhoneNumber: string (required, 5..25 characters) - Nomor kontak/telepon ibu
-//      - babyName: string (required, 1..100 characters) - Nama bayi
-//      - birthDateEpochMillis: number (required, > 0, <= request.time.toMillis()) - Waktu kelahiran
-//      - birthDateFormatted: string (required, <= 50 characters) - Tanggal lahir terformat
-//      - gestationalAgeWeeks: number (required, 20..50) - Usia gestasi bayi saat lahir
-//      - birthWeightGram: number (required, 100..10000) - Berat badan lahir dalam gram
-//      - currentWeightGram: number (required, 100..20000) - Berat badan terkini dalam gram
-//      - birthLengthCm: number (required, 0.0..100.0) - Panjang badan lahir dalam cm
-//      - currentLengthCm: number (required, 0.0..100.0) - Panjang badan terkini dalam cm
-//      - birthHeadCircumferenceCm: number (required, 0.0..80.0) - Lingkar kepala lahir dalam cm
-//      - currentHeadCircumferenceCm: number (required, 0.0..80.0) - Lingkar kepala terkini dalam cm
-//      - gender: string (required, allowed: ['LAKI_LAKI', 'PEREMPUAN', 'TIDAK_DIKETAHUI']) - Jenis kelamin
-//      - environment: string (required, 1..30 characters) - Environment build aplikasi
-//      - appVersion: string (required, 1..30 characters) - Versi rilis aplikasi klien
-//      - syncedAtEpochMillis: number (required, > 0) - Waktu lokal sinkronisasi
-//      - createdAtServer: timestamp (required, immutable, == request.time saat create) - Server timestamp pembuatan
-//      - updatedAtServer: timestamp (required, == request.time) - Server timestamp pembaharuan
-//    Access Pattern:
-//      - Get: Diizinkan dengan docId spesifik
-//      - List: Admin only
-//      - Create: Diizinkan jika valid & createdAtServer == request.time
-//      - Update: Diizinkan jika valid & createdAtServer immutable
-//      - Delete: Admin only
-//
-// 4. Subcollection: baby_records/{userDocId}/pmk_daily_records/{recordId} (Daily Kangaroo Care)
-//    Document ID: ID dokumen rekam harian PMK
-//    Fields:
-//      - sessionId: number (required, >= 0) - ID sesi di database lokal
-//      - dateEpochMillis: number (required, > 0) - Tanggal pelaksanaan PMK
-//      - dateFormatted: string (required, <= 50 characters) - Tanggal terformat
-//      - totalDurationMinutes: number (required, 0..1440) - Total durasi PMK (maksimal 24 jam)
-//      - syncedAtEpochMillis: number (required, > 0) - Waktu sinkronisasi
-//      - updatedAtServer: timestamp (required, == request.time) - Server timestamp pembaharuan
-//    Access Pattern:
-//      - Get: Diizinkan dengan recordId spesifik
-//      - List: Admin only
-//      - Create/Update: Diizinkan jika mematuhi validasi skema harian PMK
-//      - Delete: Admin only
-//
-// 5. Subcollection: baby_records/{userDocId}/screenings/{docId} (Screenings)
-//    Document ID: 'essential_screening' (berisi map screening wajib) atau 'additional_screening'
-//    Fields: Map screening_neurosonografi, screening_oftamologi, screening_audiologi, screening_tiroid, atau additional list
-//    Access Pattern:
-//      - Get: Diizinkan dengan docId spesifik
-//      - List: Admin only
-//      - Create/Update: Diizinkan jika mematuhi validasi dokumen skrining
-//      - Delete: Admin only
-//
-// 6. Subcollection: baby_records/{userDocId}/growth_measurements/{measurementId} (Growth Measurements)
-//    Document ID: ID dokumen pengukuran pertumbuhan bayi
-//    Fields:
-//      - measurementId: number (required, >= 0) - ID lokal pengukuran di SQLite
-//      - measurementDateEpochMillis: number (required, > 0) - Waktu pengukuran
-//      - measurementDateFormatted: string (required, <= 50 characters) - Tanggal pengukuran terformat
-//      - pmaWeeks: number (required, 20.0..60.0) - Postmenstrual Age dalam minggu saat pengukuran
-//      - chronologicalAgeWeeks: number (required, 0.0..200.0) - Usia kronologis dalam minggu
-//      - data: map (required, keys: ['weight', 'length', 'head'])
-//          - weight: map { value: number > 0.0, unit: string }
-//          - length: map { value: number > 0.0, unit: string }
-//          - head: map { value: number > 0.0, unit: string }
-//      - syncedAtEpochMillis: number (required, > 0) - Waktu sinkronisasi
-//      - updatedAtServer: timestamp (required, == request.time) - Server timestamp pembaharuan
-//    Access Pattern:
-//      - Get: Diizinkan dengan measurementId spesifik
-//      - List: Admin only
-//      - Create/Update: Diizinkan jika mematuhi validasi skema pengukuran
-//      - Delete: Admin only
-//
-// 7. Subcollection: baby_records/{userDocId}/pmk_sessions/{sessionId} (Legacy PMK Sessions)
-//    Document ID: ID dokumen sesi PMK individual (Backward Compatibility)
-//    Access Pattern:
-//      - Get: Diizinkan dengan sessionId spesifik
-//      - List: Admin only
-//      - Create/Update: Diizinkan jika mematuhi validasi isValidPmkSession
-//      - Delete: Admin only
-//
-// ===============================================================
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ===============================================================
-    // Helper Functions
-    // ===============================================================
-
-    // Memeriksa apakah pengguna terautentikasi di Firebase Auth
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    // Memeriksa apakah pengguna memiliki hak akses Admin via Firebase Auth Custom Claims
     function isAdmin() {
       return isAuthenticated() &&
              'admin' in request.auth.token &&
              request.auth.token.admin == true;
     }
 
-    // Memastikan dokumen hanya berisi field yang didefinisikan (mencegah schema pollution)
-    function hasOnlyAllowedFields(fields) {
-      return request.resource.data.keys().hasOnly(fields);
-    }
-
-    // Memastikan seluruh field yang didefinisikan ada dalam payload (mencegah missing field)
-    function hasRequiredFields(fields) {
-      return request.resource.data.keys().hasAll(fields);
-    }
-
-    // ===============================================================
-    // Allowed Fields Schemas
-    // ===============================================================
-
-    // 1. Profil Onboarding Bayi (Backward Compatibility)
-    function allowedBabyProfileFields() {
-      return [
-        'babyName',
-        'birthDateEpochMillis',
-        'birthDateFormatted',
-        'gestationalAgeWeeks',
-        'birthWeightGram',
-        'currentWeightGram',
-        'birthLengthCm',
-        'currentLengthCm',
-        'birthHeadCircumferenceCm',
-        'currentHeadCircumferenceCm',
-        'gender',
-        'environment',
-        'appVersion',
-        'syncedAtEpochMillis',
-        'createdAtServer'
-      ];
-    }
-
-    // 2. Subkoleksi baby_data (Profil Identitas Bayi & Ibu)
-    function allowedBabyDataFields() {
-      return [
-        'babyId',
-        'motherName',
-        'motherPhoneNumber',
-        'babyName',
-        'birthDateEpochMillis',
-        'birthDateFormatted',
-        'gestationalAgeWeeks',
-        'birthWeightGram',
-        'currentWeightGram',
-        'birthLengthCm',
-        'currentLengthCm',
-        'birthHeadCircumferenceCm',
-        'currentHeadCircumferenceCm',
-        'gender',
-        'environment',
-        'appVersion',
-        'syncedAtEpochMillis',
-        'createdAtServer',
-        'updatedAtServer'
-      ];
-    }
-
-    // 3. Subkoleksi pmk_daily_records (Rekam Harian PMK)
-    function allowedPmkDailyRecordFields() {
-      return [
-        'sessionId',
-        'dateEpochMillis',
-        'dateFormatted',
-        'totalDurationMinutes',
-        'syncedAtEpochMillis',
-        'updatedAtServer'
-      ];
-    }
-
-    // 4. Subkoleksi growth_measurements (Skema Terstruktur Baru dengan Data Map)
-    function allowedGrowthMeasurementRecordFields() {
-      return [
-        'measurementId',
-        'measurementDateEpochMillis',
-        'measurementDateFormatted',
-        'pmaWeeks',
-        'chronologicalAgeWeeks',
-        'data',
-        'syncedAtEpochMillis',
-        'updatedAtServer'
-      ];
-    }
-
-    // 5. Sesi PMK Legacy
-    function allowedPmkSessionFields() {
-      return [
-        'sessionIdLocal',
-        'startTimeEpochMillis',
-        'endTimeEpochMillis',
-        'durationMinutes',
-        'caregiverRole',
-        'moodRating',
-        'notes',
-        'syncedAtEpochMillis',
-        'updatedAtServer'
-      ];
-    }
-
-    // 6. Pengukuran Pertumbuhan Legacy (Flat Parameter)
-    function allowedGrowthMeasurementFields() {
-      return [
-        'measurementIdLocal',
-        'parameter',
-        'value',
-        'unit',
-        'measurementDateEpochMillis',
-        'measurementDateFormatted',
-        'pmaWeeks',
-        'chronologicalAgeWeeks',
-        'percentileBadge',
-        'note',
-        'syncedAtEpochMillis',
-        'updatedAtServer'
-      ];
-    }
-
-    // 7. Skrining Legacy (Flat Fields)
-    function allowedScreeningFields() {
-      return [
-        'screeningIdLocal',
-        'screeningType',
-        'title',
-        'categoryBadge',
-        'targetTimingLabel',
-        'targetDateEpoch',
-        'targetDateEpoch2',
-        'clinicOrLab',
-        'isAlarmActive',
-        'isAlarm2Active',
-        'isCompleted',
-        'realizationDateEpoch',
-        'hospitalName',
-        'doctorName',
-        'clinicalResult',
-        'findings',
-        'conclusion',
-        'syncedAtEpochMillis',
-        'updatedAtServer'
-      ];
-    }
-
-    // ===============================================================
-    // Domain Validators
-    // ===============================================================
-
-    // Validator: Profil Onboarding Bayi
-    function isValidBabyOnboardingProfile(data) {
-      return hasRequiredFields(allowedBabyProfileFields()) &&
-             hasOnlyAllowedFields(allowedBabyProfileFields()) &&
-             
-             // Identitas nama bayi (1..100 karakter)
-             data.babyName is string &&
-             data.babyName.size() >= 1 &&
-             data.babyName.size() <= 100 &&
-             
-             // Tanggal lahir dalam epoch milidetik (positif dan tidak boleh melebihi waktu sekarang)
-             data.birthDateEpochMillis is number &&
-             data.birthDateEpochMillis > 0 &&
-             data.birthDateEpochMillis <= request.time.toMillis() &&
-             
-             // Tanggal lahir terformat (string maksimal 50 karakter)
-             data.birthDateFormatted is string &&
-             data.birthDateFormatted.size() <= 50 &&
-             
-             // Usia gestasi saat lahir (20 sampai 50 minggu)
-             data.gestationalAgeWeeks is number &&
-             data.gestationalAgeWeeks >= 20 &&
-             data.gestationalAgeWeeks <= 50 &&
-             
-             // Berat lahir dan saat onboarding dalam gram
-             data.birthWeightGram is number &&
-             data.birthWeightGram >= 100 &&
-             data.birthWeightGram <= 10000 &&
-             data.currentWeightGram is number &&
-             data.currentWeightGram >= 100 &&
-             data.currentWeightGram <= 20000 &&
-             
-             // Panjang badan dalam cm (0.0 jika tidak diisi, batas atas 100.0 cm)
-             data.birthLengthCm is number &&
-             data.birthLengthCm >= 0.0 &&
-             data.birthLengthCm <= 100.0 &&
-             data.currentLengthCm is number &&
-             data.currentLengthCm >= 0.0 &&
-             data.currentLengthCm <= 100.0 &&
-             
-             // Lingkar kepala dalam cm (0.0 jika tidak diisi, batas atas 80.0 cm)
-             data.birthHeadCircumferenceCm is number &&
-             data.birthHeadCircumferenceCm >= 0.0 &&
-             data.birthHeadCircumferenceCm <= 80.0 &&
-             data.currentHeadCircumferenceCm is number &&
-             data.currentHeadCircumferenceCm >= 0.0 &&
-             data.currentHeadCircumferenceCm <= 80.0 &&
-             
-             // Jenis kelamin (enum yang valid)
-             data.gender is string &&
-             data.gender in ['LAKI_LAKI', 'PEREMPUAN', 'TIDAK_DIKETAHUI'] &&
-             
-             // Metadata aplikasi & environment
-             data.environment is string &&
-             data.environment.size() >= 1 &&
-             data.environment.size() <= 30 &&
-             data.appVersion is string &&
-             data.appVersion.size() >= 1 &&
-             data.appVersion.size() <= 30 &&
-             
-             // Waktu sinkronisasi lokal
-             data.syncedAtEpochMillis is number &&
-             data.syncedAtEpochMillis > 0 &&
-             data.syncedAtEpochMillis <= request.time.toMillis() + 300000 &&
-             
-             // Server timestamp Firestore
-             data.createdAtServer is timestamp &&
-             data.createdAtServer == request.time;
-    }
-
-    // Validator: Subkoleksi baby_data (Profil Identitas Bayi & Ibu)
-    function isValidBabyData(data) {
-      return hasRequiredFields(allowedBabyDataFields()) &&
-             hasOnlyAllowedFields(allowedBabyDataFields()) &&
-             
-             // ID bayi (>= 0)
-             data.babyId is number &&
-             data.babyId >= 0 &&
-             
-             // Identitas ibu (nama 1..100 karakter, no telepon 5..25 karakter)
-             data.motherName is string &&
-             data.motherName.size() >= 1 &&
-             data.motherName.size() <= 100 &&
-             data.motherPhoneNumber is string &&
-             data.motherPhoneNumber.size() >= 5 &&
-             data.motherPhoneNumber.size() <= 25 &&
-             
-             // Identitas nama bayi (1..100 karakter)
-             data.babyName is string &&
-             data.babyName.size() >= 1 &&
-             data.babyName.size() <= 100 &&
-             
-             // Tanggal lahir dalam epoch milidetik (positif dan tidak boleh melebihi waktu sekarang)
-             data.birthDateEpochMillis is number &&
-             data.birthDateEpochMillis > 0 &&
-             data.birthDateEpochMillis <= request.time.toMillis() &&
-             
-             // Tanggal lahir terformat (string maksimal 50 karakter)
-             data.birthDateFormatted is string &&
-             data.birthDateFormatted.size() <= 50 &&
-             
-             // Usia gestasi saat lahir (20 sampai 50 minggu)
-             data.gestationalAgeWeeks is number &&
-             data.gestationalAgeWeeks >= 20 &&
-             data.gestationalAgeWeeks <= 50 &&
-             
-             // Berat lahir dan saat ini dalam gram (rentang realistis 100g s.d. 10.000g / 20.000g)
-             data.birthWeightGram is number &&
-             data.birthWeightGram >= 100 &&
-             data.birthWeightGram <= 10000 &&
-             data.currentWeightGram is number &&
-             data.currentWeightGram >= 100 &&
-             data.currentWeightGram <= 20000 &&
-             
-             // Panjang badan dalam cm (0.0 jika belum diukur, batas atas 100.0 cm)
-             data.birthLengthCm is number &&
-             data.birthLengthCm >= 0.0 &&
-             data.birthLengthCm <= 100.0 &&
-             data.currentLengthCm is number &&
-             data.currentLengthCm >= 0.0 &&
-             data.currentLengthCm <= 100.0 &&
-             
-             // Lingkar kepala dalam cm (0.0 jika belum diukur, batas atas 80.0 cm)
-             data.birthHeadCircumferenceCm is number &&
-             data.birthHeadCircumferenceCm >= 0.0 &&
-             data.birthHeadCircumferenceCm <= 80.0 &&
-             data.currentHeadCircumferenceCm is number &&
-             data.currentHeadCircumferenceCm >= 0.0 &&
-             data.currentHeadCircumferenceCm <= 80.0 &&
-             
-             // Jenis kelamin (enum yang valid)
-             data.gender is string &&
-             data.gender in ['LAKI_LAKI', 'PEREMPUAN', 'TIDAK_DIKETAHUI'] &&
-             
-             // Metadata aplikasi & environment
-             data.environment is string &&
-             data.environment.size() >= 1 &&
-             data.environment.size() <= 30 &&
-             data.appVersion is string &&
-             data.appVersion.size() >= 1 &&
-             data.appVersion.size() <= 30 &&
-             
-             // Waktu sinkronisasi lokal (> 0)
-             data.syncedAtEpochMillis is number &&
-             data.syncedAtEpochMillis > 0 &&
-             
-             // Server timestamps
-             data.createdAtServer is timestamp &&
-             data.updatedAtServer is timestamp &&
-             data.updatedAtServer == request.time;
-    }
-
-    // Validator: Subkoleksi pmk_daily_records (Rekam Harian PMK)
-    function isValidPmkDailyRecord(data) {
-      return hasRequiredFields(allowedPmkDailyRecordFields()) &&
-             hasOnlyAllowedFields(allowedPmkDailyRecordFields()) &&
-             
-             // ID sesi (>= 0)
-             data.sessionId is number &&
-             data.sessionId >= 0 &&
-             
-             // Tanggal sesi epoch (> 0) & terformat (<= 50)
-             data.dateEpochMillis is number &&
-             data.dateEpochMillis > 0 &&
-             data.dateFormatted is string &&
-             data.dateFormatted.size() <= 50 &&
-             
-             // Total durasi PMK (0 s.d. 1440 menit / 24 jam)
-             data.totalDurationMinutes is number &&
-             data.totalDurationMinutes >= 0 &&
-             data.totalDurationMinutes <= 1440 &&
-             
-             // Waktu sinkronisasi lokal (> 0)
-             data.syncedAtEpochMillis is number &&
-             data.syncedAtEpochMillis > 0 &&
-             
-             // Server timestamp Firestore
-             data.updatedAtServer is timestamp &&
-             data.updatedAtServer == request.time;
-    }
-
-    // Validator: Subkoleksi screenings (Dokumen essential_screening atau additional_screening)
-    function isValidScreeningDoc(data) {
-      return (!('syncedAtEpochMillis' in data) || (data.syncedAtEpochMillis is number && data.syncedAtEpochMillis > 0)) &&
-             (!('updatedAtServer' in data) || (data.updatedAtServer is timestamp && data.updatedAtServer == request.time));
-    }
-
-    // Validator: Subkoleksi growth_measurements (Skema Terstruktur Baru dengan Data Map)
-    function isValidGrowthMeasurementRecord(data) {
-      return hasRequiredFields(allowedGrowthMeasurementRecordFields()) &&
-             hasOnlyAllowedFields(allowedGrowthMeasurementRecordFields()) &&
-             
-             // ID pengukuran lokal (>= 0)
-             data.measurementId is number &&
-             data.measurementId >= 0 &&
-             
-             // Tanggal pengukuran epoch (> 0) & terformat (<= 50)
-             data.measurementDateEpochMillis is number &&
-             data.measurementDateEpochMillis > 0 &&
-             data.measurementDateFormatted is string &&
-             data.measurementDateFormatted.size() <= 50 &&
-             
-             // PMA dalam minggu (20.0 s.d. 60.0) dan usia kronologis (0.0 s.d. 200.0)
-             data.pmaWeeks is number &&
-             data.pmaWeeks >= 20.0 &&
-             data.pmaWeeks <= 60.0 &&
-             data.chronologicalAgeWeeks is number &&
-             data.chronologicalAgeWeeks >= 0.0 &&
-             data.chronologicalAgeWeeks <= 200.0 &&
-             
-             // Map pengukuran data: weight, length, head
-             data.data is map &&
-             data.data.keys().hasOnly(['weight', 'length', 'head']) &&
-             data.data.weight is map &&
-             data.data.weight.value is number && data.data.weight.value > 0.0 &&
-             data.data.weight.unit is string && data.data.weight.unit.size() >= 1 && data.data.weight.unit.size() <= 20 &&
-             data.data.length is map &&
-             data.data.length.value is number && data.data.length.value > 0.0 &&
-             data.data.length.unit is string && data.data.length.unit.size() >= 1 && data.data.length.unit.size() <= 20 &&
-             data.data.head is map &&
-             data.data.head.value is number && data.data.head.value > 0.0 &&
-             data.data.head.unit is string && data.data.head.unit.size() >= 1 && data.data.head.unit.size() <= 20 &&
-             
-             // Waktu sinkronisasi lokal (> 0)
-             data.syncedAtEpochMillis is number &&
-             data.syncedAtEpochMillis > 0 &&
-             
-             // Server timestamp Firestore
-             data.updatedAtServer is timestamp &&
-             data.updatedAtServer == request.time;
-    }
-
-    // Validator: Sesi PMK Legacy
-    function isValidPmkSession(data) {
-      return hasRequiredFields(allowedPmkSessionFields()) &&
-             hasOnlyAllowedFields(allowedPmkSessionFields()) &&
-             data.sessionIdLocal is number && data.sessionIdLocal >= 0 &&
-             data.startTimeEpochMillis is number && data.startTimeEpochMillis > 0 &&
-             data.endTimeEpochMillis is number && data.endTimeEpochMillis >= data.startTimeEpochMillis &&
-             data.durationMinutes is number && data.durationMinutes >= 0 && data.durationMinutes <= 1440 &&
-             data.caregiverRole is string && data.caregiverRole.size() >= 1 && data.caregiverRole.size() <= 50 &&
-             data.moodRating is number && data.moodRating >= 0 && data.moodRating <= 5 &&
-             data.notes is string && data.notes.size() <= 500 &&
-             data.syncedAtEpochMillis is number && data.syncedAtEpochMillis > 0 &&
-             data.updatedAtServer is timestamp && data.updatedAtServer == request.time;
-    }
-
-    // Validator: Pengukuran Pertumbuhan Legacy (Flat Format)
-    function isValidGrowthMeasurement(data) {
-      return hasRequiredFields(allowedGrowthMeasurementFields()) &&
-             hasOnlyAllowedFields(allowedGrowthMeasurementFields()) &&
-             data.measurementIdLocal is number && data.measurementIdLocal >= 0 &&
-             data.parameter is string && data.parameter in ['WEIGHT', 'LENGTH', 'HEAD_CIRCUMFERENCE'] &&
-             data.value is number && data.value > 0.0 && data.value <= 50000.0 &&
-             data.unit is string && data.unit.size() >= 1 && data.unit.size() <= 10 &&
-             data.measurementDateEpochMillis is number && data.measurementDateEpochMillis > 0 &&
-             data.measurementDateFormatted is string && data.measurementDateFormatted.size() <= 50 &&
-             data.pmaWeeks is number && data.pmaWeeks >= 20.0 && data.pmaWeeks <= 60.0 &&
-             data.chronologicalAgeWeeks is number && data.chronologicalAgeWeeks >= 0 && data.chronologicalAgeWeeks <= 200 &&
-             data.percentileBadge is string && data.percentileBadge.size() <= 50 &&
-             data.note is string && data.note.size() <= 200 &&
-             data.syncedAtEpochMillis is number && data.syncedAtEpochMillis > 0 &&
-             data.updatedAtServer is timestamp && data.updatedAtServer == request.time;
-    }
-
-    // Validator: Skrining Legacy (Flat Format)
-    function isValidScreening(data) {
-      return hasRequiredFields(allowedScreeningFields()) &&
-             hasOnlyAllowedFields(allowedScreeningFields()) &&
-             data.screeningIdLocal is number && data.screeningIdLocal >= 0 &&
-             data.screeningType is string && data.screeningType.size() >= 1 && data.screeningType.size() <= 50 &&
-             data.title is string && data.title.size() >= 1 && data.title.size() <= 100 &&
-             data.categoryBadge is string && data.categoryBadge.size() <= 50 &&
-             data.targetTimingLabel is string && data.targetTimingLabel.size() <= 50 &&
-             data.targetDateEpoch is number && data.targetDateEpoch > 0 &&
-             data.targetDateEpoch2 is number && data.targetDateEpoch2 >= 0 &&
-             data.clinicOrLab is string && data.clinicOrLab.size() <= 100 &&
-             data.isAlarmActive is bool && data.isAlarm2Active is bool && data.isCompleted is bool &&
-             data.realizationDateEpoch is number && data.realizationDateEpoch >= 0 &&
-             data.hospitalName is string && data.hospitalName.size() <= 100 &&
-             data.doctorName is string && data.doctorName.size() <= 100 &&
-             data.clinicalResult is string && data.clinicalResult.size() <= 200 &&
-             data.findings is string && data.findings.size() <= 500 &&
-             data.conclusion is string && data.conclusion.size() <= 500 &&
-             data.syncedAtEpochMillis is number && data.syncedAtEpochMillis > 0 &&
-             data.updatedAtServer is timestamp && data.updatedAtServer == request.time;
-    }
-
-    // ===============================================================
-    // Rules Match Blocks
-    // ===============================================================
-
-    // Default deny all access across any unlisted collections
+    // Default Deny
     match /{document=**} {
       allow read, write: if false;
     }
@@ -587,65 +21,55 @@ service cloud.firestore {
     // 1. Koleksi Profil Onboarding Bayi (Backward Compatibility)
     match /baby_onboarding_profiles/{profileId} {
       allow read: if isAdmin();
-      allow create: if isValidBabyOnboardingProfile(request.resource.data);
-      allow update: if isAdmin() && isValidBabyOnboardingProfile(request.resource.data);
-      allow delete: if isAdmin();
+      allow create: if true;
+      allow update, delete: if isAdmin();
     }
 
-    // 2. Koleksi Rekam Medis Komprehensif Root: baby_records/{userDocId}
+    // 2. Koleksi Rekam Medis Pengguna (1 Dokumen = 1 User)
     match /baby_records/{userDocId} {
-      // GET: Diizinkan membaca dokumen user dengan userDocId spesifik
       allow get: if true;
-
-      // LIST: Ditutup untuk klien umum dan hanya diizinkan untuk Admin (mencegah scraping PII)
       allow list: if isAdmin();
-
-      // CREATE / UPDATE: Diizinkan untuk inisialisasi & sinkronisasi metadata user
       allow create, update: if true;
-
-      // DELETE: Hanya administrator yang berhak menghapus rekam medis user
       allow delete: if isAdmin();
 
-      // 3. Subkoleksi Profil Identitas Bayi & Ibu: baby_data
+      // Subkoleksi: baby_data (Profil Bayi & Ibu)
       match /baby_data/{docId} {
         allow get: if true;
         allow list: if isAdmin();
-        allow create: if isValidBabyData(request.resource.data) &&
-                         request.resource.data.createdAtServer == request.time;
-        allow update: if isValidBabyData(request.resource.data) &&
-                         request.resource.data.createdAtServer == resource.data.createdAtServer;
+        allow create: if request.resource.data.createdAtServer == request.time;
+        allow update: if request.resource.data.createdAtServer == resource.data.createdAtServer;
         allow delete: if isAdmin();
       }
 
-      // 4. Subkoleksi Rekam Harian PMK: pmk_daily_records
+      // Subkoleksi: pmk_daily_records (Rekam Harian PMK)
       match /pmk_daily_records/{recordId} {
         allow get: if true;
         allow list: if isAdmin();
-        allow create, update: if isValidPmkDailyRecord(request.resource.data);
+        allow create, update: if true;
         allow delete: if isAdmin();
       }
 
-      // 5. Subkoleksi Skrining Bayi: screenings
+      // Subkoleksi: screenings (Skrining Wajib & Tambahan)
       match /screenings/{docId} {
         allow get: if true;
         allow list: if isAdmin();
-        allow create, update: if isValidScreeningDoc(request.resource.data) || isValidScreening(request.resource.data);
+        allow create, update: if true;
         allow delete: if isAdmin();
       }
 
-      // 6. Subkoleksi Pengukuran Pertumbuhan: growth_measurements
+      // Subkoleksi: growth_measurements (Pertumbuhan Terstruktur)
       match /growth_measurements/{measurementId} {
         allow get: if true;
         allow list: if isAdmin();
-        allow create, update: if isValidGrowthMeasurementRecord(request.resource.data) || isValidGrowthMeasurement(request.resource.data);
+        allow create, update: if true;
         allow delete: if isAdmin();
       }
 
-      // 7. Subkoleksi Sesi PMK Legacy (Backward Compatibility)
+      // Subkoleksi legacy: pmk_sessions (Kompatibilitas)
       match /pmk_sessions/{sessionId} {
         allow get: if true;
         allow list: if isAdmin();
-        allow create, update: if isValidPmkSession(request.resource.data);
+        allow create, update: if true;
         allow delete: if isAdmin();
       }
     }

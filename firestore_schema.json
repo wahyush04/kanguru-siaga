@@ -24,7 +24,7 @@
             },
             "pmk_daily_records": [
                 {
-                    "sessionId": 1,
+                    "sessionId": "15112026",
                     "dateEpochMillis": 1700000000000,
                     "dateFormatted": "15 Nov 2023",
                     "totalDurationMinutes": 60,
@@ -32,7 +32,7 @@
                     "updatedAtServer": "SERVER_TIMESTAMP"
                 },
                 {
-                    "sessionId": 2,
+                    "sessionId": "16112026",
                     "dateEpochMillis": 1700000000000,
                     "dateFormatted": "16 Nov 2023",
                     "totalDurationMinutes": 200,
