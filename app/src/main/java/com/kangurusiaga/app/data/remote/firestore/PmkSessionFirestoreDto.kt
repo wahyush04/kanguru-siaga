@@ -2,6 +2,9 @@ package com.kangurusiaga.app.data.remote.firestore
 
 import com.google.firebase.firestore.FieldValue
 import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 data class PmkSessionFirestoreDto(
     val sessionIdLocal: Long,
@@ -14,8 +17,18 @@ data class PmkSessionFirestoreDto(
     val syncedAtEpochMillis: Long = System.currentTimeMillis()
 ) {
     fun toMap(): Map<String, Any?> {
+        val formattedDate = try {
+            val sdf = SimpleDateFormat("d MMM yyyy", Locale("id", "ID"))
+            sdf.format(Date(startTimeEpochMillis))
+        } catch (_: Exception) {
+            ""
+        }
         return mapOf(
+            "sessionId" to sessionIdLocal,
             "sessionIdLocal" to sessionIdLocal,
+            "dateEpochMillis" to startTimeEpochMillis,
+            "dateFormatted" to formattedDate,
+            "totalDurationMinutes" to durationMinutes,
             "startTimeEpochMillis" to startTimeEpochMillis,
             "endTimeEpochMillis" to endTimeEpochMillis,
             "durationMinutes" to durationMinutes,

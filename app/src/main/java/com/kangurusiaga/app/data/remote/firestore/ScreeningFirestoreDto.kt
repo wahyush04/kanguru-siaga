@@ -25,6 +25,7 @@ data class ScreeningFirestoreDto(
 ) {
     fun toMap(): Map<String, Any?> {
         return mapOf(
+            "screeningId" to screeningIdLocal,
             "screeningIdLocal" to screeningIdLocal,
             "screeningType" to screeningType,
             "title" to title,

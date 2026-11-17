@@ -1,6 +1,8 @@
 package com.kangurusiaga.app.core.datastore
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.provider.Settings
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -10,6 +12,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kangurusiaga.app.domain.model.settings.AppTextScale
 import com.kangurusiaga.app.domain.model.settings.AppThemeMode
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -20,6 +23,7 @@ val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name =
 
 @Singleton
 class UserPreferencesDataStore @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val dataStore: DataStore<Preferences>
 ) {
     private object PreferencesKeys {
@@ -87,10 +91,22 @@ class UserPreferencesDataStore @Inject constructor(
         }
     }
 
+    @SuppressLint("HardwareIds")
     suspend fun getOrCreateFirestoreBabyDocId(): String {
         var currentId = dataStore.data.firstOrNull()?.get(PreferencesKeys.FIRESTORE_BABY_DOC_ID)
         if (currentId.isNullOrBlank()) {
-            val newId = java.util.UUID.randomUUID().toString()
+            val androidId = context?.let {
+                try {
+                    Settings.Secure.getString(it.contentResolver, Settings.Secure.ANDROID_ID)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            val newId = if (!androidId.isNullOrBlank()) {
+                "user_$androidId"
+            } else {
+                "user_${java.util.UUID.randomUUID()}"
+            }
             dataStore.edit { preferences ->
                 preferences[PreferencesKeys.FIRESTORE_BABY_DOC_ID] = newId
             }

@@ -1,0 +1,204 @@
+{
+    "baby_records": [
+        {
+            "baby_data": {
+                "babyId": 1,
+                "motherName": "Siti Aminah",
+                "motherPhoneNumber": "081234567890",
+                "babyName": "Budi Santoso",
+                "birthDateEpochMillis": 1700000000000,
+                "birthDateFormatted": "15 Nov 2023",
+                "gestationalAgeWeeks": 36,
+                "birthWeightGram": 2400,
+                "currentWeightGram": 3200,
+                "birthLengthCm": 46.5,
+                "currentLengthCm": 50.0,
+                "birthHeadCircumferenceCm": 32.0,
+                "currentHeadCircumferenceCm": 34.5,
+                "gender": "LAKI_LAKI",
+                "environment": "production",
+                "appVersion": "1.0.0",
+                "syncedAtEpochMillis": 1700000050000,
+                "createdAtServer": "SERVER_TIMESTAMP",
+                "updatedAtServer": "SERVER_TIMESTAMP"
+            },
+            "pmk_daily_records": [
+                {
+                    "sessionId": 1,
+                    "dateEpochMillis": 1700000000000,
+                    "dateFormatted": "15 Nov 2023",
+                    "totalDurationMinutes": 60,
+                    "syncedAtEpochMillis": 1700013700000,
+                    "updatedAtServer": "SERVER_TIMESTAMP"
+                },
+                {
+                    "sessionId": 2,
+                    "dateEpochMillis": 1700000000000,
+                    "dateFormatted": "16 Nov 2023",
+                    "totalDurationMinutes": 200,
+                    "syncedAtEpochMillis": 1700013700000,
+                    "updatedAtServer": "SERVER_TIMESTAMP"
+                }
+            ],
+            "screenings": {
+                "essential_screening": {
+                    "screening_neurosonografi": {
+                        "screeningId": 1,
+                        "screeningType": "ROP",
+                        "title": "Skrining Mata Bayi Prematur",
+                        "categoryBadge": "Wajib",
+                        "targetTimingLabel": "Usia 4 Minggu",
+                        "targetDateEpoch": 1702419200000,
+                        "targetDateEpoch2": 0,
+                        "clinicOrLab": "RSIA Bunda",
+                        "isAlarmActive": true,
+                        "isAlarm2Active": false,
+                        "isCompleted": false,
+                        "realizationDateEpoch": 0,
+                        "hospitalName": "",
+                        "doctorName": "",
+                        "clinicalResult": "",
+                        "findings": "",
+                        "conclusion": "",
+                        "syncedAtEpochMillis": 1700000050000,
+                        "updatedAtServer": "SERVER_TIMESTAMP"
+                    },
+                    "screening_oftamologi": {
+                        "screeningId": 2,
+                        "screeningType": "ROP",
+                        "title": "Skrining Mata Bayi Prematur",
+                        "categoryBadge": "Wajib",
+                        "targetTimingLabel": "Usia 4 Minggu",
+                        "targetDateEpoch": 1702419200000,
+                        "targetDateEpoch2": 0,
+                        "clinicOrLab": "RSIA Bunda",
+                        "isAlarmActive": true,
+                        "isAlarm2Active": false,
+                        "isCompleted": false,
+                        "realizationDateEpoch": 0,
+                        "hospitalName": "",
+                        "doctorName": "",
+                        "clinicalResult": "",
+                        "findings": "",
+                        "conclusion": "",
+                        "syncedAtEpochMillis": 1700000050000,
+                        "updatedAtServer": "SERVER_TIMESTAMP"
+                    },
+                    "screening_audiologi": {
+                        "screeningId": 3,
+                        "screeningType": "ROP",
+                        "title": "Skrining Mata Bayi Prematur",
+                        "categoryBadge": "Wajib",
+                        "targetTimingLabel": "Usia 4 Minggu",
+                        "targetDateEpoch": 1702419200000,
+                        "targetDateEpoch2": 0,
+                        "clinicOrLab": "RSIA Bunda",
+                        "isAlarmActive": true,
+                        "isAlarm2Active": false,
+                        "isCompleted": false,
+                        "realizationDateEpoch": 0,
+                        "hospitalName": "",
+                        "doctorName": "",
+                        "clinicalResult": "",
+                        "findings": "",
+                        "conclusion": "",
+                        "syncedAtEpochMillis": 1700000050000,
+                        "updatedAtServer": "SERVER_TIMESTAMP"
+                    },
+                    "screening_tiroid": {
+                        "screeningId": 4,
+                        "screeningType": "ROP",
+                        "title": "Skrining Mata Bayi Prematur",
+                        "categoryBadge": "Wajib",
+                        "targetTimingLabel": "Usia 4 Minggu",
+                        "targetDateEpoch": 1702419200000,
+                        "targetDateEpoch2": 0,
+                        "clinicOrLab": "RSIA Bunda",
+                        "isAlarmActive": true,
+                        "isAlarm2Active": false,
+                        "isCompleted": false,
+                        "realizationDateEpoch": 0,
+                        "hospitalName": "",
+                        "doctorName": "",
+                        "clinicalResult": "",
+                        "findings": "",
+                        "conclusion": "",
+                        "syncedAtEpochMillis": 1700000050000,
+                        "updatedAtServer": "SERVER_TIMESTAMP"
+                    }
+                },
+                "additional_screening": [
+                    {
+                        "screeningId": 1,
+                        "screeningType": "ROP",
+                        "title": "Skrining Mata Bayi Prematur",
+                        "categoryBadge": "Wajib",
+                        "targetTimingLabel": "Usia 4 Minggu",
+                        "targetDateEpoch": 1702419200000,
+                        "targetDateEpoch2": 0,
+                        "clinicOrLab": "RSIA Bunda",
+                        "isAlarmActive": true,
+                        "isAlarm2Active": false,
+                        "isCompleted": false,
+                        "realizationDateEpoch": 0,
+                        "hospitalName": "",
+                        "doctorName": "",
+                        "clinicalResult": "",
+                        "findings": "",
+                        "conclusion": "",
+                        "syncedAtEpochMillis": 1700000050000,
+                        "updatedAtServer": "SERVER_TIMESTAMP"
+                    }
+                ]
+            },
+            "growth_measurements": [
+                {
+                    "measurementId": 1,
+                    "measurementDateEpochMillis": 1701000000000,
+                    "measurementDateFormatted": "21 Nov 2023",
+                    "pmaWeeks": 38.0,
+                    "chronologicalAgeWeeks": 2,
+                    "data": {
+                        "weight": {
+                            "value": 1800.0,
+                            "unit": "gram"
+                        },
+                        "length": {
+                            "value": 50,
+                            "unit": "cm"
+                        },
+                        "head": {
+                            "value": 34.0,
+                            "unit": "cm"
+                        }
+                    },
+                    "syncedAtEpochMillis": 1701000050000,
+                    "updatedAtServer": "SERVER_TIMESTAMP"
+                },
+                {
+                    "measurementId": 2,
+                    "measurementDateEpochMillis": 1701000000000,
+                    "measurementDateFormatted": "28 Nov 2023",
+                    "pmaWeeks": 39.0,
+                    "chronologicalAgeWeeks": 3,
+                    "data": {
+                        "weight": {
+                            "value": 1850.0,
+                            "unit": "gram"
+                        },
+                        "length": {
+                            "value": 52.0,
+                            "unit": "cm"
+                        },
+                        "head": {
+                            "value": 36.0,
+                            "unit": "cm"
+                        }
+                    },
+                    "syncedAtEpochMillis": 1701000050000,
+                    "updatedAtServer": "SERVER_TIMESTAMP"
+                }
+            ]
+        }
+    ]
+}

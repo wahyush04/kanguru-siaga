@@ -3,6 +3,7 @@ package com.kangurusiaga.app.core.datastore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -25,7 +26,10 @@ class UserPreferencesDataStoreTest {
             scope = testScope,
             produceFile = { tmpFolder.newFile("test_user_preferences.preferences_pb") }
         )
-        return UserPreferencesDataStore(testDataStore)
+        return UserPreferencesDataStore(
+            context = mockk(relaxed = true),
+            dataStore = testDataStore
+        )
     }
 
     @Test

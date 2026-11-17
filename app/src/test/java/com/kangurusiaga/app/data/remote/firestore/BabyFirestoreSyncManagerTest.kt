@@ -63,11 +63,14 @@ class BabyFirestoreSyncManagerTest {
         every { documentRef.id } returns "doc_12345"
         every { documentRef.get() } returns Tasks.forResult(docSnapshot)
         every { documentRef.set(any()) } returns Tasks.forResult(null)
+        every { documentRef.set(any(), any()) } returns Tasks.forResult(null)
         every { documentRef.update(any<Map<String, Any?>>()) } returns Tasks.forResult(null)
         every { documentRef.collection(any()) } returns subCollectionRef
 
         every { subCollectionRef.document(any()) } returns subDocRef
+        every { subDocRef.get() } returns Tasks.forResult(docSnapshot)
         every { subDocRef.set(any()) } returns Tasks.forResult(null)
+        every { subDocRef.set(any(), any()) } returns Tasks.forResult(null)
 
         every { docSnapshot.exists() } returns false
 
@@ -106,7 +109,7 @@ class BabyFirestoreSyncManagerTest {
         every { networkMonitor.isOnline() } returns true
 
         val capturedMap = slot<Map<String, Any?>>()
-        every { documentRef.set(capture(capturedMap)) } returns Tasks.forResult(null)
+        every { subDocRef.set(capture(capturedMap)) } returns Tasks.forResult(null)
 
         val baby = Baby(
             id = 1L,
@@ -125,7 +128,7 @@ class BabyFirestoreSyncManagerTest {
         val result = syncManager.syncOnboardingBaby(baby, currentWeightGram = 2050)
 
         assertThat(result).isTrue()
-        verify(atLeast = 1) { documentRef.set(any()) }
+        verify(atLeast = 1) { subDocRef.set(any()) }
 
         val map = capturedMap.captured
         assertThat(map["babyName"]).isEqualTo("Siti Aisyah")
@@ -141,7 +144,8 @@ class BabyFirestoreSyncManagerTest {
     @Test
     fun syncOnboardingBaby_whenFirestoreThrowsException_handlesGracefullyAndReturnsFalse() = runTest(testDispatcher) {
         every { networkMonitor.isOnline() } returns true
-        every { documentRef.get() } throws RuntimeException("Simulated Firestore Exception")
+        every { documentRef.set(any(), any()) } throws RuntimeException("Simulated Firestore Exception")
+        every { subDocRef.get() } throws RuntimeException("Simulated Firestore Exception")
 
         val baby = Baby(
             name = "Baby Test",
@@ -176,7 +180,7 @@ class BabyFirestoreSyncManagerTest {
         val result = syncManager.syncBabyProfile(baby)
 
         assertThat(result).isTrue()
-        verify(atLeast = 1) { documentRef.set(any()) }
+        verify(atLeast = 1) { subDocRef.set(any()) }
     }
 
     @Test
@@ -218,11 +222,12 @@ class BabyFirestoreSyncManagerTest {
             clinicOrLab = "Poli Anak",
             isCompleted = false
         )
+        coEvery { prematureScreeningDao.getScreeningsListForBaby(1L) } returns listOf(screening)
 
         val result = syncManager.syncScreening(screening)
 
         assertThat(result).isTrue()
-        verify(atLeast = 1) { subDocRef.set(any()) }
+        verify(atLeast = 1) { subDocRef.set(any(), any()) }
     }
 
     @Test
@@ -240,6 +245,7 @@ class BabyFirestoreSyncManagerTest {
             value = 1950.0f,
             unit = "gram"
         )
+        coEvery { growthMeasurementDao.getAllMeasurementsListForBaby(1L) } returns listOf(measurement)
 
         val result = syncManager.syncGrowthMeasurement(measurement)
 

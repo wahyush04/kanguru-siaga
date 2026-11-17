@@ -72,3 +72,36 @@ data class GrowthMeasurementFirestoreDto(
         }
     }
 }
+
+data class StructuredGrowthRecordDto(
+    val measurementId: Long,
+    val measurementDateEpochMillis: Long,
+    val measurementDateFormatted: String,
+    val pmaWeeks: Float,
+    val chronologicalAgeWeeks: Float,
+    val weightValue: Double,
+    val weightUnit: String = "gram",
+    val lengthValue: Double,
+    val lengthUnit: String = "cm",
+    val headValue: Double,
+    val headUnit: String = "cm",
+    val syncedAtEpochMillis: Long = System.currentTimeMillis()
+) {
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "measurementId" to measurementId,
+            "measurementIdLocal" to measurementId,
+            "measurementDateEpochMillis" to measurementDateEpochMillis,
+            "measurementDateFormatted" to measurementDateFormatted,
+            "pmaWeeks" to pmaWeeks,
+            "chronologicalAgeWeeks" to chronologicalAgeWeeks,
+            "data" to mapOf(
+                "weight" to mapOf("value" to weightValue, "unit" to weightUnit),
+                "length" to mapOf("value" to lengthValue, "unit" to lengthUnit),
+                "head" to mapOf("value" to headValue, "unit" to headUnit)
+            ),
+            "syncedAtEpochMillis" to syncedAtEpochMillis,
+            "updatedAtServer" to FieldValue.serverTimestamp()
+        )
+    }
+}

@@ -26,6 +26,7 @@ data class BabyRecordFirestoreDto(
 ) {
     fun toMap(isNewDocument: Boolean = false): Map<String, Any?> {
         val map = mutableMapOf<String, Any?>(
+            "babyId" to babyIdLocal,
             "babyIdLocal" to babyIdLocal,
             "motherName" to motherName,
             "motherPhoneNumber" to motherPhoneNumber,

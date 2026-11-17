@@ -98,7 +98,8 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
         const val TAG = "BabyFirestoreSync"
         const val COLLECTION_BABY_PROFILES = "baby_onboarding_profiles"
         const val COLLECTION_BABY_RECORDS = "baby_records"
-        const val SUBCOLLECTION_PMK = "pmk_sessions"
+        const val SUBCOLLECTION_BABY_DATA = "baby_data"
+        const val SUBCOLLECTION_PMK_DAILY = "pmk_daily_records"
         const val SUBCOLLECTION_SCREENINGS = "screenings"
         const val SUBCOLLECTION_GROWTH = "growth_measurements"
     }
@@ -110,29 +111,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
             val babyEntity = babyDao.getActiveBabyOnce()
             if (babyEntity != null) {
                 val baby = babyEntity.toDomain()
-                val genderString = when (baby.gender) {
-                    Gender.MALE -> "LAKI_LAKI"
-                    Gender.FEMALE -> "PEREMPUAN"
-                    Gender.UNSPECIFIED, null -> "TIDAK_DIKETAHUI"
-                }
-                val dto = BabyRecordFirestoreDto.create(
-                    babyIdLocal = baby.id,
-                    motherName = baby.motherName,
-                    motherPhoneNumber = baby.motherPhoneNumber,
-                    babyName = baby.name,
-                    birthDateEpochMillis = baby.birthDateEpochMillis,
-                    gestationalAgeWeeks = baby.gestationalAgeWeeks,
-                    birthWeightGram = baby.birthWeightGram,
-                    currentWeightGram = baby.birthWeightGram,
-                    birthLengthCm = baby.birthLengthCm,
-                    currentLengthCm = baby.birthLengthCm,
-                    birthHeadCircumferenceCm = baby.birthHeadCircumferenceCm,
-                    currentHeadCircumferenceCm = baby.birthHeadCircumferenceCm,
-                    gender = genderString,
-                    environment = BuildConfig.ENVIRONMENT,
-                    appVersion = BuildConfig.VERSION_NAME
-                )
-                docRef.set(dto.toMap(isNewDocument = true)).await()
+                syncBabyProfile(baby)
                 AppLogger.i(TAG, "Parent doc baby_records/$babyDocId diinisialisasi otomatis")
             }
         }
@@ -154,7 +133,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
             }
 
             try {
-                // 1. Sinkronkan profil utama ibu & bayi ke baby_records/{babyDocId}
+                // 1. Sinkronkan profil utama ibu & bayi ke baby_records/{babyDocId} (root & baby_data)
                 val profileSuccess = syncBabyProfile(
                     baby = baby,
                     currentWeightGram = currentWeightGram,
@@ -194,7 +173,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
 
             try {
                 val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
-                val docRef = firestore.collection(COLLECTION_BABY_RECORDS).document(babyDocId)
+                val parentDocRef = firestore.collection(COLLECTION_BABY_RECORDS).document(babyDocId)
 
                 val genderString = when (baby.gender) {
                     Gender.MALE -> "LAKI_LAKI"
@@ -220,18 +199,33 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                     appVersion = BuildConfig.VERSION_NAME
                 )
 
-                val snapshot = docRef.get().await()
+                // 1. Simpan metadata pada dokumen induk user
+                val rootMeta = mapOf(
+                    "userId" to babyDocId,
+                    "babyId" to baby.id,
+                    "babyName" to baby.name,
+                    "motherName" to baby.motherName,
+                    "motherPhoneNumber" to baby.motherPhoneNumber,
+                    "environment" to BuildConfig.ENVIRONMENT,
+                    "appVersion" to BuildConfig.VERSION_NAME,
+                    "updatedAtServer" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                )
+                parentDocRef.set(rootMeta, com.google.firebase.firestore.SetOptions.merge()).await()
+
+                // 2. Simpan profil ke subkoleksi baby_data/profile
+                val babyDataDocRef = parentDocRef.collection(SUBCOLLECTION_BABY_DATA).document("profile")
+                val snapshot = babyDataDocRef.get().await()
                 if (snapshot.exists()) {
                     val existingCreatedAt = snapshot.get("createdAtServer")
                     val map = dto.toMap(isNewDocument = false).toMutableMap()
                     if (existingCreatedAt != null) {
                         map["createdAtServer"] = existingCreatedAt
                     }
-                    docRef.set(map).await()
-                    AppLogger.i(TAG, "BERHASIL update profil bayi di Firestore: babyDocId=$babyDocId")
+                    babyDataDocRef.set(map).await()
+                    AppLogger.i(TAG, "BERHASIL update subkoleksi baby_data/profile: babyDocId=$babyDocId")
                 } else {
-                    docRef.set(dto.toMap(isNewDocument = true)).await()
-                    AppLogger.i(TAG, "BERHASIL create profil bayi di Firestore: babyDocId=$babyDocId")
+                    babyDataDocRef.set(dto.toMap(isNewDocument = true)).await()
+                    AppLogger.i(TAG, "BERHASIL create subkoleksi baby_data/profile: babyDocId=$babyDocId")
                 }
                 true
             } catch (e: Exception) {
@@ -256,12 +250,12 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 val dto = PmkSessionFirestoreDto.fromEntity(session)
                 firestore.collection(COLLECTION_BABY_RECORDS)
                     .document(babyDocId)
-                    .collection(SUBCOLLECTION_PMK)
+                    .collection(SUBCOLLECTION_PMK_DAILY)
                     .document("session_${session.id}")
                     .set(dto.toMap())
                     .await()
 
-                AppLogger.i(TAG, "BERHASIL menyinkronkan sesi PMK ke Firestore: session_${session.id}")
+                AppLogger.i(TAG, "BERHASIL menyinkronkan sesi PMK ke $SUBCOLLECTION_PMK_DAILY: session_${session.id}")
                 true
             } catch (e: Exception) {
                 AppLogger.e(TAG, "GAGAL menyinkronkan sesi PMK (id=${session.id}) ke Firestore: ${e.message}", e)
@@ -285,12 +279,12 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                     val dto = PmkSessionFirestoreDto.fromEntity(session)
                     firestore.collection(COLLECTION_BABY_RECORDS)
                         .document(babyDocId)
-                        .collection(SUBCOLLECTION_PMK)
+                        .collection(SUBCOLLECTION_PMK_DAILY)
                         .document("session_${session.id}")
                         .set(dto.toMap())
                         .await()
                 }
-                AppLogger.i(TAG, "BERHASIL menyinkronkan ${sessions.size} sesi PMK ke Firestore")
+                AppLogger.i(TAG, "BERHASIL menyinkronkan ${sessions.size} sesi PMK ke $SUBCOLLECTION_PMK_DAILY")
                 true
             } catch (e: Exception) {
                 AppLogger.e(TAG, "GAGAL menyinkronkan semua sesi PMK ke Firestore: ${e.message}", e)
@@ -301,32 +295,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
     }
 
     override suspend fun syncScreening(screening: PrematureScreeningEntity): Boolean {
-        return withContext(ioDispatcher) {
-            if (!networkMonitor.isOnline()) {
-                AppLogger.d(TAG, "Offline: Melewati sinkronisasi skrining (id=${screening.id})")
-                return@withContext false
-            }
-
-            try {
-                val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
-                ensureParentBabyDocExists(babyDocId, screening.babyId)
-
-                val dto = ScreeningFirestoreDto.fromEntity(screening)
-                firestore.collection(COLLECTION_BABY_RECORDS)
-                    .document(babyDocId)
-                    .collection(SUBCOLLECTION_SCREENINGS)
-                    .document("screening_${screening.id}")
-                    .set(dto.toMap())
-                    .await()
-
-                AppLogger.i(TAG, "BERHASIL menyinkronkan skrining ke Firestore: screening_${screening.id}")
-                true
-            } catch (e: Exception) {
-                AppLogger.e(TAG, "GAGAL menyinkronkan skrining (id=${screening.id}) ke Firestore: ${e.message}", e)
-                CrashlyticsLogger.recordException(e)
-                false
-            }
-        }
+        return syncAllScreenings(screening.babyId)
     }
 
     override suspend fun syncAllScreenings(babyId: Long): Boolean {
@@ -339,16 +308,53 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
                 ensureParentBabyDocExists(babyDocId, babyId)
 
-                for (screening in screenings) {
-                    val dto = ScreeningFirestoreDto.fromEntity(screening)
-                    firestore.collection(COLLECTION_BABY_RECORDS)
-                        .document(babyDocId)
-                        .collection(SUBCOLLECTION_SCREENINGS)
-                        .document("screening_${screening.id}")
-                        .set(dto.toMap())
-                        .await()
+                var neuroMap: Map<String, Any?>? = null
+                var oftamologiMap: Map<String, Any?>? = null
+                var audiologiMap: Map<String, Any?>? = null
+                var tiroidMap: Map<String, Any?>? = null
+                val additionalList = mutableListOf<Map<String, Any?>>()
+
+                for (s in screenings) {
+                    val dto = ScreeningFirestoreDto.fromEntity(s)
+                    val map = dto.toMap()
+                    when (s.screeningType) {
+                        "USG_HEAD" -> neuroMap = map
+                        "ROP" -> oftamologiMap = map
+                        "HEARING_OAE_BERA" -> audiologiMap = map
+                        "THYROID" -> tiroidMap = map
+                        else -> additionalList.add(map)
+                    }
                 }
-                AppLogger.i(TAG, "BERHASIL menyinkronkan ${screenings.size} data skrining ke Firestore")
+
+                val essentialDoc = mutableMapOf<String, Any?>(
+                    "syncedAtEpochMillis" to System.currentTimeMillis(),
+                    "updatedAtServer" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                )
+                if (neuroMap != null) essentialDoc["screening_neurosonografi"] = neuroMap
+                if (oftamologiMap != null) essentialDoc["screening_oftamologi"] = oftamologiMap
+                if (audiologiMap != null) essentialDoc["screening_audiologi"] = audiologiMap
+                if (tiroidMap != null) essentialDoc["screening_tiroid"] = tiroidMap
+
+                firestore.collection(COLLECTION_BABY_RECORDS)
+                    .document(babyDocId)
+                    .collection(SUBCOLLECTION_SCREENINGS)
+                    .document("essential_screening")
+                    .set(essentialDoc, com.google.firebase.firestore.SetOptions.merge())
+                    .await()
+
+                val additionalDoc = mapOf(
+                    "items" to additionalList,
+                    "syncedAtEpochMillis" to System.currentTimeMillis(),
+                    "updatedAtServer" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                )
+                firestore.collection(COLLECTION_BABY_RECORDS)
+                    .document(babyDocId)
+                    .collection(SUBCOLLECTION_SCREENINGS)
+                    .document("additional_screening")
+                    .set(additionalDoc, com.google.firebase.firestore.SetOptions.merge())
+                    .await()
+
+                AppLogger.i(TAG, "BERHASIL menyinkronkan ${screenings.size} data skrining ke $SUBCOLLECTION_SCREENINGS")
                 true
             } catch (e: Exception) {
                 AppLogger.e(TAG, "GAGAL menyinkronkan semua data skrining ke Firestore: ${e.message}", e)
@@ -359,32 +365,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
     }
 
     override suspend fun syncGrowthMeasurement(measurement: GrowthMeasurementEntity): Boolean {
-        return withContext(ioDispatcher) {
-            if (!networkMonitor.isOnline()) {
-                AppLogger.d(TAG, "Offline: Melewati sinkronisasi pengukuran pertumbuhan (id=${measurement.id})")
-                return@withContext false
-            }
-
-            try {
-                val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
-                ensureParentBabyDocExists(babyDocId, measurement.babyId)
-
-                val dto = GrowthMeasurementFirestoreDto.fromEntity(measurement)
-                firestore.collection(COLLECTION_BABY_RECORDS)
-                    .document(babyDocId)
-                    .collection(SUBCOLLECTION_GROWTH)
-                    .document("growth_${measurement.id}")
-                    .set(dto.toMap())
-                    .await()
-
-                AppLogger.i(TAG, "BERHASIL menyinkronkan pertumbuhan ke Firestore: growth_${measurement.id}")
-                true
-            } catch (e: Exception) {
-                AppLogger.e(TAG, "GAGAL menyinkronkan pertumbuhan (id=${measurement.id}) ke Firestore: ${e.message}", e)
-                CrashlyticsLogger.recordException(e)
-                false
-            }
-        }
+        return syncAllGrowthMeasurements(measurement.babyId)
     }
 
     override suspend fun syncAllGrowthMeasurements(babyId: Long): Boolean {
@@ -397,16 +378,58 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
                 ensureParentBabyDocExists(babyDocId, babyId)
 
-                for (measurement in measurements) {
-                    val dto = GrowthMeasurementFirestoreDto.fromEntity(measurement)
+                val sdfDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+                val grouped = measurements.groupBy { sdfDate.format(java.util.Date(it.measurementDateEpochMillis)) }
+
+                for ((_, list) in grouped) {
+                    val first = list.first()
+                    var weightVal = 0.0
+                    var lengthVal = 0.0
+                    var headVal = 0.0
+
+                    for (m in list) {
+                        when (m.parameter.uppercase()) {
+                            "WEIGHT" -> {
+                                weightVal = if (m.value < 50f) (m.value * 1000f).toDouble() else m.value.toDouble()
+                            }
+                            "LENGTH" -> {
+                                lengthVal = m.value.toDouble()
+                            }
+                            "HEAD_CIRCUMFERENCE" -> {
+                                headVal = m.value.toDouble()
+                            }
+                        }
+                    }
+
+                    val formattedDate = try {
+                        java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale("id", "ID")).format(java.util.Date(first.measurementDateEpochMillis))
+                    } catch (_: Exception) {
+                        ""
+                    }
+
+                    val structuredDto = StructuredGrowthRecordDto(
+                        measurementId = first.id,
+                        measurementDateEpochMillis = first.measurementDateEpochMillis,
+                        measurementDateFormatted = formattedDate,
+                        pmaWeeks = first.pmaWeeks,
+                        chronologicalAgeWeeks = first.chronologicalAgeWeeks,
+                        weightValue = weightVal,
+                        weightUnit = "gram",
+                        lengthValue = lengthVal,
+                        lengthUnit = "cm",
+                        headValue = headVal,
+                        headUnit = "cm"
+                    )
+
                     firestore.collection(COLLECTION_BABY_RECORDS)
                         .document(babyDocId)
                         .collection(SUBCOLLECTION_GROWTH)
-                        .document("growth_${measurement.id}")
-                        .set(dto.toMap())
+                        .document("measurement_${first.id}")
+                        .set(structuredDto.toMap())
                         .await()
                 }
-                AppLogger.i(TAG, "BERHASIL menyinkronkan ${measurements.size} data pertumbuhan ke Firestore")
+
+                AppLogger.i(TAG, "BERHASIL menyinkronkan data pertumbuhan ke $SUBCOLLECTION_GROWTH")
                 true
             } catch (e: Exception) {
                 AppLogger.e(TAG, "GAGAL menyinkronkan semua data pertumbuhan ke Firestore: ${e.message}", e)
