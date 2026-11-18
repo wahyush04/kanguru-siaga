@@ -68,8 +68,10 @@ class PmkRemindersViewModel @Inject constructor(
     val uiState: StateFlow<PmkRemindersUiState> = getBabyProfileUseCase()
         .flatMapLatest { baby ->
             val babyId = baby?.id ?: 1L
+            val remindersFlow = getPmkRemindersUseCase(babyId)
+            reminderScheduler.rescheduleAllEnabledReminders()
             combine(
-                getPmkRemindersUseCase(babyId),
+                remindersFlow,
                 getTodayPmkSessionsUseCase(babyId),
                 _dialogState
             ) { reminders, todaySessions, dialogs ->

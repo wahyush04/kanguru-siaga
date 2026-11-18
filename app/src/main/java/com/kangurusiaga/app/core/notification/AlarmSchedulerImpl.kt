@@ -151,6 +151,13 @@ class AlarmSchedulerImpl @Inject constructor(
                     )
                 )
             }
+            if (pmkList.isNotEmpty()) {
+                reminderScheduleDao.pruneOrphanedReferences(ReminderType.PMK.name, pmkList.map { it.id })
+            } else {
+                reminderScheduleDao.getByType(ReminderType.PMK.name)
+                    .filterNot { it.id.startsWith("SNOOZE_") }
+                    .forEach { reminderScheduleDao.deleteById(it.id) }
+            }
         } catch (_: Exception) {
         }
 
@@ -184,6 +191,13 @@ class AlarmSchedulerImpl @Inject constructor(
                         updatedAt = now
                     )
                 )
+            }
+            if (feedingList.isNotEmpty()) {
+                reminderScheduleDao.pruneOrphanedReferences(ReminderType.ASI.name, feedingList.map { it.id })
+            } else {
+                reminderScheduleDao.getByType(ReminderType.ASI.name)
+                    .filterNot { it.id.startsWith("SNOOZE_") }
+                    .forEach { reminderScheduleDao.deleteById(it.id) }
             }
         } catch (_: Exception) {
         }

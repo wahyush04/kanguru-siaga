@@ -28,6 +28,7 @@ class SaveBabyProfileUseCase @Inject constructor(
     private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase,
     private val growthRepository: GrowthRepository,
     private val fentonGrowthRepository: FentonGrowthRepository,
+    private val initializeDefaultRemindersUseCase: InitializeDefaultRemindersUseCase,
     @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke(
@@ -56,6 +57,9 @@ class SaveBabyProfileUseCase @Inject constructor(
 
             // 2. Simpan data awal kelahiran (Berat, Panjang, Lingkar Kepala) ke pertumbuhan
             ensureInitialGrowthDataUseCase(savedBaby)
+
+            // 2b. Seed seluruh pengingat default (PMK, ASI, Skrining) & jadwalkan alarm terdekat ke AlarmManager
+            initializeDefaultRemindersUseCase(savedBaby)
 
             val now = System.currentTimeMillis()
             val ageCalc = PmaCalculator.calculate(

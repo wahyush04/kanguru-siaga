@@ -3,12 +3,14 @@ package com.kangurusiaga.app.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kangurusiaga.app.core.common.PmkTimerManager
+import com.kangurusiaga.app.core.notification.AlarmScheduler
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.model.PmkTimerState
 import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
 import com.kangurusiaga.app.domain.usecase.GetBabyProfileUseCase
 import com.kangurusiaga.app.domain.usecase.GetTodayPmkSessionsUseCase
+import com.kangurusiaga.app.domain.usecase.InitializeDefaultRemindersUseCase
 import com.kangurusiaga.app.domain.usecase.notification.GetUnreadNotificationCountUseCase
 import com.kangurusiaga.app.domain.usecase.notification.SyncInAppNotificationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +38,9 @@ class HomeViewModel @Inject constructor(
     private val getUnreadNotificationCountUseCase: GetUnreadNotificationCountUseCase? = null,
     private val syncInAppNotificationsUseCase: SyncInAppNotificationsUseCase? = null,
     private val pmkTimerManager: PmkTimerManager? = null,
-    private val userPreferencesRepository: UserPreferencesRepository? = null
+    private val userPreferencesRepository: UserPreferencesRepository? = null,
+    private val initializeDefaultRemindersUseCase: InitializeDefaultRemindersUseCase? = null,
+    private val alarmScheduler: AlarmScheduler? = null
 ) : ViewModel() {
 
     val hasSeenAlarmGuidance: Flow<Boolean> = userPreferencesRepository?.hasSeenAlarmGuidance ?: flowOf(true)
@@ -44,6 +48,7 @@ class HomeViewModel @Inject constructor(
     fun dismissAlarmGuidance() {
         viewModelScope.launch {
             userPreferencesRepository?.setHasSeenAlarmGuidance(true)
+            alarmScheduler?.syncAndScheduleNextAlarm()
         }
     }
 
@@ -65,6 +70,7 @@ class HomeViewModel @Inject constructor(
         .flatMapLatest { baby ->
             if (baby != null) {
                 viewModelScope.launch {
+                    initializeDefaultRemindersUseCase?.invoke(baby)
                     syncInAppNotificationsUseCase?.invoke(baby.id)
                     pmkTimerManager?.ensureTickerRunning()
                     pmkTimerManager?.refreshTodayTotal()

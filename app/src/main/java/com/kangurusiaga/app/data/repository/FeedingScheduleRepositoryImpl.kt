@@ -1,5 +1,7 @@
 package com.kangurusiaga.app.data.repository
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.kangurusiaga.app.data.local.dao.FeedingScheduleDao
 import com.kangurusiaga.app.data.local.entity.FeedingScheduleEntity
 import com.kangurusiaga.app.data.mapper.toDomain
@@ -8,6 +10,7 @@ import com.kangurusiaga.app.domain.model.FeedingMethod
 import com.kangurusiaga.app.domain.model.FeedingSchedule
 import com.kangurusiaga.app.domain.model.RepeatType
 import com.kangurusiaga.app.domain.repository.FeedingScheduleRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -15,8 +18,13 @@ import javax.inject.Singleton
 
 @Singleton
 class FeedingScheduleRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val dao: FeedingScheduleDao
 ) : FeedingScheduleRepository {
+
+    private val prefs: SharedPreferences by lazy {
+        context.getSharedPreferences("feeding_schedule_prefs", Context.MODE_PRIVATE)
+    }
 
     override fun observeSchedules(): Flow<List<FeedingSchedule>> {
         return dao.observeAll().map { entities ->
@@ -57,7 +65,12 @@ class FeedingScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun seedDefaultSchedulesIfEmpty() {
-        if (dao.count() > 0) return
+        val seedKey = "feeding_seeded_v1"
+        if (prefs.getBoolean(seedKey, false)) return
+        if (dao.count() > 0) {
+            prefs.edit().putBoolean(seedKey, true).apply()
+            return
+        }
 
         val defaultSlots = listOf(
             Pair(6, 0),
@@ -94,6 +107,7 @@ class FeedingScheduleRepositoryImpl @Inject constructor(
         }
 
         dao.insertAll(entities)
+        prefs.edit().putBoolean(seedKey, true).apply()
     }
 
     override suspend fun resetAllOffsetToZero() {

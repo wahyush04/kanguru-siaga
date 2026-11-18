@@ -26,6 +26,7 @@ class SaveBabyProfileUseCaseTest {
     private val ensureInitialGrowthDataUseCase: EnsureInitialGrowthDataUseCase = mockk(relaxed = true)
     private val growthRepository: GrowthRepository = mockk(relaxed = true)
     private val fentonGrowthRepository: com.kangurusiaga.app.data.repository.FentonGrowthRepository = mockk(relaxed = true)
+    private val initializeDefaultRemindersUseCase: InitializeDefaultRemindersUseCase = mockk(relaxed = true)
 
     private val useCase = SaveBabyProfileUseCase(
         babyRepository = babyRepository,
@@ -34,6 +35,7 @@ class SaveBabyProfileUseCaseTest {
         ensureInitialGrowthDataUseCase = ensureInitialGrowthDataUseCase,
         growthRepository = growthRepository,
         fentonGrowthRepository = fentonGrowthRepository,
+        initializeDefaultRemindersUseCase = initializeDefaultRemindersUseCase,
         ioDispatcher = testDispatcher
     )
 
@@ -129,6 +131,9 @@ class SaveBabyProfileUseCaseTest {
         }
         coVerify(exactly = 1) {
             ensureInitialGrowthDataUseCase(match { it.id == 101L && it.name == "Aisyah Putri" })
+        }
+        coVerify(exactly = 1) {
+            initializeDefaultRemindersUseCase(match { it.id == 101L && it.name == "Aisyah Putri" })
         }
         // Pastikan pengukuran saat ini untuk berat, panjang, dan lingkar kepala disimpan
         coVerify(exactly = 1) {
