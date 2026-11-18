@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -84,6 +85,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -616,7 +618,9 @@ private fun HomeFeatureMenuGrid(
     ) {
         // Row 1
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             HomeFeatureGridCard(
@@ -633,7 +637,9 @@ private fun HomeFeatureMenuGrid(
                 ),
                 icon = Icons.Default.PlayArrow,
                 onClick = onNavigateToPmkCenter,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             )
 
             HomeFeatureGridCard(
@@ -650,7 +656,9 @@ private fun HomeFeatureMenuGrid(
                 ),
                 icon = Icons.AutoMirrored.Filled.MenuBook,
                 onClick = onNavigateToBblrCare,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             )
 
             HomeFeatureGridCard(
@@ -667,13 +675,17 @@ private fun HomeFeatureMenuGrid(
                 ),
                 icon = Icons.Default.Warning,
                 onClick = onOpenEmergency,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             )
         }
 
         // Row 2
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             HomeFeatureGridCard(
@@ -690,7 +702,9 @@ private fun HomeFeatureMenuGrid(
                 ),
                 icon = Icons.Default.Straighten,
                 onClick = onNavigateToAntropometriVideo,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             )
 
             HomeFeatureGridCard(
@@ -707,7 +721,9 @@ private fun HomeFeatureMenuGrid(
                 ),
                 icon = Icons.Default.WaterDrop,
                 onClick = onNavigateToBathingVideo,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             )
 
             HomeFeatureGridCard(
@@ -724,7 +740,9 @@ private fun HomeFeatureMenuGrid(
                 ),
                 icon = Icons.Default.Alarm,
                 onClick = onNavigateToAsiAlarm,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             )
         }
     }
@@ -743,7 +761,7 @@ private fun HomeFeatureGridCard(
 ) {
     Card(
         modifier = modifier
-            .height(128.dp)
+            .heightIn(min = 128.dp)
             .border(1.dp, KanguruTheme.colors.cardBorder, RoundedCornerShape(16.dp))
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
@@ -753,8 +771,9 @@ private fun HomeFeatureGridCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 6.dp, vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(horizontal = 6.dp, vertical = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             // Nested Gradient Icon Container
             Box(
@@ -780,14 +799,12 @@ private fun HomeFeatureGridCard(
                 }
             }
 
-            // Text Labels - vertically centered in remaining card space to eliminate white space gap
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Text Labels - expands card height naturally so subtitle is never clipped
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(top = 4.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = title,
@@ -795,7 +812,8 @@ private fun HomeFeatureGridCard(
                     fontWeight = FontWeight.Bold,
                     color = KanguruTheme.colors.textPrimary,
                     textAlign = TextAlign.Center,
-                    maxLines = 3
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
@@ -804,7 +822,8 @@ private fun HomeFeatureGridCard(
                     fontWeight = FontWeight.SemiBold,
                     color = subtitleColor,
                     textAlign = TextAlign.Center,
-                    maxLines = 2
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
