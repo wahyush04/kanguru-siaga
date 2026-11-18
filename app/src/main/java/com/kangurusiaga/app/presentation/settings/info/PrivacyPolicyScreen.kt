@@ -589,7 +589,7 @@ fun PrivacyPolicyScreen(
                     category = "Sistem",
                     isRosePermission = true,
                     isTealCategory = false,
-                    description = "Menampilkan banner timer sesi PMK yang berjalan, pengingat alarm mendesak (PMK & ASI), pengingat rutin penapisan klinis & grafik Fenton, serta notifikasi informatif jadwal terlewat."
+                    description = "Menampilkan banner timer sesi PMK yang berjalan, pengingat alarm mendesak (PMK & ASI) dengan nada notifikasi khusus serta kontrol interaktif ('Matikan' & 'Tunda 10 Menit'), pengingat rutin penapisan klinis & grafik Fenton, serta notifikasi informatif jadwal terlewat."
                 )
                 PrivacyPermissionItemCard(
                     permission = "SCHEDULE_EXACT_ALARM",
@@ -599,18 +599,11 @@ fun PrivacyPolicyScreen(
                     description = "Menjadwalkan alarm waktu presisi untuk pengingat penting/mendesak (3 jadwal estafet PMK dan 12 jadwal minum ASI per 2 jam) menggunakan arsitektur Sequential Single Next-Alarm yang hemat baterai. Aplikasi memeriksa canScheduleExactAlarms() dan beralih ke penjadwalan hemat daya (setAndAllowWhileIdle()) jika izin tidak aktif tanpa crash. Secara ketat tidak menggunakan USE_EXACT_ALARM."
                 )
                 PrivacyPermissionItemCard(
-                    permission = "FOREGROUND_SERVICE (MEDIA_PLAYBACK)",
-                    category = "Alarm Audio",
-                    isRosePermission = true,
-                    isTealCategory = false,
-                    description = "Menjalankan pemutaran nada dering alarm khusus pada pengingat mendesak (PMK & ASI) satu kali putar dengan kontrol notifikasi interaktif ('Matikan' & 'Tunda 10 Menit') serta batas henti otomatis."
-                )
-                PrivacyPermissionItemCard(
                     permission = "WAKE_LOCK & VIBRATE",
                     category = "Sistem",
                     isRosePermission = false,
                     isTealCategory = false,
-                    description = "Menjaga prosesor tetap aktif sementara saat alarm berbunyi agar nada pengingat tidak terputus saat layar padam, serta getaran haptik lembut di ruang perawatan."
+                    description = "Menjaga keandalan pengiriman pengingat saat perangkat dalam mode tidur, serta memberikan getaran haptik lembut saat notifikasi masuk di ruang perawatan."
                 )
                 PrivacyPermissionItemCard(
                     permission = "RECEIVE_BOOT_COMPLETED",

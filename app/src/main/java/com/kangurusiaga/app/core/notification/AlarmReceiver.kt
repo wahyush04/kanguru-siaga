@@ -3,7 +3,6 @@ package com.kangurusiaga.app.core.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.kangurusiaga.app.data.local.dao.BabyDao
 import com.kangurusiaga.app.data.local.dao.InAppNotificationDao
 import com.kangurusiaga.app.data.local.dao.PrematureScreeningDao
@@ -41,6 +40,28 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var prematureScreeningDao: PrematureScreeningDao
 
     override fun onReceive(context: Context, intent: Intent) {
+        when (intent.action) {
+            ACTION_DISMISS_ALARM -> {
+                notificationManager.cancelUrgentAlarmNotification()
+                return
+            }
+
+            ACTION_SNOOZE_ALARM -> {
+                notificationManager.cancelUrgentAlarmNotification()
+                val snoozeReminderId = intent.getStringExtra(EXTRA_REMINDER_ID) ?: return
+                val pendingResult = goAsync()
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        alarmScheduler.snoozeReminder(snoozeReminderId, SNOOZE_DURATION_MINUTES)
+                    } catch (_: Exception) {
+                    } finally {
+                        pendingResult.finish()
+                    }
+                }
+                return
+            }
+        }
+
         val reminderId = intent.getStringExtra(EXTRA_REMINDER_ID) ?: return
         val type = intent.getStringExtra(EXTRA_TYPE) ?: ReminderType.PMK.name
         val referenceId = intent.getLongExtra(EXTRA_REFERENCE_ID, 0L)
@@ -55,22 +76,15 @@ class AlarmReceiver : BroadcastReceiver() {
                 val babyId = baby?.id ?: 1L
                 val babyName = baby?.name ?: "si kecil"
 
-                // 1. Execute Reminder Action (Separation of Audio & Routine Notifications)
+                // 1. Execute Reminder Action (Urgent custom channel sound & routine notifications)
                 when (type) {
                     ReminderType.PMK.name -> {
-                        // Urgent: Run ForegroundService with custom looping ringtone
-                        val serviceIntent = Intent(context, AlarmSoundService::class.java).apply {
-                            action = AlarmSoundService.ACTION_START_ALARM
-                            putExtra(AlarmSoundService.EXTRA_REMINDER_ID, reminderId)
-                            putExtra(AlarmSoundService.EXTRA_TYPE, ReminderType.PMK.name)
-                            putExtra(AlarmSoundService.EXTRA_LABEL, label)
-                            putExtra(AlarmSoundService.EXTRA_EXTRA_DATA, extraData)
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            context.startForegroundService(serviceIntent)
-                        } else {
-                            context.startService(serviceIntent)
-                        }
+                        // Urgent: High-priority notification with custom PMK NotificationChannel sound
+                        notificationManager.showUrgentAlarmNotification(
+                            reminderId = reminderId,
+                            type = ReminderType.PMK.name,
+                            label = label
+                        )
 
                         // Insert In-App Notification
                         val targetMins = extraData?.toIntOrNull() ?: 480
@@ -96,19 +110,12 @@ class AlarmReceiver : BroadcastReceiver() {
                     }
 
                     ReminderType.ASI.name -> {
-                        // Urgent: Run ForegroundService with custom looping ringtone
-                        val serviceIntent = Intent(context, AlarmSoundService::class.java).apply {
-                            action = AlarmSoundService.ACTION_START_ALARM
-                            putExtra(AlarmSoundService.EXTRA_REMINDER_ID, reminderId)
-                            putExtra(AlarmSoundService.EXTRA_TYPE, ReminderType.ASI.name)
-                            putExtra(AlarmSoundService.EXTRA_LABEL, label)
-                            putExtra(AlarmSoundService.EXTRA_EXTRA_DATA, extraData)
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            context.startForegroundService(serviceIntent)
-                        } else {
-                            context.startService(serviceIntent)
-                        }
+                        // Urgent: High-priority notification with custom ASI NotificationChannel sound
+                        notificationManager.showUrgentAlarmNotification(
+                            reminderId = reminderId,
+                            type = ReminderType.ASI.name,
+                            label = label
+                        )
 
                         // Insert In-App Notification
                         val parts = extraData?.split("|") ?: emptyList()
@@ -309,6 +316,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_TRIGGER_REMINDER = "com.kangurusiaga.app.action.TRIGGER_REMINDER"
+        const val ACTION_DISMISS_ALARM = "com.kangurusiaga.app.action.DISMISS_ALARM"
+        const val ACTION_SNOOZE_ALARM = "com.kangurusiaga.app.action.SNOOZE_ALARM"
 
         const val EXTRA_REMINDER_ID = "extra_reminder_id"
         const val EXTRA_TYPE = "extra_type"
@@ -317,5 +326,7 @@ class AlarmReceiver : BroadcastReceiver() {
         const val EXTRA_LABEL = "extra_label"
         const val EXTRA_TARGET_MILLIS = "extra_target_millis"
         const val EXTRA_EXTRA_DATA = "extra_extra_data"
+
+        private const val SNOOZE_DURATION_MINUTES = 10
     }
 }
