@@ -10,7 +10,7 @@ class BatchUpdateFeedingVolumeUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(volumeMl: Int): Result<Unit> {
         return runCatching {
-            require(volumeMl in 5..150) { "Volume ASI harus antara 5 ml dan 150 ml" }
+            require(volumeMl in 1..150) { "Volume ASI harus antara 1 ml dan 150 ml" }
             repository.updateAllVolumes(volumeMl)
             scheduler.rescheduleAllEnabled()
         }

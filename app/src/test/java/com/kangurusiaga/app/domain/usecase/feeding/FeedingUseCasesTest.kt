@@ -21,6 +21,7 @@ class FeedingUseCasesTest {
     private lateinit var updateUseCase: UpdateFeedingScheduleUseCase
     private lateinit var deleteUseCase: DeleteFeedingScheduleUseCase
     private lateinit var toggleUseCase: ToggleFeedingScheduleUseCase
+    private lateinit var batchUpdateUseCase: BatchUpdateFeedingVolumeUseCase
 
     @Before
     fun setup() {
@@ -32,6 +33,7 @@ class FeedingUseCasesTest {
         updateUseCase = UpdateFeedingScheduleUseCase(repository, scheduler)
         deleteUseCase = DeleteFeedingScheduleUseCase(repository, scheduler)
         toggleUseCase = ToggleFeedingScheduleUseCase(repository, scheduler)
+        batchUpdateUseCase = BatchUpdateFeedingVolumeUseCase(repository, scheduler)
     }
 
     @Test
@@ -172,5 +174,25 @@ class FeedingUseCasesTest {
         assertThat(result.isSuccess).isTrue()
         assertThat(repository.getScheduleById(id)?.isEnabled).isTrue()
         assertThat(scheduler.scheduledSchedules.containsKey(id)).isTrue()
+    }
+
+    @Test
+    fun batchUpdateFeedingVolume_updatesAllVolumesAndReschedules() = runTest {
+        val id1 = repository.addSchedule(FeedingSchedule(hour = 6, minute = 0, volumeMl = 30))
+        val id2 = repository.addSchedule(FeedingSchedule(hour = 8, minute = 0, volumeMl = 30))
+
+        val result = batchUpdateUseCase(31)
+
+        assertThat(result.isSuccess).isTrue()
+        assertThat(repository.getScheduleById(id1)?.volumeMl).isEqualTo(31)
+        assertThat(repository.getScheduleById(id2)?.volumeMl).isEqualTo(31)
+        assertThat(scheduler.rescheduleAllCallCount).isEqualTo(1)
+    }
+
+    @Test
+    fun batchUpdateFeedingVolume_allows1MlAndRejectsZeroOrOver150() = runTest {
+        assertThat(batchUpdateUseCase(1).isSuccess).isTrue()
+        assertThat(batchUpdateUseCase(0).isFailure).isTrue()
+        assertThat(batchUpdateUseCase(151).isFailure).isTrue()
     }
 }

@@ -837,21 +837,18 @@ private fun DailyMiniBarsRow(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(66.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(colors.surfaceVariant)
-            .padding(start = 8.dp, end = 8.dp, top = 6.dp, bottom = 4.dp)
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 6.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.Bottom
         ) {
             dailyActivities.forEach { item ->
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
+                    modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom
                 ) {
@@ -860,12 +857,13 @@ private fun DailyMiniBarsRow(
                         text = item.durationFormatted,
                         style = typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = if (item.isAboveTarget) colors.primary else colors.warning
+                        color = if (item.isAboveTarget) colors.primary else colors.warning,
+                        maxLines = 1
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                    // Vertical Bar (Height proportional to hours, max 12h = 32dp)
+                    // Vertical Bar (Height proportional to hours, max 12h = 30dp)
                     val barFraction = (item.durationHours / 12f).coerceIn(0.20f, 1f)
                     Box(
                         modifier = Modifier
@@ -881,7 +879,8 @@ private fun DailyMiniBarsRow(
                     Text(
                         text = item.dayLabel,
                         style = typography.labelSmall,
-                        color = colors.textSecondary
+                        color = colors.textSecondary,
+                        maxLines = 1
                     )
                 }
             }

@@ -162,8 +162,8 @@ fun BatchFeedingVolumeBottomSheet(
                                 shape = CircleShape
                             )
                             .clickable {
-                                if (volume > 5) {
-                                    volume -= 5
+                                if (volume > 1) {
+                                    volume -= 1
                                 }
                             },
                         contentAlignment = Alignment.Center
@@ -209,7 +209,7 @@ fun BatchFeedingVolumeBottomSheet(
                             )
                             .clickable {
                                 if (volume < 150) {
-                                    volume += 5
+                                    volume += 1
                                 }
                             },
                         contentAlignment = Alignment.Center

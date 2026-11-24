@@ -205,125 +205,127 @@ fun PmkStatisticsScreen(
                 Column(modifier = Modifier.padding(14.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.Top
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Avatar circle
-                            val context = LocalContext.current
-                            val photoUri = uiState.baby?.photoUri
-                            Box(
-                                modifier = Modifier
-                                    .size(46.dp)
-                                    .clip(CircleShape)
-                                    .background(colors.primaryContainer)
-                                    .border(2.dp, colors.primaryBorder, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (!photoUri.isNullOrBlank()) {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(context)
-                                            .data(photoUri)
-                                            .crossfade(true)
-                                            .build(),
-                                        contentDescription = "Foto ${uiState.baby?.name ?: "Bayi"}",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                } else {
-                                    Text(
-                                        text = "👶",
-                                        style = KanguruTheme.typography.titleLarge
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column {
-                                val babyName = uiState.baby?.name ?: "Bayi"
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = babyName,
-                                        style = KanguruTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = colors.textPrimary
-                                    )
-                                    val birthWeight = uiState.baby?.birthWeightGram
-                                    if (birthWeight != null && birthWeight > 0) {
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Box(
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(8.dp))
-                                                .background(colors.primaryContainer)
-                                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                                        ) {
-                                            Text(
-                                                text = if (birthWeight < 2500) "BBLR ${birthWeight}g" else "${birthWeight}g",
-                                                style = KanguruTheme.typography.labelSmall,
-                                                fontWeight = FontWeight.Bold,
-                                                color = colors.primary
-                                            )
-                                        }
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.height(2.dp))
-
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        imageVector = Icons.Default.CalendarMonth,
-                                        contentDescription = null,
-                                        tint = colors.primary,
-                                        modifier = Modifier.size(12.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    val dateText = if (stats.dateRangeText.isNotBlank()) {
-                                        if (stats.period == StatsPeriod.THIS_WEEK || stats.period == StatsPeriod.LAST_WEEK) {
-                                            "${stats.dateRangeText} (Minggu ke-${stats.babyChronologicalWeek})"
-                                        } else {
-                                            stats.dateRangeText
-                                        }
-                                    } else {
-                                        uiState.selectedPeriod.title
-                                    }
-                                    Text(
-                                        text = dateText,
-                                        style = KanguruTheme.typography.labelSmall,
-                                        color = colors.textSecondary
-                                    )
-                                }
-                            }
-                        }
-
-                        // Star badge status
-                        val badgeText = stats.complianceBadge.ifBlank {
-                            if (stats.compliancePercentage >= 80) "Sangat Baik"
-                            else if (stats.compliancePercentage >= 50) "Cukup"
-                            else if (stats.totalDurationMinutes > 0) "Perlu Ditingkatkan"
-                            else "Belum Ada"
-                        }
-                        val isBadgeGood = stats.compliancePercentage >= 80 || stats.complianceBadge == "Sangat Baik"
+                        // Avatar circle
+                        val context = LocalContext.current
+                        val photoUri = uiState.baby?.photoUri
                         Box(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(if (isBadgeGood) colors.successContainer else colors.surfaceVariant)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .size(46.dp)
+                                .clip(CircleShape)
+                                .background(colors.primaryContainer)
+                                .border(2.dp, colors.primaryBorder, CircleShape),
+                            contentAlignment = Alignment.Center
                         ) {
+                            if (!photoUri.isNullOrBlank()) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data(photoUri)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Foto ${uiState.baby?.name ?: "Bayi"}",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                Text(
+                                    text = "👶",
+                                    style = KanguruTheme.typography.titleLarge
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            val babyName = uiState.baby?.name ?: "Bayi"
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = babyName,
+                                    style = KanguruTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.textPrimary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f, fill = false)
+                                )
+                                val birthWeight = uiState.baby?.birthWeightGram
+                                if (birthWeight != null && birthWeight > 0) {
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(colors.primaryContainer)
+                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = if (birthWeight < 2500) "BBLR ${birthWeight}g" else "${birthWeight}g",
+                                            style = KanguruTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = colors.primary
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(2.dp))
+
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
-                                    imageVector = Icons.Default.Star,
+                                    imageVector = Icons.Default.CalendarMonth,
                                     contentDescription = null,
-                                    tint = if (isBadgeGood) colors.success else colors.primary,
+                                    tint = colors.primary,
                                     modifier = Modifier.size(12.dp)
                                 )
-                                Spacer(modifier = Modifier.width(3.dp))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                val dateText = if (stats.dateRangeText.isNotBlank()) {
+                                    if (stats.period == StatsPeriod.THIS_WEEK || stats.period == StatsPeriod.LAST_WEEK) {
+                                        "${stats.dateRangeText} (Minggu ke-${stats.babyChronologicalWeek})"
+                                    } else {
+                                        stats.dateRangeText
+                                    }
+                                } else {
+                                    uiState.selectedPeriod.title
+                                }
                                 Text(
-                                    text = badgeText,
+                                    text = dateText,
                                     style = KanguruTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = if (isBadgeGood) colors.onSuccessContainer else colors.textPrimary
+                                    color = colors.textSecondary
                                 )
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            // Star badge status
+                            val badgeText = stats.complianceBadge.ifBlank {
+                                if (stats.compliancePercentage >= 80) "Sangat Baik"
+                                else if (stats.compliancePercentage >= 50) "Cukup"
+                                else if (stats.totalDurationMinutes > 0) "Perlu Ditingkatkan"
+                                else "Belum Ada"
+                            }
+                            val isBadgeGood = stats.compliancePercentage >= 80 || stats.complianceBadge == "Sangat Baik"
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(if (isBadgeGood) colors.successContainer else colors.surfaceVariant)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (isBadgeGood) colors.success else colors.primary,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(3.dp))
+                                    Text(
+                                        text = badgeText,
+                                        style = KanguruTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (isBadgeGood) colors.onSuccessContainer else colors.textPrimary
+                                    )
+                                }
                             }
                         }
                     }
@@ -608,11 +610,10 @@ private fun SummaryThreeCardsRow(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Total ${selectedPeriod.title}",
+                        text = "Total\n${selectedPeriod.title}",
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = colors.textSecondary,
-                        minLines = 2,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -674,11 +675,10 @@ private fun SummaryThreeCardsRow(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Target Mingguan",
+                        text = "Target\nMingguan",
                         style = KanguruTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = colors.textSecondary,
-                        minLines = 2,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
