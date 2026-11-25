@@ -289,5 +289,63 @@ class GetPmkWeeklyRecapUseCaseTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun invoke_unclosedSessionInPreviousWeek_doesNotLeakIntoCurrentWeek() = runTest {
+        val now = System.currentTimeMillis()
+        val msPerDay = 24L * 3600 * 1000L
+        val sevenDaysAgo = now - (7L * msPerDay)
+        val yesterdayCal = java.util.Calendar.getInstance().apply {
+            timeInMillis = now - msPerDay
+            set(java.util.Calendar.HOUR_OF_DAY, 19)
+            set(java.util.Calendar.MINUTE, 30)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val yesterdayEpoch = yesterdayCal.timeInMillis
+
+        val baby = Baby(
+            id = 500L,
+            name = "Baby Prod",
+            gender = Gender.FEMALE,
+            birthDateEpochMillis = sevenDaysAgo,
+            birthWeightGram = 1800,
+            gestationalAgeWeeks = 32,
+            createdAt = sevenDaysAgo
+        )
+
+        val week1Session = PmkSession(
+            id = 1L,
+            babyId = 500L,
+            startTimeEpoch = sevenDaysAgo,
+            endTimeEpoch = sevenDaysAgo + (8 * 3600 * 1000L),
+            durationMinutes = 480,
+            activeDurationMinutes = 480,
+            source = com.kangurusiaga.app.domain.model.PmkSource.TIMER,
+            status = TimerStatus.COMPLETED
+        )
+
+        val unclosedYesterdaySession = PmkSession(
+            id = 2L,
+            babyId = 500L,
+            startTimeEpoch = yesterdayEpoch,
+            endTimeEpoch = 0L,
+            durationMinutes = 269,
+            activeDurationMinutes = 269,
+            source = com.kangurusiaga.app.domain.model.PmkSource.TIMER,
+            status = TimerStatus.RUNNING
+        )
+
+        every { getBabyProfileUseCase() } returns flowOf(baby)
+        every { pmkRepository.getSessionsForBaby(500L) } returns flowOf(listOf(week1Session, unclosedYesterdaySession))
+        every { growthRepository.getAllMeasurementsDesc(500L) } returns flowOf(emptyList())
+
+        useCase().test {
+            val item = awaitItem()
+            val week2 = item.weeklyEvaluations.first { it.weekNumber == 2 }
+            assertThat(week2.dailyActivities.all { it.durationHours == 0f }).isTrue()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }
 

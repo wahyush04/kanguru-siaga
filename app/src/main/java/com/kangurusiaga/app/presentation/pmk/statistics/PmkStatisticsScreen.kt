@@ -168,20 +168,7 @@ fun PmkStatisticsScreen(
                         color = colors.textPrimary
                     )
 
-                    IconButton(
-                        onClick = { /* Export or filter */ },
-                        modifier = Modifier
-                            .size(38.dp)
-                            .clip(CircleShape)
-                            .background(colors.surfaceElevated)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CalendarMonth,
-                            contentDescription = "Kalender",
-                            tint = colors.textSecondary,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                    Spacer(modifier = Modifier.size(38.dp))
                 }
             }
         }

@@ -167,21 +167,7 @@ fun PmkHistoryScreen(
                         color = colors.textPrimary
                     )
 
-                    IconButton(
-                        onClick = { /* Filter or calendar report */ },
-                        modifier = Modifier
-                            .size(38.dp)
-                            .clip(CircleShape)
-                            .background(colors.surfaceElevated)
-                            .border(1.dp, colors.cardBorder, CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CalendarToday,
-                            contentDescription = "Kalender",
-                            tint = colors.textSecondary,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                    Spacer(modifier = Modifier.size(38.dp))
                 }
             }
         }

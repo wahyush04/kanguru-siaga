@@ -152,28 +152,6 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
         val daysSinceStart = maxOf(0L, TimeUnit.MILLISECONDS.toDays(now - appUsageStartEpoch))
         val currentWeekNumber = maxOf(1, ((daysSinceStart / 7) + 1).toInt())
 
-        // Flatten all segments from sessions for timeline computation
-        val allSegments = sessions.flatMap { session ->
-            if (session.segments.isNotEmpty()) {
-                session.segments
-            } else {
-                listOf(
-                    PmkSegment(
-                        id = session.id,
-                        sessionId = session.id,
-                        caregiver = session.currentCaregiver,
-                        startTimeEpoch = session.startTimeEpoch,
-                        endTimeEpoch = if (session.status == TimerStatus.RUNNING) null else session.endTimeEpoch,
-                        durationMinutes = session.activeDurationMinutes.coerceAtLeast(session.durationMinutes),
-                        status = PmkSegmentStatus.ACTIVE,
-                        babyTemperature = session.babyTemperature,
-                        babyResponse = session.babyResponse,
-                        notes = session.notes
-                    )
-                )
-            }
-        }.sortedBy { it.startTimeEpoch }
-
         val startSdf = SimpleDateFormat("dd MMM", Locale("id", "ID"))
         val endSdf = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
 
@@ -188,8 +166,33 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
             val statusLabel = if (isCurrentWeek) "Berjalan" else "Selesai"
             val dateRangeText = "${startSdf.format(Date(weekStartEpoch))} - ${endSdf.format(Date(weekEndEpoch))}"
 
+            // Filter sesi per minggu berdasarkan startTimeEpoch agar selaras dengan Statistik & Riwayat Harian,
+            // sehingga sesi yang belum ditutup (endTimeEpoch == null) di minggu sebelumnya tidak bocor ke minggu berikutnya.
+            val weekSessions = sessions.filter { it.startTimeEpoch in weekStartEpoch..weekEndEpoch }
+            val weekSegments = weekSessions.flatMap { session ->
+                if (session.segments.isNotEmpty()) {
+                    session.segments
+                } else {
+                    listOf(
+                        PmkSegment(
+                            id = session.id,
+                            sessionId = session.id,
+                            caregiver = session.currentCaregiver,
+                            startTimeEpoch = session.startTimeEpoch,
+                            endTimeEpoch = if (session.status == TimerStatus.RUNNING) null else session.endTimeEpoch,
+                            durationMinutes = session.activeDurationMinutes.coerceAtLeast(session.durationMinutes),
+                            status = PmkSegmentStatus.ACTIVE,
+                            babyTemperature = session.babyTemperature,
+                            babyResponse = session.babyResponse,
+                            notes = session.notes
+                        )
+                    )
+                }
+            }.sortedBy { it.startTimeEpoch }
+
             // 7 Days of the week
             val dailyBars = mutableListOf<DailyActivityBar>()
+            var totalWeekMinutesExact = 0
             val cal = Calendar.getInstance()
             for (dayIdx in 0..6) {
                 val dayStart = weekStartEpoch + (dayIdx * msPerDay)
@@ -210,9 +213,10 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
                     dayStartEpoch = dayStart,
                     dayEndEpoch = dayEnd,
                     dayFormatted = dayLabel,
-                    segments = allSegments
+                    segments = weekSegments
                 )
                 val dayMinutes = timeline.totalActiveMinutes
+                totalWeekMinutesExact += dayMinutes
                 val hoursFloat = (dayMinutes / 60f * 10).roundToInt() / 10f
                 val hoursFormatted = if (hoursFloat % 1f == 0f) "${hoursFloat.toInt()}j" else "${hoursFloat}j"
                 val isAboveTarget = dayMinutes >= (8 * 60) // >= 8 hours minimal WHO target
@@ -227,8 +231,7 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
                 )
             }
 
-            val totalWeekMinutes = dailyBars.sumOf { (it.durationHours * 60).toInt() }
-            val avgDailyMinutes = totalWeekMinutes / 7
+            val avgDailyMinutes = totalWeekMinutesExact / 7
             val avgH = avgDailyMinutes / 60
             val avgM = avgDailyMinutes % 60
             val averageDailyHoursFormatted = "Rata-rata ${avgH}j ${avgM}m/hari"
@@ -466,9 +469,8 @@ class GetPmkWeeklyRecapUseCase @Inject constructor(
         val activeSessions = sessions.filter { it.status == TimerStatus.COMPLETED }
         val totalActiveMinutes = activeSessions.sumOf { it.activeDurationMinutes.coerceAtLeast(it.durationMinutes) }
         val overallDaysCount = maxOf(1L, TimeUnit.MILLISECONDS.toDays(now - appUsageStartEpoch) + 1)
-        val overallAvgDailyHours = (totalActiveMinutes / 60f) / overallDaysCount
-        val overallAvgHoursFloat = (overallAvgDailyHours * 10).roundToInt() / 10f
-        val avgContactFormatted = "${overallAvgHoursFloat.toInt()}j ${(overallAvgDailyHours * 60 % 60).toInt()}m/hr"
+        val overallAvgMinutes = (totalActiveMinutes / overallDaysCount).toInt()
+        val avgContactFormatted = "${overallAvgMinutes / 60}j ${overallAvgMinutes % 60}m/hr"
 
         val complianceCount = weeklyEvaluations.count { it.isTargetMet }
         val totalWeeks = weeklyEvaluations.size

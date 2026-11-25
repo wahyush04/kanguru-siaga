@@ -27,7 +27,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Psychology
@@ -152,17 +151,7 @@ fun PmkWeeklyRecapScreen(
                         color = colors.textPrimary
                     )
 
-                    IconButton(
-                        onClick = { /* Filter tanggal / Kalender */ },
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CalendarToday,
-                            contentDescription = "Kalender",
-                            tint = colors.textSecondary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                    Spacer(modifier = Modifier.size(36.dp))
                 }
             }
         }
