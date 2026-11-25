@@ -1031,14 +1031,17 @@ private fun HomeDailyActivityCard(
                     )
                 }
 
+                val isTargetMet = progressFraction >= 1f
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = null,
-                        tint = KanguruTheme.colors.gridSubtitleTeal,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    if (isTargetMet) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null,
+                            tint = KanguruTheme.colors.gridSubtitleTeal,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
                     Text(
                         text = stringResource(R.string.home_target_pmk_target_met),
                         style = KanguruTheme.typography.labelSmall,
