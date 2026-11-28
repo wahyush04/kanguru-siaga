@@ -76,9 +76,11 @@ import com.kangurusiaga.app.domain.model.PmkCaregiver
 import com.kangurusiaga.app.domain.model.PmkPauseReason
 import com.kangurusiaga.app.domain.model.PmkTimerState
 import com.kangurusiaga.app.domain.model.TimerStatus
+import android.net.Uri
 import com.kangurusiaga.app.presentation.pmk.components.PmkCaregiverHandoverSheet
 import com.kangurusiaga.app.presentation.pmk.components.PmkFinishSessionSheet
 import com.kangurusiaga.app.presentation.pmk.components.PmkPauseSheet
+import com.kangurusiaga.app.presentation.pmk.components.PmkPositionVerificationBottomSheet
 
 @Composable
 fun PmkTimerRoute(
@@ -110,7 +112,11 @@ fun PmkTimerRoute(
         onNavigateBack = onNavigateBack,
         onNavigateToHistory = onNavigateToHistory,
         onNavigateToGuide = onNavigateToGuide,
-        onStart = { viewModel.startContinuousTimer() },
+        onStart = { viewModel.onStartPmkClicked() },
+        onCreateVerificationCameraUri = { viewModel.createTempCameraUri() },
+        onDismissVerificationSheet = { viewModel.dismissPositionVerificationSheet() },
+        onSkipVerification = { viewModel.skipPositionVerification() },
+        onConfirmVerification = { viewModel.confirmPositionVerification(it) },
         onOpenPauseSheet = { viewModel.openPauseSheet() },
         onClosePauseSheet = { viewModel.closePauseSheet() },
         onSelectPauseReason = { viewModel.selectPauseReason(it) },
@@ -142,6 +148,10 @@ fun PmkTimerScreen(
     onNavigateToHistory: () -> Unit = {},
     onNavigateToGuide: () -> Unit,
     onStart: () -> Unit,
+    onCreateVerificationCameraUri: () -> Uri = { Uri.EMPTY },
+    onDismissVerificationSheet: () -> Unit = {},
+    onSkipVerification: () -> Unit = {},
+    onConfirmVerification: (Uri?) -> Unit = {},
     onOpenPauseSheet: () -> Unit,
     onClosePauseSheet: () -> Unit,
     onSelectPauseReason: (PmkPauseReason) -> Unit,
@@ -167,6 +177,7 @@ fun PmkTimerScreen(
     val handoverSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val pauseSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val finishSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val verificationSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val gradientBrush = Brush.verticalGradient(
         colors = listOf(
@@ -361,6 +372,18 @@ fun PmkTimerScreen(
             onNotesChange = { onFinishDetailsChange(uiState.finishTemperature, uiState.finishResponse, it) },
             onConfirm = onConfirmFinish,
             onDismiss = onCloseFinishDialog
+        )
+    }
+
+    if (uiState.showPositionVerificationSheet) {
+        PmkPositionVerificationBottomSheet(
+            sheetState = verificationSheetState,
+            isUploading = uiState.isUploadingVerificationPhoto,
+            uploadError = uiState.verificationUploadError,
+            onCreateCameraUri = onCreateVerificationCameraUri,
+            onDismiss = onDismissVerificationSheet,
+            onSkip = onSkipVerification,
+            onConfirmAndStart = onConfirmVerification
         )
     }
 }

@@ -1,5 +1,8 @@
 package com.kangurusiaga.app.data.remote.firestore
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kangurusiaga.app.BuildConfig
 import com.kangurusiaga.app.core.common.AppDispatchers
@@ -15,9 +18,11 @@ import com.kangurusiaga.app.data.local.entity.GrowthMeasurementEntity
 import com.kangurusiaga.app.data.local.entity.PmkSessionEntity
 import com.kangurusiaga.app.data.local.entity.PrematureScreeningEntity
 import com.kangurusiaga.app.data.mapper.toDomain
+import com.kangurusiaga.app.data.remote.cloudinary.CloudinaryUploadResult
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.Gender
 import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -77,6 +82,16 @@ interface BabyFirestoreSyncManager {
     suspend fun syncAllGrowthMeasurements(babyId: Long): Boolean
 
     /**
+     * Menyinkronkan hasil upload foto verifikasi posisi PMK ke subkoleksi pmk_photo_verification.
+     */
+    suspend fun syncPmkPhotoVerification(
+        babyId: Long,
+        uploadResult: CloudinaryUploadResult,
+        photoSource: String,
+        checklistCompletedCount: Int
+    ): Boolean
+
+    /**
      * Menyinkronkan seluruh data (profil ibu & bayi, riwayat PMK, skrining, dan pertumbuhan).
      */
     suspend fun syncAll(babyId: Long? = null): Boolean
@@ -84,6 +99,7 @@ interface BabyFirestoreSyncManager {
 
 @Singleton
 class BabyFirestoreSyncManagerImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val firestore: FirebaseFirestore,
     private val networkMonitor: NetworkMonitor,
     private val userPreferencesRepository: UserPreferencesRepository,
@@ -102,6 +118,7 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
         const val SUBCOLLECTION_PMK_DAILY = "pmk_daily_records"
         const val SUBCOLLECTION_SCREENINGS = "screenings"
         const val SUBCOLLECTION_GROWTH = "growth_measurements"
+        const val SUBCOLLECTION_PMK_PHOTO_VERIFICATION = "pmk_photo_verification"
     }
 
     private suspend fun ensureParentBabyDocExists(babyDocId: String, babyId: Long) {
@@ -181,6 +198,8 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                     Gender.UNSPECIFIED, null -> "TIDAK_DIKETAHUI"
                 }
 
+                val (firstInstallEpochMillis, firstInstallFormatted) = getFirstInstallInfo()
+
                 val dto = BabyRecordFirestoreDto.create(
                     babyIdLocal = baby.id,
                     motherName = baby.motherName,
@@ -196,7 +215,9 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                     currentHeadCircumferenceCm = currentHeadCircumferenceCm ?: baby.birthHeadCircumferenceCm,
                     gender = genderString,
                     environment = BuildConfig.ENVIRONMENT,
-                    appVersion = BuildConfig.VERSION_NAME
+                    appVersion = BuildConfig.VERSION_NAME,
+                    firstInstallEpochMillis = firstInstallEpochMillis,
+                    firstInstallFormatted = firstInstallFormatted
                 )
 
                 // 1. Simpan metadata pada dokumen induk user
@@ -208,6 +229,8 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                     "motherPhoneNumber" to baby.motherPhoneNumber,
                     "environment" to BuildConfig.ENVIRONMENT,
                     "appVersion" to BuildConfig.VERSION_NAME,
+                    "firstInstallEpochMillis" to firstInstallEpochMillis,
+                    "firstInstallFormatted" to firstInstallFormatted,
                     "updatedAtServer" to com.google.firebase.firestore.FieldValue.serverTimestamp()
                 )
                 parentDocRef.set(rootMeta, com.google.firebase.firestore.SetOptions.merge()).await()
@@ -433,6 +456,85 @@ class BabyFirestoreSyncManagerImpl @Inject constructor(
                 true
             } catch (e: Exception) {
                 AppLogger.e(TAG, "GAGAL menyinkronkan semua data pertumbuhan ke Firestore: ${e.message}", e)
+                CrashlyticsLogger.recordException(e)
+                false
+            }
+        }
+    }
+
+    private fun getFirstInstallInfo(): Pair<Long, String> {
+        return try {
+            val pkgInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.packageManager.getPackageInfo(
+                    context.packageName,
+                    PackageManager.PackageInfoFlags.of(0)
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                context.packageManager.getPackageInfo(context.packageName, 0)
+            }
+            val installMillis = pkgInfo.firstInstallTime
+            val formatted = if (installMillis > 0L) {
+                java.text.SimpleDateFormat("dd MMM yyyy, HH:mm", java.util.Locale.forLanguageTag("id-ID"))
+                    .format(java.util.Date(installMillis))
+            } else {
+                ""
+            }
+            installMillis to formatted
+        } catch (_: Exception) {
+            0L to ""
+        }
+    }
+
+    override suspend fun syncPmkPhotoVerification(
+        babyId: Long,
+        uploadResult: CloudinaryUploadResult,
+        photoSource: String,
+        checklistCompletedCount: Int
+    ): Boolean {
+        return withContext(ioDispatcher) {
+            if (!networkMonitor.isOnline()) return@withContext false
+            try {
+                val babyDocId = userPreferencesRepository.getOrCreateFirestoreBabyDocId()
+                ensureParentBabyDocExists(babyDocId, babyId)
+
+                val now = System.currentTimeMillis()
+                val formattedDate = try {
+                    java.text.SimpleDateFormat("dd MMM yyyy, HH:mm", java.util.Locale.forLanguageTag("id-ID"))
+                        .format(java.util.Date(now))
+                } catch (_: Exception) {
+                    ""
+                }
+                val docId = uploadResult.publicId.substringAfterLast('/').ifBlank { "pmk_pos_${babyId}_$now" }
+
+                val payload = mapOf(
+                    "photoId" to docId,
+                    "babyId" to babyId,
+                    "photoDateEpochMillis" to now,
+                    "photoDateFormatted" to formattedDate,
+                    "cloudinaryPublicId" to uploadResult.publicId,
+                    "cloudinaryFolder" to uploadResult.folder,
+                    "assetType" to uploadResult.type,
+                    "secureUrl" to uploadResult.secureUrl,
+                    "source" to photoSource,
+                    "checklistCompletedCount" to checklistCompletedCount,
+                    "checklistAllMet" to (checklistCompletedCount >= 4),
+                    "verificationStatus" to "PENDING",
+                    "syncedAtEpochMillis" to now,
+                    "updatedAtServer" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                )
+
+                firestore.collection(COLLECTION_BABY_RECORDS)
+                    .document(babyDocId)
+                    .collection(SUBCOLLECTION_PMK_PHOTO_VERIFICATION)
+                    .document(docId)
+                    .set(payload)
+                    .await()
+
+                AppLogger.i(TAG, "BERHASIL menyinkronkan foto verifikasi PMK ke $SUBCOLLECTION_PMK_PHOTO_VERIFICATION/$docId")
+                true
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "GAGAL menyinkronkan foto verifikasi PMK ke Firestore: ${e.message}", e)
                 CrashlyticsLogger.recordException(e)
                 false
             }

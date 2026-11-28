@@ -20,7 +20,9 @@
                 "appVersion": "1.0.0",
                 "syncedAtEpochMillis": 1700000050000,
                 "createdAtServer": "SERVER_TIMESTAMP",
-                "updatedAtServer": "SERVER_TIMESTAMP"
+                "updatedAtServer": "SERVER_TIMESTAMP",
+                "firstInstallEpochMillis": 1700000000000,
+                "firstInstallFormatted": "15 Nov 2023"
             },
             "pmk_daily_records": [
                 {
@@ -196,6 +198,24 @@
                         }
                     },
                     "syncedAtEpochMillis": 1701000050000,
+                    "updatedAtServer": "SERVER_TIMESTAMP"
+                }
+            ],
+            "pmk_photo_verification": [
+                {
+                    "photoId": "pmk_pos_1_1700000000",
+                    "babyId": 1,
+                    "photoDateEpochMillis": 1700000000000,
+                    "photoDateFormatted": "15 Nov 2023, 10:30",
+                    "cloudinaryPublicId": "kanguru-siaga/verifikasi-pmk/pmk_pos_1_1700000000",
+                    "cloudinaryFolder": "kanguru-siaga/verifikasi-pmk",
+                    "assetType": "private",
+                    "secureUrl": "https://res.cloudinary.com/tzccdgab/image/private/...",
+                    "source": "CAMERA",
+                    "checklistCompletedCount": 4,
+                    "checklistAllMet": true,
+                    "verificationStatus": "PENDING",
+                    "syncedAtEpochMillis": 1700000050000,
                     "updatedAtServer": "SERVER_TIMESTAMP"
                 }
             ]

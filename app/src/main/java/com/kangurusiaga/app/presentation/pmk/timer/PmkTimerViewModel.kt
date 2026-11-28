@@ -1,13 +1,19 @@
 package com.kangurusiaga.app.presentation.pmk.timer
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kangurusiaga.app.core.common.PhotoStorageManager
 import com.kangurusiaga.app.core.common.PmkTimerManager
+import com.kangurusiaga.app.data.remote.cloudinary.CloudinaryUploadService
+import com.kangurusiaga.app.data.remote.config.PmkRemoteConfigManager
+import com.kangurusiaga.app.data.remote.firestore.BabyFirestoreSyncManager
 import com.kangurusiaga.app.domain.model.Baby
 import com.kangurusiaga.app.domain.model.PmkCaregiver
 import com.kangurusiaga.app.domain.model.PmkPauseReason
 import com.kangurusiaga.app.domain.model.PmkSession
 import com.kangurusiaga.app.domain.model.PmkTimerState
+import com.kangurusiaga.app.domain.repository.UserPreferencesRepository
 import com.kangurusiaga.app.domain.usecase.DailyTimeline
 import com.kangurusiaga.app.domain.usecase.GetBabyProfileUseCase
 import com.kangurusiaga.app.domain.usecase.GetDailyPmkTimelineUseCase
@@ -35,6 +41,11 @@ data class PmkTimerUiState(
     val showPauseSheet: Boolean = false,
     val showFinishConfirmDialog: Boolean = false,
     val showFinishSessionSheet: Boolean = false,
+    val showPositionVerificationSheet: Boolean = false,
+    val isUploadingVerificationPhoto: Boolean = false,
+    val verificationUploadError: String? = null,
+    val hasSeenPmkPositionVerification: Boolean = true,
+    val lastPmkPositionVerificationDate: String? = null,
     val isNightModeDim: Boolean = false,
     val handoverCaregiver: PmkCaregiver = PmkCaregiver.AYAH,
     val handoverTemperature: String = "36.8",
@@ -59,12 +70,20 @@ sealed interface PmkTimerUiEvent {
 class PmkTimerViewModel @Inject constructor(
     private val timerManager: PmkTimerManager,
     private val getDailyTimelineUseCase: GetDailyPmkTimelineUseCase,
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val cloudinaryUploadService: CloudinaryUploadService,
+    private val babyFirestoreSyncManager: BabyFirestoreSyncManager,
+    private val pmkRemoteConfigManager: PmkRemoteConfigManager,
+    private val photoStorageManager: PhotoStorageManager,
     getBabyProfileUseCase: GetBabyProfileUseCase
 ) : ViewModel() {
 
     init {
         timerManager.ensureTickerRunning()
         timerManager.refreshTodayTotal()
+        viewModelScope.launch {
+            pmkRemoteConfigManager.fetchAndActivate()
+        }
     }
 
     private data class SheetState(
@@ -72,6 +91,9 @@ class PmkTimerViewModel @Inject constructor(
         val showPauseSheet: Boolean = false,
         val showFinishConfirmDialog: Boolean = false,
         val showFinishSessionSheet: Boolean = false,
+        val showPositionVerificationSheet: Boolean = false,
+        val isUploadingVerificationPhoto: Boolean = false,
+        val verificationUploadError: String? = null,
         val isNightModeDim: Boolean = false,
         val handoverCaregiver: PmkCaregiver = PmkCaregiver.AYAH,
         val handoverTemperature: String = "36.8",
@@ -95,8 +117,10 @@ class PmkTimerViewModel @Inject constructor(
         combine(
             timerManager.timerState,
             getDailyTimelineUseCase(babyId, Calendar.getInstance()),
-            _sheetState
-        ) { timer, timeline, sheets ->
+            _sheetState,
+            userPreferencesRepository.hasSeenPmkPositionVerification,
+            userPreferencesRepository.lastPmkPositionVerificationDate
+        ) { timer, timeline, sheets, hasSeenVerification, lastVerifiedDate ->
             val syncedTimeline = timeline.syncWithActiveTimer(timer)
             PmkTimerUiState(
                 timerState = timer,
@@ -106,6 +130,11 @@ class PmkTimerViewModel @Inject constructor(
                 showPauseSheet = sheets.showPauseSheet,
                 showFinishConfirmDialog = sheets.showFinishConfirmDialog,
                 showFinishSessionSheet = sheets.showFinishSessionSheet,
+                showPositionVerificationSheet = sheets.showPositionVerificationSheet,
+                isUploadingVerificationPhoto = sheets.isUploadingVerificationPhoto,
+                verificationUploadError = sheets.verificationUploadError,
+                hasSeenPmkPositionVerification = hasSeenVerification,
+                lastPmkPositionVerificationDate = lastVerifiedDate,
                 isNightModeDim = sheets.isNightModeDim,
                 handoverCaregiver = sheets.handoverCaregiver,
                 handoverTemperature = sheets.handoverTemperature,
@@ -125,6 +154,100 @@ class PmkTimerViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = PmkTimerUiState()
     )
+
+    fun onStartPmkClicked(caregiver: PmkCaregiver? = null) {
+        val mode = pmkRemoteConfigManager.getPmkPhotoVerificationMode()
+        val shouldShow = PmkRemoteConfigManager.shouldShowVerificationPopup(
+            mode = mode,
+            hasSeenOnce = uiState.value.hasSeenPmkPositionVerification,
+            lastVerifiedDateKey = uiState.value.lastPmkPositionVerificationDate,
+            todayDateKey = PmkRemoteConfigManager.todayDateKey()
+        )
+        if (shouldShow) {
+            _sheetState.update {
+                it.copy(
+                    showPositionVerificationSheet = true,
+                    isUploadingVerificationPhoto = false,
+                    verificationUploadError = null
+                )
+            }
+        } else {
+            startContinuousTimer(caregiver)
+        }
+    }
+
+    fun dismissPositionVerificationSheet() {
+        _sheetState.update {
+            it.copy(
+                showPositionVerificationSheet = false,
+                isUploadingVerificationPhoto = false,
+                verificationUploadError = null
+            )
+        }
+    }
+
+    fun skipPositionVerification() {
+        viewModelScope.launch {
+            userPreferencesRepository.setHasSeenPmkPositionVerification(true)
+            userPreferencesRepository.setLastPmkPositionVerificationDate(PmkRemoteConfigManager.todayDateKey())
+            _sheetState.update {
+                it.copy(
+                    showPositionVerificationSheet = false,
+                    isUploadingVerificationPhoto = false,
+                    verificationUploadError = null
+                )
+            }
+            startContinuousTimer()
+        }
+    }
+
+    fun confirmPositionVerification(photoUri: Uri?) {
+        if (photoUri == null) {
+            skipPositionVerification()
+            return
+        }
+        val babyId = uiState.value.baby?.id ?: 1L
+        viewModelScope.launch {
+            _sheetState.update {
+                it.copy(
+                    isUploadingVerificationPhoto = true,
+                    verificationUploadError = null
+                )
+            }
+            val result = cloudinaryUploadService.uploadPrivatePmkVerificationPhoto(photoUri, babyId)
+            result.fold(
+                onSuccess = { uploadResult ->
+                    babyFirestoreSyncManager.syncPmkPhotoVerification(
+                        babyId = babyId,
+                        uploadResult = uploadResult,
+                        photoSource = "CAMERA_OR_GALLERY",
+                        checklistCompletedCount = 4
+                    )
+                    userPreferencesRepository.setHasSeenPmkPositionVerification(true)
+                    userPreferencesRepository.setLastPmkPositionVerificationDate(PmkRemoteConfigManager.todayDateKey())
+                    _sheetState.update {
+                        it.copy(
+                            showPositionVerificationSheet = false,
+                            isUploadingVerificationPhoto = false,
+                            verificationUploadError = null
+                        )
+                    }
+                    startContinuousTimer()
+                    _events.emit(PmkTimerUiEvent.Message("Foto verifikasi posisi PMK tersimpan aman"))
+                },
+                onFailure = { error ->
+                    _sheetState.update {
+                        it.copy(
+                            isUploadingVerificationPhoto = false,
+                            verificationUploadError = error.message ?: "Gagal mengunggah foto. Coba lagi atau lewati."
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    fun createTempCameraUri(): Uri = photoStorageManager.createTempCameraUri()
 
     fun startContinuousTimer(caregiver: PmkCaregiver? = null) {
         val babyId = uiState.value.baby?.id ?: 1L

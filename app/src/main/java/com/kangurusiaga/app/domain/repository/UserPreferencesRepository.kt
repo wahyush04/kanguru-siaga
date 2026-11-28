@@ -12,6 +12,8 @@ interface UserPreferencesRepository {
     val textScale: Flow<AppTextScale>
     val notificationsEnabled: Flow<Boolean>
     val hasSeenAlarmGuidance: Flow<Boolean>
+    val hasSeenPmkPositionVerification: Flow<Boolean>
+    val lastPmkPositionVerificationDate: Flow<String?>
     val firestoreBabyDocId: Flow<String?>
     val appSettings: Flow<AppSettings>
 
@@ -20,6 +22,8 @@ interface UserPreferencesRepository {
     suspend fun setTextScale(scale: AppTextScale)
     suspend fun setNotificationsEnabled(enabled: Boolean)
     suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean)
+    suspend fun setHasSeenPmkPositionVerification(hasSeen: Boolean)
+    suspend fun setLastPmkPositionVerificationDate(dateKey: String)
     suspend fun getOrCreateFirestoreBabyDocId(): String
     suspend fun setFirestoreBabyDocId(id: String)
 }

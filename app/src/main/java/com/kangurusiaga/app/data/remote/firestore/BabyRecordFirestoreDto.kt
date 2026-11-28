@@ -22,6 +22,8 @@ data class BabyRecordFirestoreDto(
     val gender: String,
     val environment: String,
     val appVersion: String,
+    val firstInstallEpochMillis: Long = 0L,
+    val firstInstallFormatted: String = "",
     val syncedAtEpochMillis: Long = System.currentTimeMillis()
 ) {
     fun toMap(isNewDocument: Boolean = false): Map<String, Any?> {
@@ -43,6 +45,8 @@ data class BabyRecordFirestoreDto(
             "gender" to gender,
             "environment" to environment,
             "appVersion" to appVersion,
+            "firstInstallEpochMillis" to firstInstallEpochMillis,
+            "firstInstallFormatted" to firstInstallFormatted,
             "syncedAtEpochMillis" to syncedAtEpochMillis,
             "updatedAtServer" to FieldValue.serverTimestamp()
         )
@@ -68,7 +72,9 @@ data class BabyRecordFirestoreDto(
             currentHeadCircumferenceCm: Float = 0f,
             gender: String,
             environment: String,
-            appVersion: String
+            appVersion: String,
+            firstInstallEpochMillis: Long = 0L,
+            firstInstallFormatted: String = ""
         ): BabyRecordFirestoreDto {
             val formattedDate = try {
                 val sdf = SimpleDateFormat("d MMMM yyyy", Locale("id", "ID"))
@@ -93,7 +99,9 @@ data class BabyRecordFirestoreDto(
                 currentHeadCircumferenceCm = if (currentHeadCircumferenceCm > 0f) currentHeadCircumferenceCm else birthHeadCircumferenceCm,
                 gender = gender,
                 environment = environment,
-                appVersion = appVersion
+                appVersion = appVersion,
+                firstInstallEpochMillis = firstInstallEpochMillis,
+                firstInstallFormatted = firstInstallFormatted
             )
         }
     }

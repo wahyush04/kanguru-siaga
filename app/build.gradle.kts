@@ -36,6 +36,24 @@ val fentonApiKey: String = System.getenv("FENTON_API_KEY")
     ?: envProperties.getProperty("API_KEY")
     ?: ""
 
+val cloudinaryCloudName: String = System.getenv("CLOUDINARY_CLOUD_NAME")
+    ?: localProperties.getProperty("cloudinary.cloud.name")
+    ?: localProperties.getProperty("CLOUDINARY_CLOUD_NAME")
+    ?: envProperties.getProperty("CLOUDINARY_CLOUD_NAME")
+    ?: ""
+
+val cloudinaryApiKey: String = System.getenv("CLOUDINARY_API_KEY")
+    ?: localProperties.getProperty("cloudinary.api.key")
+    ?: localProperties.getProperty("CLOUDINARY_API_KEY")
+    ?: envProperties.getProperty("CLOUDINARY_API_KEY")
+    ?: ""
+
+val cloudinaryApiSecret: String = System.getenv("CLOUDINARY_API_SECRET")
+    ?: localProperties.getProperty("cloudinary.api.secret")
+    ?: localProperties.getProperty("CLOUDINARY_API_SECRET")
+    ?: envProperties.getProperty("CLOUDINARY_API_SECRET")
+    ?: ""
+
 val keystoreProperties = Properties().apply {
     val file = rootProject.file("keystore.properties")
     if (file.exists()) {
@@ -80,6 +98,9 @@ android {
         }
         manifestPlaceholders["appName"] = "Kanguru Siaga"
         buildConfigField("String", "FENTON_API_KEY", "\"$fentonApiKey\"")
+        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"$cloudinaryCloudName\"")
+        buildConfigField("String", "CLOUDINARY_API_KEY", "\"$cloudinaryApiKey\"")
+        buildConfigField("String", "CLOUDINARY_API_SECRET", "\"$cloudinaryApiSecret\"")
     }
 
     signingConfigs {
@@ -194,6 +215,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.config)
 
     // Unit Testing
     testImplementation(libs.junit)

@@ -75,6 +75,7 @@ class BabyFirestoreSyncManagerTest {
         every { docSnapshot.exists() } returns false
 
         syncManager = BabyFirestoreSyncManagerImpl(
+            context = mockk(relaxed = true),
             firestore = firestore,
             networkMonitor = networkMonitor,
             userPreferencesRepository = userPreferencesRepository,

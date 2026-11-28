@@ -1378,19 +1378,51 @@ fun SettingsScreen(
                     }
 
                     // ==========================================
-                    // 8. FOOTER BRANDING
+                    // 8. FOOTER BRANDING & FIRST INSTALL INFO
                     // ==========================================
+                    val footerContext = LocalContext.current
+                    val firstInstallFormatted = remember(footerContext) {
+                        try {
+                            val pkgInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                footerContext.packageManager.getPackageInfo(
+                                    footerContext.packageName,
+                                    PackageManager.PackageInfoFlags.of(0)
+                                )
+                            } else {
+                                @Suppress("DEPRECATION")
+                                footerContext.packageManager.getPackageInfo(footerContext.packageName, 0)
+                            }
+                            val installTime = pkgInfo.firstInstallTime
+                            if (installTime > 0L) {
+                                java.text.SimpleDateFormat(
+                                    "dd MMM yyyy, HH:mm",
+                                    Locale.forLanguageTag("id-ID")
+                                ).format(java.util.Date(installTime))
+                            } else {
+                                "-"
+                            }
+                        } catch (_: Exception) {
+                            "-"
+                        }
+                    }
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp, bottom = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
                             text = "KANGURU SIAGA • Pendamping Khusus Bayi Kecil",
                             style = KanguruTheme.typography.labelSmall,
                             fontWeight = FontWeight.Medium,
-                            color = TextTertiary
+                            color = KanguruTheme.colors.textTertiary
+                        )
+                        Text(
+                            text = "Pertama dipasang: $firstInstallFormatted",
+                            style = KanguruTheme.typography.labelSmall,
+                            color = KanguruTheme.colors.textTertiary
                         )
                     }
 

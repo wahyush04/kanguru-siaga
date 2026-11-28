@@ -32,6 +32,8 @@ class UserPreferencesDataStore @Inject constructor(
         val TEXT_SCALE = floatPreferencesKey("text_scale")
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
         val HAS_SEEN_ALARM_GUIDANCE = booleanPreferencesKey("has_seen_alarm_guidance")
+        val HAS_SEEN_PMK_POSITION_VERIFICATION = booleanPreferencesKey("has_seen_pmk_position_verification")
+        val LAST_PMK_POSITION_VERIFICATION_DATE = stringPreferencesKey("last_pmk_position_verification_date")
         val FIRESTORE_BABY_DOC_ID = stringPreferencesKey("firestore_baby_doc_id")
     }
 
@@ -61,6 +63,14 @@ class UserPreferencesDataStore @Inject constructor(
         preferences[PreferencesKeys.HAS_SEEN_ALARM_GUIDANCE] ?: false
     }
 
+    val hasSeenPmkPositionVerification: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.HAS_SEEN_PMK_POSITION_VERIFICATION] ?: false
+    }
+
+    val lastPmkPositionVerificationDate: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.LAST_PMK_POSITION_VERIFICATION_DATE]
+    }
+
     suspend fun setOnboardingCompleted(completed: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_ONBOARDING_COMPLETED] = completed
@@ -88,6 +98,18 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.HAS_SEEN_ALARM_GUIDANCE] = hasSeen
+        }
+    }
+
+    suspend fun setHasSeenPmkPositionVerification(hasSeen: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.HAS_SEEN_PMK_POSITION_VERIFICATION] = hasSeen
+        }
+    }
+
+    suspend fun setLastPmkPositionVerificationDate(dateKey: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_PMK_POSITION_VERIFICATION_DATE] = dateKey
         }
     }
 

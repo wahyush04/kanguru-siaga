@@ -22,6 +22,8 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override val textScale: Flow<AppTextScale> = dataStore.textScale
     override val notificationsEnabled: Flow<Boolean> = dataStore.notificationsEnabled
     override val hasSeenAlarmGuidance: Flow<Boolean> = dataStore.hasSeenAlarmGuidance
+    override val hasSeenPmkPositionVerification: Flow<Boolean> = dataStore.hasSeenPmkPositionVerification
+    override val lastPmkPositionVerificationDate: Flow<String?> = dataStore.lastPmkPositionVerificationDate
     override val firestoreBabyDocId: Flow<String?> = dataStore.firestoreBabyDocId
 
     override val appSettings: Flow<AppSettings> = combine(
@@ -54,6 +56,14 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun setHasSeenAlarmGuidance(hasSeen: Boolean) {
         dataStore.setHasSeenAlarmGuidance(hasSeen)
+    }
+
+    override suspend fun setHasSeenPmkPositionVerification(hasSeen: Boolean) {
+        dataStore.setHasSeenPmkPositionVerification(hasSeen)
+    }
+
+    override suspend fun setLastPmkPositionVerificationDate(dateKey: String) {
+        dataStore.setLastPmkPositionVerificationDate(dateKey)
     }
 
     override suspend fun getOrCreateFirestoreBabyDocId(): String {
